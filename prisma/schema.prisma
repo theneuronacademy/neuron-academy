@@ -1,0 +1,448 @@
+// Phase 3 — PostgreSQL schema (Prisma ORM).
+// Frontend + existing test engine (lib/storage.ts, lib/testTypes.ts) are
+// UNTOUCHED. These models are the production foundation; the localStorage
+// test engine keeps working until the API-backed engine lands.
+// Passwords are NEVER stored in plaintext — see prisma/seed.ts (bcryptjs).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  FACULTY
+  STUDENT
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum FacultyStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CourseStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum BatchStatus {
+  ACTIVE
+  UPCOMING
+  COMPLETED
+}
+
+enum TestType {
+  LIVE
+  OFFLINE
+  PRACTICE
+}
+
+enum TestStatus {
+  DRAFT
+  SCHEDULED
+  LIVE
+  COMPLETED
+  PUBLISHED
+}
+
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+  SHORT_ANSWER
+  NUMERIC
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  EVALUATED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  LEAVE
+}
+
+enum AttendanceSource {
+  MANUAL
+  BIOMETRIC
+}
+
+enum NotificationAudience {
+  ALL_STUDENTS
+  BATCH
+  FACULTY
+  INDIVIDUAL
+}
+
+enum NotificationStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CONVERTED
+  CLOSED
+}
+
+enum PopupFrequency {
+  ONCE_PER_SESSION
+  ONCE_PER_DAY
+  EVERY_VISIT
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  role         Role     @default(STUDENT)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  studentProfile      Student?
+  facultyProfile      Faculty?
+  createdTests        Test[]         @relation("TestCreator")
+  createdNotifications Notification[] @relation("NotificationCreator")
+  createdAnnouncements Announcement[] @relation("AnnouncementCreator")
+}
+
+model Student {
+  id          String        @id @default(cuid())
+  userId      String?       @unique
+  studentId   String        @unique
+  name        String
+  email       String        @unique
+  phone       String
+  photo       String?
+  courseId    String?
+  batchId     String?
+  joiningDate DateTime      @default(now())
+  status      StudentStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  course     Course?      @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  batch      Batch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  attendance Attendance[]
+  attempts   TestAttempt[]
+  results    Result[]
+  targetedNotifications Notification[] @relation("NotificationStudent")
+}
+
+model Faculty {
+  id            String        @id @default(cuid())
+  userId        String?       @unique
+  facultyId     String        @unique
+  name          String
+  email         String        @unique
+  phone         String
+  photo         String?
+  qualification String?
+  experience    String?
+  bio           String?
+  // Public faculty-page fields (subject filter, card designation).
+  subject       String?
+  designation   String?        @default("Faculty")
+  status        FacultyStatus @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user                 User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  batches              Batch[]
+  targetedNotifications Notification[] @relation("NotificationFaculty")
+}
+
+model Course {
+  id               String       @id @default(cuid())
+  name             String
+  slug             String       @unique
+  description      String?
+  shortDescription String?
+  image            String?
+  duration         String?
+  fee              Float?
+  status           CourseStatus @default(ACTIVE)
+  displayOrder     Int          @default(0)
+  // Website catalogue fields (filter pills, cards) — kept so the public
+  // site maps 1:1 without placeholder defaults once seeded from /data/courses.
+  category         String       @default("Engineering")
+  target           String?
+  mode             String?
+  facultyName      String?
+  badge            String?
+  accent           String?
+  subjects         String[]     @default([])
+  highlights       String[]     @default([])
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  students  Student[]
+  batches   Batch[]
+  enquiries Enquiry[]
+}
+
+model Batch {
+  id        String      @id @default(cuid())
+  name      String
+  courseId  String
+  facultyId String?
+  startDate DateTime?
+  endDate   DateTime?
+  status    BatchStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  course        Course         @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  faculty       Faculty?       @relation(fields: [facultyId], references: [id], onDelete: SetNull)
+  students      Student[]
+  tests         Test[]
+  attendance    Attendance[]
+  notifications Notification[] @relation("NotificationBatch")
+}
+
+model Banner {
+  id           String   @id @default(cuid())
+  title        String
+  subtitle     String?
+  description  String?
+  imageUrl     String?
+  videoUrl     String?
+  buttonText   String?
+  buttonUrl    String?
+  startDate    DateTime?
+  endDate      DateTime?
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Popup {
+  id         String         @id @default(cuid())
+  title      String
+  message    String
+  imageUrl   String?
+  videoUrl   String?
+  buttonText String?
+  buttonUrl  String?
+  frequency  PopupFrequency @default(ONCE_PER_SESSION)
+  startDate  DateTime?
+  endDate    DateTime?
+  isActive   Boolean        @default(true)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model GalleryItem {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  imageUrl     String
+  category     String   @default("Academy")
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Testimonial {
+  id           String   @id @default(cuid())
+  name         String
+  role         String   @default("Student")
+  message      String
+  photo        String?
+  rating       Int      @default(5)
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Result {
+  id         String   @id @default(cuid())
+  studentId  String
+  testId     String
+  marks      Float    @default(0)
+  totalMarks Float    @default(0)
+  percentage Float    @default(0)
+  rank       Int?
+  status     String   @default("PUBLISHED")
+  // Server-computed breakdown (Step 13 response fields).
+  attempted  Int      @default(0)
+  correct    Int      @default(0)
+  wrong      Int      @default(0)
+  unanswered Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@index([testId])
+  @@index([studentId])
+}
+
+// Compatible with the existing test engine contract (lib/testTypes.ts):
+// title=name, duration=durationMinutes, totalQuestions=questionIds.length.
+// The localStorage engine (lib/storage.ts) is NOT replaced in this phase.
+model Test {
+  id             String     @id @default(cuid())
+  title          String
+  description    String?
+  batchId        String?
+  createdById    String?
+  type           TestType   @default(PRACTICE)
+  duration       Int        @default(60)
+  totalQuestions Int        @default(0)
+  totalMarks     Int        @default(0)
+  startTime      DateTime?
+  endTime        DateTime?
+  status         TestStatus @default(DRAFT)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  batch     Batch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  createdBy User?        @relation("TestCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  questions Question[]
+  attempts  TestAttempt[]
+  results   Result[]
+}
+
+// questionType supports future types (comprehension, matrix) without
+// complicating today's MCQ-first engine. Options stay nullable so new
+// types don't force fake A-D options.
+model Question {
+  id            String       @id @default(cuid())
+  testId        String
+  questionText  String
+  questionType  QuestionType @default(MCQ)
+  optionA       String?
+  optionB       String?
+  optionC       String?
+  optionD       String?
+  correctAnswer String?
+  marks         Float        @default(1)
+  negativeMarks Float        @default(0)
+  explanation   String?
+  order         Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  test Test @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@index([testId])
+}
+
+model TestAttempt {
+  id          String        @id @default(cuid())
+  testId      String
+  studentId   String
+  startedAt   DateTime      @default(now())
+  submittedAt DateTime?
+  // Submitted answers { questionId: "A"|"B"|"C"|"D"|null } — persisted so
+  // evaluation is reproducible server-side. Never trust client marks.
+  answers     Json?
+  score       Float         @default(0)
+  totalMarks  Float         @default(0)
+  percentage  Float         @default(0)
+  status      AttemptStatus @default(IN_PROGRESS)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([testId])
+  @@index([studentId])
+}
+
+// Database model only in Phase 3. eSSL/biometric connection is a later
+// phase — source=BIOMETRIC + deviceId exist so no rework is needed then.
+model Attendance {
+  id        String           @id @default(cuid())
+  studentId String
+  batchId   String
+  date      DateTime         @db.Date
+  status    AttendanceStatus @default(PRESENT)
+  checkIn   DateTime?
+  checkOut  DateTime?
+  source    AttendanceSource @default(MANUAL)
+  deviceId  String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  batch   Batch   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, date])
+  @@index([batchId, date])
+}
+
+model Notification {
+  id              String               @id @default(cuid())
+  title           String
+  message         String
+  type            String               @default("general")
+  audience        NotificationAudience @default(ALL_STUDENTS)
+  createdById     String?
+  targetBatchId   String?
+  targetStudentId String?
+  targetFacultyId String?
+  scheduledAt     DateTime?
+  sentAt          DateTime?
+  status          NotificationStatus   @default(DRAFT)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  createdBy     User?    @relation("NotificationCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  targetBatch   Batch?   @relation("NotificationBatch", fields: [targetBatchId], references: [id], onDelete: SetNull)
+  targetStudent Student? @relation("NotificationStudent", fields: [targetStudentId], references: [id], onDelete: SetNull)
+  targetFaculty Faculty? @relation("NotificationFaculty", fields: [targetFacultyId], references: [id], onDelete: SetNull)
+}
+
+model Enquiry {
+  id        String        @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  courseId  String?
+  message   String?
+  status    EnquiryStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  course Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+}
+
+model Announcement {
+  id             String   @id @default(cuid())
+  title          String
+  content        String
+  imageUrl       String?
+  targetAudience String   @default("ALL")
+  startDate      DateTime?
+  endDate        DateTime?
+  isActive       Boolean  @default(true)
+  createdById    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  createdBy User? @relation("AnnouncementCreator", fields: [createdById], references: [id], onDelete: SetNull)
+}

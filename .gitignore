@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+dist/
+
+# Environment secrets — NEVER commit real credentials.
+.env
+.env.local
+.env*.local
+
+# Prisma migrations output is tracked, but local dev database files are not.
+*.db
+*.db-journal
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Vercel
+.vercel/
