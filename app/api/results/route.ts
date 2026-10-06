@@ -39,7 +39,9 @@ export async function GET(req: NextRequest) {
   const viewer = getUserFromRequest(req);
   if (!viewer) return fail("Not authenticated.", 401);
   const db = getDb();
-  if (!db) return ok({ items: [], source: "demo", note: "Results live in lib/storage.ts until the API engine lands." });
+  // P0: marks are private — never answer from demo data; fail honestly
+  // (503) when no database is configured, like attempts/books/public tests.
+  if (!db) return dbNotConfigured("Reading results");
   try {
     const params = new URL(req.url).searchParams;
     const testId = params.get("testId");

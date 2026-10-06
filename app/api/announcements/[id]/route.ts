@@ -8,10 +8,11 @@ import { parseDate } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const auth = requireApiRole(req, ["ADMIN"]);
-  if (!auth.ok) return fail(auth.error, auth.status);
+  // P0: announcement detail is public website content (list GET is public
+  // and every sibling CMS detail GET — banners, gallery, popups,
+  // testimonials, courses, batches — is public). Writes stay ADMIN-only.
   const db = getDb();
   if (!db) return dbNotConfigured("Reading an announcement");
   try {

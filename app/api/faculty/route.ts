@@ -4,6 +4,7 @@
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
+import { getUserFromRequest } from "@/lib/session";
 import { requireApiRole } from "@/lib/server-auth";
 import { isEmail, isNonEmpty, isPhone, missingFields } from "@/lib/validation";
 import { DEMO_FACULTY } from "@/data/admin";
@@ -26,12 +27,24 @@ function toAdmin(f: any) {
   };
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const db = getDb();
-  if (!db) return ok({ items: DEMO_FACULTY, source: "demo" });
+  // P0: email/phone are PII — ADMIN sessions get the full shape, everyone
+  // else (website cards, anonymous) gets the public shape. Demo rows are
+  // fictional but go through the same strip for a consistent contract.
+  const viewer = getUserFromRequest(req);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const toPublic = (f: any) => {
+    const { email: _e, phone: _p, ...rest } = toAdmin(f);
+    void _e;
+    void _p;
+    return rest;
+  };
+  if (!db) return ok({ items: DEMO_FACULTY.map(toPublic), source: "demo" });
   try {
     const rows = await db.faculty.findMany({ include: { batches: true }, orderBy: { createdAt: "desc" }, take: 200 });
-    return ok({ items: rows.map(toAdmin), source: "database" });
+    if (viewer?.role === "ADMIN") return ok({ items: rows.map(toAdmin), source: "database" });
+    return ok({ items: rows.map(toPublic), source: "database" });
   } catch (err) {
     return serverError("faculty:list", err);
   }

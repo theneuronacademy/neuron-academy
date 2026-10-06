@@ -31,7 +31,9 @@ function validOptionMap(v: any): Record<string, string[]> | null {
 
 export async function GET(req: NextRequest) {
   const db = getDb();
-  if (!db) return ok({ items: [], source: "demo", note: "Question bank lives in lib/storage.ts until the API engine lands." });
+  // P0: question rows carry answer keys — never answer from demo data; fail
+  // honestly (503) when no database is configured, like attempts/books.
+  if (!db) return dbNotConfigured("Reading questions");
   const viewer = getUserFromRequest(req);
   const testId = new URL(req.url).searchParams.get("testId");
   // Student branch: answer-free questions for one visible test.

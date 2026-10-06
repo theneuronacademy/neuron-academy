@@ -2,8 +2,11 @@
 // - Runs on /admin/*, /faculty/*, /student/* only. Public routes (/, /courses/*,
 //   /faculty/[slug] profiles, logins) pass through untouched.
 // - Verifies the HMAC session cookie with WebCrypto (Edge-safe, no Node APIs).
-// - Without SESSION_SECRET it passes through (demo mode — page-level demo
-//   guards still apply). Never crashes, never locks out demo mode.
+// - P0 fail-closed: in production without a usable SESSION_SECRET no session
+//   can verify, so every protected route redirects to login. Development
+//   (NODE_ENV !== "production") keeps the demo pass-through so the demo UI
+//   stays usable without a secret. Never crashes, never exposes secrets or
+//   token contents (only the role string leaves verifyRole).
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -54,8 +57,11 @@ function loginRedirect(req: NextRequest, loginPath: string): NextResponse {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const secret = process.env.SESSION_SECRET;
-  // Demo mode (no secret): page-level demo guards apply, never block.
-  if (!secret || secret.length < 16) return NextResponse.next();
+  const secretValid = !!secret && secret.length >= 16;
+  // P0: without a usable secret no session can verify. Production fails
+  // closed (protected routes redirect to login below); development keeps
+  // the demo pass-through (page-level demo guards still apply).
+  if (!secretValid && process.env.NODE_ENV !== "production") return NextResponse.next();
 
   // Public login/register pages always pass.
   if (
@@ -74,7 +80,9 @@ export async function middleware(req: NextRequest) {
     if (rest && !rest.includes("/") && !FACULTY_RESERVED.has(rest)) return NextResponse.next();
   }
 
-  const role = await verifyRole(req.cookies.get(COOKIE)?.value ?? "", secret);
+  // Without a usable secret no token can verify — treat every caller as
+  // unauthenticated so production fails closed (login redirect below).
+  const role = secretValid ? await verifyRole(req.cookies.get(COOKIE)?.value ?? "", secret as string) : null;
 
   if (pathname.startsWith("/admin")) {
     if (!role) return loginRedirect(req, "/admin/login");

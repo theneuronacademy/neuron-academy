@@ -111,6 +111,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       }));
       return ok({ item: { ...meta, questions: safeQuestions } });
     }
+    // P0: full rows include question data + answer keys — staff only.
+    // Anonymous callers are unauthenticated (401); any other non-student
+    // role that reaches here is forbidden (403). STUDENT is handled above.
+    if (!viewer) return fail("Not authenticated.", 401);
+    if (viewer.role !== "ADMIN" && viewer.role !== "FACULTY") return fail("Forbidden.", 403);
     return ok({ item: row });
   } catch (err) {
     return serverError("tests:get", err);
