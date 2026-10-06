@@ -139,7 +139,14 @@ export async function getDashboardStats() {
   return DEMO_STATS;
 }
 export async function getRecentActivity() {
-  // TODO backend: GET /api/activity (audit log, Phase 4)
+  const data = await callApi<{ items: { id: string; text: string; time: string }[] }>("/api/activity");
+  if (data && Array.isArray(data.items) && data.items.length > 0) {
+    return data.items
+      .filter((a) => a && typeof a.id === "string" && typeof a.text === "string")
+      .map((a) => ({ id: a.id, text: a.text, time: typeof a.time === "string" ? a.time : "" }));
+  }
+  if (data && Array.isArray(data.items)) return [];
+  if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") return [];
   return DEMO_ACTIVITY;
 }
 export async function getUpcomingTests(): Promise<AdminTest[]> {
@@ -178,11 +185,34 @@ export async function getUpcomingTests(): Promise<AdminTest[]> {
   return unwrapItems<AdminTest>(data, DEMO_UPCOMING_TESTS);
 }
 export async function getAttendanceOverview() {
-  // TODO backend: GET /api/attendance/overview (aggregate, Phase 4)
+  const data = await callApi<{ overview: { batch: string; pct: number }[]; avg: number }>("/api/attendance/overview");
+  if (data && Array.isArray(data.overview)) {
+    const rows = data.overview.filter((r) => r && typeof r.batch === "string" && typeof r.pct === "number");
+    if (rows.length > 0) return rows;
+    return [];
+  }
+  if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") return [];
   return DEMO_ATTENDANCE_OVERVIEW;
 }
 export async function getWebsiteStatus() {
-  // TODO backend: derive from /api/health + banner/popup counts
+  const [health, banners, popups] = await Promise.all([
+    callApi<{ database: string; mode: string; website: string }>("/api/health"),
+    callApi<{ items: { isActive?: boolean; active?: boolean }[] }>("/api/banners"),
+    callApi<{ items: { isActive?: boolean; active?: boolean }[] }>("/api/popups"),
+  ]);
+  if (health) {
+    const countActive = (d: { items: { isActive?: boolean; active?: boolean }[] } | null) =>
+      d && Array.isArray(d.items) ? d.items.filter((r) => (r.isActive ?? r.active ?? true) === true).length : 0;
+    return {
+      online: health.website !== "offline",
+      lastUpdate: new Date().toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }),
+      activeBanners: countActive(banners),
+      activePopups: countActive(popups),
+    };
+  }
+  if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") {
+    return { online: true, lastUpdate: "—", activeBanners: 0, activePopups: 0 };
+  }
   return DEMO_WEBSITE_STATUS;
 }
 

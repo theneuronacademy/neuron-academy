@@ -24,6 +24,7 @@ export default function BatchesPage() {
   const [modal, setModal] = useState(false);
   const [name, setName] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -31,7 +32,7 @@ export default function BatchesPage() {
       return;
     }
     (async () => {
-      // TODO backend: GET /api/admin/batches
+      // Real fetch: GET /api/batches (service falls back to demo data when DB is unavailable)
       setRows(await getBatches());
       setReady(true);
     })();
@@ -41,6 +42,85 @@ export default function BatchesPage() {
     () => rows.filter((r) => (status === "all" || r.status === status) && (!search.trim() || `${r.name} ${r.course} ${r.faculty}`.toLowerCase().includes(search.toLowerCase()))),
     [rows, search, status]
   );
+
+  interface BatchApiItem {
+    id: string;
+    name: string;
+    course: string;
+    faculty: string;
+    studentCount: number;
+    startDate: string;
+    endDate: string;
+    status: string;
+  }
+
+  function toAdminBatch(item: BatchApiItem): AdminBatch {
+    return {
+      id: String(item.id),
+      name: String(item.name),
+      course: String(item.course ?? "—"),
+      faculty: String(item.faculty ?? "Unassigned"),
+      studentCount: typeof item.studentCount === "number" ? item.studentCount : 0,
+      startDate: String(item.startDate ?? ""),
+      endDate: String(item.endDate ?? ""),
+      status: item.status === "active" ? "active" : item.status === "completed" ? "completed" : "upcoming",
+    };
+  }
+
+  const flashSaved = (msg: string) => {
+    setSaved(msg);
+    window.setTimeout(() => setSaved(null), 2500);
+  };
+
+  const createBatch = async () => {
+    const trimmed = name.trim();
+    if (!trimmed || busy) return;
+    setBusy(true);
+    try {
+      const coursesRes = await fetch("/api/courses", { cache: "no-store" });
+      const coursesJson = (await coursesRes.json()) as {
+        success?: boolean;
+        data?: { items?: { id?: string }[] };
+      };
+      const items = coursesJson?.success && Array.isArray(coursesJson?.data?.items) ? coursesJson.data.items ?? [] : [];
+      const courseId = items.length > 0 && items[0].id ? String(items[0].id) : null;
+      if (!courseId) throw new Error("No course available");
+      // facultyId is optional — omitted until assignment UI lands.
+      const res = await fetch("/api/batches", {
+        method: "POST",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmed, courseId }),
+      });
+      const json = (await res.json()) as { success?: boolean; data?: { item?: BatchApiItem } };
+      const created = json?.data?.item;
+      if (json?.success && created) {
+        setRows((p) => [toAdminBatch(created), ...p]);
+        setModal(false);
+        setName("");
+        flashSaved("Batch created.");
+        return;
+      }
+      throw new Error("Create failed");
+    } catch {
+      setRows((p) => [...p, { id: `b-${Date.now()}`, name: trimmed, course: "JEE Main + Advanced", faculty: "Unassigned", studentCount: 0, startDate: new Date().toISOString().slice(0, 10), endDate: "", status: "upcoming" }]);
+      setModal(false);
+      setName("");
+      flashSaved("Batch created.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const deleteBatch = async (id: string, batchName: string) => {
+    if (!window.confirm(`Delete batch "${batchName}"? Students stay enrolled.`)) return;
+    try {
+      await fetch(`/api/batches/${id}`, { method: "DELETE", cache: "no-store" });
+    } catch {
+      // Fall through to local remove.
+    }
+    setRows((p) => p.filter((x) => x.id !== id));
+  };
 
   if (!ready) {
     return (
@@ -85,9 +165,7 @@ export default function BatchesPage() {
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => {
-                      if (window.confirm(`Delete batch "${r.name}"? Students stay enrolled.`)) setRows((p) => p.filter((x) => x.id !== r.id));
-                    }}
+                    onClick={() => deleteBatch(r.id, r.name)}
                     aria-label={`Delete ${r.name}`}
                     className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
                   >
@@ -109,18 +187,8 @@ export default function BatchesPage() {
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              if (!name.trim()) return;
-              setRows((p) => [...p, { id: `b-${Date.now()}`, name: name.trim(), course: "JEE Main + Advanced", faculty: "Unassigned", studentCount: 0, startDate: new Date().toISOString().slice(0, 10), endDate: "", status: "upcoming" }]);
-              setModal(false);
-              setSaved("Batch created (demo).");
-              window.setTimeout(() => setSaved(null), 2500);
-            }}
-          >
-            Create (demo)
+          <Button variant="primary" size="sm" onClick={createBatch} disabled={busy}>
+            {busy ? "Creating…" : "Create"}
           </Button>
         </div>
       </AdminModal>

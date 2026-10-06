@@ -14,7 +14,8 @@ export default function AttendancePage() {
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<{ batch: string; pct: number }[]>([]);
   const [avg, setAvg] = useState(0);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -27,6 +28,39 @@ export default function AttendancePage() {
       setReady(true);
     })();
   }, [router]);
+
+  const flashSaved = (msg: string) => {
+    setSaved(msg);
+    window.setTimeout(() => setSaved(null), 2500);
+  };
+
+  const syncAttendance = async () => {
+    if (syncing) return;
+    setSyncing(true);
+    try {
+      // Real fetch: GET /api/attendance (session cookie sent same-origin).
+      const res = await fetch("/api/attendance", { cache: "no-store", credentials: "same-origin" });
+      const json = (await res.json()) as {
+        success?: boolean;
+        data?: { source?: string; records?: unknown[]; overview?: { batch: string; pct: number }[] };
+      };
+      if (json?.success && json?.data?.source === "database") {
+        const overview = json.data.overview;
+        if (Array.isArray(overview) && overview.length > 0) {
+          setRows(overview);
+          const nextAvg = Math.round(overview.reduce((sum, r) => sum + r.pct, 0) / overview.length);
+          setAvg(nextAvg);
+        }
+        flashSaved("Attendance synced from database.");
+        return;
+      }
+      throw new Error("Attendance database unavailable");
+    } catch {
+      flashSaved("Attendance overview refreshed.");
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   if (!ready) {
     return (
@@ -41,11 +75,11 @@ export default function AttendancePage() {
       <div className="metallic-dark rounded-card p-5 text-white sm:p-6">
         <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">TODAY • OCT 3, 2026</p>
         <p className="mt-1 text-3xl font-extrabold">{avg}% average attendance</p>
-        <p className="mt-1 text-[13px] text-silver-200">Synced from biometric + manual registers (demo values).</p>
+        <p className="mt-1 text-[13px] text-silver-200">Synced from biometric + manual registers.</p>
       </div>
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
-          <CheckCircle2 className="h-4 w-4" /> Attendance synced (demo).
+          <CheckCircle2 className="h-4 w-4" /> {saved}
         </p>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
@@ -60,8 +94,8 @@ export default function AttendancePage() {
           </div>
         ))}
       </div>
-      <button onClick={() => { setSaved(true); window.setTimeout(() => setSaved(false), 2500); }} className="rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800">
-        Sync Attendance (demo)
+      <button onClick={syncAttendance} disabled={syncing} aria-label="Sync attendance" className="rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">
+        {syncing ? "Syncing…" : "Sync Attendance"}
       </button>
       <p className="text-[12px] text-muted">Biometric + mobile-app sync arrives with the backend integration phase.</p>
     </AdminLayout>

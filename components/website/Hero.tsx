@@ -61,7 +61,7 @@ function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) 
 
   if (ad.mediaUrl) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={ad.mediaUrl} alt={ad.title} className="animate-kenburns h-full w-full object-cover" loading={large ? "eager" : "lazy"} />;
+    return <img src={ad.mediaUrl} alt={ad.title || "Neuron Academy featured announcement"} width={1200} height={800} className="animate-kenburns h-full w-full object-cover" loading={large ? "eager" : "lazy"} />;
   }
 
   return (
@@ -103,11 +103,12 @@ export function Hero() {
   const active = heroAds[0];
 
   return (
-    <section id="home" className="metallic-dark relative overflow-hidden">
-      {/* ambient colour fields */}
+    <section id="home" className="metallic-dark bg-aurora relative overflow-hidden">
+      {/* symmetric premium grid + ambient colour fields */}
+      <div className="bg-symmetric-grid pointer-events-none absolute inset-0" aria-hidden />
       <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
-      <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl" aria-hidden />
+      <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" aria-hidden />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-12 pt-12 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:pt-16">
         <div className="animate-slide-up">
@@ -124,7 +125,7 @@ export function Hero() {
           </div>
           <h1 className="mt-5 text-[42px] font-extrabold leading-[1.02] tracking-tight text-white sm:text-5xl lg:text-[62px]">
             Crack JEE. NEET.
-            <span className="animate-gradient-text mt-2 block bg-gradient-to-r from-teal-300 via-amber-300 to-crimson-100 bg-clip-text text-transparent">
+            <span className="animate-gradient-text mt-2 block bg-gradient-to-r from-teal-300 via-gold-200 to-crimson-100 bg-clip-text text-transparent">
               AMU. Jamia.
             </span>
           </h1>
@@ -158,8 +159,8 @@ export function Hero() {
           ) : null}
         </div>
         <div className="relative">
-          <div className="absolute -inset-5 rounded-[30px] bg-gradient-to-br from-teal-400/25 via-amber-300/10 to-crimson/25 blur-2xl" aria-hidden />
-          <div className="premium-ring relative overflow-hidden rounded-[26px] border border-white/30 bg-navy-800" style={{ minHeight: 440 }}>
+          <div className="absolute -inset-5 rounded-[30px] bg-gradient-to-br from-teal-400/25 via-gold-400/10 to-crimson/25 blur-2xl" aria-hidden />
+          <div className="premium-ring premium-ring-dark relative overflow-hidden rounded-[26px] border border-white/30 bg-navy-800" style={{ minHeight: 440 }}>
             {active ? (
               <div className="h-[440px] sm:h-[500px]">
                 <AdMedia ad={active} large />

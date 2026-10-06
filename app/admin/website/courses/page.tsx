@@ -12,7 +12,6 @@ import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
-import { COURSES, COURSE_CATEGORIES } from "@/data/courses";
 
 interface Row {
   id: string;
@@ -32,6 +31,9 @@ export default function WebsiteCoursesPage() {
   const [modal, setModal] = useState(false);
   const [editing, setEditing] = useState<Row | null>(null);
   const [name, setName] = useState("");
+  const [category, setCategory] = useState("Engineering");
+  const [duration, setDuration] = useState("1 year");
+  const [mode, setMode] = useState("Offline + Online");
   const [saved, setSaved] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,9 +41,29 @@ export default function WebsiteCoursesPage() {
       router.replace("/admin/login");
       return;
     }
-    // TODO backend: GET /api/admin/website/courses (today: public catalogue as source of truth)
-    setRows(COURSES.map((c) => ({ id: c.id, name: c.name, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
-    setReady(true);
+    (async () => {
+      try {
+        const res = await fetch("/api/courses", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && Array.isArray(json.data?.items)) {
+          setRows(json.data.items.map((c: any) => ({
+            id: c.id,
+            name: c.name ?? "",
+            category: c.category ?? "Engineering",
+            duration: c.duration ?? "1 year",
+            mode: c.mode ?? "Offline + Online",
+            admissionOpen: c.isActive ?? c.admissionOpen ?? true,
+          })));
+        } else {
+          const { COURSES, COURSE_CATEGORIES } = await import("@/data/courses");
+          setRows(COURSES.map((c) => ({ id: c.id, name: c.name, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
+        }
+      } catch {
+        const { COURSES, COURSE_CATEGORIES } = await import("@/data/courses");
+        setRows(COURSES.map((c) => ({ id: c.id, name: c.name, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
+      }
+      setReady(true);
+    })();
   }, [router]);
 
   const filtered = useMemo(
@@ -57,25 +79,77 @@ export default function WebsiteCoursesPage() {
   const openAdd = () => {
     setEditing(null);
     setName("");
+    setCategory("Engineering");
+    setDuration("1 year");
+    setMode("Offline + Online");
     setModal(true);
   };
   const openEdit = (r: Row) => {
     setEditing(r);
     setName(r.name);
+    setCategory(r.category);
+    setDuration(r.duration);
+    setMode(r.mode);
     setModal(true);
   };
-  const save = () => {
+  const save = async () => {
     if (!name.trim()) return;
-    if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim() } : r)));
-    else setRows((p) => [...p, { id: `c-${Date.now()}`, name: name.trim(), category: "Engineering", duration: "1 year", mode: "Offline + Online", admissionOpen: true }]);
+    const payload = { name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), isActive: true };
+    try {
+      if (editing) {
+        const res = await fetch(`/api/courses/${editing.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        });
+        if (res.ok) {
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim() } : r)));
+          setSaved("Course updated.");
+        } else {
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim() } : r)));
+          setSaved("Updated locally (database unavailable).");
+        }
+      } else {
+        const res = await fetch("/api/courses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && json.data?.item) {
+          const item = json.data.item;
+          setRows((p) => [...p, { id: item.id, name: item.name, category: item.category ?? "Engineering", duration: item.duration ?? "1 year", mode: item.mode ?? "Offline + Online", admissionOpen: true }]);
+          setSaved("Course added.");
+        } else {
+          setRows((p) => [...p, { id: `c-${Date.now()}`, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), admissionOpen: true }]);
+          setSaved("Added locally (database unavailable).");
+        }
+      }
+    } catch {
+      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim() } : r)));
+      else setRows((p) => [...p, { id: `c-${Date.now()}`, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), admissionOpen: true }]);
+      setSaved("Saved locally (database unavailable).");
+    }
     setModal(false);
-    setSaved(editing ? "Course updated (demo — backend sync later)." : "Course added (demo — backend sync later).");
     window.setTimeout(() => setSaved(null), 2500);
   };
-  const remove = (r: Row) => {
+  const remove = async (r: Row) => {
     if (!window.confirm(`Delete "${r.name}" from the website?`)) return;
-    setRows((p) => p.filter((x) => x.id !== r.id));
-    setSaved("Course removed (demo).");
+    try {
+      const res = await fetch(`/api/courses/${r.id}`, { method: "DELETE", cache: "no-store" });
+      if (res.ok) {
+        setRows((p) => p.filter((x) => x.id !== r.id));
+        setSaved("Course removed.");
+      } else {
+        setRows((p) => p.filter((x) => x.id !== r.id));
+        setSaved("Removed locally (database unavailable).");
+      }
+    } catch {
+      setRows((p) => p.filter((x) => x.id !== r.id));
+      setSaved("Removed locally (database unavailable).");
+    }
     window.setTimeout(() => setSaved(null), 2500);
   };
   const toggle = (r: Row) => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, admissionOpen: !x.admissionOpen } : x)));
@@ -98,7 +172,7 @@ export default function WebsiteCoursesPage() {
       ) : null}
       <AdminToolbar>
         <SearchBar value={search} onChange={setSearch} placeholder="Search courses…" />
-        <FilterBar value={cat} onChange={setCat} ariaLabel="Filter by category" options={[{ value: "all", label: "All categories" }, ...COURSE_CATEGORIES.map((c) => ({ value: c, label: c }))]} />
+        <FilterBar value={cat} onChange={setCat} ariaLabel="Filter by category" options={[{ value: "all", label: "All categories" }, { value: "Engineering", label: "Engineering" }, { value: "Medical", label: "Medical" }, { value: "Foundation", label: "Foundation" }, { value: "School", label: "School" }]} />
       </AdminToolbar>
       {filtered.length === 0 ? (
         <EmptyState title="No courses match" desc="Try a different search or category." />
@@ -141,13 +215,36 @@ export default function WebsiteCoursesPage() {
           Course name
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. JEE Main + Advanced" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
         </label>
-        <p className="mt-2 text-[12px] text-muted">Full field set (category, duration, faculty, subjects) arrives with the backend form schema.</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <label className="block text-[12px] font-bold text-navy-700">
+            Category
+            <select value={category} onChange={(e) => setCategory(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+              <option value="Engineering">Engineering</option>
+              <option value="Medical">Medical</option>
+              <option value="Foundation">Foundation</option>
+              <option value="School">School</option>
+            </select>
+          </label>
+          <label className="block text-[12px] font-bold text-navy-700">
+            Duration
+            <input value={duration} onChange={(e) => setDuration(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="1 year" />
+          </label>
+          <label className="block text-[12px] font-bold text-navy-700">
+            Mode
+            <select value={mode} onChange={(e) => setMode(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+              <option value="Offline + Online">Offline + Online</option>
+              <option value="Offline">Offline</option>
+              <option value="Online">Online</option>
+            </select>
+          </label>
+        </div>
+        <p className="mt-2 text-[12px] text-muted">Full field set (faculty, subjects, highlights) arrives with the backend form schema.</p>
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
           <Button variant="primary" size="sm" onClick={save}>
-            Save (demo)
+            Save
           </Button>
         </div>
       </AdminModal>

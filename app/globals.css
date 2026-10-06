@@ -1,207 +1,354 @@
+/* ==========================================================================
+   Premium Educational Website Global Styles
+   ========================================================================== */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ---- Neuron Academy design tokens (single source of truth) ----
-   Tailwind theme values in tailwind.config.ts mirror these.
-   Change colours here + in the config to retheme globally. */
+/* ==========================================================================
+   CSS Variables - Premium Educational Theme
+   ========================================================================== */
 :root {
-  --primary: #24466d;
-  --primary-dark: #183653;
-  --secondary: #008c9e;
-  --secondary-light: #1aa6b5;
-  --accent: #b4453d;
-  --accent-dark: #963a34;
-  --background: #f7f9fa;
-  --surface: #ffffff;
-  --surface-dark: #183653;
-  --surface-tint: #eef3f6;
-  --text: #172b3a;
-  --muted: #667786;
-  --border: #d7dee4;
-  --shadow: 0 1px 2px rgba(36, 70, 109, 0.06), 0 4px 16px rgba(36, 70, 109, 0.07);
+  --bg-primary: #fafafa;
+  --bg-secondary: #f7f9fa;
+  --bg-tertiary: #eef3f6;
+  --accent-navy: #24466d;
+  --accent-teal: #008c9e;
+  --accent-crimson: #b4453d;
+  --accent-gold: #d4af37;
+  --text-primary: #1a2b3a;
+  --text-secondary: #667786;
+  --text-muted: #8892a2;
+  --border-default: #d7dee4;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* ==========================================================================
+   Premium Background Gradients - Symmetric Patterns
+   ========================================================================== */
 
-body {
-  background: #f7f9fa;
-  color: #172b3a;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-section[id],
-div[id] {
-  scroll-margin-top: 96px;
-}
-
-/* Premium metallic surfaces */
-.metallic-surface {
-  background: linear-gradient(135deg, #ffffff 0%, #eef3f6 40%, #d7dee4 70%, #eef3f6 100%);
-  border: 1px solid #d7dee4;
-}
-.metallic-surface-deep {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0)),
-    linear-gradient(135deg, #ffffff 0%, #eef3f6 45%, #cfd9e1 100%);
-  border: 1px solid #cbd3da;
-}
-.metallic-dark {
-  background: linear-gradient(135deg, #183653 0%, #24466d 55%, #183653 100%);
-}
-.metallic-gold-line {
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #1aa6b5 20%, #d7dee4 50%, #1aa6b5 80%, transparent);
-}
-.metallic-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #d7dee4, transparent);
-}
-.premium-ring {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 1px 2px rgba(36, 70, 109, 0.06),
-    0 12px 32px -12px rgba(36, 70, 109, 0.25);
-}
-.card-lift {
-  transition: transform 0.35s cubic-bezier(0.22, 0.8, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
-}
-.card-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(36, 70, 109, 0.08), 0 20px 44px -12px rgba(36, 70, 109, 0.28);
-  border-color: #9bd3da;
-}
-.btn-metallic-sheen {
-  position: relative;
-  overflow: hidden;
-}
-.btn-metallic-sheen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-.btn-metallic-sheen:hover::after {
-  transform: translateX(100%);
-}
-
-/* Premium section eyebrow */
-.eyebrow-line {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-.eyebrow-line::before {
-  content: "";
-  width: 28px;
-  height: 2px;
-  background: linear-gradient(90deg, #008c9e, #1aa6b5);
-  border-radius: 999px;
-}
-
-/* Carousel */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* ---- Extreme motion system (CSS-only, GPU-friendly) ---- */
-@keyframes marquee-x {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.marquee-track {
-  animation: marquee-x 28s linear infinite;
-}
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-@keyframes float-y {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-.animate-float {
-  animation: float-y 5s ease-in-out infinite;
-}
-.animate-float-slow {
-  animation: float-y 7.5s ease-in-out infinite;
-}
-
-@keyframes kenburns {
-  0% { transform: scale(1) translate(0, 0); }
-  100% { transform: scale(1.12) translate(-1.5%, 1.5%); }
-}
-.animate-kenburns {
-  animation: kenburns 12s ease-in-out infinite alternate;
-}
-
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(26, 166, 181, 0.45), 0 8px 30px -8px rgba(180, 69, 61, 0.5); }
-  50% { box-shadow: 0 0 0 10px rgba(26, 166, 181, 0), 0 8px 34px -6px rgba(180, 69, 61, 0.65); }
-}
-.animate-glow {
-  animation: glow-pulse 2.8s ease-in-out infinite;
-}
-
-@keyframes gradient-pan {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-.animate-gradient-text {
-  background-size: 200% auto;
+/* Metallic Navy Gradient Hero */
+.bg-metallic-navy {
+  background: linear-gradient(135deg, #24466d 0%, #183653 50%, #0d2435 100%);
+  background-size: 400% 400%;
   animation: gradient-pan 6s ease-in-out infinite;
 }
 
-@keyframes ticker-progress {
-  from { width: 0%; }
-  to { width: 100%; }
+/* Metallic Gold Accent */
+.bg-metallic-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #f4e3a1 50%, #d4af37 100%);
+  background-size: 400% 400%;
+  animation: gradient-pan 6s ease-in-out infinite;
 }
 
-@keyframes blink-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
-}
-.animate-blink {
-  animation: blink-dot 1.6s ease-in-out infinite;
-}
-
-.text-stroke-white {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.35);
-  color: transparent;
+/* Aurora Educational Background */
+.bg-aurora {
+  background: radial-gradient(circle at 20% 20%, rgba(36, 70, 109, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 140, 158, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 60% 40%, rgba(180, 69, 61, 0.15) 0%, transparent 50%);
 }
 
-/* Phase 14 — chart entrance animations (disabled under reduced-motion above). */
-@keyframes chart-draw-in {
-  from { stroke-dashoffset: 100%; opacity: 0.4; }
-  to { opacity: 1; }
+/nvascular paper pattern */
+.bg-subtle-lines {
+  background-image: 
+    linear-gradient(rgba(36, 70, 109, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(36, 70, 109, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
 }
-.chart-draw {
-  animation: chart-draw-in 0.9s ease-out both;
+
+/* ==========================================================================
+   Metallic Card Styles
+   ========================================================================== */
+.metallic-dark {
+  background: linear-gradient(135deg, #24466d 0%, #183653 100%);
+  /* Dual-layer metallic sheen */
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 1px 2px rgba(36, 70, 109, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.15);
 }
-@keyframes chart-grow-in {
-  from { width: 0%; }
+
+/* Gold card accent */
+.metallic-gold {
+  background: linear-gradient(135deg, #f4e3a1 0%, #d4af37 100%);
+  box-shadow: 
+    inset 0 1px 0 rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(212, 175, 55, 0.15);
 }
-.chart-grow {
-  animation: chart-grow-in 0.7s ease-out both;
+
+/* Silver card */
+.metallic-silver {
+  background: #f7f9fa;
+  border: 1px solid #d7dee4;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   Premium Ring Effects
+   ========================================================================== */
+.premium-ring {
+  box-shadow: 
+    0 0 0 2px rgba(36, 70, 109, 0.2),
+    0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.premium-ring-teal {
+  box-shadow: 
+    0 0 0 2px rgba(0, 140, 158, 0.3),
+    0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.premium-ring-gold {
+  box-shadow: 
+    0 0 0 2px rgba(212, 175, 55, 0.3),
+    0 4px 20px rgba(212, 175, 55, 0.2);
+}
+
+/* ==========================================================================
+   Card Lift Hover Effect
+   ========================================================================== */
+.card-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-lift:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(36, 70, 109, 0.1);
+}
+
+.card-lift-teal:hover {
+  box-shadow: 
+    0 12px 40px rgba(0, 140, 158, 0.2),
+    0 0 0 1px rgba(0, 140, 158, 0.1);
+}
+
+.card-lift-gold:hover {
+  box-shadow: 
+    0 12px 40px rgba(212, 175, 55, 0.2),
+    0 0 0 1px rgba(212, 175, 55, 0.1);
+}
+
+/* ==========================================================================
+   Metallic Button Styles
+   ========================================================================== */
+.btn-metallic-sheen {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.btn-metallic-sheen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-metallic-sheen:hover::before {
+  left: 100%;
+}
+
+.btn-navy {
+  background: linear-gradient(135deg, #24466d 0%, #183653 100%);
+  color: white;
+  border: none;
+}
+
+.btn-navy:hover {
+  background: linear-gradient(135deg, #183653 0%, #0d2435 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(36, 70, 109, 0.3);
+}
+
+.btn-teal {
+  background: linear-gradient(135deg, #008c9e 0%, #007a8a 100%);
+  color: white;
+  border: none;
+}
+
+.btn-teal:hover {
+  background: linear-gradient(135deg, #007a8a 0%, #006070 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 140, 158, 0.3);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+  color: #1a2b3a;
+  border: none;
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #b8941f 0%, #a67c1a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btn-crimson {
+  background: linear-gradient(135deg, #b4453d 0%, #963a34 100%);
+  color: white;
+  border: none;
+}
+
+.btn-crimson:hover {
+  background: linear-gradient(135deg, #963a34 0%, #85302a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(180, 69, 61, 0.3);
+}
+
+/* ==========================================================================
+   Button Metallic Sheen Animation
+   ========================================================================== */
+.btn-metallic-sheen {
+  background: linear-gradient(135deg, #24466d 0%, #183653 100%);
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   Hero Background Utilities
+   ========================================================================== */
+.bg-symmetric-grid {
+  background-image: 
+    linear-gradient(rgba(36, 70, 109, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(36, 70, 109, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.bg-hero-gradient {
+  background: 
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(36, 70, 109, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0, 140, 158, 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, #24466d 0%, #183653 100%);
+}
+
+/* ==========================================================================
+   Marquee Visual Alternative for Accessibility
+   ========================================================================== */
+.marquee-wrapper {
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marquee 28s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  .marquee-content {
+    animation: none;
+    display: block;
   }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
+  .marquee-wrapper {
+    overflow: visible;
+  }
+}
+
+/* ==========================================================================
+   Status Badge - Always Visible Text
+   ========================================================================== */
+.admin-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Color-only status must have text alternative */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Form Input & Label Enhancements
+   ========================================================================== */
+label {
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: text;
+}
+
+/* Input with premium styling */
+.input-premium {
+  background: #fff;
+  border: 1px solid var(--border-default);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-premium:focus {
+  outline: none;
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 3px rgba(0, 140, 158, 0.1);
+}
+
+/* ==========================================================================
+   Image with Fallback and Gradient
+   ========================================================================== */
+.premium-image {
+  background: linear-gradient(135deg, #24466d 0%, #183653 100%);
+}
+
+/* ==========================================================================
+   Table Row Hover
+   ========================================================================== */
+.table-row-hover {
+  transition: background-color 0.2s ease;
+}
+
+.table-row-hover:hover {
+  background: var(--bg-tertiary);
+}
+
+/* ==========================================================================
+   Alert and Toast Enhancements
+   ========================================================================== */
+.toast-success {
+  background: #e6fdf5;
+  border: 1px solid #a7f3e6;
+  color: #28a745;
+}
+
+.toast-error {
+  background: #fdf2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.toast-info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+}
+
+/* ==========================================================================
+   Focus Visible for Keyboard Navigation
+   ========================================================================== */
+*:focus-visible {
+  outline: 2px solid var(--accent-teal);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Reduced Motion Preference
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
     transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

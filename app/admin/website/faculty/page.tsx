@@ -12,7 +12,6 @@ import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
-import { FACULTY } from "@/data/faculty";
 
 interface Row {
   id: string;
@@ -30,6 +29,8 @@ export default function WebsiteFacultyPage() {
   const [modal, setModal] = useState(false);
   const [editing, setEditing] = useState<Row | null>(null);
   const [name, setName] = useState("");
+  const [subject, setSubject] = useState("Physics");
+  const [qualification, setQualification] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,24 +38,96 @@ export default function WebsiteFacultyPage() {
       router.replace("/admin/login");
       return;
     }
-    // TODO backend: GET /api/admin/website/faculty
-    setRows(FACULTY.map((f) => ({ id: f.id, name: f.name, subject: f.subject, qualification: f.qualification, active: true })));
-    setReady(true);
+    (async () => {
+      try {
+        const res = await fetch("/api/faculty", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && Array.isArray(json.data?.items)) {
+          setRows(json.data.items.map((f: any) => ({
+            id: f.id,
+            name: f.name ?? "",
+            subject: f.subject ?? "",
+            qualification: f.qualification ?? "",
+            active: f.isActive ?? true,
+          })));
+        } else {
+          const { FACULTY } = await import("@/data/faculty");
+          setRows(FACULTY.map((f) => ({ id: f.id, name: f.name, subject: f.subject, qualification: f.qualification, active: true })));
+        }
+      } catch {
+        const { FACULTY } = await import("@/data/faculty");
+        setRows(FACULTY.map((f) => ({ id: f.id, name: f.name, subject: f.subject, qualification: f.qualification, active: true })));
+      }
+      setReady(true);
+    })();
   }, [router]);
 
   const filtered = useMemo(() => rows.filter((r) => !search.trim() || `${r.name} ${r.subject}`.toLowerCase().includes(search.toLowerCase())), [rows, search]);
 
-  const save = () => {
+  const save = async () => {
     if (!name.trim()) return;
-    if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim() } : r)));
-    else setRows((p) => [...p, { id: `f-${Date.now()}`, name: name.trim(), subject: "Physics", qualification: "—", active: true }]);
+    const payload = { name: name.trim(), subject: subject.trim(), qualification: qualification.trim(), isActive: true };
+    try {
+      if (editing) {
+        const res = await fetch(`/api/faculty/${editing.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        });
+        if (res.ok) {
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), subject: subject.trim(), qualification: qualification.trim() } : r)));
+          setSaved("Faculty profile updated.");
+        } else {
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), subject: subject.trim(), qualification: qualification.trim() } : r)));
+          setSaved("Updated locally (database unavailable).");
+        }
+      } else {
+        const res = await fetch("/api/faculty", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...payload, email: `${name.trim().toLowerCase().replace(/\s+/g, ".")}@neuronacademy.in`, phone: "+91 97119 17317" }),
+          cache: "no-store",
+        });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && json.data?.item) {
+          const item = json.data.item;
+          setRows((p) => [...p, { id: item.id, name: item.name, subject: item.subject ?? "", qualification: item.qualification ?? "", active: true }]);
+          setSaved("Faculty profile added.");
+        } else {
+          setRows((p) => [...p, { id: `f-${Date.now()}`, name: name.trim(), subject: subject.trim(), qualification: qualification.trim(), active: true }]);
+          setSaved("Added locally (database unavailable).");
+        }
+      }
+    } catch {
+      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), subject: subject.trim(), qualification: qualification.trim() } : r)));
+      else setRows((p) => [...p, { id: `f-${Date.now()}`, name: name.trim(), subject: subject.trim(), qualification: qualification.trim(), active: true }]);
+      setSaved("Saved locally (database unavailable).");
+    }
     setModal(false);
-    setSaved("Saved (demo — backend sync later).");
+    setEditing(null);
+    setName("");
+    setSubject("Physics");
+    setQualification("");
     window.setTimeout(() => setSaved(null), 2500);
   };
-  const remove = (r: Row) => {
+
+  const remove = async (r: Row) => {
     if (!window.confirm(`Remove "${r.name}" from the website?`)) return;
-    setRows((p) => p.filter((x) => x.id !== r.id));
+    try {
+      const res = await fetch(`/api/faculty/${r.id}`, { method: "DELETE", cache: "no-store" });
+      if (res.ok) {
+        setRows((p) => p.filter((x) => x.id !== r.id));
+        setSaved("Faculty profile removed.");
+      } else {
+        setRows((p) => p.filter((x) => x.id !== r.id));
+        setSaved("Removed locally (database unavailable).");
+      }
+    } catch {
+      setRows((p) => p.filter((x) => x.id !== r.id));
+      setSaved("Removed locally (database unavailable).");
+    }
+    window.setTimeout(() => setSaved(null), 2500);
   };
 
   if (!ready) {
@@ -75,6 +148,8 @@ export default function WebsiteFacultyPage() {
         onAction={() => {
           setEditing(null);
           setName("");
+          setSubject("Physics");
+          setQualification("");
           setModal(true);
         }}
       />
@@ -113,6 +188,8 @@ export default function WebsiteFacultyPage() {
                     onClick={() => {
                       setEditing(r);
                       setName(r.name);
+                      setSubject(r.subject);
+                      setQualification(r.qualification);
                       setModal(true);
                     }}
                     aria-label={`Edit ${r.name}`}
@@ -130,17 +207,25 @@ export default function WebsiteFacultyPage() {
           rows={filtered}
         />
       )}
-      <AdminModal open={modal} title={editing ? "Edit Faculty" : "Add Faculty"} onClose={() => setModal(false)}>
+      <AdminModal open={modal} title={editing ? "Edit Faculty" : "Add Faculty"} onClose={() => { setModal(false); setEditing(null); }}>
         <label className="block text-[12px] font-bold text-navy-700">
           Display name
           <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="e.g. Dr. S. Rao — Physics" />
         </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Subject
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="Physics" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Qualification
+          <input value={qualification} onChange={(e) => setQualification(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="M.Sc, Ph.D — 15 yrs exp" />
+        </label>
         <div className="mt-4 flex justify-end gap-2">
-          <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
+          <Button variant="ghost" size="sm" onClick={() => { setModal(false); setEditing(null); }}>
             Cancel
           </Button>
           <Button variant="primary" size="sm" onClick={save}>
-            Save (demo)
+            Save
           </Button>
         </div>
       </AdminModal>

@@ -11,21 +11,56 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
-import { getBatches, getNotifications } from "@/services/adminApi";
+import { getNotifications } from "@/services/adminApi";
 import type { AdminNotification } from "@/data/admin";
 
-const AUDIENCES = ["All students", "Faculty", "JEE 2027-A", "NEET 2027-A", "AMU-XI", "JMI-IX", "Foundation X", "Individual student"];
+const DEFAULT_AUDIENCES = ["All students", "Faculty", "JEE 2027-A", "NEET 2027-A", "AMU-XI", "JMI-IX", "Foundation X", "Individual student"];
+
+interface BatchListItem {
+  name?: string;
+}
+
+interface NotificationApiItem {
+  id?: string;
+  title?: string;
+  message?: string;
+  status?: string;
+  createdAt?: string;
+  scheduledAt?: string;
+}
+
+function audienceEnumFor(label: string): string {
+  if (label === "All students") return "ALL_STUDENTS";
+  if (label === "Faculty") return "FACULTY";
+  if (label === "Individual student") return "INDIVIDUAL";
+  return "BATCH";
+}
+
+function toAdminNotification(item: NotificationApiItem, fallbackAudience: string, fallbackTitle: string, fallbackMessage: string, scheduled: boolean): AdminNotification {
+  const status = item.status === "SENT" ? "Sent" : item.status === "SCHEDULED" || scheduled ? "Scheduled" : "Draft";
+  const dateSource = typeof item.createdAt === "string" ? item.createdAt : new Date().toISOString();
+  return {
+    id: typeof item.id === "string" ? item.id : `n-${Date.now()}`,
+    title: typeof item.title === "string" ? item.title : fallbackTitle,
+    message: typeof item.message === "string" ? item.message : fallbackMessage,
+    audience: fallbackAudience,
+    date: dateSource.slice(0, 10),
+    status,
+  };
+}
 
 export default function NotificationsPage() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<AdminNotification[]>([]);
+  const [audiences, setAudiences] = useState<string[]>(DEFAULT_AUDIENCES);
   const [modal, setModal] = useState(false);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [audience, setAudience] = useState(AUDIENCES[0]);
+  const [audience, setAudience] = useState(DEFAULT_AUDIENCES[0]);
   const [schedule, setSchedule] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -33,21 +68,65 @@ export default function NotificationsPage() {
       return;
     }
     (async () => {
-      // TODO backend: GET /api/admin/notifications + GET /api/admin/batches (audience list)
-      await getBatches();
+      // Real fetch: GET /api/batches for the audience list (fallback to defaults when DB is unavailable).
+      try {
+        const res = await fetch("/api/batches", { cache: "no-store" });
+        const json = (await res.json()) as { success?: boolean; data?: { items?: BatchListItem[] } };
+        if (json?.success && Array.isArray(json?.data?.items) && (json.data.items as BatchListItem[]).length > 0) {
+          const names = (json.data.items as BatchListItem[]).map((b) => String(b.name ?? "").trim()).filter(Boolean);
+          if (names.length > 0) {
+            setAudiences(["All students", "Faculty", ...names, "Individual student"]);
+          }
+        }
+      } catch {
+        // Keep default audience list.
+      }
       setRows(await getNotifications());
       setReady(true);
     })();
   }, [router]);
 
-  const send = (now: boolean) => {
-    if (!title.trim() || !message.trim()) return;
-    setRows((p) => [{ id: `n-${Date.now()}`, title: title.trim(), message: message.trim(), audience, date: schedule || new Date().toISOString().slice(0, 10), status: now ? "Sent" : "Scheduled" }, ...p]);
-    setModal(false);
-    setTitle("");
-    setMessage("");
-    setSaved(now ? `Notification sent to ${audience} (demo).` : `Notification scheduled for ${schedule || "later"} (demo).`);
-    window.setTimeout(() => setSaved(null), 3000);
+  const send = async (now: boolean) => {
+    const trimmedTitle = title.trim();
+    const trimmedMessage = message.trim();
+    if (!trimmedTitle || !trimmedMessage || busy) return;
+    setBusy(true);
+    const flash = (msg: string) => {
+      setSaved(msg);
+      window.setTimeout(() => setSaved(null), 3000);
+    };
+    try {
+      const res = await fetch("/api/notifications", {
+        method: "POST",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: trimmedTitle,
+          message: trimmedMessage,
+          audience: audienceEnumFor(audience),
+          ...(now ? { sendNow: true } : { sendNow: false, ...(schedule ? { scheduledAt: schedule } : {}) }),
+        }),
+      });
+      const json = (await res.json()) as { success?: boolean; data?: { item?: NotificationApiItem } };
+      const created = json?.data?.item;
+      if (json?.success && created) {
+        setRows((p) => [toAdminNotification(created, audience, trimmedTitle, trimmedMessage, !now), ...p]);
+        setModal(false);
+        setTitle("");
+        setMessage("");
+        flash(now ? "Notification sent." : "Notification scheduled.");
+        return;
+      }
+      throw new Error("Send failed");
+    } catch {
+      setRows((p) => [{ id: `n-${Date.now()}`, title: trimmedTitle, message: trimmedMessage, audience, date: schedule || new Date().toISOString().slice(0, 10), status: now ? "Sent" : "Scheduled" }, ...p]);
+      setModal(false);
+      setTitle("");
+      setMessage("");
+      flash("Stored locally (database unavailable).");
+    } finally {
+      setBusy(false);
+    }
   };
 
   if (!ready) {
@@ -83,8 +162,8 @@ export default function NotificationsPage() {
         <div className="grid gap-3">
           <label className="block text-[12px] font-bold text-navy-700">
             Audience
-            <select value={audience} onChange={(e) => setAudience(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
-              {AUDIENCES.map((a) => (
+            <select value={audience} onChange={(e) => setAudience(e.target.value)} aria-label="Audience" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+              {audiences.map((a) => (
                 <option key={a} value={a}>{a}</option>
               ))}
             </select>
@@ -103,11 +182,11 @@ export default function NotificationsPage() {
           </label>
         </div>
         <div className="mt-4 flex justify-end gap-2">
-          <Button variant="outline" size="sm" onClick={() => send(false)}>
-            Schedule (demo)
+          <Button variant="outline" size="sm" onClick={() => send(false)} disabled={busy}>
+            Schedule
           </Button>
-          <Button variant="primary" size="sm" onClick={() => send(true)}>
-            <Send className="h-4 w-4" /> Send now (demo)
+          <Button variant="primary" size="sm" onClick={() => send(true)} disabled={busy} aria-label="Send notification now">
+            <Send className="h-4 w-4" /> {busy ? "Sending…" : "Send now"}
           </Button>
         </div>
       </AdminModal>

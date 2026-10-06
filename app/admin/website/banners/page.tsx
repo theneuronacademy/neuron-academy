@@ -79,8 +79,30 @@ export default function BannersPage() {
       return;
     }
     (async () => {
-      // TODO backend: GET /api/admin/website/banners
-      setRows(await getBanners());
+      try {
+        const res = await fetch("/api/banners", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && Array.isArray(json.data?.items)) {
+          setRows(json.data.items.map((b: any) => ({
+            id: b.id,
+            title: b.title,
+            subtitle: b.subtitle ?? "",
+            description: b.description ?? "",
+            image: b.imageUrl ?? "",
+            videoUrl: b.videoUrl ?? "",
+            buttonText: b.buttonText ?? "",
+            buttonUrl: b.buttonUrl ?? "",
+            startDate: b.startDate ? new Date(b.startDate).toISOString().slice(0, 10) : "",
+            endDate: b.endDate ? new Date(b.endDate).toISOString().slice(0, 10) : "",
+            active: b.isActive ?? true,
+            order: b.displayOrder ?? 0,
+          })));
+        } else {
+          setRows(await getBanners());
+        }
+      } catch {
+        setRows(await getBanners());
+      }
       setReady(true);
     })();
   }, [router]);
@@ -108,17 +130,91 @@ export default function BannersPage() {
     setForm({ title: r.title, subtitle: r.subtitle, description: r.description, image: r.image, videoUrl: r.videoUrl, buttonText: r.buttonText, buttonUrl: r.buttonUrl, startDate: r.startDate, endDate: r.endDate, active: r.active, order: r.order });
     setModal(true);
   };
-  const save = () => {
+  const save = async () => {
     if (!form.title.trim()) return;
-    if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
-    else setRows((p) => [...p, { ...form, id: `bn-${Date.now()}` }]);
+    const payload = {
+      title: form.title,
+      subtitle: form.subtitle,
+      description: form.description,
+      imageUrl: form.image,
+      videoUrl: form.videoUrl,
+      buttonText: form.buttonText,
+      buttonUrl: form.buttonUrl,
+      startDate: form.startDate || undefined,
+      endDate: form.endDate || undefined,
+      isActive: form.active,
+      displayOrder: form.order,
+    };
+    try {
+      if (editing) {
+        const res = await fetch(`/api/banners/${editing.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success) {
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
+          setSaved("Banner updated — no code needed.");
+        } else {
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
+          setSaved("Banner updated locally (database unavailable).");
+        }
+      } else {
+        const res = await fetch("/api/banners", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && json.data?.item) {
+          const item = json.data.item;
+          setRows((p) => [...p, {
+            id: item.id,
+            title: item.title,
+            subtitle: item.subtitle ?? "",
+            description: item.description ?? "",
+            image: item.imageUrl ?? "",
+            videoUrl: item.videoUrl ?? "",
+            buttonText: item.buttonText ?? "",
+            buttonUrl: item.buttonUrl ?? "",
+            startDate: item.startDate ? new Date(item.startDate).toISOString().slice(0, 10) : "",
+            endDate: item.endDate ? new Date(item.endDate).toISOString().slice(0, 10) : "",
+            active: item.isActive ?? true,
+            order: item.displayOrder ?? 0,
+          }]);
+          setSaved("Banner created — no code needed.");
+        } else {
+          setRows((p) => [...p, { ...form, id: `bn-${Date.now()}` }]);
+          setSaved("Banner created locally (database unavailable).");
+        }
+      }
+    } catch {
+      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
+      else setRows((p) => [...p, { ...form, id: `bn-${Date.now()}` }]);
+      setSaved("Saved locally (database unavailable).");
+    }
     setModal(false);
-    setSaved(editing ? "Banner updated — no code needed (demo)." : "Banner created — no code needed (demo).");
     window.setTimeout(() => setSaved(null), 3000);
   };
-  const remove = (r: AdminBanner) => {
+  const remove = async (r: AdminBanner) => {
     if (!window.confirm(`Delete banner "${r.title}"?`)) return;
-    setRows((p) => p.filter((x) => x.id !== r.id));
+    try {
+      const res = await fetch(`/api/banners/${r.id}`, { method: "DELETE", cache: "no-store" });
+      if (res.ok) {
+        setRows((p) => p.filter((x) => x.id !== r.id));
+        setSaved("Banner deleted.");
+      } else {
+        setRows((p) => p.filter((x) => x.id !== r.id));
+        setSaved("Deleted locally (database unavailable).");
+      }
+    } catch {
+      setRows((p) => p.filter((x) => x.id !== r.id));
+      setSaved("Deleted locally (database unavailable).");
+    }
+    window.setTimeout(() => setSaved(null), 2500);
   };
   const move = (r: AdminBanner, dir: -1 | 1) => {
     setRows((p) => {

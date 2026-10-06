@@ -74,8 +74,29 @@ export default function PopupsPage() {
       return;
     }
     (async () => {
-      // TODO backend: GET /api/admin/website/popups
-      setRows(await getPopups());
+      try {
+        const res = await fetch("/api/popups", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && Array.isArray(json.data?.items)) {
+          setRows(json.data.items.map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            message: p.message ?? "",
+            image: p.imageUrl ?? "",
+            videoUrl: p.videoUrl ?? "",
+            buttonText: p.buttonText ?? "",
+            buttonUrl: p.buttonUrl ?? "",
+            frequency: p.frequency === "ONCE_PER_DAY" ? "once-per-day" : p.frequency === "EVERY_VISIT" ? "every-visit" : "once-per-session",
+            startDate: p.startDate ? new Date(p.startDate).toISOString().slice(0, 10) : "",
+            endDate: p.endDate ? new Date(p.endDate).toISOString().slice(0, 10) : "",
+            active: p.isActive ?? true,
+          })));
+        } else {
+          setRows(await getPopups());
+        }
+      } catch {
+        setRows(await getPopups());
+      }
       setReady(true);
     })();
   }, [router]);
@@ -91,12 +112,87 @@ export default function PopupsPage() {
   );
 
   const set = (k: keyof typeof EMPTY, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
-  const save = () => {
+  const save = async () => {
     if (!form.title.trim()) return;
-    if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
-    else setRows((p) => [...p, { ...form, id: `pp-${Date.now()}` }]);
+    const payload = {
+      title: form.title,
+      message: form.message,
+      imageUrl: form.image || undefined,
+      videoUrl: form.videoUrl || undefined,
+      buttonText: form.buttonText,
+      buttonUrl: form.buttonUrl,
+      frequency: form.frequency === "once-per-day" ? "ONCE_PER_DAY" : form.frequency === "every-visit" ? "EVERY_VISIT" : "ONCE_PER_SESSION",
+      startDate: form.startDate || undefined,
+      endDate: form.endDate || undefined,
+      isActive: form.active,
+    };
+    try {
+      if (editing) {
+        const res = await fetch(`/api/popups/${editing.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        });
+        if (res.ok) {
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
+          setSaved("Popup updated.");
+        } else {
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
+          setSaved("Popup updated locally (database unavailable).");
+        }
+      } else {
+        const res = await fetch("/api/popups", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && json.data?.item) {
+          const item = json.data.item;
+          setRows((p) => [...p, {
+            id: item.id,
+            title: item.title,
+            message: item.message ?? "",
+            image: item.imageUrl ?? "",
+            videoUrl: item.videoUrl ?? "",
+            buttonText: item.buttonText ?? "",
+            buttonUrl: item.buttonUrl ?? "",
+            frequency: form.frequency,
+            startDate: item.startDate ? new Date(item.startDate).toISOString().slice(0, 10) : "",
+            endDate: item.endDate ? new Date(item.endDate).toISOString().slice(0, 10) : "",
+            active: item.isActive ?? true,
+          }]);
+          setSaved("Popup created.");
+        } else {
+          setRows((p) => [...p, { ...form, id: `pp-${Date.now()}` }]);
+          setSaved("Popup created locally (database unavailable).");
+        }
+      }
+    } catch {
+      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
+      else setRows((p) => [...p, { ...form, id: `pp-${Date.now()}` }]);
+      setSaved("Saved locally (database unavailable).");
+    }
     setModal(false);
-    setSaved("Popup saved (demo).");
+    window.setTimeout(() => setSaved(null), 2500);
+  };
+  const remove = async (p: AdminPopup) => {
+    if (!window.confirm(`Delete popup "${p.title}"?`)) return;
+    try {
+      const res = await fetch(`/api/popups/${p.id}`, { method: "DELETE", cache: "no-store" });
+      if (res.ok) {
+        setRows((rows) => rows.filter((x) => x.id !== p.id));
+        setSaved("Popup deleted.");
+      } else {
+        setRows((rows) => rows.filter((x) => x.id !== p.id));
+        setSaved("Deleted locally (database unavailable).");
+      }
+    } catch {
+      setRows((rows) => rows.filter((x) => x.id !== p.id));
+      setSaved("Deleted locally (database unavailable).");
+    }
     window.setTimeout(() => setSaved(null), 2500);
   };
 
@@ -162,7 +258,7 @@ export default function PopupsPage() {
                 </button>
                 <button
                   onClick={() => {
-                    if (window.confirm(`Delete popup "${p.title}"?`)) setRows((rows) => rows.filter((x) => x.id !== p.id));
+                    if (window.confirm(`Delete popup "${p.title}"?`)) remove(p);
                   }}
                   className="inline-flex items-center gap-1 rounded-lg border border-crimson-100 px-2.5 py-1.5 text-[12px] font-bold text-crimson hover:bg-crimson-50"
                 >

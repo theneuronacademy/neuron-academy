@@ -10,6 +10,17 @@ import { facultyBatchIds, resolveStudent } from "@/lib/testAccess";
 
 export const dynamic = "force-dynamic";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toAttempt(r: any) {
+  return {
+    id: String(r.id),
+    testId: String(r.testId),
+    studentId: String(r.studentId),
+    status: String(r.status),
+    score: typeof r.score === "number" ? r.score : 0,
+  };
+}
+
 export async function GET(req: NextRequest) {
   const db = getDb();
   if (!db) return dbNotConfigured("Reading attempts");
@@ -25,7 +36,7 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: "desc" },
         take: 200,
       });
-      return ok({ items: rows, source: "database" });
+      return ok({ items: rows.map(toAttempt), source: "database" });
     }
     if (viewer.role === "FACULTY") {
       const batchIds = await facultyBatchIds(db, viewer.id);
@@ -38,7 +49,7 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: "desc" },
         take: 500,
       });
-      return ok({ items: rows, source: "database" });
+      return ok({ items: rows.map(toAttempt), source: "database" });
     }
     if (viewer.role !== "ADMIN") return fail("Forbidden.", 403);
     const params = new URL(req.url).searchParams;
@@ -49,7 +60,7 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
       take: 500,
     });
-    return ok({ items: rows, source: "database" });
+    return ok({ items: rows.map(toAttempt), source: "database" });
   } catch (err) {
     return serverError("attempts:list", err);
   }

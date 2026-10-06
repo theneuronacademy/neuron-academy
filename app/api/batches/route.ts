@@ -24,10 +24,28 @@ function toAdmin(b: any) {
   };
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const facultyId = new URL(req.url).searchParams.get("facultyId");
   const db = getDb();
-  if (!db) return ok({ items: DEMO_BATCHES, source: "demo" });
+  if (!db) {
+    if (facultyId) return ok({ items: [], source: "demo" });
+    return ok({ items: DEMO_BATCHES, source: "demo" });
+  }
   try {
+    if (facultyId) {
+      const profile = await db.faculty.findFirst({
+        where: { OR: [{ userId: facultyId }, { id: facultyId }] },
+        select: { id: true },
+      });
+      if (!profile) return ok({ items: [], source: "database" });
+      const rows = await db.batch.findMany({
+        where: { facultyId: profile.id },
+        include: { course: true, faculty: true, _count: { select: { students: true } } },
+        orderBy: { createdAt: "desc" },
+        take: 200,
+      });
+      return ok({ items: rows.map(toAdmin), source: "database" });
+    }
     const rows = await db.batch.findMany({
       include: { course: true, faculty: true, _count: { select: { students: true } } },
       orderBy: { createdAt: "desc" },

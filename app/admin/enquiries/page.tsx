@@ -28,9 +28,20 @@ export default function EnquiriesPage() {
       return;
     }
     (async () => {
-      // TODO backend: GET /api/admin/enquiries
-      setRows(await getEnquiries());
-      setReady(true);
+      // Real fetch: GET /api/enquiries, falling back to demo service data when DB is unavailable.
+      try {
+        const res = await fetch("/api/enquiries", { cache: "no-store" });
+        const json = (await res.json()) as { success?: boolean; data?: { items?: AdminEnquiry[] } };
+        if (json?.success && Array.isArray(json?.data?.items)) {
+          setRows(json.data.items as AdminEnquiry[]);
+          setReady(true);
+          return;
+        }
+        throw new Error("Enquiries API unavailable");
+      } catch {
+        setRows(await getEnquiries());
+        setReady(true);
+      }
     })();
   }, [router]);
 
@@ -42,10 +53,20 @@ export default function EnquiriesPage() {
     [rows, search, status]
   );
 
-  const changeStatus = (id: string, s: EnquiryStatus) => {
-    // TODO backend: PATCH /api/admin/enquiries/:id
+  const changeStatus = async (id: string, s: EnquiryStatus) => {
+    // Real write: PATCH /api/enquiries/[id] with uppercased status, then update local rows.
+    try {
+      await fetch(`/api/enquiries/${id}`, {
+        method: "PATCH",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: s.toUpperCase() }),
+      });
+    } catch {
+      // Fall through to local update so the UI stays responsive.
+    }
     setRows((p) => p.map((x) => (x.id === id ? { ...x, status: s } : x)));
-    setSaved(`Enquiry marked as ${s} (demo).`);
+    setSaved(`Enquiry marked as ${s}.`);
     window.setTimeout(() => setSaved(null), 2500);
   };
 

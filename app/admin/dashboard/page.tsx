@@ -23,7 +23,6 @@ import { QuickAction } from "@/components/admin/AdminPageHeader";
 import { AdminStatusBadge, statusToneFor } from "@/components/admin/AdminStatusBadge";
 import { LoadingState } from "@/components/admin/AdminStates";
 import { ProgressBar } from "@/components/ui/primitives";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
 import {
   getAttendanceOverview,
   getDashboardStats,
@@ -55,26 +54,36 @@ export default function AdminDashboardPage() {
   const [liveStats, setLiveStats] = useState<{ totalTests: number; publishedTests: number; liveTests: number; scheduledTests: number; completedTests: number; totalResults: number; totalAttempts: number } | null>(null);
 
   useEffect(() => {
-    // TODO auth: replace with server session check once backend auth lands.
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
     (async () => {
-      setStats(await getDashboardStats());
-      setActivity(await getRecentActivity());
-      setUpcoming(await getUpcomingTests());
-      setEnquiries((await getEnquiries()).slice(0, 5));
-      setAttendance(await getAttendanceOverview());
-      setSite(await getWebsiteStatus());
       try {
-        const res = await fetch("/api/dashboard/stats", { cache: "no-store" });
-        const json = await res.json().catch(() => null);
-        if (res.ok && json?.success === true && typeof json.data?.totalTests === "number") setLiveStats(json.data);
+        const res = await fetch("/api/auth/session", { cache: "no-store" });
+        if (!res.ok) {
+          router.replace("/admin/login");
+          return;
+        }
+        const json = await res.json();
+        const u = json?.data?.user;
+        if (!u || u.role !== "ADMIN") {
+          router.replace("/admin/login");
+          return;
+        }
+        setStats(await getDashboardStats());
+        setActivity(await getRecentActivity());
+        setUpcoming(await getUpcomingTests());
+        setEnquiries((await getEnquiries()).slice(0, 5));
+        setAttendance(await getAttendanceOverview());
+        setSite(await getWebsiteStatus());
+        try {
+          const res = await fetch("/api/dashboard/stats", { cache: "no-store" });
+          const json = await res.json().catch(() => null);
+          if (res.ok && json?.success === true && typeof json.data?.totalTests === "number") setLiveStats(json.data);
+        } catch {
+          /* demo mode — demo cards below stay */
+        }
+        setReady(true);
       } catch {
-        /* demo mode — demo cards below stay */
+        router.replace("/admin/login");
       }
-      setReady(true);
     })();
   }, [router]);
 

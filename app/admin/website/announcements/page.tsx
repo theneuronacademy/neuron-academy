@@ -34,12 +34,73 @@ export default function AnnouncementsPage() {
       return;
     }
     (async () => {
-      // TODO backend: GET /api/admin/website/announcements
-      const data = await getAnnouncements();
-      setRows(data.map((a) => ({ id: a.id, text: a.text, date: a.date, active: a.active })));
+      try {
+        const res = await fetch("/api/announcements", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success && Array.isArray(json.data?.items)) {
+          setRows(json.data.items.map((a: any) => ({
+            id: a.id,
+            text: a.title ?? a.text ?? "",
+            date: a.startDate ? new Date(a.startDate).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+            active: a.isActive ?? true,
+          })));
+        } else {
+          const data = await getAnnouncements();
+          setRows(data.map((a) => ({ id: a.id, text: a.text, date: a.date, active: a.active })));
+        }
+      } catch {
+        const data = await getAnnouncements();
+        setRows(data.map((a) => ({ id: a.id, text: a.text, date: a.date, active: a.active })));
+      }
       setReady(true);
     })();
   }, [router]);
+
+  const save = async () => {
+    if (!text.trim()) return;
+    const payload = { title: text.trim(), content: text.trim(), isActive: true };
+    try {
+      const res = await fetch("/api/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success && json.data?.item) {
+        const item = json.data.item;
+        setRows((p) => [{ id: item.id, text: item.title ?? item.text ?? text.trim(), date: item.startDate ? new Date(item.startDate).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10), active: item.isActive ?? true }, ...p]);
+        setSaved("Announcement published.");
+      } else {
+        setRows((p) => [{ id: `an-${Date.now()}`, text: text.trim(), date: new Date().toISOString().slice(0, 10), active: true }, ...p]);
+        setSaved("Announcement published locally (database unavailable).");
+      }
+    } catch {
+      setRows((p) => [{ id: `an-${Date.now()}`, text: text.trim(), date: new Date().toISOString().slice(0, 10), active: true }, ...p]);
+      setSaved("Saved locally (database unavailable).");
+    }
+    setModal(false);
+    setText("");
+    window.setTimeout(() => setSaved(null), 2500);
+  };
+
+  const remove = async (r: Row) => {
+    if (!window.confirm(`Delete announcement "${r.text}"?`)) return;
+    try {
+      const res = await fetch(`/api/announcements/${r.id}`, { method: "DELETE", cache: "no-store" });
+      if (res.ok) {
+        setRows((p) => p.filter((x) => x.id !== r.id));
+        setSaved("Announcement deleted.");
+      } else {
+        setRows((p) => p.filter((x) => x.id !== r.id));
+        setSaved("Deleted locally (database unavailable).");
+      }
+    } catch {
+      setRows((p) => p.filter((x) => x.id !== r.id));
+      setSaved("Deleted locally (database unavailable).");
+    }
+    window.setTimeout(() => setSaved(null), 2500);
+  };
 
   if (!ready) {
     return (
@@ -79,9 +140,7 @@ export default function AnnouncementsPage() {
               className: "text-right",
               render: (r) => (
                 <button
-                  onClick={() => {
-                    if (window.confirm(`Delete announcement "${r.text}"?`)) setRows((p) => p.filter((x) => x.id !== r.id));
-                  }}
+                  onClick={() => remove(r)}
                   aria-label="Delete announcement"
                   className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
                 >
@@ -102,18 +161,8 @@ export default function AnnouncementsPage() {
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              if (!text.trim()) return;
-              setRows((p) => [{ id: `an-${Date.now()}`, text: text.trim(), date: new Date().toISOString().slice(0, 10), active: true }, ...p]);
-              setModal(false);
-              setSaved("Announcement published (demo).");
-              window.setTimeout(() => setSaved(null), 2500);
-            }}
-          >
-            Publish (demo)
+          <Button variant="primary" size="sm" onClick={save}>
+            Publish
           </Button>
         </div>
       </AdminModal>

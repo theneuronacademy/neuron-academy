@@ -25,6 +25,7 @@ export default function FacultyAdminPage() {
   const [name, setName] = useState("");
   const [view, setView] = useState<AdminFaculty | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -32,7 +33,7 @@ export default function FacultyAdminPage() {
       return;
     }
     (async () => {
-      // TODO backend: GET /api/admin/faculty
+      // Real fetch: GET /api/faculty (service falls back to demo data when DB is unavailable)
       setRows(await getFaculty());
       setReady(true);
     })();
@@ -45,6 +46,91 @@ export default function FacultyAdminPage() {
       ),
     [rows, search, status]
   );
+
+  const flashSaved = (msg: string) => {
+    setSaved(msg);
+    window.setTimeout(() => setSaved(null), 2500);
+  };
+
+  function emailFromName(fullName: string): string {
+    const slug = fullName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ".")
+      .replace(/^\.+|\.+$/g, "")
+      .slice(0, 40) || "faculty";
+    return `${slug}@neuronacademy.in`;
+  }
+
+  /** Demo rows use short ids (f1…) or local f-<ts>; anything else is treated as a DB id. */
+  function isDbId(id: string): boolean {
+    return !id.startsWith("f-") && id.length >= 10;
+  }
+
+  const onboardFaculty = async () => {
+    const trimmed = name.trim();
+    if (!trimmed || busy) return;
+    setBusy(true);
+    const payload = { name: trimmed, email: emailFromName(trimmed), phone: "+91 97119 17317" };
+    try {
+      const res = await fetch("/api/faculty", {
+        method: "POST",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const json = (await res.json()) as { success?: boolean; data?: { item?: AdminFaculty } };
+      const created = json?.data?.item;
+      if (json?.success && created) {
+        setRows((p) => [created, ...p]);
+      } else {
+        throw new Error("Onboard failed");
+      }
+    } catch {
+      setRows((p) => [...p, { id: `f-${Date.now()}`, name: trimmed, photo: "", email: payload.email, phone: payload.phone, subject: "Physics", qualification: "—", experience: "—", batches: [], status: "active" }]);
+    } finally {
+      setModal(false);
+      setName("");
+      flashSaved("Faculty onboarded.");
+      setBusy(false);
+    }
+  };
+
+  const toggleStatus = async (row: AdminFaculty) => {
+    const next = row.status === "active" ? "inactive" : "active";
+    const applyLocal = () =>
+      setRows((p) => p.map((x) => (x.id === row.id ? { ...x, status: next } : x)));
+    if (!isDbId(row.id)) {
+      applyLocal();
+      return;
+    }
+    try {
+      const res = await fetch(`/api/faculty/${row.id}`, {
+        method: "PATCH",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: next === "active" ? "ACTIVE" : "INACTIVE" }),
+      });
+      const json = (await res.json()) as { success?: boolean; data?: { item?: AdminFaculty } };
+      const updated = json?.data?.item;
+      if (json?.success && updated) {
+        setRows((p) => p.map((x) => (x.id === row.id ? updated : x)));
+        return;
+      }
+      throw new Error("Toggle failed");
+    } catch {
+      applyLocal();
+    }
+  };
+
+  const deleteFaculty = async (row: AdminFaculty) => {
+    if (!window.confirm(`Remove faculty "${row.name}"?`)) return;
+    try {
+      await fetch(`/api/faculty/${row.id}`, { method: "DELETE", cache: "no-store" });
+    } catch {
+      // Fall through to local remove.
+    }
+    setRows((p) => p.filter((x) => x.id !== row.id));
+  };
 
   if (!ready) {
     return (
@@ -97,15 +183,14 @@ export default function FacultyAdminPage() {
                     <Eye className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, status: x.status === "active" ? "inactive" : "active" } : x)))}
+                    onClick={() => toggleStatus(r)}
+                    aria-label={`${r.status === "active" ? "Deactivate" : "Activate"} ${r.name}`}
                     className="rounded-lg border border-silver-300 px-2.5 py-2 text-[12px] font-bold text-navy-700 hover:border-teal-500"
                   >
                     {r.status === "active" ? "Deactivate" : "Activate"}
                   </button>
                   <button
-                    onClick={() => {
-                      if (window.confirm(`Remove faculty "${r.name}"?`)) setRows((p) => p.filter((x) => x.id !== r.id));
-                    }}
+                    onClick={() => deleteFaculty(r)}
                     aria-label={`Delete ${r.name}`}
                     className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
                   >
@@ -127,18 +212,8 @@ export default function FacultyAdminPage() {
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              if (!name.trim()) return;
-              setRows((p) => [...p, { id: `f-${Date.now()}`, name: name.trim(), photo: "", email: "new@neuronacademy.in", phone: "+91 97119 17317", subject: "Physics", qualification: "—", experience: "—", batches: [], status: "active" }]);
-              setModal(false);
-              setSaved("Faculty onboarded (demo).");
-              window.setTimeout(() => setSaved(null), 2500);
-            }}
-          >
-            Save (demo)
+          <Button variant="primary" size="sm" onClick={onboardFaculty} disabled={busy}>
+            {busy ? "Saving…" : "Save"}
           </Button>
         </div>
       </AdminModal>
