@@ -15,6 +15,9 @@ import { canStudentAccessTest, isLiveWindowOpen, resolveStudent } from "@/lib/te
 import { safeNotify, notifyMessages } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
+// Vercel: access re-check + evaluation + attempt/result upserts under LIVE
+// burst load + cold start (Pro plan).
+export const maxDuration = 30;
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: testId } = await params;

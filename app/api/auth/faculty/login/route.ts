@@ -10,6 +10,8 @@ import { normalizePhone, verifyPassword } from "@/lib/credentials";
 import { missingFields } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
+// Vercel: bcrypt verify + DB + cold start headroom (Pro plan).
+export const maxDuration = 15;
 
 export async function POST(req: NextRequest) {
   const db = getDb();

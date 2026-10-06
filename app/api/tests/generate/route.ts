@@ -13,6 +13,8 @@ import { normalizeMode, shuffle, type OrderMode } from "@/lib/testOrdering";
 import { isNonEmpty, missingFields, parseDate } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
+// Vercel: pool read + up to 200-row createMany + cold start (Pro plan).
+export const maxDuration = 30;
 
 const TYPES = ["LIVE", "OFFLINE", "PRACTICE"] as const;
 

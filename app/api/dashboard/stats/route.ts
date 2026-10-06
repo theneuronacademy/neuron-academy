@@ -8,6 +8,8 @@ import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 
 export const dynamic = "force-dynamic";
+// Vercel: multi-table aggregation counts + cold start (Pro plan).
+export const maxDuration = 15;
 
 export async function GET(req: NextRequest) {
   const auth = requireApiRole(req, ["ADMIN"]);

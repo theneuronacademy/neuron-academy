@@ -16,6 +16,18 @@ export interface OcrProvider {
 
 const OCR_MIN_CHARS = 20;
 
+/**
+ * Whether native/WASM OCR may run in this environment. Scanned-image OCR
+ * (canvas rasterize + Tesseract) is unreliable on Vercel serverless, so it
+ * is disabled unless explicitly enabled: OCR_ENABLED=true|1|local (dev,
+ * Docker, or the future dedicated OCR worker host). Text-PDF imports never
+ * consult this flag. Never throws.
+ */
+export function ocrEnabled(): boolean {
+  const v = (process.env.OCR_ENABLED ?? "").trim().toLowerCase();
+  return v === "true" || v === "1" || v === "local";
+}
+
 export class TesseractOcrProvider implements OcrProvider {
   readonly name = "tesseract.js (eng)";
 

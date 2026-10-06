@@ -8,6 +8,9 @@ import { requireApiRole } from "@/lib/server-auth";
 import { saveUpload, validateCoverUpload } from "@/lib/storageProvider";
 
 export const dynamic = "force-dynamic";
+// Vercel: image bytes are staged via node:fs/path (storageProvider local
+// mode), so this route requires the Node.js runtime — never Edge.
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const auth = requireApiRole(req, ["ADMIN"]);

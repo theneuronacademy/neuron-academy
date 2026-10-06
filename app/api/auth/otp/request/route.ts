@@ -16,6 +16,8 @@ import {
 import { isMsg91Configured, MSG91_NOT_CONFIGURED, sendOtp } from "@/services/msg91";
 
 export const dynamic = "force-dynamic";
+// Vercel: external MSG91 fetch + rate-limit queries + cold start (Pro plan).
+export const maxDuration = 15;
 
 export async function POST(req: NextRequest) {
   const db = getDb();

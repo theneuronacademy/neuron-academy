@@ -12,6 +12,8 @@ import { batchAllowed, canStudentAccessTest, isLiveWindowOpen, resolveStudent, S
 import { buildAttemptMappings, isValidQuestionMap, normalizeMode, presentLetters } from "@/lib/testOrdering";
 
 export const dynamic = "force-dynamic";
+// Vercel: access checks + crypto ordering + attempt row + cold start (Pro plan).
+export const maxDuration = 15;
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: testId } = await params;

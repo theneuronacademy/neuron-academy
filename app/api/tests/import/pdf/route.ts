@@ -1,17 +1,26 @@
 // Phase 12 — PDF upload + processing (genuine pipeline, no mocks).
-// Flow: validate → pdfjs text per page → OCR pages without text →
+// Flow: validate → pdfjs text per page → OCR pages without text → (gated)
 // deterministic parse → PdfImport + staging DRAFT test + PENDING questions.
 // Limits: ≤10 MB, ≤50 pages, ≤10 OCR pages. Binaries never stored.
+// Serverless boundary: text PDFs import fully; scanned/image pages need
+// native canvas + Tesseract OCR, which is disabled unless OCR_ENABLED is set
+// (dev/Docker/dedicated worker). Disabled OCR fails CLOSED with code
+// OCR_NOT_AVAILABLE — never a fake COMPLETED state, never fake questions.
 
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { extractPdfText } from "@/services/pdfImport";
-import { needsOcr, rasterizePdfPage, TesseractOcrProvider } from "@/services/ocrService";
+import { needsOcr, ocrEnabled, rasterizePdfPage, TesseractOcrProvider } from "@/services/ocrService";
 import { parseQuestionsFromPages, type PageText } from "@/services/questionParser";
 
 export const dynamic = "force-dynamic";
+// Vercel: pdfjs + @napi-rs/canvas (native) + tesseract WASM only run on the
+// Node.js runtime — never Edge. Text PDFs of up to 50 pages need headroom;
+// scanned/image OCR is gated below (OCR_NOT_AVAILABLE) on serverless.
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const MAX_BYTES = 10 * 1024 * 1024;
 const MAX_PAGES = 50;
@@ -77,6 +86,21 @@ export async function POST(req: NextRequest) {
     if (totalPages === 0) throw new Error("This PDF has no readable pages.");
     if (totalPages > MAX_PAGES) {
       throw new Error(`This PDF has ${totalPages} pages (limit ${MAX_PAGES}). Split it and upload in parts.`);
+    }
+    // Serverless OCR boundary: detect scanned/image pages from the cheap
+    // text extraction BEFORE any native canvas/Tesseract work. When OCR is
+    // disabled the job fails CLOSED here — no staging test, no questions,
+    // no misleading PROCESSING record (row is marked FAILED with the reason).
+    const scannedCount = pages.filter((p) => needsOcr(p.text)).length;
+    if (scannedCount > 0 && !ocrEnabled()) {
+      const reason =
+        `This PDF has ${scannedCount} scanned/image page(s) that require OCR. ` +
+        `Serverless OCR is not available: re-upload a text-based PDF, or run the import where OCR is enabled (OCR_ENABLED).`;
+      await db.pdfImport.update({
+        where: { id: imp.id },
+        data: { status: "FAILED", totalPages, textPages: totalPages - scannedCount, ocrPages: 0, error: reason.slice(0, 500) },
+      });
+      return NextResponse.json({ success: false, error: reason, code: "OCR_NOT_AVAILABLE", scannedPages: scannedCount, textPages: totalPages - scannedCount }, { status: 422 });
     }
     // OCR pass for pages without embedded text.
     const ocr = new TesseractOcrProvider();

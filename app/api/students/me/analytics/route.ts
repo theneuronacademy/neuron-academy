@@ -9,6 +9,8 @@ import { getUserFromRequest } from "@/lib/session";
 import { getScopedStudent, requireRegular } from "@/lib/studentScope";
 
 export const dynamic = "force-dynamic";
+// Vercel: multi-query analytics aggregation + cold start (Pro plan).
+export const maxDuration = 15;
 
 export async function GET(req: NextRequest) {
   const viewer = getUserFromRequest(req);

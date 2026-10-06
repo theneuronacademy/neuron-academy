@@ -11,6 +11,8 @@ import { hashPassword, isValidPassword, normalizePhone } from "@/lib/credentials
 import { isEmail, missingFields } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
+// Vercel: bcrypt hash (cost 12) + DB writes + cold start (Pro plan).
+export const maxDuration = 15;
 
 function facultyId(): string {
   return `FAC-${Date.now().toString().slice(-6)}${Math.random().toString(36).slice(2, 4).toUpperCase()}`;

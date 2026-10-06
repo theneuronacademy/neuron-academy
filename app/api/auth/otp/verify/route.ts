@@ -9,6 +9,8 @@ import { getDb } from "@/lib/prisma";
 import { isOtpFormat, normalizeIndianMobile, OTP_MAX_ATTEMPTS, verifyOtpHash } from "@/lib/otp";
 
 export const dynamic = "force-dynamic";
+// Vercel: hash verify + DB writes + cold start headroom (Pro plan).
+export const maxDuration = 15;
 
 const GENERIC = "Invalid or expired OTP.";
 

@@ -12,6 +12,9 @@ import { getScopedStudent } from "@/lib/studentScope";
 import { deleteStorageObject, saveUpload, validatePhotoUpload } from "@/lib/storageProvider";
 
 export const dynamic = "force-dynamic";
+// Vercel: photo bytes are staged via node:fs/path (storageProvider local
+// mode), so this route requires the Node.js runtime — never Edge.
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const viewer = getUserFromRequest(req);

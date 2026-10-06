@@ -13,6 +13,8 @@ import { OTP_VERIFIED_TTL_MIN } from "@/lib/otp";
 import { isMsg91Configured } from "@/services/msg91";
 
 export const dynamic = "force-dynamic";
+// Vercel: bcrypt hash (cost 12) + OTP check + DB writes + cold start (Pro plan).
+export const maxDuration = 15;
 
 function studentId(): string {
   return `NA-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
