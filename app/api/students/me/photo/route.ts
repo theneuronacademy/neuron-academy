@@ -9,7 +9,7 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/session";
 import { getScopedStudent } from "@/lib/studentScope";
-import { removeLocalUpload, saveUpload, validatePhotoUpload } from "@/lib/storageProvider";
+import { deleteStorageObject, saveUpload, validatePhotoUpload } from "@/lib/storageProvider";
 
 export const dynamic = "force-dynamic";
 
@@ -37,9 +37,13 @@ export async function POST(req: NextRequest) {
     const saved = await saveUpload("photos", buf, file.name);
     if (!saved.ok) return fail(saved.error, 502);
     const prev = await db.student.findUnique({ where: { id: scoped.id }, select: { photoUrl: true } });
-    await db.student.update({ where: { id: scoped.id }, data: { photoUrl: saved.url } });
-    if (prev?.photoUrl) await removeLocalUpload(prev.photoUrl);
-    return ok({ photoUrl: saved.url }, 201);
+    // DB stores the durable reference (supabase://… or local path); the
+    // response carries a displayable URL. Previous object cleanup is
+    // reported honestly — linkage update is authoritative.
+    await db.student.update({ where: { id: scoped.id }, data: { photoUrl: saved.ref } });
+    let previousRemoved = true;
+    if (prev?.photoUrl && prev.photoUrl !== saved.ref) previousRemoved = await deleteStorageObject(prev.photoUrl);
+    return ok({ photoUrl: saved.url, previousRemoved }, 201);
   } catch (err) {
     return serverError("students:photo-upload", err);
   }
@@ -55,8 +59,12 @@ export async function DELETE(req: NextRequest) {
     const scoped = await getScopedStudent(db, viewer.id, viewer.email);
     if (!scoped) return fail("Student profile not found.", 404);
     const prev = await db.student.findUnique({ where: { id: scoped.id }, select: { photoUrl: true } });
+    // Fail closed on durable storage: a failed object delete keeps the link
+    // so the user can retry instead of silently orphaning the file.
+    if (prev?.photoUrl && !(await deleteStorageObject(prev.photoUrl))) {
+      return fail("Could not remove the stored photo. Try again.", 502);
+    }
     await db.student.update({ where: { id: scoped.id }, data: { photoUrl: null } });
-    if (prev?.photoUrl) await removeLocalUpload(prev.photoUrl);
     return ok({ removed: true });
   } catch (err) {
     return serverError("students:photo-remove", err);

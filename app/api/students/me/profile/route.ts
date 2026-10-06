@@ -9,6 +9,7 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/session";
 import { STUDENT_EDITABLE_FIELDS, STUDENT_PROTECTED_FIELDS, getScopedStudent, sanitizeStudent } from "@/lib/studentScope";
+import { resolveStorageUrl } from "@/lib/storageProvider";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,13 @@ export async function GET(req: NextRequest) {
       include: { batch: { select: { id: true, name: true } }, course: { select: { id: true, name: true } } },
     });
     if (!row) return fail("Student profile not found.", 404);
-    return ok({ item: sanitizeStudent(row) });
+    // Translate durable storage refs into displayable URLs at read time.
+    const item = sanitizeStudent(row) as Record<string, unknown>;
+    if (typeof item.photoUrl === "string" && item.photoUrl.startsWith("supabase://")) {
+      const resolved = await resolveStorageUrl(item.photoUrl);
+      item.photoUrl = resolved ?? null;
+    }
+    return ok({ item });
   } catch (err) {
     return serverError("students:profile-get", err);
   }
@@ -75,7 +82,8 @@ export async function PATCH(req: NextRequest) {
     }
     const photoUrl = cleanStr(body.photoUrl, 500);
     if (photoUrl !== undefined) {
-      if (!/^(\/uploads\/|https?:\/\/)/.test(photoUrl)) return fail("Invalid photo URL.", 400);
+      if (!/^(\/uploads\/|https?:\/\/|supabase:\/\/[^/]+\/[^/]+\/.+)/.test(photoUrl)) return fail("Invalid photo URL.", 400);
+      if (photoUrl.includes("/object/sign/")) return fail("Invalid photo URL.", 400);
       data.photoUrl = photoUrl;
     }
     if (body.photoUrl === null) data.photoUrl = null;

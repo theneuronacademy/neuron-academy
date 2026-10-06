@@ -28,5 +28,7 @@ export async function POST(req: NextRequest) {
   if (problem) return fail(problem, 400);
   const saved = await saveUpload("covers", buf, file.name);
   if (!saved.ok) return fail(saved.error, 502);
-  return ok({ coverImageUrl: saved.url }, 201);
+  // DB-safe reference in coverImageUrl; displayUrl for immediate preview.
+  // The admin UI PATCHes coverImageUrl (the durable ref) onto the book.
+  return ok({ coverImageUrl: saved.ref, displayUrl: saved.url }, 201);
 }

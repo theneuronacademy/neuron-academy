@@ -6,6 +6,7 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/session";
+import { resolveCoverUrl, resolveStorageUrl } from "@/lib/storageProvider";
 import { resolveStudent } from "@/lib/testAccess";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +43,14 @@ export async function GET(req: NextRequest) {
       orderBy: [{ order: "asc" }, { createdAt: "desc" }],
       take: 200,
     });
-    return ok({ items: rows, source: "database" });
+    const items = await Promise.all(
+      rows.map(async (b) => ({
+        ...b,
+        coverImageUrl: await resolveCoverUrl(b.coverImageUrl),
+        pdfUrl: await resolveStorageUrl(b.pdfUrl),
+      }))
+    );
+    return ok({ items, source: "database" });
   } catch (err) {
     return serverError("books:list", err);
   }
