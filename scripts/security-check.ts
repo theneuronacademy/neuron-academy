@@ -263,6 +263,13 @@ check(
   attemptPage.includes("DbAttempt") && attemptPage.includes("<DbAttempt testId={id} />")
 );
 
+// ------------------------------------ C2: server-only student result flow ---
+const resultPage = read("app/student/tests/[id]/result/page.tsx");
+check("student result has no local fallback", !resultPage.includes("getResultFor(") && !resultPage.includes("getTestById("));
+check("student result never evaluates locally", !resultPage.includes("evaluateTest("));
+check("student result has no localStorage authority", !resultPage.includes("localStorage") && !resultPage.includes("draftKey("));
+check("student review stays server-backed", resultPage.includes("/review") && resultPage.includes("/api/results?testId="));
+
 // ------------------------------------------------------------------ summary ---
 if (savedSecret === undefined) delete process.env.SESSION_SECRET;
 else process.env.SESSION_SECRET = savedSecret;
