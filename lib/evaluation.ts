@@ -1,6 +1,5 @@
 // Phase 5 — server-side auto evaluation (single source of truth).
-// Mirrors the local engine (services/resultService.ts) so behaviour is
-// identical after migration: correct → +marks, wrong → −negativeMarks,
+// Rules: correct → +marks, wrong → −negativeMarks,
 // unanswered → 0, unverified (null answer key) → pending review.
 // Pure functions — no DB, no localStorage — safe to unit test.
 // Client NEVER sends score/percentage; only answers are accepted.

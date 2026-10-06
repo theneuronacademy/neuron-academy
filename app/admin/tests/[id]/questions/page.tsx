@@ -7,8 +7,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { QuestionCard } from "@/components/admin/QuestionCard";
 import { QuestionEditor } from "@/components/admin/QuestionEditor";
 import { useAdminGuard } from "@/components/admin/useAdminGuard";
-import { bankPatchToApi, dbQuestionToBank } from "@/services/dbQuestionMap";
-import { blankQuestion } from "@/services/questionService";
+import { bankPatchToApi, blankQuestion, dbQuestionToBank } from "@/services/dbQuestionMap";
 import type { BankQuestion } from "@/lib/testTypes";
 
 export default function TestQuestionsPage() {

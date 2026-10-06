@@ -14,9 +14,3 @@ export async function getStudentById(id: string): Promise<AdminStudent | null> {
   const rows = await getStudents();
   return rows.find((s) => s.id === id || s.studentId === id) ?? null;
 }
-
-// TODO backend: GET /api/attempts?studentId= (TestAttempt history, Phase 4)
-export async function getStudentAttempts(_studentId: string): Promise<never[]> {
-  void _studentId;
-  return [];
-}

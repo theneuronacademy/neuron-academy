@@ -22,7 +22,6 @@ import {
   DEMO_POPUPS,
   DEMO_STATS,
   DEMO_STUDENTS,
-  DEMO_TESTS,
   DEMO_UPCOMING_TESTS,
   DEMO_WEBSITE_STATUS,
   type AdminBanner,
@@ -236,15 +235,6 @@ export async function updateFaculty(id: string, patch: Partial<AdminFaculty>): P
 export async function getBatches(): Promise<AdminBatch[]> {
   const data = await callApi<{ items: AdminBatch[] }>("/api/batches");
   return unwrapItems<AdminBatch>(data, DEMO_BATCHES);
-}
-
-// ---- Tests (Phase 2 placeholder — full test engine comes later) ----
-export async function getAdminTests(): Promise<AdminTest[]> {
-  // /api/tests returns DB rows (different shape) — accept only AdminTest-shaped items.
-  const data = await callApi<{ items: AdminTest[] }>("/api/tests");
-  const items = unwrapItems<AdminTest>(data, DEMO_TESTS);
-  if (items.length > 0 && typeof (items[0] as AdminTest).batch !== "string") return DEMO_TESTS;
-  return items;
 }
 
 // ---- Banners ----

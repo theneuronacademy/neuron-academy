@@ -5,6 +5,7 @@
 // optional 5th option (E) round-trip instead of being silently dropped.
 
 import type { BankQuestion } from "@/lib/testTypes";
+import { nowISO, uid } from "@/lib/storage";
 
 export const LETTERS = ["A", "B", "C", "D", "E"] as const;
 
@@ -50,6 +51,33 @@ export function dbQuestionToBank(r: any, testTitle: string): BankQuestion {
     status: approved ? "approved" : "review",
     createdAt: String(r.createdAt ?? ""),
     updatedAt: String(r.updatedAt ?? ""),
+  };
+}
+
+/** Blank editor template (relocated C6 from the deleted questionService — pure factory, no storage). */
+export function blankQuestion(): BankQuestion {
+  const t = nowISO();
+  return {
+    id: uid("q"),
+    question: "",
+    options: ["", "", "", ""],
+    correctAnswer: null,
+    explanation: "",
+    subject: "Quantitative Aptitude",
+    chapter: "Percentage",
+    difficulty: "Medium",
+    marks: 2,
+    negativeMarks: 0.5,
+    tags: [],
+    sourceFile: "manual",
+    sourcePage: null,
+    containsImage: false,
+    imageUrl: "",
+    confidence: 100,
+    needsReview: false,
+    status: "draft",
+    createdAt: t,
+    updatedAt: t,
   };
 }
 

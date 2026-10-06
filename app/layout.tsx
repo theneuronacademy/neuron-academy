@@ -22,13 +22,10 @@ export const metadata: Metadata = {
   },
 };
 
-import { SeedInit } from "@/components/SeedInit";
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-background text-ink antialiased">
-        <SeedInit />
         {children}
       </body>
     </html>

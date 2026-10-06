@@ -5,8 +5,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { QuestionCard } from "@/components/admin/QuestionCard";
 import { QuestionEditor } from "@/components/admin/QuestionEditor";
 import { useAdminGuard } from "@/components/admin/useAdminGuard";
-import { blankQuestion } from "@/services/questionService";
-import { LETTERS, dbQuestionToBank } from "@/services/dbQuestionMap";
+import { LETTERS, blankQuestion, dbQuestionToBank } from "@/services/dbQuestionMap";
 import type { BankQuestion } from "@/lib/testTypes";
 
 interface DbTest {

@@ -361,6 +361,58 @@ check(
   adminResults.includes("/api/results") && adminResults.includes('method: "POST"')
 );
 
+// ----------------- C6: legacy localStorage test engine is gone (final) ---
+const studentNotif = read("app/student/notifications/page.tsx");
+check(
+  "no app/student page imports storage test state",
+  !studentNotif.includes("getTests(") &&
+    !studentNotif.includes("getResults(") &&
+    !studentNotif.includes("saveResult(") &&
+    attemptPage.includes("<DbAttempt testId={id} />") &&
+    cataloguePage.includes("/api/results")
+);
+check(
+  "no app/student page imports legacy test services",
+  !studentNotif.includes("resultService") &&
+    !studentNotif.includes("questionService") &&
+    !studentNotif.includes("testService") &&
+    !attemptPage.includes("services/testService") &&
+    !resultPage.includes("services/resultService")
+);
+check(
+  "no mirror dual-writes remain in test code",
+  !read("services/dbQuestionMap.ts").includes("mirrorCreate") &&
+    !read("app/admin/tests/page.tsx").includes("mirrorStatus") &&
+    !read("app/admin/tests/page.tsx").includes("mirrorDelete")
+);
+check(
+  "no student pre-submit path touches answer keys",
+  !attemptPage.includes("correctAnswer") && resultPage.includes("/review")
+);
+check("no student path evaluates locally", !attemptPage.includes("evaluateTest(") && !resultPage.includes("evaluateTest("));
+check(
+  "no authoritative test state from localStorage",
+  !read("lib/storage.ts").includes("neuron_tests") &&
+    !read("lib/storage.ts").includes("neuron_questions") &&
+    !read("lib/storage.ts").includes("neuron_attempts") &&
+    !read("lib/storage.ts").includes("neuron_results") &&
+    !read("lib/storage.ts").includes("draftKey")
+);
+check("legacy test services are deleted", !read("services/adminApi.ts").includes("getAdminTests"));
+check(
+  "getStudentAttempts fake is deleted",
+  !read("services/studentApi.ts").includes("getStudentAttempts")
+);
+check("test catalogue is server-backed", cataloguePage.includes("/api/tests") && !cataloguePage.includes("visibleToStudents("));
+check(
+  "admin question management is API-backed",
+  perTestQuestions.includes("/api/questions") && bankPage.includes("/api/questions")
+);
+check(
+  "admin test CRUD is API-backed",
+  adminTests.includes("/api/tests") && editPage.includes('method: "PATCH"') && previewPage.includes("Unpublish")
+);
+
 // ------------------------------------------------------------------ summary ---
 if (savedSecret === undefined) delete process.env.SESSION_SECRET;
 else process.env.SESSION_SECRET = savedSecret;
