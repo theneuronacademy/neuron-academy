@@ -55,7 +55,7 @@ export function AdvertisementPreview({ ad, mode }: { ad: Partial<Advertisement>;
           <p className="mt-3 text-[11px] font-bold tracking-widest text-teal-600">{full.subtitle.toUpperCase()}</p>
           <p className="text-[15px] font-extrabold text-navy-700">{full.title}</p>
           <p className="mt-1 text-[13px] text-muted">{full.description}</p>
-          <span className="mt-3 block rounded-xl bg-crimson-DEFAULT px-4 py-2 text-center text-[13px] font-bold text-white">{full.ctaText}</span>
+          <span className="mt-3 block rounded-xl bg-crimson px-4 py-2 text-center text-[13px] font-bold text-white">{full.ctaText}</span>
         </div>
       ) : (
         <div className={mode === "hero" ? "" : "grid sm:grid-cols-2"}>

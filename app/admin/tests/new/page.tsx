@@ -22,7 +22,7 @@ export default function NewTestPage() {
           <p className="mt-1.5 text-sm leading-relaxed text-muted">
             Upload a question paper → real text extraction → review & correct → generate → publish. Demo mode included if no PDF is handy.
           </p>
-          <span className="btn-metallic-sheen mt-5 inline-block rounded-xl bg-crimson-DEFAULT px-5 py-2.5 text-sm font-bold text-white">
+          <span className="btn-metallic-sheen mt-5 inline-block rounded-xl bg-crimson px-5 py-2.5 text-sm font-bold text-white">
             <Sparkles className="mr-1 inline h-4 w-4" />Start From PDF →
           </span>
         </Link>

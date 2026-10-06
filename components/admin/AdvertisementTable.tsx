@@ -24,7 +24,7 @@ export function AdvertisementTable({
       <div className="rounded-card border border-dashed border-silver-300 bg-white p-10 text-center">
         <p className="text-lg font-extrabold text-navy-700">No advertisements yet.</p>
         <p className="mt-1 text-sm text-muted">Create your first banner, hero or popup.</p>
-        <Link href="/admin/advertisements/new" className="mt-4 inline-block rounded-xl bg-crimson-DEFAULT px-5 py-2.5 text-sm font-bold text-white">
+        <Link href="/admin/advertisements/new" className="mt-4 inline-block rounded-xl bg-crimson px-5 py-2.5 text-sm font-bold text-white">
           Create Advertisement
         </Link>
       </div>
@@ -64,7 +64,7 @@ export function AdvertisementTable({
                   ) : null}
                   <Link href={`/admin/advertisements/${ad.id}/edit`} aria-label={`Edit ${ad.title}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Pencil className="h-4 w-4" /></Link>
                   <button onClick={() => onToggle(ad.id)} aria-label={`${ad.isActive ? "Deactivate" : "Activate"} ${ad.title}`} title={ad.isActive ? "Deactivate" : "Activate"} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Power className="h-4 w-4" /></button>
-                  <button onClick={() => onDelete(ad.id)} aria-label={`Delete ${ad.title}`} className="rounded-lg border border-crimson-100 p-2 text-crimson-DEFAULT hover:bg-crimson-50"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => onDelete(ad.id)} aria-label={`Delete ${ad.title}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </td>
             </tr>

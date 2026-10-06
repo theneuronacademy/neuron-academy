@@ -66,7 +66,7 @@ export function QuestionCard({
           <button onClick={onEdit} aria-label="Edit question" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
             <Pencil className="h-4 w-4" />
           </button>
-          <button onClick={onDelete} aria-label="Delete question" className="rounded-lg border border-crimson-100 p-2 text-crimson-DEFAULT hover:bg-crimson-50">
+          <button onClick={onDelete} aria-label="Delete question" className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
             <Trash2 className="h-4 w-4" />
           </button>
         </div>
@@ -87,7 +87,7 @@ export function QuestionCard({
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {q.correctAnswer === null ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-crimson-50 px-2.5 py-1 text-[11px] font-bold text-crimson-DEFAULT">
+          <span className="inline-flex items-center gap-1 rounded-full bg-crimson-50 px-2.5 py-1 text-[11px] font-bold text-crimson">
             <AlertTriangle className="h-3 w-3" /> Answer Required
           </span>
         ) : null}

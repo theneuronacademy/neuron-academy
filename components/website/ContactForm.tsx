@@ -52,7 +52,7 @@ export function ContactForm({ admission = false }: { admission?: boolean }) {
       className="grid gap-3 rounded-card border border-silver-200 bg-white p-5 shadow-card sm:p-6"
     >
       {phase === "error" ? (
-        <p className="flex items-center gap-2 rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson-DEFAULT" role="alert">
+        <p className="flex items-center gap-2 rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">
           <AlertTriangle className="h-4 w-4" /> Something went wrong. Please try again or call us directly.
         </p>
       ) : null}

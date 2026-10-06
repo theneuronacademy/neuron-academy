@@ -5,19 +5,19 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Neuron Academy | Learn. Prepare. Succeed.",
+  title: "Neuron Academy | Activate Your Neuron",
   description:
     "Neuron Academy official website for courses, faculty, admissions, learning and academic preparation. JEE, NEET, AMU & Jamia entrance coaching in Shaheen Bagh, New Delhi.",
   keywords: ["Neuron Academy", "JEE coaching", "NEET coaching", "AMU entrance", "Jamia entrance", "Shaheen Bagh academy", "admissions"],
   openGraph: {
-    title: "Neuron Academy | Learn. Prepare. Succeed.",
+    title: "Neuron Academy | Activate Your Neuron",
     description: "Courses, faculty, admissions, learning and academic preparation — JEE, NEET, AMU & Jamia entrances.",
     type: "website",
     siteName: "Neuron Academy",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Neuron Academy | Learn. Prepare. Succeed.",
+    title: "Neuron Academy | Activate Your Neuron",
     description: "Courses, faculty, admissions, learning and academic preparation.",
   },
 };

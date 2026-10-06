@@ -13,7 +13,7 @@ export function Button({
   const base =
     "btn-metallic-sheen inline-flex items-center justify-center gap-2 font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<Variant, string> = {
-    primary: "bg-crimson-DEFAULT text-white hover:bg-crimson-bright rounded-xl shadow-card",
+    primary: "bg-crimson text-white hover:bg-crimson-bright rounded-xl shadow-card",
     secondary: "bg-teal-500 text-white hover:bg-teal-400 rounded-xl shadow-card",
     outline: "border border-silver-300 bg-white text-navy-700 hover:border-teal-500 hover:text-teal-600 rounded-xl",
     ghost: "text-navy-700 hover:bg-silver-100 rounded-xl",
@@ -31,7 +31,7 @@ export function StatusBadge({ tone = "teal", children }: { tone?: "teal" | "navy
   const tones = {
     teal: "bg-teal-50 text-teal-700 border-teal-100",
     navy: "bg-navy-50 text-navy-700 border-silver-200",
-    red: "bg-crimson-50 text-crimson-DEFAULT border-crimson-100",
+    red: "bg-crimson-50 text-crimson border-crimson-100",
     silver: "bg-silver-50 text-muted border-silver-200",
   } as const;
   return (
@@ -61,7 +61,7 @@ export function SectionHeader({ eyebrow, title, desc, dark = false }: { eyebrow:
 }
 
 export function ProgressBar({ value, tone = "teal", className }: { value: number; tone?: "teal" | "navy" | "red"; className?: string }) {
-  const colors = { teal: "bg-teal-500", navy: "bg-navy-700", red: "bg-crimson-DEFAULT" };
+  const colors = { teal: "bg-teal-500", navy: "bg-navy-700", red: "bg-crimson" };
   return (
     <div className={cn("h-2 w-full overflow-hidden rounded-full bg-silver-200", className)}>
       <div className={cn("h-full rounded-full transition-all", colors[tone])} style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />

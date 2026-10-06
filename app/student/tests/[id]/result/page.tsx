@@ -109,7 +109,7 @@ export default function StudentResultPage() {
               {review.map((d) => (
                 <div key={d.questionId} className="rounded-card border border-silver-200 bg-white p-4 shadow-card">
                   <p className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold",
-                    d.status === "correct" ? "bg-teal-50 text-teal-700" : d.status === "incorrect" ? "bg-crimson-50 text-crimson-DEFAULT" : d.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-silver-50 text-muted")}>
+                    d.status === "correct" ? "bg-teal-50 text-teal-700" : d.status === "incorrect" ? "bg-crimson-50 text-crimson" : d.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-silver-50 text-muted")}>
                     {d.status === "correct" ? <CheckCircle2 className="h-3 w-3" /> : d.status === "incorrect" ? <XCircle className="h-3 w-3" /> : d.status === "pending" ? <AlertTriangle className="h-3 w-3" /> : <MinusCircle className="h-3 w-3" />}
                     Q{d.order} • {d.status.toUpperCase()} • +{d.marksAwarded}/{d.maxMarks}
                   </p>
@@ -119,7 +119,7 @@ export default function StudentResultPage() {
                       const letter = "ABCD"[oi];
                       return (
                         <p key={oi} className={cn("rounded-lg border px-3 py-1.5",
-                          letter === d.correctAnswer ? "border-teal-500 bg-teal-50 font-bold" : letter === d.yourAnswer ? "border-crimson-DEFAULT bg-crimson-50" : "border-silver-200")}>
+                          letter === d.correctAnswer ? "border-teal-500 bg-teal-50 font-bold" : letter === d.yourAnswer ? "border-crimson bg-crimson-50" : "border-silver-200")}>
                           <span className="font-extrabold">{letter}.</span> {o ?? <span className="text-muted">(empty)</span>}
                           {letter === d.correctAnswer ? " ✓" : letter === d.yourAnswer && d.status === "incorrect" ? " (your answer)" : ""}
                         </p>
@@ -182,7 +182,7 @@ export default function StudentResultPage() {
         {result.details.map((d, i) => (
           <div key={d.questionId} className="rounded-card border border-silver-200 bg-white p-4 shadow-card">
             <p className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold",
-              d.status === "correct" ? "bg-teal-50 text-teal-700" : d.status === "incorrect" ? "bg-crimson-50 text-crimson-DEFAULT" : d.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-silver-50 text-muted")}>
+              d.status === "correct" ? "bg-teal-50 text-teal-700" : d.status === "incorrect" ? "bg-crimson-50 text-crimson" : d.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-silver-50 text-muted")}>
               {d.status === "correct" ? <CheckCircle2 className="h-3 w-3" /> : d.status === "incorrect" ? <XCircle className="h-3 w-3" /> : d.status === "pending" ? <AlertTriangle className="h-3 w-3" /> : <MinusCircle className="h-3 w-3" />}
               Q{i + 1} • {d.status.toUpperCase()}
             </p>
@@ -190,7 +190,7 @@ export default function StudentResultPage() {
             <div className="mt-2 grid gap-1 text-[13px]">
               {d.options.map((o, oi) => (
                 <p key={oi} className={cn("rounded-lg border px-3 py-1.5",
-                  oi === d.correctAnswer ? "border-teal-500 bg-teal-50 font-bold" : oi === d.yourAnswer ? "border-crimson-DEFAULT bg-crimson-50" : "border-silver-200")}>
+                  oi === d.correctAnswer ? "border-teal-500 bg-teal-50 font-bold" : oi === d.yourAnswer ? "border-crimson bg-crimson-50" : "border-silver-200")}>
                   <span className="font-extrabold">{"ABCD"[oi]}.</span> {o}
                   {oi === d.correctAnswer ? " ✓" : oi === d.yourAnswer && d.status === "incorrect" ? " (your answer)" : ""}
                 </p>

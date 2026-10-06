@@ -34,7 +34,31 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   if (!db) return ok({ items: DEMO_STUDENTS, source: "demo" });
   try {
-    const rows = await db.student.findMany({ include: { batch: true, course: true }, orderBy: { createdAt: "desc" }, take: 200 });
+    // Phase 13 — optional ?search= filters name / mobile / email (test-access console).
+    // Phase 14 — ?type=REGULAR|SCHOLARSHIP and ?status=ACTIVE|INACTIVE filters.
+    const params = new URL(req.url).searchParams;
+    const search = params.get("search")?.trim() ?? "";
+    const type = params.get("type") ?? "";
+    const status = params.get("status") ?? "";
+    const digits = search.replace(/\D/g, "");
+    const rows = await db.student.findMany({
+      where: {
+        ...(search
+          ? {
+              OR: [
+                { name: { contains: search, mode: "insensitive" } },
+                { email: { contains: search, mode: "insensitive" } },
+                ...(digits ? [{ phone: { contains: digits } }] : []),
+              ],
+            }
+          : {}),
+        ...(type === "REGULAR" || type === "SCHOLARSHIP" ? { studentType: type as "REGULAR" | "SCHOLARSHIP" } : {}),
+        ...(status === "ACTIVE" || status === "INACTIVE" ? { status: status as "ACTIVE" | "INACTIVE" } : {}),
+      },
+      include: { batch: true, course: true },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    });
     return ok({ items: rows.map(toAdmin), source: "database" });
   } catch (err) {
     return serverError("students:list", err);

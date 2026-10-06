@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX, ArrowRight, Phone, ShieldCheck, Sparkles } from "lucide-react";
 import type { Advertisement } from "@/lib/types";
 import { getHeroAds } from "@/lib/mockStore";
+import { getLiveBanners } from "@/services/siteApi";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
-import { Counter, Marquee } from "@/components/website/motion";
-import { EXAM_TICKER, HERO_STATS } from "@/lib/websiteData";
+import { Marquee } from "@/components/website/motion";
+import { EXAM_TICKER } from "@/lib/websiteData";
 
 const EXAM_PILLS = [
   { label: "JEE", color: "#1AA6B5" },
@@ -86,7 +87,10 @@ export function Hero() {
   const [heroAds, setHeroAds] = useState<Advertisement[]>([]);
 
   useEffect(() => {
-    const load = () => setHeroAds(getHeroAds());
+    // Phase 11: database banners win on the public homepage; mockStore stays dev fallback.
+    const load = () => {
+      void getLiveBanners().then((live) => setHeroAds(live && live.length > 0 ? [live[0]] : getHeroAds()));
+    };
     load();
     window.addEventListener("neuron-ads-updated", load);
     window.addEventListener("storage", load);
@@ -102,7 +106,7 @@ export function Hero() {
     <section id="home" className="metallic-dark relative overflow-hidden">
       {/* ambient colour fields */}
       <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" aria-hidden />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-crimson-DEFAULT/25 blur-3xl" aria-hidden />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl" aria-hidden />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-12 pt-12 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:pt-16">
@@ -128,20 +132,12 @@ export function Hero() {
             Shaheen Bagh&apos;s focused coaching for engineering, medical and university entrances — small batches, weekly mocks and mentors who track every mark.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <a href="#courses" className="animate-glow btn-metallic-sheen inline-flex items-center rounded-xl bg-crimson-DEFAULT px-7 py-3.5 text-[15px] font-bold text-white hover:bg-crimson-bright">
+            <a href="#courses" className="animate-glow btn-metallic-sheen inline-flex items-center rounded-xl bg-crimson px-7 py-3.5 text-[15px] font-bold text-white hover:bg-crimson-bright">
               <Sparkles className="mr-1.5 h-4 w-4" /> Explore Courses <ArrowRight className="ml-1 h-4 w-4" />
             </a>
             <a href="#contact" className="inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-[15px] font-bold text-white backdrop-blur hover:border-teal-300 hover:text-teal-200">
               <Phone className="mr-1.5 h-4 w-4" /> Book Free Demo
             </a>
-          </div>
-          <div className="mt-8 grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-4">
-            {HERO_STATS.map((s) => (
-              <div key={s.label} className="rounded-2xl border border-white/15 bg-white/5 px-3 py-2.5 text-center backdrop-blur">
-                <p className="text-xl font-extrabold text-white"><Counter value={s.value} suffix={s.suffix} /></p>
-                <p className="text-[10px] font-bold tracking-widest text-teal-300">{s.label.toUpperCase()}</p>
-              </div>
-            ))}
           </div>
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] font-bold text-silver-200">
             <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> Mentor-guided batches</span>
@@ -162,7 +158,7 @@ export function Hero() {
           ) : null}
         </div>
         <div className="relative">
-          <div className="absolute -inset-5 rounded-[30px] bg-gradient-to-br from-teal-400/25 via-amber-300/10 to-crimson-DEFAULT/25 blur-2xl" aria-hidden />
+          <div className="absolute -inset-5 rounded-[30px] bg-gradient-to-br from-teal-400/25 via-amber-300/10 to-crimson/25 blur-2xl" aria-hidden />
           <div className="premium-ring relative overflow-hidden rounded-[26px] border border-white/30 bg-navy-800" style={{ minHeight: 440 }}>
             {active ? (
               <div className="h-[440px] sm:h-[500px]">

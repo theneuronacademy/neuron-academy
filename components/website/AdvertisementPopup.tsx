@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { X, Volume2, VolumeX } from "lucide-react";
 import type { Advertisement } from "@/lib/types";
 import { getPopupAds, markPopupDismissed, wasPopupDismissedThisSession } from "@/lib/mockStore";
+import { getLivePopups } from "@/services/siteApi";
 
 export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement | null }) {
   const [ad, setAd] = useState<Advertisement | null>(forceAd ?? null);
@@ -19,12 +20,15 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
     }
     if (wasPopupDismissedThisSession()) return;
     const t = setTimeout(() => {
-      const popups = getPopupAds();
-      if (popups.length > 0) {
-        setAd(popups[0]);
-        setMuted(popups[0].muted !== false);
-        setVisible(true);
-      }
+      // Phase 11: database popups win; mockStore stays dev fallback.
+      void getLivePopups().then((live) => {
+        const popups = live ?? getPopupAds();
+        if (popups.length > 0) {
+          setAd(popups[0]);
+          setMuted(popups[0].muted !== false);
+          setVisible(true);
+        }
+      });
     }, 5000);
     return () => clearTimeout(t);
   }, [forceAd]);
@@ -88,7 +92,7 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
           <p className="mt-1.5 text-sm leading-relaxed text-muted">{ad.description}</p>
           <div className="mt-4 flex gap-2">
             {ad.ctaText ? (
-              <a href={ad.ctaLink || "#contact"} onClick={close} className="flex-1 rounded-xl bg-crimson-DEFAULT px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-crimson-bright">
+              <a href={ad.ctaLink || "#contact"} onClick={close} className="flex-1 rounded-xl bg-crimson px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-crimson-bright">
                 {ad.ctaText}
               </a>
             ) : null}

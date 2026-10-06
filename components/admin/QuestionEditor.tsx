@@ -64,7 +64,7 @@ export function QuestionEditor({
         <h3 className="text-lg font-extrabold text-navy-700">Edit Question</h3>
         <p className="text-[12px] font-semibold text-muted">Equations and symbols are preserved — edit carefully.</p>
         {error ? (
-          <p className="mt-3 rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson-DEFAULT" role="alert">
+          <p className="mt-3 rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">
             {error}
           </p>
         ) : null}

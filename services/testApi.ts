@@ -5,6 +5,16 @@
 // - writes → { ok: false, reason } (caller keeps local behaviour)
 // No database queries inside React components.
 
+export type TestAccessType = "FREE" | "PAID" | "PRIVATE";
+
+export interface TestAccessState {
+  accessType: TestAccessType;
+  price: number;
+  hasAccess: boolean;
+  locked: boolean;
+  lockReason: string | null;
+}
+
 export interface ApiTest {
   id: string;
   title: string;
@@ -17,6 +27,21 @@ export interface ApiTest {
   startTime: string | null;
   endTime: string | null;
   status: "DRAFT" | "SCHEDULED" | "LIVE" | "COMPLETED" | "PUBLISHED";
+  questionOrder?: "SERIAL" | "RANDOM";
+  optionOrder?: "SERIAL" | "RANDOM";
+  // Phase 13 — access model (present on API-backed tests).
+  accessType?: TestAccessType;
+  price?: number;
+  access?: TestAccessState;
+}
+
+export interface TestAccessRecord {
+  id: string;
+  status: "ACTIVE" | "REVOKED" | "EXPIRED";
+  grantedAt: string;
+  expiresAt: string | null;
+  test: { id: string; title: string; accessType: TestAccessType; price: number; status: string };
+  student: { id: string; name: string; phone: string; email: string };
 }
 
 export interface ApiQuestion {
@@ -28,6 +53,7 @@ export interface ApiQuestion {
   optionB: string | null;
   optionC: string | null;
   optionD: string | null;
+  optionE?: string | null;
   marks: number;
   negativeMarks: number;
   order: number;
@@ -183,6 +209,73 @@ export async function enterOfflineMarks(input: { studentId: string; testId: stri
     const json = await res.json().catch(() => null);
     if (!res.ok || json?.success !== true) return { ok: false, reason: json?.error ?? `http-${res.status}` };
     return { ok: true };
+  } catch {
+    return { ok: false, reason: "network" };
+  }
+}
+
+export interface ImportSummary {
+  id: string;
+  filename: string;
+  status: string;
+  totalPages: number;
+  textPages: number;
+  ocrPages: number;
+  error: string | null;
+}
+
+export interface ImportStats {
+  detected: number;
+  high: number;
+  needsReview: number;
+  withAnswer: number;
+  missingAnswer: number;
+  pages: number;
+}
+
+export async function uploadPdfImport(
+  file: File,
+  opts?: { batchId?: string; title?: string; subject?: string }
+): Promise<{ ok: boolean; import?: ImportSummary; stagingTestId?: string; stats?: ImportStats; issues?: string[]; reason?: string }> {
+  try {
+    if (typeof window === "undefined") return { ok: false, reason: "unavailable" };
+    const form = new FormData();
+    form.append("file", file);
+    if (opts?.batchId) form.append("batchId", opts.batchId);
+    if (opts?.title) form.append("title", opts.title);
+    if (opts?.subject) form.append("subject", opts.subject);
+    const res = await fetch("/api/tests/import/pdf", { method: "POST", body: form });
+    const json = await res.json().catch(() => null);
+    if (!res.ok || json?.success !== true) return { ok: false, reason: json?.error ?? `http-${res.status}` };
+    return { ok: true, import: json.data.import, stagingTestId: json.data.stagingTestId, stats: json.data.stats, issues: json.data.issues ?? [] };
+  } catch {
+    return { ok: false, reason: "network" };
+  }
+}
+
+export async function generateFromPool(input: {
+  title: string;
+  description?: string;
+  batchId?: string;
+  type?: string;
+  duration?: number;
+  count?: number;
+  sourceTestIds: string[];
+  selectionMode: "MANUAL" | "RANDOM" | "SERIAL";
+  questionIds?: string[];
+  questionOrder?: "SERIAL" | "RANDOM";
+  optionOrder?: "SERIAL" | "RANDOM";
+}): Promise<{ ok: boolean; id?: string; reason?: string }> {
+  try {
+    if (typeof window === "undefined") return { ok: false, reason: "unavailable" };
+    const res = await fetch("/api/tests/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    });
+    const json = await res.json().catch(() => null);
+    if (!res.ok || json?.success !== true) return { ok: false, reason: json?.error ?? `http-${res.status}` };
+    return { ok: true, id: json.data?.item?.id };
   } catch {
     return { ok: false, reason: "network" };
   }

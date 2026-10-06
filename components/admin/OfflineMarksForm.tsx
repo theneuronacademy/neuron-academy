@@ -135,7 +135,7 @@ export function OfflineMarksForm() {
         </p>
       </div>
       {msg ? (
-        <p className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-bold sm:col-span-2 lg:col-span-5 ${msg.ok ? "border border-emerald-200 bg-emerald-50 text-emerald-700" : "border border-crimson-100 bg-crimson-50 text-crimson-DEFAULT"}`}>
+        <p className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-bold sm:col-span-2 lg:col-span-5 ${msg.ok ? "border border-emerald-200 bg-emerald-50 text-emerald-700" : "border border-crimson-100 bg-crimson-50 text-crimson"}`}>
           {msg.ok ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />} {msg.text}
         </p>
       ) : null}

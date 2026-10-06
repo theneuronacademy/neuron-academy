@@ -2,11 +2,17 @@
 // Real academy/student data must NEVER be seeded. Run: npm run db:seed
 // Requires DATABASE_URL. Idempotent (upserts on unique fields).
 
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import bcrypt from "bcryptjs";
 import { COURSES } from "../data/courses";
 
-const prisma = new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL ?? "";
+const pool = new Pool({ connectionString: databaseUrl });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   if (!process.env.DATABASE_URL) {

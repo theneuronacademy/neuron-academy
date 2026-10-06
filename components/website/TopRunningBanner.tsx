@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Volume2, VolumeX, ArrowRight } from "lucide-react";
 import { getCarouselAds } from "@/lib/mockStore";
+import { getLiveBanners } from "@/services/siteApi";
 import type { Advertisement } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -118,7 +119,7 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
         }}
       />
       <div className="animate-float absolute -right-16 -top-16 h-64 w-64 rounded-full bg-teal-400/25 blur-3xl" />
-      <div className="animate-float-slow absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-crimson-DEFAULT/25 blur-3xl" />
+      <div className="animate-float-slow absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-crimson/25 blur-3xl" />
     </div>
   );
 }
@@ -135,9 +136,16 @@ export function TopRunningBanner() {
   const touchX = useRef<number | null>(null);
 
   const load = useCallback(() => {
-    const live = getCarouselAds();
-    setAds(live.length > 0 ? live : DEFAULT_BANNERS);
-    setIndex(0);
+    // Phase 11: database banners win; mockStore then static defaults stay fallback.
+    void getLiveBanners().then((live) => {
+      if (live) {
+        setAds(live);
+      } else {
+        const local = getCarouselAds();
+        setAds(local.length > 0 ? local : DEFAULT_BANNERS);
+      }
+      setIndex(0);
+    });
   }, []);
 
   useEffect(() => {
@@ -160,7 +168,7 @@ export function TopRunningBanner() {
 
   return (
     <section aria-label="Academy announcements" className="metallic-dark relative overflow-hidden border-b border-white/10">
-      <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-teal-400 via-white/60 to-crimson-DEFAULT" aria-hidden />
+      <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-teal-400 via-white/60 to-crimson" aria-hidden />
       <div
         className="relative"
         onMouseEnter={() => setPaused(true)}
@@ -192,7 +200,7 @@ export function TopRunningBanner() {
                     {ad.ctaText ? (
                       <a
                         href={ad.ctaLink || "#courses"}
-                        className="btn-metallic-sheen inline-flex items-center gap-1.5 rounded-xl bg-crimson-DEFAULT px-5 py-2.5 text-sm font-bold text-white shadow-card hover:bg-crimson-bright"
+                        className="btn-metallic-sheen inline-flex items-center gap-1.5 rounded-xl bg-crimson px-5 py-2.5 text-sm font-bold text-white shadow-card hover:bg-crimson-bright"
                       >
                         {ad.ctaText} <ArrowRight className="h-4 w-4" />
                       </a>

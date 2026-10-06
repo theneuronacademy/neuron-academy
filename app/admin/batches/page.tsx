@@ -89,7 +89,7 @@ export default function BatchesPage() {
                       if (window.confirm(`Delete batch "${r.name}"? Students stay enrolled.`)) setRows((p) => p.filter((x) => x.id !== r.id));
                     }}
                     aria-label={`Delete ${r.name}`}
-                    className="rounded-lg border border-crimson-100 p-2 text-crimson-DEFAULT hover:bg-crimson-50"
+                    className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

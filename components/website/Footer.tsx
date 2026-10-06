@@ -16,7 +16,7 @@ export function Footer() {
   return (
     <footer className="metallic-dark relative overflow-hidden text-silver-200">
       <div className="pointer-events-none absolute -top-20 left-1/3 h-56 w-96 rounded-full bg-teal-400/10 blur-3xl" aria-hidden />
-      <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-teal-400 via-amber-300 to-crimson-DEFAULT" aria-hidden />
+      <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-teal-400 via-amber-300 to-crimson" aria-hidden />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <Logo dark />

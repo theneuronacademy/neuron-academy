@@ -8,7 +8,7 @@ const TONES: Record<TestStatus, string> = {
   scheduled: "bg-navy-50 text-navy-700 border-silver-200",
   published: "bg-teal-50 text-teal-700 border-teal-100",
   live: "bg-teal-500 text-white border-teal-500",
-  completed: "bg-crimson-50 text-crimson-DEFAULT border-crimson-100",
+  completed: "bg-crimson-50 text-crimson border-crimson-100",
   archived: "bg-silver-50 text-muted border-silver-200",
 };
 

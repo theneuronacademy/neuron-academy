@@ -43,11 +43,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(typeof body.optionB === "string" ? { optionB: body.optionB } : {}),
         ...(typeof body.optionC === "string" ? { optionC: body.optionC } : {}),
         ...(typeof body.optionD === "string" ? { optionD: body.optionD } : {}),
-        ...(typeof body.correctAnswer === "string" ? { correctAnswer: body.correctAnswer } : {}),
+        ...(typeof body.optionE === "string" ? { optionE: body.optionE } : {}),
+        ...(typeof body.correctAnswer === "string" || body.correctAnswer === null ? { correctAnswer: body.correctAnswer } : {}),
         ...(typeof body.marks === "number" ? { marks: body.marks } : {}),
         ...(typeof body.negativeMarks === "number" ? { negativeMarks: body.negativeMarks } : {}),
         ...(typeof body.explanation === "string" ? { explanation: body.explanation } : {}),
         ...(typeof body.order === "number" ? { order: body.order } : {}),
+        ...(typeof body.subject === "string" ? { subject: body.subject.slice(0, 60) } : {}),
+        ...(body.reviewStatus === "PENDING" || body.reviewStatus === "APPROVED" || body.reviewStatus === "REJECTED"
+          ? { reviewStatus: body.reviewStatus }
+          : {}),
       },
     });
     return ok({ item: row });

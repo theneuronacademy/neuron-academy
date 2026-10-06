@@ -77,7 +77,7 @@ export default function GalleryAdminPage() {
                     if (window.confirm(`Delete "${g.title}"?`)) setRows((p) => p.filter((x) => x.id !== g.id));
                   }}
                   aria-label={`Delete ${g.title}`}
-                  className="rounded-lg border border-crimson-100 p-1.5 text-crimson-DEFAULT hover:bg-crimson-50"
+                  className="rounded-lg border border-crimson-100 p-1.5 text-crimson hover:bg-crimson-50"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>

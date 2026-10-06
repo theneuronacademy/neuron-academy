@@ -4,7 +4,7 @@
 
 export const ACADEMY = {
   name: "Neuron Academy",
-  tagline: "Learn. Prepare. Succeed.",
+  tagline: "Activate Your Neuron at Neuron Academy",
   branch: "Shaheen Bagh • New Delhi",
   hero: {
     title: "Crack JEE. NEET.",

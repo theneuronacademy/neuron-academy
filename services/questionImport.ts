@@ -1,12 +1,14 @@
-// Phase 5 — question import boundary (PDF/OCR lands here later).
-// Future flow (NOT implemented now):
-//   ADMIN → Upload PDF → PDF parser / OCR → ExtractedQuestion[] →
-//   admin previews → admin verifies → save via /api/questions → test ready.
-// This file is the ONLY place the future extractor plugs in. Nothing here
-// fakes extraction: parsePdfFromFile() throws until Phase-PDF implements it.
+// Phase 12 — question import boundary (implemented).
+// Live pipeline:
+//   ADMIN → Upload PDF → POST /api/tests/import/pdf → services/pdfImport.ts
+//   (pdfjs text) → services/ocrService.ts (tesseract for scanned pages) →
+//   services/questionParser.ts (deterministic detection) → PdfImport +
+//   staging test → review UI → approve → pool → POST /api/tests/generate.
+// This file keeps the shared validation helper + the legacy client stub.
 //
+
+export type ImportAnswerLetter = "A" | "B" | "C" | "D";
 // OLD LOCAL MODEL → PRISMA MODEL mapping (for the migration):
-//   BankQuestion.id          → Question.id (cuid kept where possible)
 //   BankQuestion.question    → Question.questionText
 //   BankQuestion.options[0..3] → Question.optionA..D
 //   BankQuestion.correctAnswer (0-3 index | null) → Question.correctAnswer ("A"-"D" | null)
@@ -17,8 +19,6 @@
 //   TestItem.status draft/scheduled/published/live/completed → TestStatus enum (uppercased)
 //   TestAttempt (localStorage) → TestAttempt (+ answers JSON)
 //   TestResult (localStorage) → Result (+ attempted/correct/wrong/unanswered)
-
-export type ImportAnswerLetter = "A" | "B" | "C" | "D";
 
 export interface ImportableQuestion {
   questionText: string;
@@ -65,10 +65,10 @@ export function validateImport(rows: ImportableQuestion[]): ImportValidation {
 }
 
 /**
- * TODO Phase-PDF: implement with pdfjs-dist text layer + OCR fallback.
- * Must return ImportableQuestion[] for admin preview — never auto-save.
+ * Legacy browser-side stub — superseded by the server pipeline above.
+ * Kept (throwing) so old callers fail loudly instead of silently.
  */
 export async function parsePdfFromFile(_file: File): Promise<ImportableQuestion[]> {
   void _file;
-  throw new Error("PDF question extraction is not implemented yet (planned phase).");
+  throw new Error("Use POST /api/tests/import/pdf — client-side parsing was removed in Phase 12.");
 }

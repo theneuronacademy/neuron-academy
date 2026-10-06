@@ -9,7 +9,7 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { normalizeAnswer } from "@/lib/evaluation";
-import { resolveStudent } from "@/lib/testAccess";
+import { canStudentAccessTest, resolveStudent } from "@/lib/testAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +29,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!attempt) return fail("No submitted attempt found for this test.", 404);
     const test = await db.test.findUnique({ where: { id: testId }, include: { questions: { orderBy: { order: "asc" } } } });
     if (!test) return fail("Test not found.", 404);
+    // Phase 13 — revoked/expired grants lose review access too.
+    const access = await canStudentAccessTest(db, profile.id, testId);
+    if (!access.allowed) return fail(access.reason, access.http);
     const stored = (attempt.answers ?? {}) as Record<string, string | null>;
     const items = test.questions.map((q, i) => {
       const your = normalizeAnswer(stored[q.id]);

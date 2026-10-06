@@ -14,6 +14,7 @@ import { FAQS, type Faq } from "@/data/faq";
 import { ACADEMY, CONTACT_INFO } from "@/data/site";
 import { POPUP_DEFAULTS, type PopupContent } from "@/data/popups";
 import { getVisibleAds } from "@/lib/mockStore";
+import type { Advertisement, AdType } from "@/lib/types";
 import type { BannerContent } from "@/data/banners";
 
 /** Client-side API fetch — null on server, offline, no-DB, or bad shape. */
@@ -186,6 +187,67 @@ export async function getBanners(): Promise<BannerContent[]> {
     active: a.isActive,
     order: a.priority ?? i,
   }));
+}
+
+/**
+ * Phase 11 — homepage ad inventory in mockStore shape, database-first.
+ * Returns null when PostgreSQL has no rows so callers fall back to the
+ * local mockStore (dev) or render nothing (production, gated there).
+ * Enforces active flag + start/end window + display order server-side
+ * (client clock used only for display filtering).
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function bannerRowToAd(b: any, type: AdType): Advertisement | null {
+  const active = b.isActive ?? b.active ?? true;
+  if (!active) return null;
+  const now = Date.now();
+  const start = b.startDate ? Date.parse(b.startDate) : NaN;
+  const end = b.endDate ? Date.parse(b.endDate) : NaN;
+  if (!Number.isNaN(start) && now < start) return null;
+  if (!Number.isNaN(end) && now > end) return null;
+  return {
+    id: String(b.id),
+    title: String(b.title ?? ""),
+    subtitle: String(b.subtitle ?? ""),
+    description: String(b.description ?? ""),
+    mediaType: b.videoUrl ? "video" : "image",
+    mediaUrl: String(b.imageUrl ?? b.image ?? b.videoUrl ?? ""),
+    posterUrl: "",
+    ctaText: String(b.buttonText ?? ""),
+    ctaLink: String(b.buttonUrl ?? ""),
+    type,
+    priority: typeof b.displayOrder === "number" ? b.displayOrder : (b.order ?? 0),
+    startDate: b.startDate ? String(b.startDate).slice(0, 10) : "2025-01-01",
+    endDate: b.endDate ? String(b.endDate).slice(0, 10) : "2030-12-31",
+    isActive: true,
+    autoplay: true,
+    muted: true,
+    loop: true,
+    audioEnabled: false,
+    createdAt: "",
+    updatedAt: "",
+  };
+}
+
+export async function getLiveBanners(): Promise<Advertisement[] | null> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = pickDb<any>(await apiItems("/api/banners"));
+  if (!db) return null;
+  const ads = db
+    .map((b) => bannerRowToAd(b, "banner"))
+    .filter((a): a is Advertisement => a !== null)
+    .sort((a, b) => a.priority - b.priority);
+  return ads.length > 0 ? ads : null;
+}
+
+export async function getLivePopups(): Promise<Advertisement[] | null> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = pickDb<any>(await apiItems("/api/popups"));
+  if (!db) return null;
+  const ads = db
+    .map((b) => bannerRowToAd(b, "popup"))
+    .filter((a): a is Advertisement => a !== null);
+  return ads.length > 0 ? ads : null;
 }
 
 export interface EnquiryInput {

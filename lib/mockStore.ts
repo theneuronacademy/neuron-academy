@@ -66,18 +66,21 @@ const seedAds: Advertisement[] = [
 ];
 
 function readStore(): Advertisement[] {
-  if (typeof window === "undefined") return [...seedAds];
+  // Phase 11: production never fabricates ads — empty store stays empty
+  // (database banners are the source of truth when configured).
+  if (typeof window === "undefined") return process.env.NODE_ENV === "production" ? [] : [...seedAds];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) {
+      if (process.env.NODE_ENV === "production") return [];
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seedAds));
       return [...seedAds];
     }
     const parsed = JSON.parse(raw) as Advertisement[];
-    if (!Array.isArray(parsed)) return [...seedAds];
+    if (!Array.isArray(parsed)) return process.env.NODE_ENV === "production" ? [] : [...seedAds];
     return parsed;
   } catch {
-    return [...seedAds];
+    return process.env.NODE_ENV === "production" ? [] : [...seedAds];
   }
 }
 

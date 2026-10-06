@@ -69,6 +69,9 @@ export function Navbar() {
           ))}
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
+          <Link href="/scholarship-tests" className="rounded-xl px-3 py-2 text-sm font-bold text-crimson hover:bg-crimson-50">
+            Scholarship Tests
+          </Link>
           <a href="/student/login" className="rounded-xl px-3 py-2 text-sm font-bold text-navy-700 hover:bg-silver-50">
             Student Login
           </a>
@@ -108,6 +111,9 @@ export function Navbar() {
               </a>
             ))}
             <div className="mt-2 grid gap-2 border-t border-silver-200 pt-3">
+              <Link href="/scholarship-tests" onClick={() => setOpen(false)} className="rounded-xl bg-crimson px-4 py-2.5 text-center text-sm font-bold text-white">
+                Scholarship Tests
+              </Link>
               <a href="/student/login" onClick={() => setOpen(false)} className="rounded-xl bg-navy-700 px-4 py-2.5 text-center text-sm font-bold text-white">
                 Student Login
               </a>
@@ -117,7 +123,7 @@ export function Navbar() {
               <a href="/admin/login" onClick={() => setOpen(false)} className="rounded-xl border border-silver-300 px-4 py-2.5 text-center text-sm font-bold text-navy-700">
                 Admin Login
               </a>
-              <a href="#contact" onClick={() => setOpen(false)} className="rounded-xl bg-crimson-DEFAULT px-4 py-2.5 text-center text-sm font-bold text-white">
+              <a href="#contact" onClick={() => setOpen(false)} className="rounded-xl bg-crimson px-4 py-2.5 text-center text-sm font-bold text-white">
                 Enquire Now
               </a>
             </div>

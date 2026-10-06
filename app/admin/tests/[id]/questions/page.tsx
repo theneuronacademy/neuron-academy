@@ -107,7 +107,7 @@ export default function TestQuestionsPage() {
                 setTick((t) => t + 1);
               }
             }}
-            className="rounded-lg bg-crimson-DEFAULT px-3 py-1.5 text-[12px] font-bold text-white"
+            className="rounded-lg bg-crimson px-3 py-1.5 text-[12px] font-bold text-white"
           >
             Delete Selected
           </button>
@@ -277,7 +277,7 @@ function DbQuestionsManager({ testId, testTitle }: { testId: string; testTitle: 
             setEditing({ ...blankQuestion(), subject: "Database", chapter: testTitle, sourceFile: "database" });
             setIsNew(true);
           }}
-          className="rounded-xl bg-crimson-DEFAULT px-4 py-2 text-sm font-bold text-white hover:bg-crimson-bright"
+          className="rounded-xl bg-crimson px-4 py-2 text-sm font-bold text-white hover:bg-crimson-bright"
         >
           + Add Question
         </button>

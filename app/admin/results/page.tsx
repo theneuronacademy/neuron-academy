@@ -54,7 +54,7 @@ export default function AdminResultsPage() {
       </div>
 
       {results.length === 0 ? (
-        <p className="mt-4 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No results available. Publish a test and attempt it as the demo student.</p>
+        <p className="mt-4 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No results available. Publish a test and have a student attempt it.</p>
       ) : (
         <div className="mt-4 overflow-x-auto rounded-card border border-silver-200 bg-white shadow-card">
           <table className="w-full min-w-[900px] text-left text-sm">
@@ -92,7 +92,7 @@ export default function AdminResultsPage() {
           <p className="mt-1 text-[13px] text-muted">Future backend will parse <code>studentId,studentName,marks</code>. For now, paste CSV rows to preview parsing.</p>
           <textarea
             rows={4}
-            placeholder={"STU-1001, Demo Student, 16\nSTU-1002, Second Student, 14"}
+            placeholder={"STU-1001, Student Name, 16\nSTU-1002, Second Student, 14"}
             aria-label="Offline marks CSV"
             className="mt-3 w-full rounded-xl border border-silver-300 px-3.5 py-2 font-mono text-[13px]"
             onChange={(e) => {
@@ -109,7 +109,7 @@ export default function AdminResultsPage() {
           {savedMsg ? <p className="mt-2 rounded-xl bg-teal-50 px-3 py-2 text-[13px] font-bold text-teal-700" role="status">{savedMsg}</p> : null}
           <div className="mt-3 grid gap-2.5">
             <div><label className={labelCls} htmlFor="om-sid">Student ID *</label><input id="om-sid" className={inputCls} value={sid} onChange={(e) => setSid(e.target.value)} placeholder="STU-1001" /></div>
-            <div><label className={labelCls} htmlFor="om-sn">Student Name *</label><input id="om-sn" className={inputCls} value={sname} onChange={(e) => setSname(e.target.value)} placeholder="Demo Student" /></div>
+            <div><label className={labelCls} htmlFor="om-sn">Student Name *</label><input id="om-sn" className={inputCls} value={sname} onChange={(e) => setSname(e.target.value)} placeholder="Student Name" /></div>
             <div><label className={labelCls} htmlFor="om-tn">Test Name *</label><input id="om-tn" className={inputCls} value={tname} onChange={(e) => setTname(e.target.value)} placeholder="Percentage Practice Test 01" /></div>
             <div><label className={labelCls} htmlFor="om-m">Marks *</label><input id="om-m" className={inputCls} value={marks} onChange={(e) => setMarks(e.target.value)} placeholder="16 / 20" /></div>
             <Button

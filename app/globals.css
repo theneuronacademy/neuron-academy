@@ -179,6 +179,21 @@ div[id] {
   color: transparent;
 }
 
+/* Phase 14 — chart entrance animations (disabled under reduced-motion above). */
+@keyframes chart-draw-in {
+  from { stroke-dashoffset: 100%; opacity: 0.4; }
+  to { opacity: 1; }
+}
+.chart-draw {
+  animation: chart-draw-in 0.9s ease-out both;
+}
+@keyframes chart-grow-in {
+  from { width: 0%; }
+}
+.chart-grow {
+  animation: chart-grow-in 0.7s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -58,7 +58,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
                 <span className="rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/20">🎯 {course.target}</span>
               </div>
               <div className="mt-6 flex flex-wrap gap-3">
-                <a href="#enquire" className="btn-metallic-sheen rounded-xl bg-crimson-DEFAULT px-6 py-3 text-sm font-bold text-white">Enquire About This Course</a>
+                <a href="#enquire" className="btn-metallic-sheen rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">Enquire About This Course</a>
                 <a href={process.env.NEXT_PUBLIC_WHATSAPP_URL || "#enquire"} className="rounded-xl border border-white/30 bg-white/5 px-6 py-3 text-sm font-bold text-white">WhatsApp Us</a>
               </div>
             </div>

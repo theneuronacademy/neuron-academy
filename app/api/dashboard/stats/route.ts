@@ -15,11 +15,20 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   if (!db) return dbNotConfigured("Reading dashboard stats");
   try {
-    const [byStatus, totalResults, totalAttempts] = await Promise.all([
-      db.test.groupBy({ by: ["status"], _count: { status: true } }),
-      db.result.count(),
-      db.testAttempt.count(),
-    ]);
+    const [byStatus, totalResults, totalAttempts, totalStudents, activeStudents, totalFaculty, activeFaculty, totalBatches, activeBatches, totalCourses, newEnquiries] =
+      await Promise.all([
+        db.test.groupBy({ by: ["status"], _count: { status: true } }),
+        db.result.count(),
+        db.testAttempt.count(),
+        db.student.count(),
+        db.student.count({ where: { status: "ACTIVE" } }),
+        db.faculty.count(),
+        db.faculty.count({ where: { status: "ACTIVE" } }),
+        db.batch.count(),
+        db.batch.count({ where: { status: "ACTIVE" } }),
+        db.course.count(),
+        db.enquiry.count({ where: { status: "NEW" } }),
+      ]);
     const get = (s: string) => byStatus.find((r) => r.status === s)?._count.status ?? 0;
     return ok({
       totalTests: byStatus.reduce((n, r) => n + r._count.status, 0),
@@ -30,6 +39,14 @@ export async function GET(req: NextRequest) {
       completedTests: get("COMPLETED"),
       totalResults,
       totalAttempts,
+      totalStudents,
+      activeStudents,
+      totalFaculty,
+      activeFaculty,
+      totalBatches,
+      activeBatches,
+      totalCourses,
+      newEnquiries,
       source: "database",
     });
   } catch (err) {

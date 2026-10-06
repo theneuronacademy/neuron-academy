@@ -5,7 +5,7 @@ import {
   BookOpen, Users, FileText, Target, MonitorPlay, Bell, CheckCircle2,
   Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight,
   CalendarCheck, Trophy, MessageCircle, Smartphone, BarChart3, Wallet,
-  Sparkles, Medal, Star,
+  Sparkles, Medal, Star, GraduationCap,
 } from "lucide-react";
 import { AnnouncementBar } from "@/components/website/AnnouncementBar";
 import { Navbar } from "@/components/website/Navbar";
@@ -24,7 +24,7 @@ import { FacultyDetails } from "@/components/website/FacultyDetails";
 import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
-import { Reveal, Counter, Marquee } from "@/components/website/motion";
+import { Reveal, Marquee } from "@/components/website/motion";
 import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
 import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, GALLERY_CATEGORIES, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import { CONTACT } from "@/data/contact";
@@ -155,7 +155,7 @@ function LivePhone() {
     <div className="animate-float-slow mx-auto w-full max-w-[300px] rounded-[28px] border-8 border-navy-800 bg-white shadow-card">
       <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
         <div><p className="text-xs font-extrabold text-navy-700">NEET Practice — 07 (demo)</p><p className="text-[11px] text-muted">Live • auto ranks</p></div>
-        <span className="animate-blink rounded-full bg-crimson-DEFAULT px-2 py-0.5 text-[10px] font-extrabold text-white">LIVE</span>
+        <span className="animate-blink rounded-full bg-crimson px-2 py-0.5 text-[10px] font-extrabold text-white">LIVE</span>
       </div>
       <div className="space-y-2.5 p-4">
         <div key={s} className="animate-fade-in rounded-xl bg-silver-50 p-3 ring-1 ring-silver-200">
@@ -167,7 +167,7 @@ function LivePhone() {
           </div>
         </div>
         <div className="h-1.5 overflow-hidden rounded-full bg-silver-200">
-          <div className="h-full rounded-full bg-gradient-to-r from-teal-500 to-crimson-DEFAULT transition-all duration-1000" style={{ width: `${35 + ((s % slides.length) + 1) * 18}%` }} />
+          <div className="h-full rounded-full bg-gradient-to-r from-teal-500 to-crimson transition-all duration-1000" style={{ width: `${35 + ((s % slides.length) + 1) * 18}%` }} />
         </div>
         <div className="flex items-center justify-between rounded-xl bg-navy-800 p-3 text-white">
           <span className="text-[12px] font-bold tabular-nums">⏱ {mm}:{ss}</span>
@@ -204,17 +204,9 @@ export default function HomePage() {
           <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6">
             <Reveal>
               <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
-                {[
-                  { v: 2400, s: "+", l: "Learners Guided" },
-                  { v: 52, s: "", l: "Mocks Every Year" },
-                  { v: 15, s: "+", l: "Expert Mentors" },
-                  { v: 4, s: "", l: "Entrance Tracks" },
-                ].map((x) => (
-                  <div key={x.l}>
-                    <p className="bg-gradient-to-r from-navy-700 to-teal-600 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl">
-                      <Counter value={x.v} suffix={x.s} />
-                    </p>
-                    <p className="mt-0.5 text-[11px] font-bold tracking-[0.18em] text-muted">{x.l.toUpperCase()}</p>
+                {["Small Batches", "Weekly Mocks", "Expert Mentors", "4 Entrance Tracks"].map((l) => (
+                  <div key={l}>
+                    <p className="mt-0.5 text-[11px] font-bold tracking-[0.18em] text-muted">{l.toUpperCase()}</p>
                   </div>
                 ))}
               </div>
@@ -253,8 +245,8 @@ export default function HomePage() {
                   }
                 />
                 <span className="animate-float absolute bottom-4 left-4 rounded-2xl border border-white/25 bg-navy-800/80 px-4 py-2.5 backdrop-blur">
-                  <span className="block text-lg font-extrabold text-white"><Counter value={2400} suffix="+" /></span>
-                  <span className="block text-[10px] font-bold tracking-widest text-teal-300">LEARNERS GUIDED</span>
+                  <span className="block text-lg font-extrabold text-white">Shaheen Bagh</span>
+                  <span className="block text-[10px] font-bold tracking-widest text-teal-300">NEW DELHI • ENTRANCE FOCUS</span>
                 </span>
               </div>
             </Reveal>
@@ -304,7 +296,7 @@ export default function HomePage() {
 
         {/* COURSES */}
         <section id="courses" className="relative overflow-hidden bg-background">
-          <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-crimson-DEFAULT/10 blur-3xl" aria-hidden />
+          <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-crimson/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
               <SectionHeader eyebrow="COURSES" title="One Academy. Every Entrance." desc="JEE • NEET • AMU • Jamia • Foundation — pick your battlefield." />
@@ -346,8 +338,11 @@ export default function HomePage() {
         <section id="faculty" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="FACULTY" title="Learn From Mentors Who've Been There" desc="IIT, medical & AMU/JMI alumni — demo profiles below, replace with actual faculty." />
+              <SectionHeader eyebrow="FACULTY" title="Learn From Mentors Who've Been There" desc="IIT, medical & AMU/JMI alumni guiding every batch." />
             </Reveal>
+            {FACULTY.length === 0 ? (
+              <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-background p-8 text-center text-sm font-bold text-muted">No faculty profiles published yet.</p>
+            ) : (
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {FACULTY.map((f, i) => (
                 <Reveal key={f.id} delay={(i % 4) * 80}>
@@ -355,6 +350,7 @@ export default function HomePage() {
                 </Reveal>
               ))}
             </div>
+            )}
           </div>
         </section>
 
@@ -364,7 +360,7 @@ export default function HomePage() {
           <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader dark eyebrow="RESULTS" title="Progress You Can Measure." desc="Demo placeholders — the academy will replace these with verified selections before going live." />
+              <SectionHeader dark eyebrow="RESULTS" title="Progress You Can Measure." desc="Verified selections from our entrance batches will appear here." />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {RESULTS.length === 0 ? (
@@ -388,13 +384,12 @@ export default function HomePage() {
             <Reveal delay={150}>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
                 {[
-                  { v: 2400, s: "+", l: "Learners" },
-                  { v: 52, s: "", l: "Mocks / Year" },
-                  { v: 100, s: "%", l: "Syllabus Coverage" },
+                  { l: "Weekly Mocks" },
+                  { l: "Syllabus Coverage" },
+                  { l: "Doubt Lounge" },
                 ].map((x) => (
                   <div key={x.l}>
-                    <p className="text-3xl font-extrabold text-white"><Counter value={x.v} suffix={x.s} /></p>
-                    <p className="text-[11px] font-bold tracking-[0.18em] text-teal-300">{x.l.toUpperCase()} (DEMO)</p>
+                    <p className="text-[11px] font-bold tracking-[0.18em] text-teal-300">{x.l.toUpperCase()}</p>
                   </div>
                 ))}
               </div>
@@ -407,7 +402,7 @@ export default function HomePage() {
           <div className="pointer-events-none absolute -left-20 top-10 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="TESTIMONIALS" title="What Students & Parents Say." desc="Demo quotes — replace with verified testimonials before going live." />
+              <SectionHeader eyebrow="TESTIMONIALS" title="What Students & Parents Say." desc="Verified reviews from our learners and their families will appear here." />
             </Reveal>
             <Reveal delay={120}>
               <div className="mt-8"><Testimonials /></div>
@@ -428,8 +423,8 @@ export default function HomePage() {
                   ))}
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a href="/student/login" className="animate-glow btn-metallic-sheen inline-block rounded-xl bg-crimson-DEFAULT px-6 py-3 text-sm font-bold text-white">Take a Live Demo Test →</a>
-                  <a href="/admin/tests/from-pdf" className="inline-block rounded-xl border border-silver-300 px-6 py-3 text-sm font-bold text-navy-700 hover:border-teal-500">Admin: Create From PDF</a>
+                  <a href="/scholarship-tests" className="animate-glow btn-metallic-sheen inline-block rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">Scholarship Tests →</a>
+                  <a href="/student/login" className="inline-block rounded-xl border border-silver-300 px-6 py-3 text-sm font-bold text-navy-700 hover:border-teal-500">Take a Live Demo Test</a>
                 </div>
               </div>
             </Reveal>
@@ -466,13 +461,13 @@ export default function HomePage() {
             </Reveal>
             <Reveal variant="right">
               <div className="premium-ring rounded-[20px] bg-white p-5 sm:p-6">
-                <p className="flex items-center gap-2 text-sm font-extrabold text-navy-700"><Sparkles className="h-4 w-4 text-teal-600" /> Performance Dashboard (live demo data)</p>
+                <p className="flex items-center gap-2 text-sm font-extrabold text-navy-700"><Sparkles className="h-4 w-4 text-teal-600" /> Performance Dashboard</p>
                 <div className="mt-4 flex items-center gap-4">
-                  <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-navy-700 text-xl font-extrabold text-white ring-4 ring-teal-100"><Counter value={86} suffix="%" /></span>
+                  <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-navy-700 text-xl font-extrabold text-white ring-4 ring-teal-100"><GraduationCap className="h-8 w-8" /></span>
                   <div className="flex-1 space-y-2 text-[12px] font-bold">
                     <p>Attendance tracking — <span className="text-teal-600">auto</span></p>
                     <p>Test analytics — <span className="text-teal-600">live</span></p>
-                    <p>Question bank — <span className="text-teal-600"><Counter value={20} suffix="+" /> questions</span></p>
+                    <p>Question bank — <span className="text-teal-600">included</span></p>
                   </div>
                 </div>
                 <div className="mt-4 flex gap-3 text-center">
@@ -550,9 +545,9 @@ export default function HomePage() {
                   <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> Transparent fees, honest counselling</li>
                 </ul>
                 <div className="mt-5 flex gap-6">
-                  <div><p className="text-2xl font-extrabold text-navy-700"><Counter value={2400} suffix="+" /></p><p className="text-[11px] font-bold text-muted">LEARNERS</p></div>
-                  <div><p className="text-2xl font-extrabold text-navy-700"><Counter value={52} /></p><p className="text-[11px] font-bold text-muted">MOCKS / YEAR</p></div>
-                  <div><p className="text-2xl font-extrabold text-navy-700"><Counter value={15} suffix="+" /></p><p className="text-[11px] font-bold text-muted">MENTORS</p></div>
+                  <div><p className="text-2xl font-extrabold text-navy-700">Small</p><p className="text-[11px] font-bold text-muted">BATCHES</p></div>
+                  <div><p className="text-2xl font-extrabold text-navy-700">Weekly</p><p className="text-[11px] font-bold text-muted">MOCKS</p></div>
+                  <div><p className="text-2xl font-extrabold text-navy-700">Expert</p><p className="text-[11px] font-bold text-muted">MENTORS</p></div>
                 </div>
               </div>
             </Reveal>
@@ -577,14 +572,14 @@ export default function HomePage() {
         {/* FINAL CTA */}
         <section className="metallic-dark relative overflow-hidden">
           <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
-          <div className="pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-crimson-DEFAULT/25 blur-3xl" aria-hidden />
+          <div className="pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
             <Reveal>
               <p className="text-[11px] font-bold tracking-[0.24em] text-teal-300">JEE • NEET • AMU • JAMIA • ADMISSIONS OPEN</p>
               <h2 className="animate-gradient-text mx-auto mt-3 max-w-2xl bg-gradient-to-r from-white via-teal-200 to-amber-200 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl">Your Rank Is Waiting.</h2>
               <p className="mx-auto mt-3 max-w-xl text-[15px] text-silver-200">Visit Shaheen Bagh, attend a free demo, take the diagnostic — and leave with a plan.</p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <a href="#courses" className="animate-glow rounded-xl bg-crimson-DEFAULT px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright">Explore Courses</a>
+                <a href="#courses" className="animate-glow rounded-xl bg-crimson px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright">Explore Courses</a>
                 <a href="#contact" className="rounded-xl border border-white/30 bg-white/5 px-8 py-3.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300">Book Free Demo</a>
               </div>
             </Reveal>

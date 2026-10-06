@@ -7,8 +7,9 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/session";
 import { requireApiRole } from "@/lib/server-auth";
-import { batchAllowed, facultyBatchIds, resolveStudent, STUDENT_VISIBLE_STATUSES } from "@/lib/testAccess";
+import { batchAllowed, canStudentAccessTest, facultyBatchIds, normalizeAccessFields, resolveStudent, STUDENT_VISIBLE_STATUSES, validateAccessFields } from "@/lib/testAccess";
 import { parseDate } from "@/lib/validation";
+import { safeNotify, notifyMessages } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,54 @@ async function facultyMayEdit(db: NonNullable<ReturnType<typeof getDb>>, userId:
     if (allowed.includes(t.batchId)) return true;
   }
   return false;
+}
+
+/** Phase 12 — publish gate. Returns actionable issues (empty = publishable). */
+async function validatePublishable(
+  db: NonNullable<ReturnType<typeof getDb>>,
+  testId: string,
+  patch: Record<string, unknown>
+): Promise<string[]> {
+  const issues: string[] = [];
+  const test = await db.test.findUnique({
+    where: { id: testId },
+    include: { questions: { orderBy: { order: "asc" } } },
+  });
+  if (!test) return ["Test not found."];
+  const batchId = typeof patch.batchId === "string" ? patch.batchId || null : test.batchId;
+  if (!batchId) issues.push("Assign a batch before publishing.");
+  const duration = typeof patch.duration === "number" ? patch.duration : test.duration;
+  if (!(duration > 0)) issues.push("Set a positive duration (minutes).");
+  if (test.questions.length === 0) {
+    issues.push("Add at least one question before publishing.");
+    return issues;
+  }
+  const seen = new Set<string>();
+  test.questions.forEach((q, i) => {
+    const n = i + 1;
+    const key = `${q.questionText.trim().toLowerCase()}|${[q.optionA, q.optionB, q.optionC, q.optionD, q.optionE].join("|")}`;
+    if (seen.has(key)) issues.push(`Q${n} is a duplicate.`);
+    seen.add(key);
+    const opts = [q.optionA, q.optionB, q.optionC, q.optionD, q.optionE].filter(
+      (o) => typeof o === "string" && o.trim()
+    );
+    if (opts.length < 2) issues.push(`Q${n} needs at least 2 non-empty options.`);
+    if (!q.correctAnswer) {
+      issues.push(`Q${n} has no correct answer — set it before publishing a scored test.`);
+    } else if (!["A", "B", "C", "D", "E"].includes(q.correctAnswer.toUpperCase())) {
+      issues.push(`Q${n} has an invalid correct answer.`);
+    } else if (q.correctAnswer.toUpperCase() !== q.correctAnswer) {
+      issues.push(`Q${n} answer must be a capital letter A–E.`);
+    } else {
+      const idx = "ABCDE".indexOf(q.correctAnswer);
+      const optTexts = [q.optionA, q.optionB, q.optionC, q.optionD, q.optionE];
+      if (!optTexts[idx] || !String(optTexts[idx]).trim()) {
+        issues.push(`Q${n} answer ${q.correctAnswer} has empty option text.`);
+      }
+    }
+    if (!(q.marks > 0)) issues.push(`Q${n} needs positive marks.`);
+  });
+  return issues;
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -36,9 +85,31 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         return fail("Test not found.", 404);
       }
       const profile = await resolveStudent(db, viewer.id, viewer.email);
-      if (!profile || profile.status !== "ACTIVE" || !batchAllowed(profile.batchId, row.batchId)) {
+      // Phase 14 — SCHOLARSHIP bypass for FREE tests (central gate re-checks).
+      const freeBypass = !!profile && profile.studentType === "SCHOLARSHIP" && row.accessType === "FREE";
+      if (!profile || profile.status !== "ACTIVE" || (!freeBypass && !batchAllowed(profile.batchId, row.batchId))) {
         return fail("Test not found.", 404);
       }
+      // Phase 13 — centralized FREE/PAID/PRIVATE gate. Locked tests never
+      // reach question data; authorized tests get answer keys stripped.
+      const decision = await canStudentAccessTest(db, profile.id, row.id);
+      if (!decision.allowed) return fail(decision.reason, decision.http);
+      const { questions: fullQuestions, ...meta } = row;
+      const safeQuestions = fullQuestions.map((q) => ({
+        id: q.id,
+        questionText: q.questionText,
+        questionType: q.questionType,
+        optionA: q.optionA,
+        optionB: q.optionB,
+        optionC: q.optionC,
+        optionD: q.optionD,
+        optionE: q.optionE,
+        marks: q.marks,
+        negativeMarks: q.negativeMarks,
+        order: q.order,
+        subject: q.subject,
+      }));
+      return ok({ item: { ...meta, questions: safeQuestions } });
     }
     return ok({ item: row });
   } catch (err) {
@@ -62,7 +133,38 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   } catch {
     return fail("Invalid JSON body.", 400);
   }
+  // Phase 13 — only ADMIN may change access type / price / active flag.
+  if (auth.user.role !== "ADMIN" && (body.accessType !== undefined || body.price !== undefined || body.isActive !== undefined)) {
+    return fail("Only admins can change test access type, price, or active state.", 403);
+  }
+  if (body.accessType !== undefined || body.price !== undefined) {
+    const accessErr = validateAccessFields(body.accessType, body.price);
+    if (accessErr) return fail(accessErr, 400);
+  }
+  const touchesAccess = auth.user.role === "ADMIN" && (body.accessType !== undefined || body.price !== undefined);
   try {
+    // Phase 12 — publish safety: a scored test must be complete and sane.
+    if (body.status === "PUBLISHED") {
+      const issues = await validatePublishable(db, id, body);
+      if (issues.length > 0) return fail(`Cannot publish: ${issues.join(" ")}`, 400);
+    }
+    // When only one of accessType/price is patched, keep the other from DB.
+    let accessData: { accessType?: "FREE" | "PAID" | "PRIVATE"; price?: number } = {};
+    if (touchesAccess) {
+      if (body.accessType !== undefined && body.price !== undefined) {
+        accessData = normalizeAccessFields(body.accessType, body.price);
+      } else {
+        const existing = await db.test.findUnique({ where: { id }, select: { accessType: true, price: true } });
+        if (!existing) return fail("Test not found.", 404);
+        const merged = normalizeAccessFields(
+          body.accessType !== undefined ? body.accessType : existing.accessType,
+          body.price !== undefined ? body.price : existing.price
+        );
+        const err = validateAccessFields(merged.accessType, merged.price);
+        if (err) return fail(err, 400);
+        accessData = merged;
+      }
+    }
     const row = await db.test.update({
       where: { id },
       data: {
@@ -77,26 +179,24 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(body.status === "DRAFT" || body.status === "SCHEDULED" || body.status === "LIVE" || body.status === "COMPLETED" || body.status === "PUBLISHED"
           ? { status: body.status }
           : {}),
+        ...(body.questionOrder === "SERIAL" || body.questionOrder === "RANDOM" ? { questionOrder: body.questionOrder } : {}),
+        ...(body.optionOrder === "SERIAL" || body.optionOrder === "RANDOM" ? { optionOrder: body.optionOrder } : {}),
+        ...accessData,
+        ...(typeof body.isActive === "boolean" && auth.user.role === "ADMIN" ? { isActive: body.isActive } : {}),
+        ...(body.status === "PUBLISHED" ? { publishedAt: new Date() } : {}),
       },
     });
-    // Publish → database notification for the batch (push provider consumes later).
-    if (body.status === "PUBLISHED") {
-      try {
-        await db.notification.create({
-          data: {
-            title: "New test available",
-            message: `${row.title} is now available.`,
-            type: "test",
-            audience: row.batchId ? "BATCH" : "ALL_STUDENTS",
-            targetBatchId: row.batchId,
-            createdById: auth.user.id,
-            sentAt: new Date(),
-            status: "SENT",
-          },
-        });
-      } catch {
-        /* notification must never fail publishing */
-      }
+    // Publish → notify eligible students, but ONLY for FREE tests so paid
+    // and private tests are never broadcast. Never fails publishing.
+    if (body.status === "PUBLISHED" && row.accessType === "FREE") {
+      const msg = notifyMessages.freeTestPublished(row.title);
+      await safeNotify(db, {
+        ...msg,
+        audience: row.batchId ? "BATCH" : "ALL_STUDENTS",
+        targetBatchId: row.batchId ?? undefined,
+        testId: row.id,
+        createdById: auth.user.id,
+      });
     }
     return ok({ item: row });
   } catch (err) {

@@ -24,6 +24,7 @@ import {
   Star,
   Trophy,
   User,
+  Lock,
 } from "lucide-react";
 import { adminLogout } from "@/lib/adminAuth";
 import { Logo } from "@/components/website/Logo";
@@ -64,7 +65,9 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
     label: "Academic",
     items: [
       { href: "/admin/tests", label: "Tests", icon: FileText },
+      { href: "/admin/test-access", label: "Test Access", icon: Lock },
       { href: "/admin/question-bank", label: "Question Bank", icon: Database },
+      { href: "/admin/books", label: "Books", icon: BookOpen },
       { href: "/admin/results", label: "Results", icon: BarChart3 },
       { href: "/admin/attendance", label: "Attendance", icon: BarChart3 },
     ],
@@ -139,7 +142,7 @@ export function AdminSidebar({ mobile = false, onNavigate }: { mobile?: boolean;
             adminLogout();
             router.push("/admin/login");
           }}
-          className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-crimson-100 hover:bg-crimson-DEFAULT hover:text-white"
+          className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-crimson-100 hover:bg-crimson hover:text-white"
         >
           <LogOut className="h-4 w-4" /> Logout
         </button>

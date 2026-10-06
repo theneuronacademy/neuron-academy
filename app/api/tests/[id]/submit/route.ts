@@ -10,7 +10,9 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { evaluateAnswers, normalizeAnswer } from "@/lib/evaluation";
-import { isLiveWindowOpen, resolveStudent } from "@/lib/testAccess";
+import { invertDisplayLetter, isValidQuestionMap, presentLetters } from "@/lib/testOrdering";
+import { canStudentAccessTest, isLiveWindowOpen, resolveStudent } from "@/lib/testAccess";
+import { safeNotify, notifyMessages } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +47,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
     const test = await db.test.findUnique({ where: { id: testId }, include: { questions: { orderBy: { order: "asc" } } } });
     if (!test) return fail("Test not found.", 404);
+    // Phase 13 — re-check access at submit time (a grant may have been
+    // revoked or expired mid-attempt). Never trust the earlier check alone.
+    const access = await canStudentAccessTest(db, profile.id, testId);
+    if (!access.allowed) return fail(access.reason, access.http);
     // LIVE window re-validated at submit time (server clock).
     if (test.type === "LIVE") {
       const window = isLiveWindowOpen(test.type, test.status, test.startTime, test.endTime);
@@ -52,13 +58,31 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
     if (test.type === "OFFLINE") return fail("Offline tests are not submitted online.", 400);
 
+    // Phase 12: invert display letters through the attempt's stored option
+    // mapping (RANDOM option order). The stored map is validated exactly
+    // like paper assembly — an invalid map falls back to serial, so delivery
+    // and evaluation can never disagree (no silent nulls).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rawMap = (attempt.optionMap ?? {}) as Record<string, any>;
+    const originalAnswers: Record<string, unknown> = {};
+    for (const q of test.questions) {
+      const present = presentLetters([q.optionA, q.optionB, q.optionC, q.optionD, q.optionE]);
+      const stored = isValidQuestionMap(rawMap[q.id], present) ? (rawMap[q.id] as string[]) : [...present];
+      const disp = normalizeAnswer(answers[q.id]);
+      if (disp === null) {
+        originalAnswers[q.id] = null;
+        continue;
+      }
+      originalAnswers[q.id] = invertDisplayLetter(disp, stored) ?? null;
+    }
+
     const evalResult = evaluateAnswers(
       test.questions.map((q) => ({ id: q.id, correctAnswer: q.correctAnswer, marks: q.marks, negativeMarks: q.negativeMarks })),
-      answers
+      originalAnswers
     );
-    // Persist normalized answers (letters) for reproducible review.
+    // Persist ORIGINAL letters for reproducible review.
     const stored: Record<string, string | null> = {};
-    for (const q of test.questions) stored[q.id] = normalizeAnswer(answers[q.id]);
+    for (const q of test.questions) stored[q.id] = normalizeAnswer(originalAnswers[q.id]);
 
     const updated = await db.testAttempt.update({
       where: { id: attempt.id },
@@ -100,21 +124,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             status: "PUBLISHED",
           },
         });
-    try {
-      await db.notification.create({
-        data: {
-          title: "Your result has been released",
-          message: `${test.title}: ${evalResult.marks}/${evalResult.totalMarks} (${evalResult.percentage}%).`,
-          type: "result",
-          audience: "INDIVIDUAL",
-          targetStudentId: profile.id,
-          sentAt: new Date(),
-          status: "SENT",
-        },
-      });
-    } catch {
-      /* notification must never fail submission */
-    }
+    // Phase 13 — result notification via the centralized helper (never fails submission).
+    await safeNotify(db, {
+      ...notifyMessages.resultReleased(test.title, evalResult.marks, evalResult.totalMarks, evalResult.percentage),
+      audience: "INDIVIDUAL",
+      targetStudentId: profile.id,
+      testId,
+    });
     return ok({
       attempt: { id: updated.id, status: updated.status },
       result: {

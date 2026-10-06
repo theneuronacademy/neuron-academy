@@ -10,6 +10,7 @@ import { draftKey, getQuestionById, getResultFor } from "@/lib/storage";
 import { getTestById } from "@/services/testService";
 import { evaluateTest, formatTime } from "@/services/resultService";
 import { startAttempt, submitAttempt } from "@/services/testApi";
+import { DbAttempt } from "@/components/student/DbAttempt";
 import { cn } from "@/lib/utils";
 
 type Phase = "instructions" | "attempt";
@@ -112,12 +113,10 @@ export default function StudentTestAttemptPage() {
   }, [phase, test?.id]);
 
   if (!session) return <div className="flex min-h-screen items-center justify-center text-sm font-bold text-muted">Loading…</div>;
+  // Phase 13 — database tests (FREE/PAID/PRIVATE) run on the API-backed
+  // engine with server-side access control; local tests keep the legacy flow.
   if (!test) {
-    return (
-      <StudentShell title="Test">
-        <p className="rounded-card bg-white p-6 text-sm font-bold text-muted">Test not found. <Link href="/student/tests" className="text-teal-600 underline">Back</Link></p>
-      </StudentShell>
-    );
+    return <DbAttempt testId={id} />;
   }
   const existing = getResultFor(test.id, session.studentId);
   if (existing) {
@@ -149,7 +148,7 @@ export default function StudentTestAttemptPage() {
           <div className="rounded-card bg-navy-800 p-5 text-white sm:p-6">
             <p className="text-sm font-extrabold">Ready?</p>
             <p className="mt-1 text-[13px] text-silver-200">{questions.length} questions • {formatTime(totalSec)} on the clock.</p>
-            <button onClick={() => setPhase("attempt")} className="btn-metallic-sheen mt-4 w-full rounded-xl bg-crimson-DEFAULT px-5 py-3 text-sm font-bold hover:bg-crimson-bright">
+            <button onClick={() => setPhase("attempt")} className="btn-metallic-sheen mt-4 w-full rounded-xl bg-crimson px-5 py-3 text-sm font-bold hover:bg-crimson-bright">
               Start Test
             </button>
             <Link href="/student/tests" className="mt-2 block text-center text-[13px] font-bold text-silver-200 hover:text-white">← Back to tests</Link>
@@ -170,7 +169,7 @@ export default function StudentTestAttemptPage() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2.5 sm:px-6">
           <p className="text-sm font-extrabold text-navy-700">{test.name} <span className="font-semibold text-muted">• Q{idx + 1}/{questions.length}</span></p>
           <div className="flex items-center gap-2">
-            <span className={cn("inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-extrabold", left < 60 ? "bg-crimson-50 text-crimson-DEFAULT" : "bg-navy-800 text-white")}>
+            <span className={cn("inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-extrabold", left < 60 ? "bg-crimson-50 text-crimson" : "bg-navy-800 text-white")}>
               <Timer className="h-4 w-4" /> {formatTime(left)}
             </span>
             <button onClick={() => setConfirm(true)} className="rounded-xl bg-teal-600 px-4 py-1.5 text-sm font-bold text-white">Submit</button>
@@ -250,7 +249,7 @@ export default function StudentTestAttemptPage() {
             <p><span className="mr-1 inline-block h-2.5 w-2.5 rounded bg-silver-200" /> Not Visited</p>
             <p><span className="mr-1 inline-block h-2.5 w-2.5 rounded bg-amber-400" /> Marked ({markedCount})</p>
           </div>
-          <button onClick={() => setConfirm(true)} className="mt-3 w-full rounded-xl bg-crimson-DEFAULT px-4 py-2.5 text-sm font-bold text-white">Submit Test</button>
+          <button onClick={() => setConfirm(true)} className="mt-3 w-full rounded-xl bg-crimson px-4 py-2.5 text-sm font-bold text-white">Submit Test</button>
         </aside>
       </main>
 

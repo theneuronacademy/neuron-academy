@@ -9,7 +9,7 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/session";
 import { requireApiRole } from "@/lib/server-auth";
-import { facultyBatchIds, resolveStudent, STUDENT_VISIBLE_STATUSES } from "@/lib/testAccess";
+import { facultyBatchIds, normalizeAccessFields, resolveStudent, STUDENT_VISIBLE_STATUSES, validateAccessFields } from "@/lib/testAccess";
 import { isNonEmpty, missingFields, parseDate } from "@/lib/validation";
 import { DEMO_TESTS } from "@/data/admin";
 
@@ -23,10 +23,11 @@ export async function GET(req: NextRequest) {
   if (!db) return ok({ items: DEMO_TESTS, source: "demo" });
   const viewer = getUserFromRequest(req);
   try {
-    // Public/anonymous: website-visible tests only (published + live).
+    // Public/anonymous: website-visible FREE/PAID tests only (published + live).
+    // PRIVATE tests are never listed publicly; deactivated tests are hidden.
     if (!viewer) {
       const rows = await db.test.findMany({
-        where: { status: { in: ["PUBLISHED", "LIVE"] } },
+        where: { isActive: true, status: { in: ["PUBLISHED", "LIVE"] }, accessType: { in: ["FREE", "PAID"] } },
         include: { batch: true, _count: { select: { questions: true } } },
         orderBy: { createdAt: "desc" },
         take: 100,
@@ -48,18 +49,64 @@ export async function GET(req: NextRequest) {
       return ok({ items: rows, source: "database" });
     }
     // STUDENT: own batch + visible statuses; drafts never appear.
+    // Phase 13 — PRIVATE tests without a grant are hidden; PAID tests
+    // without a grant are listed as locked metadata (no questions).
     const profile = await resolveStudent(db, viewer.id, viewer.email);
     if (!profile || profile.status !== "ACTIVE") return ok({ items: [], source: "database" });
+    // Phase 14 — SCHOLARSHIP students list every FREE test regardless of
+    // batch (plus open/own-batch tests for grants). Regular rule unchanged.
+    const isScholarship = profile.studentType === "SCHOLARSHIP";
+    const batchScope = profile.batchId ? { OR: [{ batchId: profile.batchId }, { batchId: null }] } : { batchId: null };
     const rows = await db.test.findMany({
       where: {
+        isActive: true,
         status: { in: [...STUDENT_VISIBLE_STATUSES] },
-        ...(profile.batchId ? { OR: [{ batchId: profile.batchId }, { batchId: null }] } : { batchId: null }),
+        ...(isScholarship ? { OR: [{ accessType: "FREE" }, { batchId: null }, ...(profile.batchId ? [{ batchId: profile.batchId }] : [])] } : batchScope),
       },
       include: { batch: true, _count: { select: { questions: true } } },
       orderBy: { createdAt: "desc" },
       take: 200,
     });
-    return ok({ items: rows, source: "database" });
+    const grants = await db.testAccess.findMany({
+      where: {
+        studentId: profile.id,
+        testId: { in: rows.map((t) => t.id) },
+        status: "ACTIVE",
+      },
+      select: { testId: true, expiresAt: true },
+    });
+    const now = Date.now();
+    const liveIds = new Set(
+      grants.filter((g) => !g.expiresAt || g.expiresAt.getTime() > now).map((g) => g.testId)
+    );
+    const items = rows
+      .filter((t) => t.accessType !== "PRIVATE" || liveIds.has(t.id))
+      .map((t) => {
+        const open = t.status === "PUBLISHED" || t.status === "LIVE";
+        const hasAccess = t.accessType === "FREE" ? open : liveIds.has(t.id);
+        const lockReason = hasAccess
+          ? null
+          : t.accessType === "FREE"
+            ? t.status === "SCHEDULED"
+              ? "This test has not started yet."
+              : t.status === "COMPLETED"
+                ? "This test has ended."
+                : "This test is not open."
+            : t.accessType === "PRIVATE"
+              ? "This is a private test."
+              : `This is a paid test (₹${t.price}). Contact the academy after payment to unlock access.`;
+        return {
+          ...t,
+          access: {
+            accessType: t.accessType,
+            price: t.price,
+            hasAccess,
+            locked: !hasAccess,
+            lockReason,
+          },
+        };
+      });
+    return ok({ items, source: "database" });
   } catch (err) {
     return serverError("tests:list", err);
   }
@@ -83,6 +130,13 @@ export async function POST(req: NextRequest) {
     const allowed = await facultyBatchIds(db, auth.user.id);
     if (!allowed.includes(String(body.batchId))) return fail("You can create tests only for your assigned batches.", 403);
   }
+  // Phase 13 — only ADMIN may set access type / price. Faculty tests are FREE.
+  if (auth.user.role === "FACULTY" && (body.accessType !== undefined || body.price !== undefined)) {
+    return fail("Only admins can set test access type or price.", 403);
+  }
+  const accessErr = auth.user.role === "ADMIN" ? validateAccessFields(body.accessType, body.price) : null;
+  if (accessErr) return fail(accessErr, 400);
+  const access = normalizeAccessFields(body.accessType, body.price);
   try {
     const created = await db.test.create({
       data: {
@@ -96,6 +150,9 @@ export async function POST(req: NextRequest) {
         startTime: parseDate(body.startTime),
         endTime: parseDate(body.endTime),
         status: STATUSES.includes(body.status as (typeof STATUSES)[number]) ? (body.status as (typeof STATUSES)[number]) : "DRAFT",
+        questionOrder: body.questionOrder === "RANDOM" ? "RANDOM" : "SERIAL",
+        optionOrder: body.optionOrder === "RANDOM" ? "RANDOM" : "SERIAL",
+        ...(auth.user.role === "ADMIN" ? { accessType: access.accessType, price: access.price } : {}),
       },
     });
     return ok({ item: created }, 201);

@@ -47,7 +47,7 @@ function PopupPreview({ p }: { p: Partial<AdminPopup> }) {
         </div>
         <p className="mt-3 text-[15px] font-extrabold text-navy-700">{p.title || "Popup title"}</p>
         <p className="mt-1 text-[13px] text-muted">{p.message || "Popup message appears here."}</p>
-        <span className="mt-3 block rounded-xl bg-crimson-DEFAULT px-4 py-2 text-center text-[13px] font-bold text-white">{p.buttonText || "Button"}</span>
+        <span className="mt-3 block rounded-xl bg-crimson px-4 py-2 text-center text-[13px] font-bold text-white">{p.buttonText || "Button"}</span>
         <p className="mt-2 text-[11px] text-muted">
           {p.frequency} • {p.startDate || "start"} → {p.endDate || "end"}
         </p>
@@ -164,7 +164,7 @@ export default function PopupsPage() {
                   onClick={() => {
                     if (window.confirm(`Delete popup "${p.title}"?`)) setRows((rows) => rows.filter((x) => x.id !== p.id));
                   }}
-                  className="inline-flex items-center gap-1 rounded-lg border border-crimson-100 px-2.5 py-1.5 text-[12px] font-bold text-crimson-DEFAULT hover:bg-crimson-50"
+                  className="inline-flex items-center gap-1 rounded-lg border border-crimson-100 px-2.5 py-1.5 text-[12px] font-bold text-crimson hover:bg-crimson-50"
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Delete
                 </button>

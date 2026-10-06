@@ -104,7 +104,7 @@ export function AdvertisementForm({
           onSubmit(v);
         }}
       >
-        {error ? <p className="rounded-xl border border-crimson-100 bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson-DEFAULT" role="alert">{error}</p> : null}
+        {error ? <p className="rounded-xl border border-crimson-100 bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">{error}</p> : null}
 
         <div><label className={labelCls} htmlFor="ad-title">Title *</label><input id="ad-title" className={inputCls} value={v.title} onChange={(e) => set("title", e.target.value)} placeholder="SSC CGL 2027" /></div>
         <div className="grid gap-4 sm:grid-cols-2">

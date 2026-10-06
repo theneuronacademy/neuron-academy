@@ -120,7 +120,7 @@ export default function WebsiteFacultyPage() {
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
-                  <button onClick={() => remove(r)} aria-label={`Delete ${r.name}`} className="rounded-lg border border-crimson-100 p-2 text-crimson-DEFAULT hover:bg-crimson-50">
+                  <button onClick={() => remove(r)} aria-label={`Delete ${r.name}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>

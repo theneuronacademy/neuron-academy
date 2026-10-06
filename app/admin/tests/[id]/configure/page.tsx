@@ -80,7 +80,7 @@ export default function ConfigureTestPage() {
     <AdminLayout title={`Configure — ${test.name}`} subtitle={`${pool.length} approved questions available in bank`}>
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="space-y-3 rounded-card border border-silver-200 bg-white p-5 shadow-card">
-          {error ? <p className="rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson-DEFAULT" role="alert">{error}</p> : null}
+          {error ? <p className="rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">{error}</p> : null}
           <div><label className={labelCls} htmlFor="cf-name">Test Name *</label><input id="cf-name" className={inputCls} value={name} onChange={(e) => setName(e.target.value)} /></div>
           <div><label className={labelCls} htmlFor="cf-desc">Description</label><textarea id="cf-desc" rows={2} className={inputCls} value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
           <div className="grid grid-cols-2 gap-3">

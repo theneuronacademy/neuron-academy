@@ -59,7 +59,7 @@ export default function AdminTestsPage() {
       </div>
 
       <div className="mt-4 grid gap-3 rounded-card bg-navy-800 p-5 text-white sm:grid-cols-2 lg:grid-cols-4">
-        <Link href="/admin/tests/new" className="rounded-xl bg-crimson-DEFAULT px-4 py-2.5 text-center text-sm font-bold hover:bg-crimson-bright">
+        <Link href="/admin/tests/new" className="rounded-xl bg-crimson px-4 py-2.5 text-center text-sm font-bold hover:bg-crimson-bright">
           <Plus className="mr-1 inline h-4 w-4" />Create Test
         </Link>
         <Link href="/admin/tests/from-pdf" className="rounded-xl bg-teal-500 px-4 py-2.5 text-center text-sm font-bold hover:bg-teal-400">
@@ -85,7 +85,7 @@ export default function AdminTestsPage() {
         <div className="mt-4 rounded-card border border-dashed border-silver-300 bg-white p-10 text-center">
           <p className="text-lg font-extrabold text-navy-700">No tests created yet.</p>
           <p className="mt-1 text-sm text-muted">Upload a PDF to create your first test.</p>
-          <Link href="/admin/tests/from-pdf" className="mt-4 inline-block rounded-xl bg-crimson-DEFAULT px-5 py-2.5 text-sm font-bold text-white">Create Test From PDF</Link>
+          <Link href="/admin/tests/from-pdf" className="mt-4 inline-block rounded-xl bg-crimson px-5 py-2.5 text-sm font-bold text-white">Create Test From PDF</Link>
         </div>
       ) : (
         <div className="mt-4 overflow-x-auto rounded-card border border-silver-200 bg-white shadow-card">
@@ -134,7 +134,7 @@ export default function AdminTestsPage() {
                           }
                         }}
                         aria-label={`Delete ${t.name}`}
-                        className="rounded-lg border border-crimson-100 p-2 text-crimson-DEFAULT hover:bg-crimson-50"
+                        className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

@@ -20,7 +20,7 @@ export function StatCard({
     accent === "teal"
       ? "bg-teal-50 text-teal-600"
       : accent === "crimson"
-        ? "bg-crimson-50 text-crimson-DEFAULT"
+        ? "bg-crimson-50 text-crimson"
         : "bg-navy-50 text-navy-700";
   return (
     <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card transition hover:shadow-card-hover">

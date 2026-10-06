@@ -16,9 +16,10 @@ export interface SessionUser {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function sanitizeUser<T extends Record<string, any>>(user: T): Omit<T, "passwordHash"> {
-  const { passwordHash: _removed, ...rest } = user;
-  void _removed;
+export function sanitizeUser<T extends Record<string, any>>(user: T): Omit<T, "passwordHash" | "dobHash"> {
+  const { passwordHash: _p, dobHash: _d, ...rest } = user;
+  void _p;
+  void _d;
   return rest;
 }
 

@@ -181,7 +181,7 @@ export default function BannersPage() {
                 <button onClick={() => move(b, 1)} aria-label="Move down" className="rounded-lg border border-silver-300 p-1.5 text-navy-700 hover:border-teal-500">
                   <ArrowDown className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => remove(b)} className="inline-flex items-center gap-1 rounded-lg border border-crimson-100 px-2.5 py-1.5 text-[12px] font-bold text-crimson-DEFAULT hover:bg-crimson-50">
+                <button onClick={() => remove(b)} className="inline-flex items-center gap-1 rounded-lg border border-crimson-100 px-2.5 py-1.5 text-[12px] font-bold text-crimson hover:bg-crimson-50">
                   <Trash2 className="h-3.5 w-3.5" /> Delete
                 </button>
               </div>

@@ -27,3 +27,10 @@ Thumbs.db
 
 # Vercel
 .vercel/
+
+# Local OCR training data (runtime downloads or WASM CDN provide this; never commit binaries).
+eng.traineddata
+*.traineddata
+
+# Local/generated uploads (keep the public/uploads directory itself, ignore its contents).
+public/uploads/*

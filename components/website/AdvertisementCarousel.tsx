@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { getCarouselAds } from "@/lib/mockStore";
+import { getLiveBanners } from "@/services/siteApi";
 import { AdvertisementBanner } from "@/components/website/AdvertisementBanner";
 import { cn } from "@/lib/utils";
 
@@ -13,8 +14,11 @@ export function AdvertisementCarousel() {
   const touchX = useRef<number | null>(null);
 
   const load = useCallback(() => {
-    setAds(getCarouselAds());
-    setIndex(0);
+    // Phase 11: database banners win; mockStore stays dev fallback.
+    void getLiveBanners().then((live) => {
+      setAds(live ?? getCarouselAds());
+      setIndex(0);
+    });
   }, []);
 
   useEffect(() => {

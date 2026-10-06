@@ -7,7 +7,7 @@ export const CONTACT = {
   whatsapp: "+91 97119 17317",
   whatsappHref: "https://wa.me/919711917317",
   email: "hello@neuronacademy.in",
-  address: "Neuron Academy, Shaheen Bagh, New Delhi — 110025 (demo address)",
+  address: "Neuron Academy, Shaheen Bagh, New Delhi — 110025",
   hours: "Mon–Sat • 8:00 AM – 8:00 PM",
   MAP_EMBED_URL: "",
 };

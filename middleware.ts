@@ -57,8 +57,14 @@ export async function middleware(req: NextRequest) {
   // Demo mode (no secret): page-level demo guards apply, never block.
   if (!secret || secret.length < 16) return NextResponse.next();
 
-  // Public login pages always pass.
-  if (pathname === "/admin/login" || pathname === "/faculty/login" || pathname === "/student/login") {
+  // Public login/register pages always pass.
+  if (
+    pathname === "/admin/login" ||
+    pathname === "/faculty/login" ||
+    pathname === "/faculty/register" ||
+    pathname === "/student/login" ||
+    pathname === "/student/register"
+  ) {
     return NextResponse.next();
   }
 

@@ -13,7 +13,7 @@ export function AdvertisementStatusBadge({ ad, today }: { ad: Advertisement; tod
     cls = "bg-navy-50 text-navy-700 border-silver-200";
   } else if (expired) {
     label = "Expired";
-    cls = "bg-crimson-50 text-crimson-DEFAULT border-crimson-100";
+    cls = "bg-crimson-50 text-crimson border-crimson-100";
   }
   return (
     <span className={cn("inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-bold", cls)}>

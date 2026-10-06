@@ -119,7 +119,7 @@ export default function QuestionBankPage() {
               const b = { ...blankQuestion(), chapter: dbTests.find((t) => t.id === newTestId)?.title ?? "Database", subject: "Database", sourceFile: "database" };
               setEditing(b);
             }}
-            className="rounded-xl bg-crimson-DEFAULT px-4 py-2 text-sm font-bold text-white hover:bg-crimson-bright"
+            className="rounded-xl bg-crimson px-4 py-2 text-sm font-bold text-white hover:bg-crimson-bright"
           >
             + New Question
           </button>
@@ -192,7 +192,7 @@ export default function QuestionBankPage() {
                 setChecked([]);
                 await refreshDb();
               }}
-              className="rounded-lg bg-crimson-DEFAULT px-3 py-1.5 text-[12px] font-bold text-white"
+              className="rounded-lg bg-crimson px-3 py-1.5 text-[12px] font-bold text-white"
             >
               Delete Selected
             </button>
@@ -292,7 +292,7 @@ export default function QuestionBankPage() {
             setEditing(b);
             setTick((t) => t + 1);
           }}
-          className="rounded-xl bg-crimson-DEFAULT px-4 py-2 text-sm font-bold text-white hover:bg-crimson-bright"
+          className="rounded-xl bg-crimson px-4 py-2 text-sm font-bold text-white hover:bg-crimson-bright"
         >
           + New Question
         </button>
@@ -317,7 +317,7 @@ export default function QuestionBankPage() {
                 setTick((t) => t + 1);
               }
             }}
-            className="rounded-lg bg-crimson-DEFAULT px-3 py-1.5 text-[12px] font-bold text-white"
+            className="rounded-lg bg-crimson px-3 py-1.5 text-[12px] font-bold text-white"
           >
             Delete Selected
           </button>
@@ -348,7 +348,7 @@ export default function QuestionBankPage() {
         <div className="mt-4 rounded-card border border-dashed border-silver-300 bg-white p-10 text-center">
           <p className="text-lg font-extrabold text-navy-700">No questions in the question bank.</p>
           <p className="mt-1 text-sm text-muted">Upload a PDF to create your first questions.</p>
-          <Link href="/admin/tests/from-pdf" className="mt-4 inline-block rounded-xl bg-crimson-DEFAULT px-5 py-2.5 text-sm font-bold text-white">Upload PDF</Link>
+          <Link href="/admin/tests/from-pdf" className="mt-4 inline-block rounded-xl bg-crimson px-5 py-2.5 text-sm font-bold text-white">Upload PDF</Link>
         </div>
       ) : (
         <div className="mt-4 grid gap-4">

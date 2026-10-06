@@ -4,6 +4,9 @@
 //   crashes and the website keeps working.
 // - Writes POST/PATCH/DELETE against /api/*; without a database they
 //   resolve locally (previous demo behaviour) instead of throwing.
+// Phase 10: in production builds (NODE_ENV=production) demo fallbacks are
+// disabled — lists resolve to [] and writes throw an honest error, so the
+// production UI never presents fake data as real. Dev keeps full fallback.
 // UI must only import from this file — never from /data/admin directly
 // (except types), so the backend swap touches one file.
 
@@ -61,7 +64,17 @@ function unwrapItems<T>(data: { items?: unknown } | unknown, fallback: T[]): T[]
   if (data && typeof data === "object" && Array.isArray((data as { items?: unknown }).items)) {
     return (data as { items: T[] }).items;
   }
+  // Production never shows fake records: honest empty list instead.
+  if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") return [];
   return fallback;
+}
+
+/** Demo-constructed write result (dev only). Production throws honestly. */
+function demoWrite<T>(value: T): T {
+  if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") {
+    throw new Error("Database unavailable — change not saved.");
+  }
+  return value;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,9 +119,24 @@ function popupFrequencyFor(f: AdminPopup["frequency"]): string {
   return "ONCE_PER_SESSION";
 }
 
-// ---- Dashboard (aggregates — demo until a stats endpoint lands) ----
+// ---- Dashboard ----
 export async function getDashboardStats() {
-  // TODO backend: GET /api/stats (aggregate endpoint, Phase 4)
+  // Phase 10: live aggregates when the database is reachable.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await callApi<any>("/api/dashboard/stats");
+  if (data && typeof data.totalStudents === "number") {
+    return {
+      totalStudents: data.totalStudents,
+      totalFaculty: data.totalFaculty ?? 0,
+      activeBatches: data.activeBatches ?? 0,
+      publishedTests: (data.publishedTests ?? 0) + (data.liveTests ?? 0),
+      pendingEnquiries: data.newEnquiries ?? 0,
+      todayAttendancePct: DEMO_STATS.todayAttendancePct, // attendance aggregation lands later
+    };
+  }
+  if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") {
+    return { totalStudents: 0, totalFaculty: 0, activeBatches: 0, publishedTests: 0, pendingEnquiries: 0, todayAttendancePct: 0 };
+  }
   return DEMO_STATS;
 }
 export async function getRecentActivity() {
@@ -116,8 +144,39 @@ export async function getRecentActivity() {
   return DEMO_ACTIVITY;
 }
 export async function getUpcomingTests(): Promise<AdminTest[]> {
-  // TODO backend: GET /api/tests?upcoming=true
-  return DEMO_UPCOMING_TESTS;
+  // Phase 10: live scheduled/published tests when the database is reachable.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await callApi<{ items: any[] }>("/api/tests");
+  if (data && Array.isArray(data.items)) {
+    const typeLabel: Record<string, AdminTest["type"]> = { LIVE: "Live Test", OFFLINE: "Offline Test", PRACTICE: "Practice Test" };
+    const statusLabel: Record<string, AdminTest["status"]> = {
+      DRAFT: "Draft",
+      SCHEDULED: "Scheduled",
+      PUBLISHED: "Published",
+      LIVE: "Live",
+      COMPLETED: "Completed",
+    };
+    const mapped: AdminTest[] = data.items
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .filter((t: any) => t.status === "SCHEDULED" || t.status === "PUBLISHED" || t.status === "LIVE")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((t: any) => ({
+        id: String(t.id),
+        name: String(t.title ?? "Untitled test"),
+        batch: t.batch?.name ?? "—",
+        type: typeLabel[String(t.type)] ?? "Practice Test",
+        date: t.startTime ? new Date(t.startTime).toISOString().slice(0, 10) : "",
+        time: t.startTime
+          ? new Date(t.startTime).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })
+          : "—",
+        durationMin: typeof t.duration === "number" ? t.duration : 0,
+        questions: typeof t.totalQuestions === "number" ? t.totalQuestions : (t._count?.questions ?? 0),
+        status: statusLabel[String(t.status)] ?? "Draft",
+      }))
+      .slice(0, 5);
+    return mapped;
+  }
+  return unwrapItems<AdminTest>(data, DEMO_UPCOMING_TESTS);
 }
 export async function getAttendanceOverview() {
   // TODO backend: GET /api/attendance/overview (aggregate, Phase 4)
@@ -138,7 +197,7 @@ export async function createStudent(input: Omit<AdminStudent, "id">): Promise<Ad
     method: "POST",
     body: JSON.stringify({ name: input.name, email: input.email, phone: input.phone, studentId: input.studentId }),
   });
-  return data?.item ?? { ...input, id: `s-${Date.now()}` };
+  return data?.item ?? demoWrite({ ...input, id: `s-${Date.now()}` });
 }
 export async function updateStudent(id: string, patch: Partial<AdminStudent>): Promise<AdminStudent> {
   const data = await callApi<{ item: AdminStudent }>(`/api/students/${id}`, {
@@ -146,7 +205,7 @@ export async function updateStudent(id: string, patch: Partial<AdminStudent>): P
     body: JSON.stringify({ ...patch, status: patch.status === "active" ? "ACTIVE" : patch.status === "inactive" ? "INACTIVE" : undefined }),
   });
   const found = DEMO_STUDENTS.find((s) => s.id === id) ?? DEMO_STUDENTS[0];
-  return data?.item ?? { ...found, ...patch, id };
+  return data?.item ?? demoWrite({ ...found, ...patch, id });
 }
 export async function deleteStudent(id: string): Promise<void> {
   await callApi(`/api/students/${id}`, { method: "DELETE" });
@@ -162,7 +221,7 @@ export async function createFaculty(input: Omit<AdminFaculty, "id">): Promise<Ad
     method: "POST",
     body: JSON.stringify({ name: input.name, email: input.email, phone: input.phone }),
   });
-  return data?.item ?? { ...input, id: `f-${Date.now()}` };
+  return data?.item ?? demoWrite({ ...input, id: `f-${Date.now()}` });
 }
 export async function updateFaculty(id: string, patch: Partial<AdminFaculty>): Promise<AdminFaculty> {
   const data = await callApi<{ item: AdminFaculty }>(`/api/faculty/${id}`, {
@@ -170,7 +229,7 @@ export async function updateFaculty(id: string, patch: Partial<AdminFaculty>): P
     body: JSON.stringify({ ...patch, status: patch.status === "active" ? "ACTIVE" : patch.status === "inactive" ? "INACTIVE" : undefined }),
   });
   const found = DEMO_FACULTY.find((f) => f.id === id) ?? DEMO_FACULTY[0];
-  return data?.item ?? { ...found, ...patch, id };
+  return data?.item ?? demoWrite({ ...found, ...patch, id });
 }
 
 // ---- Batches ----
@@ -213,7 +272,7 @@ export async function createBanner(input: Omit<AdminBanner, "id">): Promise<Admi
     }),
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data?.item ? toAdminBanner(data.item as any) : { ...input, id: `bn-${Date.now()}` };
+  return data?.item ? toAdminBanner(data.item as any) : demoWrite({ ...input, id: `bn-${Date.now()}` });
 }
 export async function updateBanner(id: string, patch: Partial<AdminBanner>): Promise<AdminBanner> {
   const data = await callApi<{ item: AdminBanner }>(`/api/banners/${id}`, {
@@ -227,7 +286,7 @@ export async function updateBanner(id: string, patch: Partial<AdminBanner>): Pro
   });
   const found = DEMO_BANNERS.find((b) => b.id === id) ?? DEMO_BANNERS[0];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data?.item ? toAdminBanner(data.item as any) : { ...found, ...patch, id };
+  return data?.item ? toAdminBanner(data.item as any) : demoWrite({ ...found, ...patch, id });
 }
 
 // ---- Popups ----
@@ -254,7 +313,7 @@ export async function createPopup(input: Omit<AdminPopup, "id">): Promise<AdminP
     }),
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data?.item ? toAdminPopup(data.item as any) : { ...input, id: `pp-${Date.now()}` };
+  return data?.item ? toAdminPopup(data.item as any) : demoWrite({ ...input, id: `pp-${Date.now()}` });
 }
 export async function updatePopup(id: string, patch: Partial<AdminPopup>): Promise<AdminPopup> {
   const data = await callApi<{ item: AdminPopup }>(`/api/popups/${id}`, {
@@ -268,7 +327,7 @@ export async function updatePopup(id: string, patch: Partial<AdminPopup>): Promi
   });
   const found = DEMO_POPUPS.find((p) => p.id === id) ?? DEMO_POPUPS[0];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data?.item ? toAdminPopup(data.item as any) : { ...found, ...patch, id };
+  return data?.item ? toAdminPopup(data.item as any) : demoWrite({ ...found, ...patch, id });
 }
 
 // ---- Announcements ----
@@ -301,5 +360,5 @@ export async function sendNotification(input: { title: string; message: string; 
     body: JSON.stringify({ title: input.title, message: input.message, audience, sendNow: true }),
   });
   void data;
-  return { ...input, id: `n-${Date.now()}`, date: new Date().toISOString().slice(0, 10), status: "Sent" };
+  return demoWrite({ ...input, id: `n-${Date.now()}`, date: new Date().toISOString().slice(0, 10), status: "Sent" });
 }

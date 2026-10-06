@@ -66,8 +66,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(typeof body.bio === "string" ? { bio: body.bio } : {}),
         ...(body.status === "ACTIVE" || body.status === "INACTIVE" ? { status: body.status } : {}),
       },
-      include: { batches: true },
+      include: { batches: true, user: { select: { id: true } } },
     });
+    // Phase 10: ADMIN approval toggle — activates/deactivates the login account.
+    // Approving also flips the faculty profile ACTIVE.
+    if (typeof body.isActive === "boolean" && row.user) {
+      await db.user.update({ where: { id: row.user.id }, data: { isActive: body.isActive } });
+      if (body.isActive) {
+        await db.faculty.update({ where: { id }, data: { status: "ACTIVE" } });
+      }
+    }
     return ok({ item: toAdmin(row) });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";

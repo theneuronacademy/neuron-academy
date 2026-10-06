@@ -8,7 +8,7 @@ const TONES: Record<StatusTone, string> = {
   green: "bg-emerald-50 text-emerald-700 border-emerald-200",
   blue: "bg-teal-50 text-teal-700 border-teal-200",
   amber: "bg-amber-50 text-amber-700 border-amber-200",
-  red: "bg-crimson-50 text-crimson-DEFAULT border-crimson-100",
+  red: "bg-crimson-50 text-crimson border-crimson-100",
   gray: "bg-silver-50 text-muted border-silver-200",
 };
 
