@@ -1,223 +1,55 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { QuestionCard } from "@/components/admin/QuestionCard";
 import { QuestionEditor } from "@/components/admin/QuestionEditor";
 import { useAdminGuard } from "@/components/admin/useAdminGuard";
-import { Button } from "@/components/ui/primitives";
-import { getQuestionById, getQuestions, updateQuestion, deleteQuestion, updateTest } from "@/lib/storage";
-import { approveQuestion, blankQuestion, bulkApprove, bulkDelete, markReview } from "@/services/questionService";
-import { getTestById } from "@/services/testService";
-import { isDbLive } from "@/services/dbLive";
 import { bankPatchToApi, dbQuestionToBank } from "@/services/dbQuestionMap";
+import { blankQuestion } from "@/services/questionService";
 import type { BankQuestion } from "@/lib/testTypes";
-import type { QuestionFilter } from "@/services/questionService";
-import { filterQuestions } from "@/services/questionService";
-
-const FILTERS: Array<{ v: QuestionFilter; label: string }> = [
-  { v: "all", label: "All" },
-  { v: "approved", label: "Approved" },
-  { v: "review", label: "Needs Review" },
-  { v: "missing-answer", label: "Missing Answer" },
-  { v: "high", label: "High Confidence" },
-  { v: "low", label: "Low Confidence" },
-];
 
 export default function TestQuestionsPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
   const ready = useAdminGuard();
-  const [tick, setTick] = useState(0);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<QuestionFilter>("all");
-  const [editing, setEditing] = useState<BankQuestion | null>(null);
-  const [checked, setChecked] = useState<string[]>([]);
-  // Phase 6: when this test exists in PostgreSQL, manage its questions via API.
+  // C4 canonicalization — per-test questions are API-managed ONLY. The
+  // legacy localStorage branch is removed; a test unknown to the API is
+  // honestly reported instead of edited locally.
   const [dbTitle, setDbTitle] = useState<string | null>(null);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     if (!ready) return;
     (async () => {
-      if (!(await isDbLive())) return;
       try {
         const res = await fetch(`/api/tests/${id}`, { cache: "no-store" });
         const json = await res.json().catch(() => null);
-        if (json?.success === true && json.data?.item?.id) setDbTitle(String(json.data.item.title ?? "Test"));
+        if (json?.success === true && json.data?.item?.id) {
+          setDbTitle(String(json.data.item.title ?? "Test"));
+        }
       } catch {
-        /* stay local */
+        /* honestly unavailable below */
+      } finally {
+        setChecked(true);
       }
     })();
   }, [ready, id]);
 
-  useEffect(() => {
-    const onUpd = () => setTick((t) => t + 1);
-    window.addEventListener("neuron-test-updated", onUpd);
-    return () => window.removeEventListener("neuron-test-updated", onUpd);
-  }, []);
-
-  const test = getTestById(id);
-  const all = useMemo(() => {
-    void tick;
-    if (!test) return [] as BankQuestion[];
-    return test.questionIds.map((qid) => getQuestionById(qid)).filter((q): q is BankQuestion => !!q);
-  }, [test?.questionIds.join(","), test?.updatedAt, tick]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const visible = filterQuestions(all, filter, search);
-  const high = all.filter((q) => !q.needsReview).length;
-
-  if (!ready) return <div className="flex min-h-screen items-center justify-center text-sm font-bold text-muted">Loading…</div>;
-  if (dbTitle) return <DbQuestionsManager testId={id} testTitle={dbTitle} />;
-  if (!test) {
+  if (!ready || !checked)
+    return <div className="flex min-h-screen items-center justify-center text-sm font-bold text-muted">Loading…</div>;
+  if (!dbTitle) {
     return (
       <AdminLayout title="Questions">
-        <p className="rounded-card bg-white p-6 text-sm font-bold text-muted">Test not found. <Link href="/admin/tests" className="text-teal-600 underline">Back to tests</Link></p>
+        <p className="rounded-card bg-white p-6 text-sm font-bold text-muted">
+          Test not found. <Link href="/admin/tests" className="text-teal-600 underline">Back to tests</Link>
+        </p>
       </AdminLayout>
     );
   }
-
-  const bankOthers = getQuestions().filter((q) => !test.questionIds.includes(q.id) && q.status === "approved").slice(0, 5);
-
-  return (
-    <AdminLayout title={`Questions — ${test.name}`} subtitle={`${all.length} questions • ${high} high confidence • ${all.length - high} need review`}>
-      <div className="flex flex-wrap items-center gap-2">
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search questions…" aria-label="Search questions" className="min-w-[200px] flex-1 rounded-xl border border-silver-300 bg-white px-4 py-2 text-sm focus:border-teal-500 focus:outline-none sm:max-w-xs" />
-        <div className="flex flex-wrap gap-1.5">
-          {FILTERS.map((f) => (
-            <button key={f.v} onClick={() => setFilter(f.v)} className={`rounded-full px-3 py-1.5 text-[12px] font-bold ${filter === f.v ? "bg-navy-700 text-white" : "border border-silver-300 bg-white text-navy-700"}`}>
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {checked.length > 0 ? (
-        <div className="mt-3 flex flex-wrap gap-2 rounded-card border border-teal-100 bg-teal-50 p-3">
-          <span className="text-sm font-bold text-teal-700">{checked.length} selected</span>
-          <button onClick={() => { bulkApprove(checked); setChecked([]); setTick((t) => t + 1); }} className="rounded-lg bg-teal-600 px-3 py-1.5 text-[12px] font-bold text-white">Approve Selected</button>
-          <button
-            onClick={() => {
-              if (window.confirm(`Delete ${checked.length} questions?`)) {
-                const remaining = test.questionIds.filter((qid) => !checked.includes(qid));
-                updateTest(id, { questionIds: remaining });
-                bulkDelete(checked);
-                setChecked([]);
-                setTick((t) => t + 1);
-              }
-            }}
-            className="rounded-lg bg-crimson px-3 py-1.5 text-[12px] font-bold text-white"
-          >
-            Delete Selected
-          </button>
-          <button onClick={() => setChecked([])} className="rounded-lg border border-silver-300 bg-white px-3 py-1.5 text-[12px] font-bold">Clear</button>
-        </div>
-      ) : null}
-
-      {visible.length === 0 ? (
-        <p className="mt-4 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">
-          No questions match. Adjust filters or add approved questions from the bank below.
-        </p>
-      ) : (
-        <div className="mt-4 grid gap-4">
-          {visible.map((q, i) => (
-            <QuestionCard
-              key={q.id}
-              q={q}
-              index={i}
-              selectable
-              selected={checked.includes(q.id)}
-              onToggleSelect={() => setChecked((c) => (c.includes(q.id) ? c.filter((x) => x !== q.id) : [...c, q.id]))}
-              onEdit={() => setEditing(q)}
-              onMoveUp={(() => {
-                const pos = test.questionIds.indexOf(q.id);
-                if (pos <= 0) return undefined;
-                return () => {
-                  const ids = [...test.questionIds];
-                  [ids[pos - 1], ids[pos]] = [ids[pos], ids[pos - 1]];
-                  updateTest(id, { questionIds: ids });
-                  setTick((t) => t + 1);
-                };
-              })()}
-              onMoveDown={(() => {
-                const pos = test.questionIds.indexOf(q.id);
-                if (pos < 0 || pos >= test.questionIds.length - 1) return undefined;
-                return () => {
-                  const ids = [...test.questionIds];
-                  [ids[pos], ids[pos + 1]] = [ids[pos + 1], ids[pos]];
-                  updateTest(id, { questionIds: ids });
-                  setTick((t) => t + 1);
-                };
-              })()}
-              onDelete={() => {
-                if (window.confirm("Delete this question?")) {
-                  updateTest(id, { questionIds: test.questionIds.filter((qid) => qid !== q.id) });
-                  deleteQuestion(q.id);
-                  setTick((t) => t + 1);
-                }
-              }}
-              onApprove={() => {
-                approveQuestion(q.id);
-                setTick((t) => t + 1);
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      {bankOthers.length > 0 ? (
-        <div className="mt-6 rounded-card border border-silver-200 bg-white p-4 shadow-card">
-          <p className="text-sm font-extrabold text-navy-700">Add from Question Bank (approved)</p>
-          <div className="mt-2 space-y-2">
-            {bankOthers.map((q) => (
-              <div key={q.id} className="flex items-center justify-between gap-3 rounded-xl bg-silver-50 px-3.5 py-2.5 text-[13px]">
-                <span className="font-semibold text-ink">{q.question.slice(0, 80)}{q.question.length > 80 ? "…" : ""}</span>
-                <button
-                  onClick={() => {
-                    updateTest(id, { questionIds: [...test.questionIds, q.id] });
-                    setTick((t) => t + 1);
-                  }}
-                  className="shrink-0 rounded-lg bg-navy-700 px-3 py-1.5 text-[12px] font-bold text-white"
-                >
-                  Add
-                </button>
-              </div>
-            ))}
-          </div>
-          <Link href="/admin/question-bank" className="mt-2 inline-block text-[13px] font-bold text-teal-600 hover:underline">Open full Question Bank →</Link>
-        </div>
-      ) : null}
-
-      <div className="sticky bottom-4 mt-6 flex flex-wrap gap-2 rounded-card border border-silver-200 bg-white/95 p-3 shadow-card backdrop-blur">
-        <Button
-          variant="outline"
-          onClick={() => {
-            // Toggle review flag demo: mark all unapproved as review
-            all.filter((q) => q.status !== "approved").forEach((q) => markReview(q.id));
-            setTick((t) => t + 1);
-          }}
-        >
-          Mark All For Review
-        </Button>
-        <Link href={`/admin/tests/${id}/configure`} className="btn-metallic-sheen flex-1 rounded-xl bg-navy-700 px-5 py-2.5 text-center text-sm font-bold text-white hover:bg-navy-800">
-          Continue → Configure Test
-        </Link>
-      </div>
-
-      {editing ? (
-        <QuestionEditor
-          initial={editing}
-          onCancel={() => setEditing(null)}
-          onSave={(patch) => {
-            updateQuestion(editing.id, patch);
-            setEditing(null);
-            setTick((t) => t + 1);
-          }}
-        />
-      ) : null}
-    </AdminLayout>
-  );
+  return <DbQuestionsManager testId={id} testTitle={dbTitle} />;
 }
 
 // Phase 6 — API-backed per-test question manager (used only when this test

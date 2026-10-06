@@ -281,6 +281,40 @@ check(
   cataloguePage.includes("/api/tests") && cataloguePage.includes("/api/results")
 );
 
+// ---------------------- C4: API-authoritative admin question management ---
+const perTestQuestions = read("app/admin/tests/[id]/questions/page.tsx");
+check(
+  "per-test questions have no local CRUD branch",
+  !perTestQuestions.includes("updateQuestion(") &&
+    !perTestQuestions.includes("deleteQuestion(") &&
+    !perTestQuestions.includes("bulkApprove(") &&
+    !perTestQuestions.includes("bulkDelete(") &&
+    !perTestQuestions.includes("getTestById(") &&
+    !perTestQuestions.includes("filterQuestions(")
+);
+check(
+  "per-test questions use DbQuestionsManager + question API",
+  perTestQuestions.includes("DbQuestionsManager") && perTestQuestions.includes("/api/questions")
+);
+const bankPage = read("app/admin/question-bank/page.tsx");
+check(
+  "question bank has no local CRUD branch",
+  !bankPage.includes("getQuestions(") &&
+    !bankPage.includes("saveQuestion(") &&
+    !bankPage.includes("updateQuestion(") &&
+    !bankPage.includes("deleteQuestion(") &&
+    !bankPage.includes("bulkApprove(") &&
+    !bankPage.includes("bulkDelete(") &&
+    !bankPage.includes("getTestById(") &&
+    !bankPage.includes("filterQuestions(")
+);
+check("question bank uses question API", bankPage.includes("/api/questions"));
+const qmap = read("services/dbQuestionMap.ts");
+check(
+  "question mapper preserves E option + subject + confidence",
+  qmap.includes('"E"') && qmap.includes("optionE") && qmap.includes("r.subject") && qmap.includes("r.confidence")
+);
+
 // ------------------------------------------------------------------ summary ---
 if (savedSecret === undefined) delete process.env.SESSION_SECRET;
 else process.env.SESSION_SECRET = savedSecret;
