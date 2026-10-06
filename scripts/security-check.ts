@@ -270,6 +270,17 @@ check("student result never evaluates locally", !resultPage.includes("evaluateTe
 check("student result has no localStorage authority", !resultPage.includes("localStorage") && !resultPage.includes("draftKey("));
 check("student review stays server-backed", resultPage.includes("/review") && resultPage.includes("/api/results?testId="));
 
+// ----------------------------------- C3: server-driven student catalogue ---
+const cataloguePage = read("app/student/tests/page.tsx");
+check("student catalogue never reads local tests", !cataloguePage.includes("getTests("));
+check("student catalogue never reads local results", !cataloguePage.includes("getResults("));
+check("student catalogue never derives status locally", !cataloguePage.includes("deriveStatus("));
+check("student catalogue never filters visibility locally", !cataloguePage.includes("visibleToStudents("));
+check(
+  "student catalogue is server-backed",
+  cataloguePage.includes("/api/tests") && cataloguePage.includes("/api/results")
+);
+
 // ------------------------------------------------------------------ summary ---
 if (savedSecret === undefined) delete process.env.SESSION_SECRET;
 else process.env.SESSION_SECRET = savedSecret;
