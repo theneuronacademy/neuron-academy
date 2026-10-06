@@ -251,6 +251,18 @@ check(
 );
 check("middleware has no unconditional fail-open", !mw.includes("if (!secret || secret.length < 16) return NextResponse.next()"));
 
+// ------------------------------------------- C1: server-only student attempt ---
+const attemptPage = read("app/student/tests/[id]/page.tsx");
+check("student attempt never loads BankQuestion rows", !attemptPage.includes("getQuestionById("));
+check("student attempt never touches answer keys", !attemptPage.includes("correctAnswer"));
+check("student attempt never evaluates locally", !attemptPage.includes("evaluateTest("));
+check("student attempt has no localStorage draft state", !attemptPage.includes("draftKey("));
+check("student attempt never uses local eligibility", !attemptPage.includes("getResultFor("));
+check(
+  "student attempt delegates to DbAttempt",
+  attemptPage.includes("DbAttempt") && attemptPage.includes("<DbAttempt testId={id} />")
+);
+
 // ------------------------------------------------------------------ summary ---
 if (savedSecret === undefined) delete process.env.SESSION_SECRET;
 else process.env.SESSION_SECRET = savedSecret;
