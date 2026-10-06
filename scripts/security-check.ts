@@ -315,6 +315,52 @@ check(
   qmap.includes('"E"') && qmap.includes("optionE") && qmap.includes("r.subject") && qmap.includes("r.confidence")
 );
 
+// ------------------------- C5: API-authoritative admin test CRUD + results ---
+const adminTests = read("app/admin/tests/page.tsx");
+check(
+  "admin test list has no local CRUD",
+  !adminTests.includes("getTests(") &&
+    !adminTests.includes("deleteTest(") &&
+    !adminTests.includes("duplicateTest(") &&
+    !adminTests.includes("deriveStatus(")
+);
+check(
+  "admin test list duplicates/deletes through the API",
+  adminTests.includes("/api/tests") && adminTests.includes('method: "DELETE"') && adminTests.includes('method: "POST"')
+);
+const editPage = read("app/admin/tests/[id]/edit/page.tsx");
+check(
+  "admin edit saves through PATCH, no local writes",
+  !editPage.includes("updateTest(") && !editPage.includes("getTestById(") && editPage.includes('method: "PATCH"')
+);
+const configPage = read("app/admin/tests/[id]/configure/page.tsx");
+check(
+  "admin configure saves through PATCH, no local pool",
+  !configPage.includes("updateTest(") &&
+    !configPage.includes("getTestById(") &&
+    !configPage.includes("selectQuestions(") &&
+    configPage.includes('method: "PATCH"')
+);
+const previewPage = read("app/admin/tests/[id]/preview/page.tsx");
+check(
+  "admin preview publishes through PATCH, no local writes",
+  !previewPage.includes("publishTest(") &&
+    !previewPage.includes("updateTest(") &&
+    !previewPage.includes("getTestById(") &&
+    !previewPage.includes("getQuestionById(") &&
+    previewPage.includes('method: "PATCH"')
+);
+check("admin preview supports unpublish via API", previewPage.includes("Unpublish"));
+const adminResults = read("app/admin/results/page.tsx");
+check(
+  "admin results have no local result authority",
+  !adminResults.includes("saveResult(") && !adminResults.includes("getResults(") && !adminResults.includes("getTests(")
+);
+check(
+  "admin results read/write through the results API",
+  adminResults.includes("/api/results") && adminResults.includes('method: "POST"')
+);
+
 // ------------------------------------------------------------------ summary ---
 if (savedSecret === undefined) delete process.env.SESSION_SECRET;
 else process.env.SESSION_SECRET = savedSecret;
