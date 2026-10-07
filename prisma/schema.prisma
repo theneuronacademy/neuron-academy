@@ -582,6 +582,8 @@ model Notification {
   targetStudent Student? @relation("NotificationStudent", fields: [targetStudentId], references: [id], onDelete: SetNull)
   targetFaculty Faculty? @relation("NotificationFaculty", fields: [targetFacultyId], references: [id], onDelete: SetNull)
   targetUser    User?    @relation("NotificationUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  // Phase 16 — per-user read receipts (broadcast-safe).
+  reads         NotificationRead[]
 
   @@index([targetStudentId])
   @@index([targetUserId])
@@ -590,6 +592,26 @@ model Notification {
   @@index([channel])
   @@index([audience])
   @@index([createdAt])
+}
+
+// Phase 16 — per-user read receipts for broadcast notifications.
+// Notification.isRead is a single shared column: flipping it for an
+// ALL_STUDENTS/BATCH broadcast would clear unread state for every other
+// recipient. Individually-targeted rows (targetStudentId/targetUserId)
+// keep using the shared flag (single recipient — safe); broadcasts use
+// one receipt row per reader. Never trusted from the client: rows are
+// created only from the session identity in PATCH /api/notifications/mine.
+model NotificationRead {
+  id             String   @id @default(cuid())
+  notificationId String
+  userId         String
+  readAt         DateTime @default(now())
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@index([userId])
+  @@index([notificationId])
 }
 
 // Phase 13 — mobile OTP verification requests. The plaintext OTP is NEVER

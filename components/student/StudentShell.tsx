@@ -89,8 +89,12 @@ export function StudentShell({ title, subtitle, children }: { title: string; sub
             <Link href="/" className="hidden rounded-xl px-3 py-2 text-sm font-bold text-muted hover:text-navy-700 sm:block">Website</Link>
             <button
               onClick={() => {
-                studentLogout();
-                router.push("/student/login");
+                // Phase 16 — clear the server session cookie first so the
+                // HttpOnly neuron_session does not survive a client logout.
+                void fetch("/api/auth/logout", { method: "POST" }).finally(() => {
+                  studentLogout();
+                  router.push("/student/login");
+                });
               }}
               className="inline-flex items-center gap-1.5 rounded-xl border border-silver-300 px-3.5 py-2 text-sm font-bold text-navy-700 hover:border-crimson hover:text-crimson"
             >

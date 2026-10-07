@@ -40,7 +40,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         order: i + 1,
         questionId: q.id,
         questionText: q.questionText,
-        options: [q.optionA, q.optionB, q.optionC, q.optionD],
+        options: [q.optionA, q.optionB, q.optionC, q.optionD, q.optionE],
         yourAnswer: your,
         correctAnswer: q.correctAnswer,
         marksAwarded: Math.max(0, Math.round(awarded * 100) / 100),

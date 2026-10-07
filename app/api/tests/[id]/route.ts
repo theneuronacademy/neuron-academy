@@ -76,10 +76,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   const db = getDb();
   if (!db) return dbNotConfigured("Reading a test");
+  // Phase 16 — authenticate before touching the database so anonymous
+  // callers always get a uniform 401 (no id-existence oracle via 404/401).
+  const viewer = getUserFromRequest(req);
+  if (!viewer) return fail("Not authenticated.", 401);
   try {
     const row = await db.test.findUnique({ where: { id }, include: { questions: { orderBy: { order: "asc" } }, batch: true } });
     if (!row) return fail("Test not found.", 404);
-    const viewer = getUserFromRequest(req);
     if (viewer?.role === "STUDENT") {
       if (!STUDENT_VISIBLE_STATUSES.includes(row.status as (typeof STUDENT_VISIBLE_STATUSES)[number])) {
         return fail("Test not found.", 404);
@@ -112,9 +115,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return ok({ item: { ...meta, questions: safeQuestions } });
     }
     // P0: full rows include question data + answer keys — staff only.
-    // Anonymous callers are unauthenticated (401); any other non-student
-    // role that reaches here is forbidden (403). STUDENT is handled above.
-    if (!viewer) return fail("Not authenticated.", 401);
+    // Anonymous callers are rejected above (401) before any DB lookup.
+    // STUDENT is handled above; any other non-staff role is forbidden (403).
     if (viewer.role !== "ADMIN" && viewer.role !== "FACULTY") return fail("Forbidden.", 403);
     return ok({ item: row });
   } catch (err) {

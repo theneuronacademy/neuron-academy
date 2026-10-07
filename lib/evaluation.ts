@@ -4,11 +4,11 @@
 // Pure functions — no DB, no localStorage — safe to unit test.
 // Client NEVER sends score/percentage; only answers are accepted.
 
-export type AnswerLetter = "A" | "B" | "C" | "D";
+export type AnswerLetter = "A" | "B" | "C" | "D" | "E";
 
 export interface EvaluableQuestion {
   id: string;
-  correctAnswer: string | null; // "A"-"D" letter, null = needs manual review
+  correctAnswer: string | null; // "A"-"E" letter, null = needs manual review
   marks: number;
   negativeMarks: number;
 }
@@ -28,17 +28,17 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
-/** Normalize client answers: accept "A"-"D", index 0-3, null/undefined → null. */
+/** Normalize client answers: accept "A"-"E", index 0-4, null/undefined → null. */
 export function normalizeAnswer(v: unknown): AnswerLetter | null {
   if (v === null || v === undefined || v === "") return null;
-  if (typeof v === "number" && Number.isInteger(v) && v >= 0 && v <= 3) {
-    return (["A", "B", "C", "D"] as const)[v];
+  if (typeof v === "number" && Number.isInteger(v) && v >= 0 && v <= 4) {
+    return (["A", "B", "C", "D", "E"] as const)[v];
   }
   if (typeof v === "string") {
     const t = v.trim().toUpperCase();
-    if (t === "A" || t === "B" || t === "C" || t === "D") return t;
-    if (t === "0" || t === "1" || t === "2" || t === "3") {
-      return (["A", "B", "C", "D"] as const)[Number(t)];
+    if (t === "A" || t === "B" || t === "C" || t === "D" || t === "E") return t;
+    if (t === "0" || t === "1" || t === "2" || t === "3" || t === "4") {
+      return (["A", "B", "C", "D", "E"] as const)[Number(t)];
     }
   }
   return null;

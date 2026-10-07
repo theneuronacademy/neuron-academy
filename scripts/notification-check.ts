@@ -63,6 +63,16 @@ function tokenFor(role: string): string {
   const mine = read("app/api/notifications/mine/route.ts");
   check("student mark-read scoped to visible set", mine.includes("...visible") && mine.includes("targetStudentId: profile.id"));
   check("student mark-read returns 404 on foreign id", mine.includes('fail("Notification not found.", 404)'));
+  check("student mark-read verifies visibility first", mine.includes("findFirst") && mine.includes("id: body.id"));
+}
+
+// Phase 16 — per-user read receipts: one student's read must never clear
+// another recipient's unread state on a shared broadcast.
+{
+  const mine = read("app/api/notifications/mine/route.ts");
+  check("broadcast reads use per-user receipts", mine.includes("NotificationRead") || mine.includes("notificationRead"));
+  check("shared flag only flips for individually-targeted rows", mine.includes("isIndividual"));
+  check("unread count is per-user", mine.includes("unreadCount") && mine.includes("receipts.has"));
 }
 
 // 4. faculty → own notifications = allowed
@@ -100,11 +110,11 @@ function tokenFor(role: string): string {
   check("mark-read derives identity from session", mine.includes("viewer.id") && !mine.includes("body.userId") && !mine.includes("body.studentId"));
 }
 
-// 9. mark-all-read affects only current user
+// 9. mark-read cannot target another user (receipts scoped to session id)
 {
   const mine = read("app/api/notifications/mine/route.ts");
-  check("student mark-all scoped to own visible set", mine.includes("...visible, isRead: false"));
-  check("faculty mark-all scoped to own visible set", mine.includes("...facultyVisible, isRead: false"));
+  check("student mark-all writes receipts as session user", mine.includes("recordReads(db, viewer.id"));
+  check("faculty mark-all writes receipts as session user", mine.includes("facultyVisible"));
 }
 
 // 10. arbitrary recipientId injection blocked

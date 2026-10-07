@@ -299,6 +299,7 @@ export type NotificationWhereInput = {
   targetStudent?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
   targetFaculty?: Prisma.XOR<Prisma.FacultyNullableScalarRelationFilter, Prisma.FacultyWhereInput> | null
   targetUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  reads?: Prisma.NotificationReadListRelationFilter
 }
 
 export type NotificationOrderByWithRelationInput = {
@@ -326,6 +327,7 @@ export type NotificationOrderByWithRelationInput = {
   targetStudent?: Prisma.StudentOrderByWithRelationInput
   targetFaculty?: Prisma.FacultyOrderByWithRelationInput
   targetUser?: Prisma.UserOrderByWithRelationInput
+  reads?: Prisma.NotificationReadOrderByRelationAggregateInput
 }
 
 export type NotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -356,6 +358,7 @@ export type NotificationWhereUniqueInput = Prisma.AtLeast<{
   targetStudent?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
   targetFaculty?: Prisma.XOR<Prisma.FacultyNullableScalarRelationFilter, Prisma.FacultyWhereInput> | null
   targetUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  reads?: Prisma.NotificationReadListRelationFilter
 }, "id">
 
 export type NotificationOrderByWithAggregationInput = {
@@ -428,6 +431,7 @@ export type NotificationCreateInput = {
   targetStudent?: Prisma.StudentCreateNestedOneWithoutTargetedNotificationsInput
   targetFaculty?: Prisma.FacultyCreateNestedOneWithoutTargetedNotificationsInput
   targetUser?: Prisma.UserCreateNestedOneWithoutTargetedUserNotificationsInput
+  reads?: Prisma.NotificationReadCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationUncheckedCreateInput = {
@@ -450,6 +454,7 @@ export type NotificationUncheckedCreateInput = {
   status?: $Enums.NotificationStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  reads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationUpdateInput = {
@@ -472,6 +477,7 @@ export type NotificationUpdateInput = {
   targetStudent?: Prisma.StudentUpdateOneWithoutTargetedNotificationsNestedInput
   targetFaculty?: Prisma.FacultyUpdateOneWithoutTargetedNotificationsNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutTargetedUserNotificationsNestedInput
+  reads?: Prisma.NotificationReadUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateInput = {
@@ -494,6 +500,7 @@ export type NotificationUncheckedUpdateInput = {
   status?: Prisma.EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reads?: Prisma.NotificationReadUncheckedUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationCreateManyInput = {
@@ -631,6 +638,11 @@ export type NotificationMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type NotificationScalarRelationFilter = {
+  is?: Prisma.NotificationWhereInput
+  isNot?: Prisma.NotificationWhereInput
 }
 
 export type NotificationCreateNestedManyWithoutCreatedByInput = {
@@ -855,6 +867,20 @@ export type EnumNotificationStatusFieldUpdateOperationsInput = {
   set?: $Enums.NotificationStatus
 }
 
+export type NotificationCreateNestedOneWithoutReadsInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutReadsInput, Prisma.NotificationUncheckedCreateWithoutReadsInput>
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutReadsInput
+  connect?: Prisma.NotificationWhereUniqueInput
+}
+
+export type NotificationUpdateOneRequiredWithoutReadsNestedInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutReadsInput, Prisma.NotificationUncheckedCreateWithoutReadsInput>
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutReadsInput
+  upsert?: Prisma.NotificationUpsertWithoutReadsInput
+  connect?: Prisma.NotificationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.NotificationUpdateToOneWithWhereWithoutReadsInput, Prisma.NotificationUpdateWithoutReadsInput>, Prisma.NotificationUncheckedUpdateWithoutReadsInput>
+}
+
 export type NotificationCreateWithoutCreatedByInput = {
   id?: string
   title: string
@@ -874,6 +900,7 @@ export type NotificationCreateWithoutCreatedByInput = {
   targetStudent?: Prisma.StudentCreateNestedOneWithoutTargetedNotificationsInput
   targetFaculty?: Prisma.FacultyCreateNestedOneWithoutTargetedNotificationsInput
   targetUser?: Prisma.UserCreateNestedOneWithoutTargetedUserNotificationsInput
+  reads?: Prisma.NotificationReadCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationUncheckedCreateWithoutCreatedByInput = {
@@ -895,6 +922,7 @@ export type NotificationUncheckedCreateWithoutCreatedByInput = {
   status?: $Enums.NotificationStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  reads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationCreateOrConnectWithoutCreatedByInput = {
@@ -926,6 +954,7 @@ export type NotificationCreateWithoutTargetUserInput = {
   targetBatch?: Prisma.BatchCreateNestedOneWithoutNotificationsInput
   targetStudent?: Prisma.StudentCreateNestedOneWithoutTargetedNotificationsInput
   targetFaculty?: Prisma.FacultyCreateNestedOneWithoutTargetedNotificationsInput
+  reads?: Prisma.NotificationReadCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationUncheckedCreateWithoutTargetUserInput = {
@@ -947,6 +976,7 @@ export type NotificationUncheckedCreateWithoutTargetUserInput = {
   status?: $Enums.NotificationStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  reads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationCreateOrConnectWithoutTargetUserInput = {
@@ -1035,6 +1065,7 @@ export type NotificationCreateWithoutTargetStudentInput = {
   targetBatch?: Prisma.BatchCreateNestedOneWithoutNotificationsInput
   targetFaculty?: Prisma.FacultyCreateNestedOneWithoutTargetedNotificationsInput
   targetUser?: Prisma.UserCreateNestedOneWithoutTargetedUserNotificationsInput
+  reads?: Prisma.NotificationReadCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationUncheckedCreateWithoutTargetStudentInput = {
@@ -1056,6 +1087,7 @@ export type NotificationUncheckedCreateWithoutTargetStudentInput = {
   status?: $Enums.NotificationStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  reads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationCreateOrConnectWithoutTargetStudentInput = {
@@ -1103,6 +1135,7 @@ export type NotificationCreateWithoutTargetFacultyInput = {
   targetBatch?: Prisma.BatchCreateNestedOneWithoutNotificationsInput
   targetStudent?: Prisma.StudentCreateNestedOneWithoutTargetedNotificationsInput
   targetUser?: Prisma.UserCreateNestedOneWithoutTargetedUserNotificationsInput
+  reads?: Prisma.NotificationReadCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationUncheckedCreateWithoutTargetFacultyInput = {
@@ -1124,6 +1157,7 @@ export type NotificationUncheckedCreateWithoutTargetFacultyInput = {
   status?: $Enums.NotificationStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  reads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationCreateOrConnectWithoutTargetFacultyInput = {
@@ -1171,6 +1205,7 @@ export type NotificationCreateWithoutTargetBatchInput = {
   targetStudent?: Prisma.StudentCreateNestedOneWithoutTargetedNotificationsInput
   targetFaculty?: Prisma.FacultyCreateNestedOneWithoutTargetedNotificationsInput
   targetUser?: Prisma.UserCreateNestedOneWithoutTargetedUserNotificationsInput
+  reads?: Prisma.NotificationReadCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationUncheckedCreateWithoutTargetBatchInput = {
@@ -1192,6 +1227,7 @@ export type NotificationUncheckedCreateWithoutTargetBatchInput = {
   status?: $Enums.NotificationStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  reads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutNotificationInput
 }
 
 export type NotificationCreateOrConnectWithoutTargetBatchInput = {
@@ -1218,6 +1254,110 @@ export type NotificationUpdateWithWhereUniqueWithoutTargetBatchInput = {
 export type NotificationUpdateManyWithWhereWithoutTargetBatchInput = {
   where: Prisma.NotificationScalarWhereInput
   data: Prisma.XOR<Prisma.NotificationUpdateManyMutationInput, Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchInput>
+}
+
+export type NotificationCreateWithoutReadsInput = {
+  id?: string
+  title: string
+  message: string
+  type?: string
+  audience?: $Enums.NotificationAudience
+  channel?: $Enums.NotificationChannel
+  isRead?: boolean
+  readAt?: Date | string | null
+  testId?: string | null
+  scheduledAt?: Date | string | null
+  sentAt?: Date | string | null
+  status?: $Enums.NotificationStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedNotificationsInput
+  targetBatch?: Prisma.BatchCreateNestedOneWithoutNotificationsInput
+  targetStudent?: Prisma.StudentCreateNestedOneWithoutTargetedNotificationsInput
+  targetFaculty?: Prisma.FacultyCreateNestedOneWithoutTargetedNotificationsInput
+  targetUser?: Prisma.UserCreateNestedOneWithoutTargetedUserNotificationsInput
+}
+
+export type NotificationUncheckedCreateWithoutReadsInput = {
+  id?: string
+  title: string
+  message: string
+  type?: string
+  audience?: $Enums.NotificationAudience
+  channel?: $Enums.NotificationChannel
+  isRead?: boolean
+  readAt?: Date | string | null
+  testId?: string | null
+  createdById?: string | null
+  targetBatchId?: string | null
+  targetStudentId?: string | null
+  targetFacultyId?: string | null
+  targetUserId?: string | null
+  scheduledAt?: Date | string | null
+  sentAt?: Date | string | null
+  status?: $Enums.NotificationStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type NotificationCreateOrConnectWithoutReadsInput = {
+  where: Prisma.NotificationWhereUniqueInput
+  create: Prisma.XOR<Prisma.NotificationCreateWithoutReadsInput, Prisma.NotificationUncheckedCreateWithoutReadsInput>
+}
+
+export type NotificationUpsertWithoutReadsInput = {
+  update: Prisma.XOR<Prisma.NotificationUpdateWithoutReadsInput, Prisma.NotificationUncheckedUpdateWithoutReadsInput>
+  create: Prisma.XOR<Prisma.NotificationCreateWithoutReadsInput, Prisma.NotificationUncheckedCreateWithoutReadsInput>
+  where?: Prisma.NotificationWhereInput
+}
+
+export type NotificationUpdateToOneWithWhereWithoutReadsInput = {
+  where?: Prisma.NotificationWhereInput
+  data: Prisma.XOR<Prisma.NotificationUpdateWithoutReadsInput, Prisma.NotificationUncheckedUpdateWithoutReadsInput>
+}
+
+export type NotificationUpdateWithoutReadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  audience?: Prisma.EnumNotificationAudienceFieldUpdateOperationsInput | $Enums.NotificationAudience
+  channel?: Prisma.EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedNotificationsNestedInput
+  targetBatch?: Prisma.BatchUpdateOneWithoutNotificationsNestedInput
+  targetStudent?: Prisma.StudentUpdateOneWithoutTargetedNotificationsNestedInput
+  targetFaculty?: Prisma.FacultyUpdateOneWithoutTargetedNotificationsNestedInput
+  targetUser?: Prisma.UserUpdateOneWithoutTargetedUserNotificationsNestedInput
+}
+
+export type NotificationUncheckedUpdateWithoutReadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  audience?: Prisma.EnumNotificationAudienceFieldUpdateOperationsInput | $Enums.NotificationAudience
+  channel?: Prisma.EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+  isRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetStudentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetFacultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type NotificationCreateManyCreatedByInput = {
@@ -1281,6 +1421,7 @@ export type NotificationUpdateWithoutCreatedByInput = {
   targetStudent?: Prisma.StudentUpdateOneWithoutTargetedNotificationsNestedInput
   targetFaculty?: Prisma.FacultyUpdateOneWithoutTargetedNotificationsNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutTargetedUserNotificationsNestedInput
+  reads?: Prisma.NotificationReadUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutCreatedByInput = {
@@ -1302,6 +1443,7 @@ export type NotificationUncheckedUpdateWithoutCreatedByInput = {
   status?: Prisma.EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reads?: Prisma.NotificationReadUncheckedUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateManyWithoutCreatedByInput = {
@@ -1344,6 +1486,7 @@ export type NotificationUpdateWithoutTargetUserInput = {
   targetBatch?: Prisma.BatchUpdateOneWithoutNotificationsNestedInput
   targetStudent?: Prisma.StudentUpdateOneWithoutTargetedNotificationsNestedInput
   targetFaculty?: Prisma.FacultyUpdateOneWithoutTargetedNotificationsNestedInput
+  reads?: Prisma.NotificationReadUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutTargetUserInput = {
@@ -1365,6 +1508,7 @@ export type NotificationUncheckedUpdateWithoutTargetUserInput = {
   status?: Prisma.EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reads?: Prisma.NotificationReadUncheckedUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateManyWithoutTargetUserInput = {
@@ -1428,6 +1572,7 @@ export type NotificationUpdateWithoutTargetStudentInput = {
   targetBatch?: Prisma.BatchUpdateOneWithoutNotificationsNestedInput
   targetFaculty?: Prisma.FacultyUpdateOneWithoutTargetedNotificationsNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutTargetedUserNotificationsNestedInput
+  reads?: Prisma.NotificationReadUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutTargetStudentInput = {
@@ -1449,6 +1594,7 @@ export type NotificationUncheckedUpdateWithoutTargetStudentInput = {
   status?: Prisma.EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reads?: Prisma.NotificationReadUncheckedUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateManyWithoutTargetStudentInput = {
@@ -1512,6 +1658,7 @@ export type NotificationUpdateWithoutTargetFacultyInput = {
   targetBatch?: Prisma.BatchUpdateOneWithoutNotificationsNestedInput
   targetStudent?: Prisma.StudentUpdateOneWithoutTargetedNotificationsNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutTargetedUserNotificationsNestedInput
+  reads?: Prisma.NotificationReadUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutTargetFacultyInput = {
@@ -1533,6 +1680,7 @@ export type NotificationUncheckedUpdateWithoutTargetFacultyInput = {
   status?: Prisma.EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reads?: Prisma.NotificationReadUncheckedUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateManyWithoutTargetFacultyInput = {
@@ -1596,6 +1744,7 @@ export type NotificationUpdateWithoutTargetBatchInput = {
   targetStudent?: Prisma.StudentUpdateOneWithoutTargetedNotificationsNestedInput
   targetFaculty?: Prisma.FacultyUpdateOneWithoutTargetedNotificationsNestedInput
   targetUser?: Prisma.UserUpdateOneWithoutTargetedUserNotificationsNestedInput
+  reads?: Prisma.NotificationReadUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutTargetBatchInput = {
@@ -1617,6 +1766,7 @@ export type NotificationUncheckedUpdateWithoutTargetBatchInput = {
   status?: Prisma.EnumNotificationStatusFieldUpdateOperationsInput | $Enums.NotificationStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reads?: Prisma.NotificationReadUncheckedUpdateManyWithoutNotificationNestedInput
 }
 
 export type NotificationUncheckedUpdateManyWithoutTargetBatchInput = {
@@ -1640,6 +1790,35 @@ export type NotificationUncheckedUpdateManyWithoutTargetBatchInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type NotificationCountOutputType
+ */
+
+export type NotificationCountOutputType = {
+  reads: number
+}
+
+export type NotificationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  reads?: boolean | NotificationCountOutputTypeCountReadsArgs
+}
+
+/**
+ * NotificationCountOutputType without action
+ */
+export type NotificationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotificationCountOutputType
+   */
+  select?: Prisma.NotificationCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * NotificationCountOutputType without action
+ */
+export type NotificationCountOutputTypeCountReadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationReadWhereInput
+}
 
 
 export type NotificationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1667,6 +1846,8 @@ export type NotificationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   targetStudent?: boolean | Prisma.Notification$targetStudentArgs<ExtArgs>
   targetFaculty?: boolean | Prisma.Notification$targetFacultyArgs<ExtArgs>
   targetUser?: boolean | Prisma.Notification$targetUserArgs<ExtArgs>
+  reads?: boolean | Prisma.Notification$readsArgs<ExtArgs>
+  _count?: boolean | Prisma.NotificationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notification"]>
 
 export type NotificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1752,6 +1933,8 @@ export type NotificationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   targetStudent?: boolean | Prisma.Notification$targetStudentArgs<ExtArgs>
   targetFaculty?: boolean | Prisma.Notification$targetFacultyArgs<ExtArgs>
   targetUser?: boolean | Prisma.Notification$targetUserArgs<ExtArgs>
+  reads?: boolean | Prisma.Notification$readsArgs<ExtArgs>
+  _count?: boolean | Prisma.NotificationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type NotificationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.Notification$createdByArgs<ExtArgs>
@@ -1776,6 +1959,7 @@ export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     targetStudent: Prisma.$StudentPayload<ExtArgs> | null
     targetFaculty: Prisma.$FacultyPayload<ExtArgs> | null
     targetUser: Prisma.$UserPayload<ExtArgs> | null
+    reads: Prisma.$NotificationReadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2196,6 +2380,7 @@ export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends run
   targetStudent<T extends Prisma.Notification$targetStudentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$targetStudentArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   targetFaculty<T extends Prisma.Notification$targetFacultyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$targetFacultyArgs<ExtArgs>>): Prisma.Prisma__FacultyClient<runtime.Types.Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   targetUser<T extends Prisma.Notification$targetUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$targetUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  reads<T extends Prisma.Notification$readsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$readsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationReadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2737,6 +2922,30 @@ export type Notification$targetUserArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * Notification.reads
+ */
+export type Notification$readsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotificationRead
+   */
+  select?: Prisma.NotificationReadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NotificationRead
+   */
+  omit?: Prisma.NotificationReadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationReadInclude<ExtArgs> | null
+  where?: Prisma.NotificationReadWhereInput
+  orderBy?: Prisma.NotificationReadOrderByWithRelationInput | Prisma.NotificationReadOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationReadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationReadScalarFieldEnum | Prisma.NotificationReadScalarFieldEnum[]
 }
 
 /**

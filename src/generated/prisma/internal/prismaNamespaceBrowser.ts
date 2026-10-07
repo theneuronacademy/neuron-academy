@@ -68,6 +68,7 @@ export const ModelName = {
   PdfImport: 'PdfImport',
   Attendance: 'Attendance',
   Notification: 'Notification',
+  NotificationRead: 'NotificationRead',
   OtpRequest: 'OtpRequest',
   PushSubscription: 'PushSubscription',
   Book: 'Book',
@@ -440,6 +441,16 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const NotificationReadScalarFieldEnum = {
+  id: 'id',
+  notificationId: 'notificationId',
+  userId: 'userId',
+  readAt: 'readAt'
+} as const
+
+export type NotificationReadScalarFieldEnum = (typeof NotificationReadScalarFieldEnum)[keyof typeof NotificationReadScalarFieldEnum]
 
 
 export const OtpRequestScalarFieldEnum = {

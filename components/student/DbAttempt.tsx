@@ -157,6 +157,17 @@ export function DbAttempt({ testId }: { testId: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
+  // Phase 16 — accidental-navigation guard during an live attempt.
+  // Server state is authoritative; this only prevents losing focus/time.
+  useEffect(() => {
+    if (phase !== "attempt") return;
+    const guard = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", guard);
+    return () => window.removeEventListener("beforeunload", guard);
+  }, [phase]);
+
   if (phase === "loading") {
     return (
       <StudentShell title="Test">
@@ -229,12 +240,12 @@ export function DbAttempt({ testId }: { testId: string }) {
     <div className="min-h-screen bg-background">
       <div className="sticky top-0 z-40 border-b border-silver-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2.5 sm:px-6">
-          <p className="text-sm font-extrabold text-navy-700">{meta.title} <span className="font-semibold text-muted">• Q{idx + 1}/{paper.length}</span></p>
-          <div className="flex items-center gap-2">
-            <span className={cn("inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-extrabold", left < 60 ? "bg-crimson-50 text-crimson" : "bg-navy-800 text-white")}>
+          <p className="min-w-0 flex-1 truncate text-sm font-extrabold text-navy-700">{meta.title} <span className="font-semibold text-muted">• Q{idx + 1}/{paper.length}</span></p>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className={cn("inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-extrabold", left < 60 ? "bg-crimson-50 text-crimson" : "bg-navy-800 text-white")} role="timer" aria-label={`${fmt(left)} remaining`}>
               <Timer className="h-4 w-4" /> {fmt(left)}
             </span>
-            <button onClick={() => setConfirm(true)} className="rounded-xl bg-teal-600 px-4 py-1.5 text-sm font-bold text-white">Submit</button>
+            <button onClick={() => setConfirm(true)} className="min-h-11 rounded-xl bg-teal-600 px-4 py-1.5 text-sm font-bold text-white">Submit</button>
           </div>
         </div>
         <div className="h-1 bg-silver-200">
@@ -249,16 +260,16 @@ export function DbAttempt({ testId }: { testId: string }) {
           ) : (
             <>
               <p className="text-[12px] font-bold text-muted">Question {idx + 1} • {q.marks} marks{q.negativeMarks ? ` • −${q.negativeMarks} negative` : ""}</p>
-              <h2 className="mt-1 text-[16px] font-extrabold leading-snug text-ink">{q.questionText}</h2>
+              <h2 className="mt-1 break-words text-[16px] font-extrabold leading-snug text-ink">{q.questionText}</h2>
               <div className="mt-4 grid gap-2">
                 {q.options.map((o) => (
                   <button
                     key={o.display}
                     onClick={() => setAnswers((a) => ({ ...a, [q.id]: o.display }))}
-                    className={cn("rounded-xl border px-4 py-3 text-left text-sm font-semibold transition", answers[q.id] === o.display ? "border-teal-500 bg-teal-50 text-navy-700 ring-2 ring-teal-500/20" : "border-silver-200 hover:border-teal-400")}
+                    className={cn("min-h-11 break-words rounded-xl border px-4 py-3 text-left text-sm font-semibold transition", answers[q.id] === o.display ? "border-teal-500 bg-teal-50 text-navy-700 ring-2 ring-teal-500/20" : "border-silver-200 hover:border-teal-400")}
                     aria-pressed={answers[q.id] === o.display}
                   >
-                    <span className="mr-2 font-extrabold">{o.display}.</span>{o.text ?? <span className="text-muted">(empty)</span>}
+                    <span className="mr-2 font-extrabold">{o.display}.</span><span className="break-words">{o.text ?? <span className="text-muted">(empty)</span>}</span>
                   </button>
                 ))}
               </div>
@@ -303,13 +314,14 @@ export function DbAttempt({ testId }: { testId: string }) {
         </aside>
       </main>
       {confirm ? (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-navy-800/60 p-4" role="dialog" aria-modal="true" aria-label="Confirm submission">
-          <div className="w-full max-w-sm rounded-card bg-white p-6 text-center">
+        <div className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-navy-800/60 p-4" role="dialog" aria-modal="true" aria-label="Confirm submission">
+          <div className="max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-card bg-white p-6 text-center">
             <p className="text-lg font-extrabold text-navy-700">Submit test?</p>
-            <p className="mt-2 text-sm text-muted">Answered: <b>{answered}</b> • Unanswered: <b>{unanswered}</b> • Marked: <b>{marked.length}</b></p>
+            <p className="mt-2 break-words text-sm text-muted">Answered: <b>{answered}</b> • Unanswered: <b>{unanswered}</b> • Marked: <b>{marked.length}</b></p>
+            <p className="mt-1 text-[12px] font-semibold text-muted">This cannot be undone. The server will evaluate your answers.</p>
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <button onClick={() => setConfirm(false)} className="rounded-xl border border-silver-300 px-4 py-2.5 text-sm font-bold">Cancel</button>
-              <button onClick={() => { setConfirm(false); void doSubmit(); }} disabled={busy} className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60">Confirm Submit</button>
+              <button onClick={() => setConfirm(false)} className="min-h-11 rounded-xl border border-silver-300 px-4 py-2.5 text-sm font-bold">Cancel</button>
+              <button onClick={() => { setConfirm(false); void doSubmit(); }} disabled={busy} className="min-h-11 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60">Confirm Submit</button>
             </div>
           </div>
         </div>

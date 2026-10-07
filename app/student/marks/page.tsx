@@ -72,9 +72,9 @@ export default function StudentMarksPage() {
       ) : (
         <>
           {list.length > 0 ? (
-            <div className="mt-4 rounded-card border border-silver-200 bg-white p-5 shadow-card">
+            <div className="mt-4 min-w-0 rounded-card border border-silver-200 bg-white p-5 shadow-card">
               <h2 className="text-[15px] font-extrabold text-navy-700">Recent Marks Trend</h2>
-              <div className="mt-2">
+              <div className="mt-2 overflow-x-auto">
                 <TrendChart points={[...list].reverse().slice(-12).map((m) => ({ label: m.testTitle, value: m.percentage }))} />
               </div>
             </div>
@@ -84,10 +84,10 @@ export default function StudentMarksPage() {
           ) : (
             <div className="mt-4 grid gap-3">
               {list.map((m) => (
-                <div key={m.id} className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-silver-200 bg-white p-4 shadow-card">
-                  <div>
-                    <p className="flex items-center gap-1.5 text-sm font-extrabold text-navy-700"><Trophy className="h-4 w-4 text-amber-500" /> {m.testTitle}</p>
-                    <p className="mt-0.5 text-[12px] text-muted">
+                <div key={m.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-card border border-silver-200 bg-white p-4 shadow-card">
+                  <div className="min-w-0 flex-1">
+                    <p className="flex min-w-0 items-center gap-1.5 text-sm font-extrabold text-navy-700"><Trophy className="h-4 w-4 shrink-0 text-amber-500" /> <span className="truncate">{m.testTitle}</span></p>
+                    <p className="mt-0.5 break-words text-[12px] text-muted">
                       {new Date(m.date).toLocaleDateString()} • ✓ {m.correct} • ✗ {m.wrong} • — {m.unanswered}
                     </p>
                   </div>

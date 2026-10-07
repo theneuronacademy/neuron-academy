@@ -103,6 +103,11 @@ export type Attendance = Prisma.AttendanceModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model NotificationRead
+ * 
+ */
+export type NotificationRead = Prisma.NotificationReadModel
+/**
  * Model OtpRequest
  * 
  */

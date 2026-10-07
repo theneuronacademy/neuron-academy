@@ -18,6 +18,8 @@ interface Analytics {
 
 interface FeedItem { id: string; title: string; message: string; isRead: boolean }
 interface BookRow { id: string; title: string; author: string | null; subject: string | null; coverImageUrl: string | null }
+interface ResultRow { id: string; testId: string; testTitle: string; marks: number; totalMarks: number; percentage: number; date: string }
+interface BatchInfo { id: string; name: string; status: string; course: { name: string } | null }
 
 /** Phase 14 — premium student dashboard (REGULAR full / SCHOLARSHIP slim). */
 export default function StudentDashboardPage() {
@@ -29,6 +31,9 @@ export default function StudentDashboardPage() {
   const [feed, setFeed] = useState<FeedItem[] | null>(null);
   const [unread, setUnread] = useState(0);
   const [books, setBooks] = useState<BookRow[] | null>(null);
+  // Phase 16 — recent server-evaluated results + current batch (REGULAR).
+  const [recentResults, setRecentResults] = useState<ResultRow[] | null>(null);
+  const [batch, setBatch] = useState<BatchInfo | null>(null);
 
   const scholarship = profile?.studentType === "SCHOLARSHIP";
 
@@ -66,6 +71,27 @@ export default function StudentDashboardPage() {
         setBooks(res.ok && json?.success === true && Array.isArray(json.data?.items) ? (json.data.items as BookRow[]).slice(0, 3) : []);
       } catch {
         setBooks([]);
+      }
+      // Phase 16 — recent results (own rows only; empty when none).
+      try {
+        const res = await fetch("/api/results", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        const items = res.ok && json?.success === true && Array.isArray(json.data?.items) ? (json.data.items as ResultRow[]) : [];
+        setRecentResults(items.slice(0, 5));
+      } catch {
+        setRecentResults([]);
+      }
+      // Phase 16 — current batch card (REGULAR only; 403 → scholarship/null).
+      try {
+        const res = await fetch("/api/students/me/batches", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success === true && json.data?.batch) {
+          setBatch(json.data.batch as BatchInfo);
+        } else {
+          setBatch(null);
+        }
+      } catch {
+        setBatch(null);
       }
     })();
   }, [session]);
@@ -197,11 +223,53 @@ export default function StudentDashboardPage() {
         </div>
       </div>
 
+      {!scholarship && batch ? (
+        <div className="mt-4 flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-card border border-teal-200 bg-teal-50/60 p-4">
+          <div className="min-w-0">
+            <p className="text-[11px] font-extrabold tracking-widest text-teal-700">CURRENT BATCH</p>
+            <p className="truncate text-[15px] font-extrabold text-navy-700">{batch.name}</p>
+            <p className="truncate text-[12px] font-semibold text-muted">
+              {[batch.course?.name, batch.status].filter(Boolean).join(" • ")}
+            </p>
+          </div>
+          <Link href="/student/batches" className="shrink-0 rounded-xl bg-navy-700 px-4 py-2 text-[13px] font-bold text-white">
+            My Batch →
+          </Link>
+        </div>
+      ) : null}
+
+      {/* RECENT RESULTS — server-evaluated, own rows only */}
+      <div className="mt-4 rounded-card border border-silver-200 bg-white p-5 shadow-card">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-1.5 text-[15px] font-extrabold text-navy-700"><Trophy className="h-4 w-4" /> Recent Results</h2>
+          <Link href="/student/results" className="text-[13px] font-bold text-teal-600 hover:underline">View all →</Link>
+        </div>
+        {recentResults === null ? (
+          <div className="mt-3 space-y-2"><Skeleton className="h-14" /><Skeleton className="h-14" /></div>
+        ) : recentResults.length === 0 ? (
+          <p className="mt-3 rounded-xl bg-silver-50 px-4 py-6 text-center text-sm font-bold text-muted">
+            No results yet — attempt a test and your score will appear here.
+          </p>
+        ) : (
+          <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {recentResults.slice(0, 3).map((r) => (
+              <Link key={r.id} href={`/student/tests/${r.testId}/result`} className="min-w-0 rounded-xl bg-silver-50 px-4 py-3 transition hover:bg-teal-50/60">
+                <p className="truncate text-sm font-extrabold text-navy-700">{r.testTitle || "Test"}</p>
+                <p className="mt-0.5 text-[12px] font-bold text-muted">{r.marks}/{r.totalMarks} • {r.percentage}%</p>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
       {!scholarship ? (
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
           {/* PERFORMANCE */}
           <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
-            <h2 className="flex items-center gap-1.5 text-[15px] font-extrabold text-navy-700"><BarChart3 className="h-4 w-4" /> Performance Trend</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-1.5 text-[15px] font-extrabold text-navy-700"><BarChart3 className="h-4 w-4" /> Performance Trend</h2>
+              <Link href="/student/analytics" className="text-[13px] font-bold text-teal-600 hover:underline">Analytics →</Link>
+            </div>
             <div className="mt-3">
               {analytics === null && !analyticsFailed ? <Skeleton className="h-36" /> : (
                 <TrendChart points={(analytics?.tests.trend ?? []).map((t) => ({ label: t.title, value: t.percentage }))} />

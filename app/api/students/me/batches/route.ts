@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     if (denied || !scoped) return fail(denied?.error ?? "Student profile not found.", denied?.status ?? 403);
     if (!scoped.batchId) return ok({ batch: null });
 
-    const [batch, upcoming, attGroups] = await Promise.all([
+    const [batch, upcomingAll, attGroups, grants] = await Promise.all([
       db.batch.findUnique({
         where: { id: scoped.batchId },
         select: {
@@ -42,7 +42,17 @@ export async function GET(req: NextRequest) {
         take: 20,
       }),
       db.attendance.groupBy({ by: ["status"], where: { studentId: scoped.id }, _count: { status: true } }),
+      // Phase 16 — grants for PRIVATE upcoming filtering (ACTIVE, unexpired).
+      db.testAccess.findMany({
+        where: { studentId: scoped.id, status: "ACTIVE", OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
+        select: { testId: true },
+      }),
     ]);
+    // Phase 16 — never leak PRIVATE test metadata without an explicit grant.
+    // GET /api/tests hides PRIVATE rows without TestAccess; this feed must
+    // match. PAID rows stay visible as locked metadata (consistent catalogue).
+    const grantedIds = new Set(grants.map((g) => g.testId));
+    const upcoming = upcomingAll.filter((t) => t.accessType !== "PRIVATE" || grantedIds.has(t.id));
     if (!batch) return ok({ batch: null });
     const s: Record<string, number> = { PRESENT: 0, ABSENT: 0, LATE: 0, LEAVE: 0 };
     for (const g of attGroups) s[g.status] = g._count.status;
