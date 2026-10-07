@@ -128,12 +128,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           },
         });
     // Phase 13 — result notification via the centralized helper (never fails submission).
-    await safeNotify(db, {
-      ...notifyMessages.resultReleased(test.title, evalResult.marks, evalResult.totalMarks, evalResult.percentage),
-      audience: "INDIVIDUAL",
-      targetStudentId: profile.id,
-      testId,
-    });
+    // Phase 15 — notify only on first release; re-submits/re-evaluations stay
+    // silent to avoid notification spam.
+    if (!existing) {
+      await safeNotify(db, {
+        ...notifyMessages.resultReleased(test.title, evalResult.marks, evalResult.totalMarks, evalResult.percentage),
+        audience: "INDIVIDUAL",
+        targetStudentId: profile.id,
+        testId,
+      });
+    }
     return ok({
       attempt: { id: updated.id, status: updated.status },
       result: {

@@ -78,9 +78,9 @@ export async function POST(req: NextRequest) {
       data: {
         name: String(body.name),
         serialNumber: String(body.serialNumber),
-        deviceType: body.deviceType ?? "X2000",
+        deviceType: typeof body.deviceType === "string" && body.deviceType ? body.deviceType : "X2000",
         ipAddress: ipAddress || undefined,
-        port: body.port ?? undefined,
+        port: body.port === undefined ? undefined : port,
         protocol,
         location: String(body.location ?? ""),
         isActive: body.isActive !== false, // default true

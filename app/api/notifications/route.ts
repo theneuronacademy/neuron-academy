@@ -26,8 +26,11 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) return fail(auth.error, auth.status);
   const db = getDb();
   if (!db) return ok({ items: DEMO_NOTIFICATIONS, source: "demo" });
+  // Phase 15 — bounded history (default 100, max 200 preserves prior ceiling).
+  const rawLimit = Number(new URL(req.url).searchParams.get("limit"));
+  const limit = Number.isFinite(rawLimit) ? Math.min(200, Math.max(1, Math.floor(rawLimit))) : 100;
   try {
-    const rows = await db.notification.findMany({ orderBy: { createdAt: "desc" }, take: 200 });
+    const rows = await db.notification.findMany({ orderBy: { createdAt: "desc" }, take: limit });
     return ok({
       items: rows.map((n) => ({
         id: n.id,
@@ -37,6 +40,7 @@ export async function GET(req: NextRequest) {
         date: new Date(n.createdAt).toISOString().slice(0, 10),
         status: n.status === "SENT" ? "Sent" : n.status === "SCHEDULED" ? "Scheduled" : "Draft",
       })),
+      limit,
       source: "database",
     });
   } catch (err) {

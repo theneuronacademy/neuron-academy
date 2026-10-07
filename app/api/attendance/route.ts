@@ -7,6 +7,7 @@ import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { missingFields, parseDate } from "@/lib/validation";
 import { facultyBatchIds } from "@/lib/testAccess";
+import { notifyMessages, safeNotify } from "@/lib/notify";
 import { DEMO_ATTENDANCE_OVERVIEW } from "@/data/admin";
 
 export const dynamic = "force-dynamic";
@@ -87,6 +88,26 @@ export async function POST(req: NextRequest) {
         source: "MANUAL",
       },
     });
+    // Phase 15 — absence alert (ABSENT only; PRESENT/LATE/LEAVE stay silent
+    // to avoid daily notification spam). One alert per student per day max:
+    // skip when an attendance-type notification already exists today.
+    // Never fails the attendance write.
+    if (row.status === "ABSENT") {
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const already = await db.notification.findFirst({
+        where: { targetStudentId: studentId, type: "attendance", createdAt: { gte: dayStart } },
+        select: { id: true },
+      }).catch(() => null);
+      if (!already) {
+        const dateStr = date.toISOString().slice(0, 10);
+        await safeNotify(db, {
+          ...notifyMessages.attendanceAbsent(dateStr),
+          audience: "INDIVIDUAL",
+          targetStudentId: studentId,
+        });
+      }
+    }
     return ok({ item: row }, 201);
   } catch (err) {
     return serverError("attendance:mark", err);

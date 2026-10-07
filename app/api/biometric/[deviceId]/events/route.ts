@@ -5,7 +5,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fail, ok, dbNotConfigured } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
-import { resolveUser } from "@/lib/testAccess";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -91,12 +90,11 @@ export async function GET(
   });
   if (!device) return fail(`Unknown biometric device ID "${deviceId}".`, 404);
 
-  // 2. Return recent events
+  // 2. Return recent events (select-only: include+select cannot combine)
   const events = await db.biometricDeviceEvent.findMany({
     where: { deviceId: device.id },
     orderBy: { eventTimestamp: "desc" },
     take: 50,
-    include: { attendance: true },
     select: {
       id: true,
       biometricUserId: true,
@@ -168,7 +166,9 @@ export async function POST(
   delete rawPayload.eventTimestamp;
   const payloadHash = computePayloadHash(biometricUserId, eventType, parsedTimestamp.getTime(), rawPayload);
 
-  // 5. Check for duplicate delivery (idempotency)
+  // 5. Check for duplicate delivery (idempotency). No ORM relation exists
+  // between BiometricDeviceEvent and Attendance, so the linked record (if
+  // any) is fetched separately by attendanceId.
   const existingEvent = await db.biometricDeviceEvent.findFirst({
     where: {
       deviceId: device.id,
@@ -176,23 +176,25 @@ export async function POST(
       eventTimestamp: parsedTimestamp,
       payloadHash,
     },
-    include: { attendance: true },
   });
 
   if (existingEvent) {
     // Duplicate delivery — make idempotent
-    if (existingEvent.attendance) {
+    const linked = existingEvent.attendanceId
+      ? await db.attendance.findUnique({ where: { id: existingEvent.attendanceId } }).catch(() => null)
+      : null;
+    if (linked) {
       return ok({
         eventId: existingEvent.id,
         duplicate: true,
         attendance: {
-          id: existingEvent.attendance.id,
-          studentId: existingEvent.attendance.studentId,
-          date: existingEvent.attendance.date,
-          status: existingEvent.attendance.status,
-          source: existingEvent.attendance.source,
-          checkIn: existingEvent.attendance.checkIn,
-          checkOut: existingEvent.attendance.checkOut,
+          id: linked.id,
+          studentId: linked.studentId,
+          date: linked.date,
+          status: linked.status,
+          source: linked.source,
+          checkIn: linked.checkIn,
+          checkOut: linked.checkOut,
         },
         deviceLastSeenAt: device.lastSeenAt,
         totalEvents: device.totalEvents,

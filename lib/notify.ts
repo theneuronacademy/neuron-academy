@@ -69,4 +69,12 @@ export const notifyMessages = {
     message: `${title}: ${marks}/${total} (${pct}%). Open the result to review.`,
     type: "result",
   }),
+  // Phase 15 — absence alert only (PRESENT/LATE/LEAVE stay silent to avoid
+  // daily notification spam). One alert per student per day max (see
+  // attendance route dedup check before calling safeNotify).
+  attendanceAbsent: (dateStr: string, batchName?: string) => ({
+    title: "Absent marked",
+    message: `You were marked absent on ${dateStr}${batchName ? ` (${batchName})` : ""}. Contact the academy office if this is incorrect.`,
+    type: "attendance",
+  }),
 };

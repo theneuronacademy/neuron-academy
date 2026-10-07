@@ -26,11 +26,19 @@ function shape(n: any) {
   };
 }
 
+/** Parse ?limit= with safe bounds (default 50, max 100). */
+function parseLimit(req: NextRequest, def: number, max: number): number {
+  const raw = Number(new URL(req.url).searchParams.get("limit"));
+  if (!Number.isFinite(raw)) return def;
+  return Math.min(max, Math.max(1, Math.floor(raw)));
+}
+
 export async function GET(req: NextRequest) {
   const viewer = getUserFromRequest(req);
   if (!viewer) return fail("Not authenticated.", 401);
   const db = getDb();
   if (!db) return dbNotConfigured("Reading notifications");
+  const limit = parseLimit(req, 50, 100);
   try {
     if (viewer.role === "STUDENT") {
       const profile = await resolveStudent(db, viewer.id, viewer.email);
@@ -45,10 +53,10 @@ export async function GET(req: NextRequest) {
         ],
       };
       const [rows, unreadCount] = await Promise.all([
-        db.notification.findMany({ where, orderBy: { createdAt: "desc" }, take: 100 }),
+        db.notification.findMany({ where, orderBy: { createdAt: "desc" }, take: limit }),
         db.notification.count({ where: { ...where, isRead: false } }),
       ]);
-      return ok({ items: rows.map(shape), unreadCount, source: "database" });
+      return ok({ items: rows.map(shape), unreadCount, limit, source: "database" });
     }
     if (viewer.role === "FACULTY") {
       const batches = await facultyBatchIds(db, viewer.id);
@@ -57,10 +65,10 @@ export async function GET(req: NextRequest) {
         OR: [{ targetUserId: viewer.id }, { audience: "FACULTY" as const }, ...(batches.length > 0 ? [{ targetBatchId: { in: batches } }] : [])],
       };
       const [rows, unreadCount] = await Promise.all([
-        db.notification.findMany({ where, orderBy: { createdAt: "desc" }, take: 100 }),
+        db.notification.findMany({ where, orderBy: { createdAt: "desc" }, take: limit }),
         db.notification.count({ where: { ...where, isRead: false } }),
       ]);
-      return ok({ items: rows.map(shape), unreadCount, source: "database" });
+      return ok({ items: rows.map(shape), unreadCount, limit, source: "database" });
     }
     return fail("Forbidden.", 403);
   } catch (err) {
@@ -105,17 +113,28 @@ export async function PATCH(req: NextRequest) {
       if (updated.count === 0) return fail("Notification not found.", 404);
       return ok({ updated: true });
     }
-    // FACULTY
+    // FACULTY — same visibility scope as the GET feed (own + FACULTY
+    // broadcasts + assigned-batch targets), so mark-all clears everything
+    // the faculty member can see. Still strictly limited to their own feed.
+    const facultyBatches = await facultyBatchIds(db, viewer.id);
+    const facultyVisible = {
+      status: "SENT" as const,
+      OR: [
+        { targetUserId: viewer.id },
+        { audience: "FACULTY" as const },
+        ...(facultyBatches.length > 0 ? [{ targetBatchId: { in: facultyBatches } }] : []),
+      ],
+    };
     if (body.all === true) {
       await db.notification.updateMany({
-        where: { status: "SENT", OR: [{ targetUserId: viewer.id }, { audience: "FACULTY" }] },
+        where: { ...facultyVisible, isRead: false },
         data: { isRead: true, readAt: new Date() },
       });
       return ok({ updated: true });
     }
     if (typeof body.id !== "string") return fail("id or all is required.", 400);
     const updated = await db.notification.updateMany({
-      where: { id: body.id, status: "SENT", OR: [{ targetUserId: viewer.id }, { audience: "FACULTY" }] },
+      where: { id: body.id, ...facultyVisible },
       data: { isRead: true, readAt: new Date() },
     });
     if (updated.count === 0) return fail("Notification not found.", 404);

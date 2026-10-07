@@ -9,6 +9,13 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+// Phase 14.1 — keep the classic node_modules client in sync with the same
+// schema (lib/prisma.ts and most routes import from "@prisma/client").
+// Generator-only change: zero DB/migration impact.
+generator client_legacy {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
 }

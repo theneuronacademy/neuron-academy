@@ -41,7 +41,9 @@ function fakeReq(token?: string): NextRequest {
 }
 
 function tokenFor(role: string): string {
-  return createSessionToken({ id: `u-${role}`, email: `${role.toLowerCase()}@x.test`, role: role as "ADMIN" | "FACULTY" | "STUDENT", name: role });
+  const t = createSessionToken({ id: `u-${role}`, email: `${role.toLowerCase()}@x.test`, role: role as "ADMIN" | "FACULTY" | "STUDENT", name: role });
+  if (!t) throw new Error("test secret missing");
+  return t;
 }
 
 // 1. Anonymous → faculty API = 401 (real helper)

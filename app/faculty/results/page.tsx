@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FacultyShell } from "@/components/faculty/FacultyShell";
 
 interface ResultRow { id: string; testId: string; testTitle: string; studentId: string; studentName: string; marks: number; totalMarks: number; percentage: number; date: string }
 
 export default function FacultyResultsPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [rows, setRows] = React.useState<ResultRow[]>([]);
-  const [testId, setTestId] = React.useState(searchParams.get("testId") ?? "");
+  // Deep-link (?testId=) is read client-side only so prerender stays static-safe.
+  const [testId, setTestId] = React.useState("");
   const [ready, setReady] = React.useState(false);
 
   async function load(nextTest = testId) {
@@ -25,9 +25,18 @@ export default function FacultyResultsPage() {
   useEffect(() => {
     let live = true;
     (async () => {
+      let qt = "";
+      try {
+        qt = new URLSearchParams(window.location.search).get("testId") ?? "";
+      } catch {
+        /* ignore */
+      }
       const s = await fetch("/api/auth/session", { cache: "no-store" });
       if (!s.ok) { router.replace("/faculty/login"); return; }
-      if (live) await load();
+      if (live) {
+        if (qt) setTestId(qt);
+        await load(qt);
+      }
     })();
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps

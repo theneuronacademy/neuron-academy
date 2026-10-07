@@ -29,7 +29,7 @@ export default function StudentNotificationsPage() {
     if (!session) return;
     (async () => {
       try {
-        const res = await fetch("/api/notifications/mine", { cache: "no-store" });
+        const res = await fetch("/api/notifications/mine?limit=50", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success === true && Array.isArray(json.data?.items)) {
           setFeed(json.data.items as FeedItem[]);

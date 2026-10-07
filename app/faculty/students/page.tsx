@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FacultyShell } from "@/components/faculty/FacultyShell";
 
 interface StudentRow {
@@ -23,11 +23,11 @@ interface BatchOpt { id: string; name: string }
 
 export default function FacultyStudentsPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [rows, setRows] = React.useState<StudentRow[]>([]);
   const [batches, setBatches] = React.useState<BatchOpt[]>([]);
   const [search, setSearch] = React.useState("");
-  const [batchId, setBatchId] = React.useState(searchParams.get("batchId") ?? "");
+  // Deep-link (?batchId=) is read client-side only so prerender stays static-safe.
+  const [batchId, setBatchId] = React.useState("");
   const [ready, setReady] = React.useState(false);
 
   async function load(nextSearch = search, nextBatch = batchId) {
@@ -44,6 +44,12 @@ export default function FacultyStudentsPage() {
   useEffect(() => {
     let live = true;
     (async () => {
+      let qb = "";
+      try {
+        qb = new URLSearchParams(window.location.search).get("batchId") ?? "";
+      } catch {
+        /* ignore */
+      }
       const s = await fetch("/api/auth/session", { cache: "no-store" });
       if (!s.ok) { router.replace("/faculty/login"); return; }
       const bR = await fetch("/api/faculty/batches", { cache: "no-store" });
@@ -51,7 +57,10 @@ export default function FacultyStudentsPage() {
       if (live && bR.ok && bJ?.success && Array.isArray(bJ.data?.items)) {
         setBatches(bJ.data.items.map((b: { id: string; name: string }) => ({ id: b.id, name: b.name })));
       }
-      if (live) await load();
+      if (live) {
+        if (qb) setBatchId(qb);
+        await load(search, qb);
+      }
     })();
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FacultyShell } from "@/components/faculty/FacultyShell";
 import { cn } from "@/lib/utils";
 
@@ -11,9 +11,9 @@ type AttStatus = "PRESENT" | "ABSENT" | "LATE" | "LEAVE";
 
 export default function FacultyAttendancePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [batches, setBatches] = React.useState<BatchOpt[]>([]);
-  const [batchId, setBatchId] = React.useState(searchParams.get("batchId") ?? "");
+  // Deep-link (?batchId=) is read client-side only so prerender stays static-safe.
+  const [batchId, setBatchId] = React.useState("");
   const [date, setDate] = React.useState(() => new Date().toISOString().slice(0, 10));
   const [students, setStudents] = React.useState<AttStudent[]>([]);
   const [marks, setMarks] = React.useState<Record<string, AttStatus>>({});
@@ -25,6 +25,12 @@ export default function FacultyAttendancePage() {
   useEffect(() => {
     let live = true;
     (async () => {
+      try {
+        const q = new URLSearchParams(window.location.search).get("batchId");
+        if (live && q) setBatchId(q);
+      } catch {
+        /* ignore */
+      }
       const s = await fetch("/api/auth/session", { cache: "no-store" });
       if (!s.ok) { router.replace("/faculty/login"); return; }
       const bR = await fetch("/api/faculty/batches", { cache: "no-store" });

@@ -170,6 +170,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         accessData = merged;
       }
     }
+    // Phase 15 — publish deduplication: notify only on transition INTO
+    // PUBLISHED, never on repeated PATCH calls that leave status unchanged.
+    const previous = body.status === "PUBLISHED"
+      ? await db.test.findUnique({ where: { id }, select: { status: true } }).catch(() => null)
+      : null;
     const row = await db.test.update({
       where: { id },
       data: {
@@ -193,7 +198,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     });
     // Publish → notify eligible students, but ONLY for FREE tests so paid
     // and private tests are never broadcast. Never fails publishing.
-    if (body.status === "PUBLISHED" && row.accessType === "FREE") {
+    if (body.status === "PUBLISHED" && row.accessType === "FREE" && previous?.status !== "PUBLISHED") {
       const msg = notifyMessages.freeTestPublished(row.title);
       await safeNotify(db, {
         ...msg,

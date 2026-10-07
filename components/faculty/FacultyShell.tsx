@@ -27,7 +27,7 @@ export function FacultyShell({ title, subtitle, children }: { title: string; sub
     let live = true;
     (async () => {
       try {
-        const res = await fetch("/api/notifications/mine", { cache: "no-store" });
+        const res = await fetch("/api/notifications/mine?limit=1", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (live && res.ok && json?.success === true && typeof json.data?.unreadCount === "number") {
           setUnread(json.data.unreadCount);

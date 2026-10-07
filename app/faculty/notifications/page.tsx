@@ -13,7 +13,7 @@ export default function FacultyNotificationsPage() {
   const [busy, setBusy] = React.useState<string | null>(null);
 
   async function load() {
-    const res = await fetch("/api/notifications/mine", { cache: "no-store" });
+    const res = await fetch("/api/notifications/mine?limit=50", { cache: "no-store" });
     if (res.status === 401) { router.replace("/faculty/login"); return; }
     const json = await res.json().catch(() => null);
     if (res.ok && json?.success === true && Array.isArray(json.data?.items)) setFeed(json.data.items as FeedItem[]);
