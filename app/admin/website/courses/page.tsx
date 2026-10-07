@@ -46,7 +46,7 @@ export default function WebsiteCoursesPage() {
         const res = await fetch("/api/courses", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows(json.data.items.map((c: any) => ({
+          setRows((json.data.items as Array<{ id: string; name?: string; category?: string; duration?: string; mode?: string; isActive?: boolean; admissionOpen?: boolean }>).map((c) => ({
             id: c.id,
             name: c.name ?? "",
             category: c.category ?? "Engineering",

@@ -10,13 +10,19 @@ import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
-import { getBanners } from "@/services/adminApi";
 
 interface Row {
   id: string;
   title: string;
   category: string;
   image: string;
+}
+
+interface ApiGalleryRow {
+  id: string;
+  title?: string;
+  category?: string;
+  imageUrl?: string;
 }
 
 export default function GalleryAdminPage() {
@@ -40,20 +46,20 @@ export default function GalleryAdminPage() {
         const res = await fetch("/api/gallery", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows(json.data.items.map((g: any) => ({
+          setRows((json.data.items as ApiGalleryRow[]).map((g) => ({
             id: g.id,
             title: g.title ?? "",
             category: g.category ?? "Academy",
             image: g.imageUrl ?? "",
           })));
         } else {
-          // fallback to local data
-          const { GALLERY, GALLERY_CATEGORIES } = await import("@/data/gallery");
-          setRows(GALLERY.map((g) => ({ id: g.id, title: g.title, category: g.category, image: g.imageUrl ?? "" })));
+          // fallback to local data (data/gallery GalleryItem uses `image`)
+          const { GALLERY } = await import("@/data/gallery");
+          setRows(GALLERY.map((g) => ({ id: g.id, title: g.title, category: g.category, image: g.image ?? "" })));
         }
       } catch {
-        const { GALLERY, GALLERY_CATEGORIES } = await import("@/data/gallery");
-        setRows(GALLERY.map((g) => ({ id: g.id, title: g.title, category: g.category, image: g.imageUrl ?? "" })));
+        const { GALLERY } = await import("@/data/gallery");
+        setRows(GALLERY.map((g) => ({ id: g.id, title: g.title, category: g.category, image: g.image ?? "" })));
       }
       setReady(true);
     })();

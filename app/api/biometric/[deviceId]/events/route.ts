@@ -4,7 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { fail, ok, dbNotConfigured } from "@/lib/api-response";
-import { getDb, PrismaClient } from "@/lib/prisma";
+import { getDb } from "@/lib/prisma";
 import { resolveUser } from "@/lib/testAccess";
 import crypto from "crypto";
 
@@ -32,7 +32,8 @@ function computePayloadHash(
 // ---------------------------------------------------------------------------
 // Helper: map biometricUserId to Student or Faculty
 // ---------------------------------------------------------------------------
-async function resolveUser(db: PrismaClient, biometricUserId: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- @prisma/client types pre-date the biometric delegates (client-regeneration follow-up); runtime uses the generated client which includes them.
+async function resolveUser(db: any, biometricUserId: string) {
   // Try Student first (most common case) — check studentId or email
   const student = await db.student.findFirst({
     where: {

@@ -43,12 +43,12 @@ export default function WebResultsPage() {
         const res = await fetch("/api/results/offline", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows(json.data.items.map((r: any) => ({
+          setRows((json.data.items as Array<{ id: string; name?: string; studentName?: string; score?: string; marks?: string; exam?: string; testTitle?: string; year?: string; createdAt?: string; isActive?: boolean }>).map((r) => ({
             id: r.id,
             name: r.name ?? r.studentName ?? "",
             score: r.score ?? r.marks ?? "",
             exam: r.exam ?? r.testTitle ?? "",
-            year: r.year ?? new Date(r.createdAt).getFullYear().toString(),
+            year: r.year ?? (r.createdAt ? new Date(r.createdAt).getFullYear().toString() : new Date().getFullYear().toString()),
             active: r.isActive ?? true,
           })));
         } else {

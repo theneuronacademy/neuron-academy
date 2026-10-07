@@ -42,7 +42,7 @@ export default function TestimonialsAdminPage() {
         const res = await fetch("/api/testimonials", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows(json.data.items.map((t: any) => ({
+          setRows((json.data.items as Array<{ id: string; studentName?: string; name?: string; course?: string; achievement?: string; isActive?: boolean }>).map((t) => ({
             id: t.id,
             studentName: t.studentName ?? t.name ?? "",
             course: t.course ?? "",

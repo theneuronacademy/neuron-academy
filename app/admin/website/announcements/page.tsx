@@ -38,7 +38,7 @@ export default function AnnouncementsPage() {
         const res = await fetch("/api/announcements", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows(json.data.items.map((a: any) => ({
+          setRows((json.data.items as Array<{ id: string; title?: string; text?: string; startDate?: string; isActive?: boolean }>).map((a) => ({
             id: a.id,
             text: a.title ?? a.text ?? "",
             date: a.startDate ? new Date(a.startDate).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),

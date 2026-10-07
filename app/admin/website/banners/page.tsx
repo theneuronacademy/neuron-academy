@@ -83,9 +83,9 @@ export default function BannersPage() {
         const res = await fetch("/api/banners", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows(json.data.items.map((b: any) => ({
+          setRows((json.data.items as Array<{ id: string; title?: string; subtitle?: string; description?: string; imageUrl?: string; videoUrl?: string; buttonText?: string; buttonUrl?: string; startDate?: string; endDate?: string; isActive?: boolean; displayOrder?: number }>).map((b) => ({
             id: b.id,
-            title: b.title,
+            title: b.title ?? "",
             subtitle: b.subtitle ?? "",
             description: b.description ?? "",
             image: b.imageUrl ?? "",

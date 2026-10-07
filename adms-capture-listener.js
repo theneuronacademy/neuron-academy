@@ -18,6 +18,7 @@
  * Run on a VPS with public IP for real device, or locally for testing.
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports -- standalone plain-Node capture tool (no bundler/ESM); require() is the correct module system here. */
 const http = require('http');
 const fs = require('fs');
 const path = require('path');

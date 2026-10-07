@@ -43,7 +43,7 @@ export default function WebsiteFacultyPage() {
         const res = await fetch("/api/faculty", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows(json.data.items.map((f: any) => ({
+          setRows((json.data.items as Array<{ id: string; name?: string; subject?: string; qualification?: string; isActive?: boolean }>).map((f) => ({
             id: f.id,
             name: f.name ?? "",
             subject: f.subject ?? "",

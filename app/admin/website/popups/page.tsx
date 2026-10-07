@@ -78,9 +78,9 @@ export default function PopupsPage() {
         const res = await fetch("/api/popups", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows(json.data.items.map((p: any) => ({
+          setRows((json.data.items as Array<{ id: string; title?: string; message?: string; imageUrl?: string; videoUrl?: string; buttonText?: string; buttonUrl?: string; frequency?: string; startDate?: string; endDate?: string; isActive?: boolean }>).map((p) => ({
             id: p.id,
-            title: p.title,
+            title: p.title ?? "",
             message: p.message ?? "",
             image: p.imageUrl ?? "",
             videoUrl: p.videoUrl ?? "",
