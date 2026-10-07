@@ -156,15 +156,17 @@ export default function TestimonialsAdminPage() {
             { key: "n", header: "Student", render: (r) => <span className="font-extrabold text-navy-700">{r.studentName}</span> },
             { key: "c", header: "Course", render: (r) => r.course },
             { key: "a", header: "Achievement", render: (r) => <span className="text-muted">{r.achievement}</span> },
-            {
+{
               key: "s",
               header: "Status",
-              render: (r) => (
-                <button onClick={() => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: !x.active } : x)))}>
-                  <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold ${r.active ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-silver-200 bg-silver-50 text-muted"}`}>
-                    {r.active ? "Active" : "Hidden"}
-                  </span>
-                </button>
+              render: (r) => {
+                return (
+                  <button onClick={() => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: !x.active } : x)))}>
+                    <span className={r.active ? "inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold border-emerald-200 bg-emerald-50 text-emerald-700" : "inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold border-silver-200 bg-silver-50 text-muted"}>
+                      {r.active ? "Active" : "Hidden"}
+                    </span>
+                  </button>
+                );
               },
             },
             {

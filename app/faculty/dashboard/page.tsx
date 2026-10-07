@@ -7,6 +7,7 @@ import { GraduationCap, Layers, LogOut, PenSquare, Users, Clock } from "lucide-r
 import { OfflineMarksForm } from "@/components/admin/OfflineMarksForm";
 import { isDbLive } from "@/services/dbLive";
 import { cn } from "@/lib/utils";
+import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 
 interface FacultyBatch {
   id: string;

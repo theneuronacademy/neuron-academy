@@ -7,7 +7,8 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
-import { AdminToolbar, SearchBar, FilterBar, EmptyState } from "@/components/admin/SearchBar";
+import { AdminToolbar, SearchBar, FilterBar } from "@/components/admin/SearchBar";
+import { EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
 import { toggleBiometricDevice } from "@/services/adminApi";
@@ -344,8 +345,8 @@ export default function BiometricDevicesPage() {
   );
 }
 
-function useFormState(initial: any) {
-  const [state, setState] = React.useState(initial);
+function useFormState<T>(initial: T) {
+  const [state, setState] = React.useState<T>(initial);
   return { state, setState };
 }
 

@@ -1,0 +1,24 @@
+{
+  "name": "adms-capture-listener",
+  "version": "1.0.0",
+  "description": "Temporary ADMS traffic capture listener for K90 Pro protocol discovery",
+  "main": "adms-capture-listener.js",
+  "scripts": {
+    "start": "node adms-capture-listener.js",
+    "start:local": "PORT=38787 node adms-capture-listener.js",
+    "start:vps": "PORT=8787 node adms-capture-listener.js"
+  },
+  "keywords": [
+    "adms",
+    "k90-pro",
+    "biometric",
+    "capture",
+    "protocol-discovery"
+  ],
+  "author": "Neuron Academy",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

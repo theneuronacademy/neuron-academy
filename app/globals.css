@@ -48,7 +48,7 @@
     radial-gradient(circle at 60% 40%, rgba(180, 69, 61, 0.15) 0%, transparent 50%);
 }
 
-/nvascular paper pattern */
+/* vascular paper pattern */
 .bg-subtle-lines {
   background-image: 
     linear-gradient(rgba(36, 70, 109, 0.03) 1px, transparent 1px),
