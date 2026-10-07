@@ -9,7 +9,6 @@ import { AdminTable } from "@/components/admin/AdminTable";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 import { Button } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
-import { getDeviceEvents } from "@/services/adminApi";
 
 interface BiometricDeviceDetail {
   id: string;
@@ -52,7 +51,7 @@ function getTone(status: string) {
 
 export default function BiometricDeviceDetailPage({
   params,
-}: { params: { id: string } }) {
+}: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [device, setDevice] = useState<BiometricDeviceDetail | null>(null);
@@ -62,10 +61,11 @@ export default function BiometricDeviceDetailPage({
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [deviceId, setDeviceId] = useState<string | null>(null);
 
-  const loadDevice = async () => {
+  const loadDevice = async (id: string) => {
     try {
-      const res = await fetch(`/api/biometric/devices/${params.id}`, { cache: "no-store" });
+      const res = await fetch(`/api/biometric/devices/${id}`, { cache: "no-store" });
       const json = await res.json().catch(() => null);
       if (res.ok && json?.success === true && json?.data?.device) {
         setDevice(json.data.device as BiometricDeviceDetail);
@@ -76,9 +76,9 @@ export default function BiometricDeviceDetailPage({
     setReady(true);
   };
 
-  const loadEvents = async () => {
+  const loadEvents = async (id: string) => {
     try {
-      const res = await fetch(`/api/biometric/devices/${params.id}/events`, { cache: "no-store" });
+      const res = await fetch(`/api/biometric/${id}/events`, { cache: "no-store" });
       const json = await res.json().catch(() => null);
       if (res.ok && json?.success === true && Array.isArray(json?.events)) {
         setEvents(json.events as DeviceEventRow[]);
@@ -89,12 +89,19 @@ export default function BiometricDeviceDetailPage({
   };
 
   useEffect(() => {
+    let live = true;
     (async () => {
-      await loadDevice();
-      await loadEvents();
-      setReady(true);
+      const p = await params;
+      if (!live) return;
+      setDeviceId(p.id);
+      await loadDevice(p.id);
+      await loadEvents(p.id);
+      if (live) setReady(true);
     })();
-  }, [params.id]);
+    return () => {
+      live = false;
+    };
+  }, [params]);
 
   const openMappingForm = (biometricUserId: string) => {
     setMapping({
@@ -133,7 +140,7 @@ export default function BiometricDeviceDetailPage({
       }
       setSaved(`Mapped ${mapping.biometricUserId} to ${mapping.userType}.`);
       setOpenMapping(false);
-      await loadEvents();
+      await loadEvents(device.id);
       setBusy(false);
     } catch {
       setErr("Cannot reach the server.");

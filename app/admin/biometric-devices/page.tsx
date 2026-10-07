@@ -11,7 +11,6 @@ import { AdminToolbar, SearchBar, FilterBar } from "@/components/admin/SearchBar
 import { EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
-import { toggleBiometricDevice } from "@/services/adminApi";
 
 interface BiometricDeviceRow {
   id: string;
@@ -91,13 +90,13 @@ export default function BiometricDevicesPage() {
 
   function openEdit(r: BiometricDeviceRow) {
     setErr(null);
-    setEditRow(r);
+    setEdit(r);
     setEditOpen(true);
   }
 
   function closeEdit() {
     setEditOpen(false);
-    setEditRow(null);
+    setEdit(null);
     setErr(null);
   }
 
@@ -138,18 +137,27 @@ export default function BiometricDevicesPage() {
     }
   }
 
-  function deleteDevice(id: string) {
-    if (confirm("Are you sure you want to deactivate this biometric device?")) {
-      setBusy(true);
-      toggleBiometricDevice(id, false).then((res) => {
-        if (res?.success) {
-          setSaved("Device deactivated.");
-          load().then(() => setSaved("Device deactivated."));
-        } else {
-          setErr(res?.error ?? "Failed to deactivate device.");
-        }
-        setBusy(false);
+  async function deleteDevice(id: string) {
+    if (!confirm("Are you sure you want to deactivate this biometric device?")) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      const res = await fetch(`/api/biometric/devices/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: false }),
       });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || json?.success !== true) {
+        setErr(json?.error ?? "Failed to deactivate device (device API route pending Phase 12 scope).");
+        return;
+      }
+      setSaved("Device deactivated.");
+      await load();
+    } catch {
+      setErr("Cannot reach the server.");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -293,37 +301,37 @@ export default function BiometricDevicesPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">Name</label>
-                    <input value={edit.name} onChange={(e) => setState((s: BiometricDeviceRow) => ({ ...s, name: e.target.value }))} className={inputCls} required />
+                    <input value={edit.name} onChange={(e) => setEdit((s) => (s ? { ...s, name: e.target.value } : s))} className={inputCls} required />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">Serial Number</label>
-                    <input value={edit.serialNumber} onChange={(e) => setState((s: BiometricDeviceRow) => ({ ...s, serialNumber: e.target.value }))} className={inputCls} required />
+                    <input value={edit.serialNumber} onChange={(e) => setEdit((s) => (s ? { ...s, serialNumber: e.target.value } : s))} className={inputCls} required />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">Device Type</label>
-                    <input value={edit.deviceType} onChange={(e) => setState((s: BiometricDeviceRow) => ({ ...s, deviceType: e.target.value }))} className={inputCls} />
+                    <input value={edit.deviceType} onChange={(e) => setEdit((s) => (s ? { ...s, deviceType: e.target.value } : s))} className={inputCls} />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">Protocol</label>
-                    <input value={edit.protocol} onChange={(e) => setState((s: BiometricDeviceRow) => ({ ...s, protocol: e.target.value }))} className={inputCls} />
+                    <input value={edit.protocol} onChange={(e) => setEdit((s) => (s ? { ...s, protocol: e.target.value } : s))} className={inputCls} />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">IP Address</label>
-                    <input value={edit.ipAddress || ""} onChange={(e) => setState((s: BiometricDeviceRow) => ({ ...s, ipAddress: e.target.value }))} className={inputCls} />
+                    <input value={edit.ipAddress || ""} onChange={(e) => setEdit((s) => (s ? { ...s, ipAddress: e.target.value } : s))} className={inputCls} />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">Port</label>
-                    <input value={edit.port ?? ""} onChange={(e) => setState((s: BiometricDeviceRow) => ({ ...s, port: Number(e.target.value) || null }))} className={inputCls} type="number" />
+                    <input value={edit.port ?? ""} onChange={(e) => setEdit((s) => (s ? { ...s, port: Number(e.target.value) || null } : s))} className={inputCls} type="number" />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">Location</label>
-                    <input value={edit.location || ""} onChange={(e) => setState((s: BiometricDeviceRow) => ({ ...s, location: e.target.value }))} className={inputCls} />
+                    <input value={edit.location || ""} onChange={(e) => setEdit((s) => (s ? { ...s, location: e.target.value } : s))} className={inputCls} />
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">Active</label>
                     <select
                       value={edit.isActive ? "true" : "false"}
-                      onChange={(e) => setState((s: BiometricDeviceRow) => ({ ...s, isActive: e.target.value === "true" }))}
+                      onChange={(e) => setEdit((s) => (s ? { ...s, isActive: e.target.value === "true" } : s))}
                       className={inputCls}
                     >
                       <option value="true">Active</option>
@@ -343,11 +351,6 @@ export default function BiometricDevicesPage() {
         </AdminModal>
       </AdminLayout>
   );
-}
-
-function useFormState<T>(initial: T) {
-  const [state, setState] = React.useState<T>(initial);
-  return { state, setState };
 }
 
 function ErrToast({ error }: { error?: string | null }) {

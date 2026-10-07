@@ -31,8 +31,8 @@ export * from "./enums"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more BiometricDevices
- * const biometricDevices = await prisma.biometricDevice.findMany()
+ * // Fetch zero or more Users
+ * const users = await prisma.user.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -41,6 +41,116 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
+ * Model Student
+ * 
+ */
+export type Student = Prisma.StudentModel
+/**
+ * Model Faculty
+ * 
+ */
+export type Faculty = Prisma.FacultyModel
+/**
+ * Model Course
+ * 
+ */
+export type Course = Prisma.CourseModel
+/**
+ * Model Batch
+ * 
+ */
+export type Batch = Prisma.BatchModel
+/**
+ * Model Banner
+ * 
+ */
+export type Banner = Prisma.BannerModel
+/**
+ * Model Popup
+ * 
+ */
+export type Popup = Prisma.PopupModel
+/**
+ * Model GalleryItem
+ * 
+ */
+export type GalleryItem = Prisma.GalleryItemModel
+/**
+ * Model Testimonial
+ * 
+ */
+export type Testimonial = Prisma.TestimonialModel
+/**
+ * Model Result
+ * 
+ */
+export type Result = Prisma.ResultModel
+/**
+ * Model TestAccess
+ * 
+ */
+export type TestAccess = Prisma.TestAccessModel
+/**
+ * Model Test
+ * 
+ */
+export type Test = Prisma.TestModel
+/**
+ * Model Question
+ * 
+ */
+export type Question = Prisma.QuestionModel
+/**
+ * Model TestAttempt
+ * 
+ */
+export type TestAttempt = Prisma.TestAttemptModel
+/**
+ * Model PdfImport
+ * 
+ */
+export type PdfImport = Prisma.PdfImportModel
+/**
+ * Model Attendance
+ * 
+ */
+export type Attendance = Prisma.AttendanceModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model OtpRequest
+ * 
+ */
+export type OtpRequest = Prisma.OtpRequestModel
+/**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = Prisma.PushSubscriptionModel
+/**
+ * Model Book
+ * 
+ */
+export type Book = Prisma.BookModel
+/**
+ * Model Enquiry
+ * 
+ */
+export type Enquiry = Prisma.EnquiryModel
+/**
+ * Model Announcement
+ * 
+ */
+export type Announcement = Prisma.AnnouncementModel
 /**
  * Model BiometricDevice
  * 
@@ -51,13 +161,3 @@ export type BiometricDevice = Prisma.BiometricDeviceModel
  * 
  */
 export type BiometricDeviceEvent = Prisma.BiometricDeviceEventModel
-/**
- * Model Student
- * 
- */
-export type Student = Prisma.StudentModel
-/**
- * Model Batch
- * 
- */
-export type Batch = Prisma.BatchModel

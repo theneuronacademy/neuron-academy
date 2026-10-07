@@ -13,6 +13,7 @@
     "security:check": "tsx scripts/security-check.ts",
     "storage:check": "tsx scripts/storage-check.ts",
     "runtime:check": "tsx scripts/runtime-check.ts",
+    "faculty:check": "tsx scripts/faculty-auth-check.ts",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",

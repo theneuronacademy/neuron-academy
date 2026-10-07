@@ -9,12 +9,101 @@
 * 🟢 You can import this file directly.
 */
 
-export const AttendanceSource = {
-  MANUAL: 'MANUAL',
-  BIOMETRIC: 'BIOMETRIC'
+export const Role = {
+  ADMIN: 'ADMIN',
+  FACULTY: 'FACULTY',
+  STUDENT: 'STUDENT'
 } as const
 
-export type AttendanceSource = (typeof AttendanceSource)[keyof typeof AttendanceSource]
+export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const StudentStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type StudentStatus = (typeof StudentStatus)[keyof typeof StudentStatus]
+
+
+export const StudentType = {
+  REGULAR: 'REGULAR',
+  SCHOLARSHIP: 'SCHOLARSHIP'
+} as const
+
+export type StudentType = (typeof StudentType)[keyof typeof StudentType]
+
+
+export const BookVisibility = {
+  ALL: 'ALL',
+  REGULAR_ONLY: 'REGULAR_ONLY'
+} as const
+
+export type BookVisibility = (typeof BookVisibility)[keyof typeof BookVisibility]
+
+
+export const FacultyStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type FacultyStatus = (typeof FacultyStatus)[keyof typeof FacultyStatus]
+
+
+export const CourseStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type CourseStatus = (typeof CourseStatus)[keyof typeof CourseStatus]
+
+
+export const BatchStatus = {
+  ACTIVE: 'ACTIVE',
+  UPCOMING: 'UPCOMING',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type BatchStatus = (typeof BatchStatus)[keyof typeof BatchStatus]
+
+
+export const TestType = {
+  LIVE: 'LIVE',
+  OFFLINE: 'OFFLINE',
+  PRACTICE: 'PRACTICE'
+} as const
+
+export type TestType = (typeof TestType)[keyof typeof TestType]
+
+
+export const TestStatus = {
+  DRAFT: 'DRAFT',
+  SCHEDULED: 'SCHEDULED',
+  LIVE: 'LIVE',
+  COMPLETED: 'COMPLETED',
+  PUBLISHED: 'PUBLISHED'
+} as const
+
+export type TestStatus = (typeof TestStatus)[keyof typeof TestStatus]
+
+
+export const QuestionType = {
+  MCQ: 'MCQ',
+  TRUE_FALSE: 'TRUE_FALSE',
+  SHORT_ANSWER: 'SHORT_ANSWER',
+  NUMERIC: 'NUMERIC'
+} as const
+
+export type QuestionType = (typeof QuestionType)[keyof typeof QuestionType]
+
+
+export const AttemptStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  SUBMITTED: 'SUBMITTED',
+  EVALUATED: 'EVALUATED'
+} as const
+
+export type AttemptStatus = (typeof AttemptStatus)[keyof typeof AttemptStatus]
 
 
 export const AttendanceStatus = {
@@ -25,3 +114,76 @@ export const AttendanceStatus = {
 } as const
 
 export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]
+
+
+export const AttendanceSource = {
+  MANUAL: 'MANUAL',
+  BIOMETRIC: 'BIOMETRIC'
+} as const
+
+export type AttendanceSource = (typeof AttendanceSource)[keyof typeof AttendanceSource]
+
+
+export const NotificationAudience = {
+  ALL_STUDENTS: 'ALL_STUDENTS',
+  BATCH: 'BATCH',
+  FACULTY: 'FACULTY',
+  INDIVIDUAL: 'INDIVIDUAL'
+} as const
+
+export type NotificationAudience = (typeof NotificationAudience)[keyof typeof NotificationAudience]
+
+
+export const NotificationStatus = {
+  DRAFT: 'DRAFT',
+  SCHEDULED: 'SCHEDULED',
+  SENT: 'SENT'
+} as const
+
+export type NotificationStatus = (typeof NotificationStatus)[keyof typeof NotificationStatus]
+
+
+export const TestAccessType = {
+  FREE: 'FREE',
+  PAID: 'PAID',
+  PRIVATE: 'PRIVATE'
+} as const
+
+export type TestAccessType = (typeof TestAccessType)[keyof typeof TestAccessType]
+
+
+export const TestAccessStatus = {
+  ACTIVE: 'ACTIVE',
+  REVOKED: 'REVOKED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type TestAccessStatus = (typeof TestAccessStatus)[keyof typeof TestAccessStatus]
+
+
+export const NotificationChannel = {
+  IN_APP: 'IN_APP',
+  WEB_PUSH: 'WEB_PUSH',
+  MOBILE_PUSH: 'MOBILE_PUSH'
+} as const
+
+export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
+
+
+export const EnquiryStatus = {
+  NEW: 'NEW',
+  CONTACTED: 'CONTACTED',
+  CONVERTED: 'CONVERTED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type EnquiryStatus = (typeof EnquiryStatus)[keyof typeof EnquiryStatus]
+
+
+export const PopupFrequency = {
+  ONCE_PER_SESSION: 'ONCE_PER_SESSION',
+  ONCE_PER_DAY: 'ONCE_PER_DAY',
+  EVERY_VISIT: 'EVERY_VISIT'
+} as const
+
+export type PopupFrequency = (typeof PopupFrequency)[keyof typeof PopupFrequency]

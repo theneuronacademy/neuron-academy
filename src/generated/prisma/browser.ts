@@ -18,6 +18,116 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
+ * Model Student
+ * 
+ */
+export type Student = Prisma.StudentModel
+/**
+ * Model Faculty
+ * 
+ */
+export type Faculty = Prisma.FacultyModel
+/**
+ * Model Course
+ * 
+ */
+export type Course = Prisma.CourseModel
+/**
+ * Model Batch
+ * 
+ */
+export type Batch = Prisma.BatchModel
+/**
+ * Model Banner
+ * 
+ */
+export type Banner = Prisma.BannerModel
+/**
+ * Model Popup
+ * 
+ */
+export type Popup = Prisma.PopupModel
+/**
+ * Model GalleryItem
+ * 
+ */
+export type GalleryItem = Prisma.GalleryItemModel
+/**
+ * Model Testimonial
+ * 
+ */
+export type Testimonial = Prisma.TestimonialModel
+/**
+ * Model Result
+ * 
+ */
+export type Result = Prisma.ResultModel
+/**
+ * Model TestAccess
+ * 
+ */
+export type TestAccess = Prisma.TestAccessModel
+/**
+ * Model Test
+ * 
+ */
+export type Test = Prisma.TestModel
+/**
+ * Model Question
+ * 
+ */
+export type Question = Prisma.QuestionModel
+/**
+ * Model TestAttempt
+ * 
+ */
+export type TestAttempt = Prisma.TestAttemptModel
+/**
+ * Model PdfImport
+ * 
+ */
+export type PdfImport = Prisma.PdfImportModel
+/**
+ * Model Attendance
+ * 
+ */
+export type Attendance = Prisma.AttendanceModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model OtpRequest
+ * 
+ */
+export type OtpRequest = Prisma.OtpRequestModel
+/**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = Prisma.PushSubscriptionModel
+/**
+ * Model Book
+ * 
+ */
+export type Book = Prisma.BookModel
+/**
+ * Model Enquiry
+ * 
+ */
+export type Enquiry = Prisma.EnquiryModel
+/**
+ * Model Announcement
+ * 
+ */
+export type Announcement = Prisma.AnnouncementModel
+/**
  * Model BiometricDevice
  * 
  */
@@ -27,13 +137,3 @@ export type BiometricDevice = Prisma.BiometricDeviceModel
  * 
  */
 export type BiometricDeviceEvent = Prisma.BiometricDeviceEventModel
-/**
- * Model Student
- * 
- */
-export type Student = Prisma.StudentModel
-/**
- * Model Batch
- * 
- */
-export type Batch = Prisma.BatchModel

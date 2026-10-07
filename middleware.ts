@@ -11,7 +11,20 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const COOKIE = "neuron_session";
-const FACULTY_RESERVED = new Set(["login", "dashboard"]);
+const FACULTY_RESERVED = new Set([
+  "login",
+  "register",
+  "dashboard",
+  "batches",
+  "students",
+  "attendance",
+  "tests",
+  "results",
+  "analytics",
+  "notifications",
+  "profile",
+  "activity",
+]);
 
 function b64urlToBytes(s: string): Uint8Array<ArrayBuffer> {
   const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
@@ -96,7 +109,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith("/faculty/dashboard")) {
+  if (pathname === "/faculty" || pathname.startsWith("/faculty/")) {
     if (!role) return loginRedirect(req, "/faculty/login");
     if (role !== "FACULTY" && role !== "ADMIN") return NextResponse.redirect(new URL("/", req.url));
     return NextResponse.next();

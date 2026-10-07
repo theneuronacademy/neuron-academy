@@ -1,69 +1,84 @@
+// Phase 3 — PostgreSQL schema (Prisma ORM).
+// Frontend + existing test engine (lib/storage.ts, lib/testTypes.ts) are
+// UNTOUCHED. These models are the production foundation; the localStorage
+// test engine keeps working until the API-backed engine lands.
+// Passwords are NEVER stored in plaintext — see prisma/seed.ts (bcryptjs).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
 datasource db {
   provider = "postgresql"
 }
 
-// ================================================================
-// Biometric Device Management
-// ================================================================
-// Device registration — admin-managed. Each physical X2000 device
-// registered in the system. Credentials stored securely; never exposed
-// to frontend or mobile clients.
-//
-// Device → Backend API only. Student/Faculty apps never communicate
-// directly with the biometric device.
-//
-// Last communication tracking for admin dashboard health visibility.
-model BiometricDevice {
-  id            String           @id @default(cuid())
-  name          String
-  serialNumber  String   @unique
-  deviceType    String       @default("X2000")
-  ipAddress     String?
-  port          Int?
-  protocol      String       @default("ADMS")
-  location      String?
-  isActive      Boolean        @default(true)
-  lastSeenAt    DateTime?
-  totalEvents   Int            @default(0)
-  failedEvents  Int            @default(0)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  @@index([isActive])
-  @@index([lastSeenAt])
+enum Role {
+  ADMIN
+  FACULTY
+  STUDENT
 }
 
-model BiometricDeviceEvent {
-  id                String           @id @default(cuid())
-  deviceId          String?          // FK to BiometricDevice
-  biometricUserId   String
-  eventTimestamp    DateTime @default(now())
-  eventType         String
-  payloadHash       String           @db.VarChar(64) // SHA-256 hex string
-  processed         Boolean          @default(false)
-    // True if an Attendance record was created/resolved from this event
-  attendanceId      String?
-    // Link to created Attendance row (if processed)
-  receivedAt        DateTime         @default(now())
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-
-  @@index([deviceId])
-  @@index([biometricUserId])
-  @@index([processed])
-  @@index([eventTimestamp])
-
-  @@unique([deviceId, biometricUserId, eventTimestamp, payloadHash])
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
 }
 
-// ================================================================
-// Legacy models from baseline migration — referenced for relations.
-// These types are defined in migration 20261006000000_baseline SQL.
-// ================================================================
+// Phase 14 — student type. REGULAR = full academic experience; SCHOLARSHIP =
+// scholarship/FREE tests + profile + notifications + enabled books only.
+// Enforced server-side on every route; never trusted from the client.
+enum StudentType {
+  REGULAR
+  SCHOLARSHIP
+}
 
-enum AttendanceSource {
-  MANUAL
-  BIOMETRIC
+// Phase 14 — per-book visibility for scholarship students.
+enum BookVisibility {
+  ALL
+  REGULAR_ONLY
+}
+
+enum FacultyStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CourseStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum BatchStatus {
+  ACTIVE
+  UPCOMING
+  COMPLETED
+}
+
+enum TestType {
+  LIVE
+  OFFLINE
+  PRACTICE
+}
+
+enum TestStatus {
+  DRAFT
+  SCHEDULED
+  LIVE
+  COMPLETED
+  PUBLISHED
+}
+
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+  SHORT_ANSWER
+  NUMERIC
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  EVALUATED
 }
 
 enum AttendanceStatus {
@@ -73,20 +88,634 @@ enum AttendanceStatus {
   LEAVE
 }
 
+enum AttendanceSource {
+  MANUAL
+  BIOMETRIC
+}
+
+enum NotificationAudience {
+  ALL_STUDENTS
+  BATCH
+  FACULTY
+  INDIVIDUAL
+}
+
+enum NotificationStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+}
+
+// Phase 13 — test access model (FREE open | PAID manual grant after UPI | PRIVATE invite-only).
+enum TestAccessType {
+  FREE
+  PAID
+  PRIVATE
+}
+
+enum TestAccessStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+// Phase 13 — notification delivery channels. Only IN_APP is delivered today;
+// WEB_PUSH / MOBILE_PUSH rows are stored so future providers need no rework.
+enum NotificationChannel {
+  IN_APP
+  WEB_PUSH
+  MOBILE_PUSH
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CONVERTED
+  CLOSED
+}
+
+enum PopupFrequency {
+  ONCE_PER_SESSION
+  ONCE_PER_DAY
+  EVERY_VISIT
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  // Phase 10: one-way credential for ADMIN mobile+DOB login.
+  // bcrypt(SESSION_SECRET + dobISO). Never returned, logged, or sent out.
+  dobHash      String?
+  role         Role     @default(STUDENT)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  studentProfile      Student?
+  facultyProfile      Faculty?
+  createdTests        Test[]         @relation("TestCreator")
+  createdImports      PdfImport[]    @relation("PdfImportCreator")
+  createdNotifications Notification[] @relation("NotificationCreator")
+  createdAnnouncements Announcement[] @relation("AnnouncementCreator")
+  // Phase 13 — access grants performed by this admin + push subscriptions.
+  grantedAccesses TestAccess[] @relation("AccessGranter")
+  pushSubscriptions PushSubscription[]
+  targetedUserNotifications Notification[] @relation("NotificationUser")
+}
+
 model Student {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
+  id          String        @id @default(cuid())
+  userId      String?       @unique
+  studentId   String        @unique
+  name        String
+  email       String        @unique
+  phone       String
+  photo       String?
+  courseId    String?
+  batchId     String?
+  joiningDate DateTime      @default(now())
+  status      StudentStatus @default(ACTIVE)
+  // Phase 14 — student type + profile. mobile/email/studentType/batch are
+  // admin-managed; students edit only the allowlisted profile fields.
+  studentType   StudentType @default(REGULAR)
+  dob           DateTime?
+  photoUrl      String?
+  gender        String?
+  address       String?
+  city          String?
+  school        String?
+  className     String?
+  parentName    String?
+  parentMobile  String?
+  enrollmentDate DateTime   @default(now())
+  lastLoginAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  course     Course?      @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  batch      Batch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  attendance Attendance[]
+  attempts   TestAttempt[]
+  results    Result[]
+  targetedNotifications Notification[] @relation("NotificationStudent")
+  // Phase 13 — PAID/PRIVATE test grants for this student.
+  testAccesses TestAccess[]
+
+  @@index([studentType])
+  @@index([status])
+  @@index([batchId])
+}
+
+model Faculty {
+  id            String        @id @default(cuid())
+  userId        String?       @unique
+  facultyId     String        @unique
+  name          String
+  email         String        @unique
+  phone         String
+  photo         String?
+  qualification String?
+  experience    String?
+  bio           String?
+  // Public faculty-page fields (subject filter, card designation).
+  subject       String?
+  designation   String?        @default("Faculty")
+  status        FacultyStatus @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user                 User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  batches              Batch[]
+  targetedNotifications Notification[] @relation("NotificationFaculty")
+}
+
+model Course {
+  id               String       @id @default(cuid())
+  name             String
+  slug             String       @unique
+  description      String?
+  shortDescription String?
+  image            String?
+  duration         String?
+  fee              Float?
+  status           CourseStatus @default(ACTIVE)
+  displayOrder     Int          @default(0)
+  // Website catalogue fields (filter pills, cards) — kept so the public
+  // site maps 1:1 without placeholder defaults once seeded from /data/courses.
+  category         String       @default("Engineering")
+  target           String?
+  mode             String?
+  facultyName      String?
+  badge            String?
+  accent           String?
+  subjects         String[]     @default([])
+  highlights       String[]     @default([])
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  students  Student[]
+  batches   Batch[]
+  enquiries Enquiry[]
 }
 
 model Batch {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   name      String
+  courseId  String
+  facultyId String?
+  startDate DateTime?
+  endDate   DateTime?
+  status    BatchStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  course        Course         @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  faculty       Faculty?       @relation(fields: [facultyId], references: [id], onDelete: SetNull)
+  students      Student[]
+  tests         Test[]
+  attendance    Attendance[]
+  notifications Notification[] @relation("NotificationBatch")
 }
 
-// Prisma Client generator configuration.
-// This block is managed by prisma.config.ts; do not remove.
-generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+model Banner {
+  id           String   @id @default(cuid())
+  title        String
+  subtitle     String?
+  description  String?
+  imageUrl     String?
+  videoUrl     String?
+  buttonText   String?
+  buttonUrl    String?
+  startDate    DateTime?
+  endDate      DateTime?
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Popup {
+  id         String         @id @default(cuid())
+  title      String
+  message    String
+  imageUrl   String?
+  videoUrl   String?
+  buttonText String?
+  buttonUrl  String?
+  frequency  PopupFrequency @default(ONCE_PER_SESSION)
+  startDate  DateTime?
+  endDate    DateTime?
+  isActive   Boolean        @default(true)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model GalleryItem {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  imageUrl     String
+  category     String   @default("Academy")
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Testimonial {
+  id           String   @id @default(cuid())
+  name         String
+  role         String   @default("Student")
+  message      String
+  photo        String?
+  rating       Int      @default(5)
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Result {
+  id         String   @id @default(cuid())
+  studentId  String
+  testId     String
+  marks      Float    @default(0)
+  totalMarks Float    @default(0)
+  percentage Float    @default(0)
+  rank       Int?
+  status     String   @default("PUBLISHED")
+  // Server-computed breakdown (Step 13 response fields).
+  attempted  Int      @default(0)
+  correct    Int      @default(0)
+  wrong      Int      @default(0)
+  unanswered Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@index([testId])
+  @@index([studentId])
+  @@index([studentId, testId])
+}
+
+// Phase 13 — manual student access grants for PAID/PRIVATE tests.
+// Payment happens externally (UPI); an ADMIN creates an ACTIVE row after
+// confirming payment. One ACTIVE row per (test, student) — enforced by the
+// composite unique on (testId, studentId, status): re-grant after revoke
+// works because the old row is REVOKED/EXPIRED, never a second ACTIVE.
+model TestAccess {
+  id        String           @id @default(cuid())
+  testId    String
+  studentId String
+  grantedBy String?
+  status    TestAccessStatus @default(ACTIVE)
+  grantedAt DateTime         @default(now())
+  expiresAt DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  granter User?   @relation("AccessGranter", fields: [grantedBy], references: [id], onDelete: SetNull)
+
+  @@unique([testId, studentId, status])
+  @@index([studentId])
+  @@index([testId])
+  @@index([status])
+  @@index([studentId, testId])
+}
+
+// Compatible with the existing test engine contract (lib/testTypes.ts):
+// title=name, duration=durationMinutes, totalQuestions=questionIds.length.
+// The localStorage engine (lib/storage.ts) is NOT replaced in this phase.
+model Test {
+  id             String     @id @default(cuid())
+  title          String
+  description    String?
+  batchId        String?
+  createdById    String?
+  type           TestType   @default(PRACTICE)
+  duration       Int        @default(60)
+  totalQuestions Int        @default(0)
+  totalMarks     Int        @default(0)
+  startTime      DateTime?
+  endTime        DateTime?
+  status         TestStatus @default(DRAFT)
+  // Phase 12 — test generator ordering (SERIAL | RANDOM).
+  questionOrder  String     @default("SERIAL")
+  optionOrder    String     @default("SERIAL")
+  // Phase 13 — access model. FREE = open to eligible students, PAID =
+  // admin grants TestAccess after external UPI payment (no gateway),
+  // PRIVATE = invite-only via TestAccess. No payment provider is used.
+  accessType   TestAccessType @default(FREE)
+  // Price in integer rupees. FREE must be 0, PAID must be > 0.
+  price        Int            @default(0)
+  publishedAt  DateTime?
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  batch     Batch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  createdBy User?        @relation("TestCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  questions Question[]
+  attempts  TestAttempt[]
+  results   Result[]
+  accesses  TestAccess[]
+
+  @@index([status])
+  @@index([accessType])
+  @@index([publishedAt])
+  @@index([batchId])
+}
+
+// questionType supports future types (comprehension, matrix) without
+// complicating today's MCQ-first engine. Options stay nullable so new
+// types don't force fake A-D options.
+model Question {
+  id            String       @id @default(cuid())
+  testId        String
+  questionText  String
+  questionType  QuestionType @default(MCQ)
+  optionA       String?
+  optionB       String?
+  optionC       String?
+  optionD       String?
+  // Phase 12 — 5th option support (variable 2–5 options).
+  optionE       String?
+  correctAnswer String?
+  marks         Float        @default(1)
+  negativeMarks Float        @default(0)
+  explanation   String?
+  order         Int          @default(0)
+  // Phase 12 — import provenance + review pipeline.
+  // subject groups pool filtering; reviewStatus: PENDING | APPROVED | REJECTED.
+  // confidence: HIGH | MEDIUM | LOW (parser-assessed, faculty reviews).
+  subject       String?
+  sourceFile    String?
+  sourcePage    Int?
+  confidence    String?
+  reviewStatus  String       @default("APPROVED")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  test Test @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@index([testId])
+}
+
+model TestAttempt {
+  id          String        @id @default(cuid())
+  testId      String
+  studentId   String
+  startedAt   DateTime      @default(now())
+  submittedAt DateTime?
+  // Submitted answers { questionId: "A"|"B"|"C"|"D"|null } — persisted so
+  // evaluation is reproducible server-side. Never trust client marks.
+  answers     Json?
+  // Phase 12 — server-generated per-attempt ordering (RANDOM modes).
+  // questionOrder: string[] (question ids in display order).
+  // optionMap: Record<questionId, string[]> display position → original letter.
+  // Stored at attempt start; refresh-safe; evaluation inverts the mapping.
+  questionOrder Json?
+  optionMap     Json?
+  score       Float         @default(0)
+  totalMarks  Float         @default(0)
+  percentage  Float         @default(0)
+  status      AttemptStatus @default(IN_PROGRESS)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([testId])
+  @@index([studentId])
+  @@index([studentId, testId])
+  @@index([status])
+}
+
+// Phase 12 — PDF import session. Tracks one upload through
+// PROCESSING → COMPLETED | REVIEW_REQUIRED | FAILED.
+// Questions land on a staging test (see Question.reviewStatus); only
+// APPROVED rows enter the usable pool. Binaries are never stored —
+// metadata + structured rows only (Supabase Storage later if needed).
+model PdfImport {
+  id                String   @id @default(cuid())
+  filename          String
+  status            String   @default("PROCESSING")
+  totalPages        Int      @default(0)
+  textPages         Int      @default(0)
+  ocrPages          Int      @default(0)
+  questionsDetected Int      @default(0)
+  questionsApproved Int      @default(0)
+  questionsRejected Int      @default(0)
+  stagingTestId     String?
+  createdById       String?
+  error             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  createdBy User? @relation("PdfImportCreator", fields: [createdById], references: [id], onDelete: SetNull)
+}
+
+// Database model only in Phase 3. eSSL/biometric connection is a later
+// phase — source=BIOMETRIC + deviceId exist so no rework is needed then.
+model Attendance {
+  id        String           @id @default(cuid())
+  studentId String
+  batchId   String
+  date      DateTime         @db.Date
+  status    AttendanceStatus @default(PRESENT)
+  checkIn   DateTime?
+  checkOut  DateTime?
+  source    AttendanceSource @default(MANUAL)
+  deviceId  String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  batch   Batch   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, date])
+  @@index([batchId, date])
+}
+
+model Notification {
+  id              String               @id @default(cuid())
+  title           String
+  message         String
+  type            String               @default("general")
+  audience        NotificationAudience @default(ALL_STUDENTS)
+  // Phase 13 — delivery channel + in-app read state. WEB_PUSH/MOBILE_PUSH
+  // rows are stored but delivery providers land in a later phase.
+  channel         NotificationChannel  @default(IN_APP)
+  isRead          Boolean              @default(false)
+  readAt          DateTime?
+  // Optional deep link to a test (e.g. "new scholarship test available").
+  testId          String?
+  createdById     String?
+  targetBatchId   String?
+  targetStudentId String?
+  targetFacultyId String?
+  targetUserId    String?
+  scheduledAt     DateTime?
+  sentAt          DateTime?
+  status          NotificationStatus   @default(DRAFT)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  createdBy     User?    @relation("NotificationCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  targetBatch   Batch?   @relation("NotificationBatch", fields: [targetBatchId], references: [id], onDelete: SetNull)
+  targetStudent Student? @relation("NotificationStudent", fields: [targetStudentId], references: [id], onDelete: SetNull)
+  targetFaculty Faculty? @relation("NotificationFaculty", fields: [targetFacultyId], references: [id], onDelete: SetNull)
+  targetUser    User?    @relation("NotificationUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([targetStudentId])
+  @@index([targetUserId])
+  @@index([targetBatchId])
+  @@index([status])
+  @@index([channel])
+  @@index([audience])
+  @@index([createdAt])
+}
+
+// Phase 13 — mobile OTP verification requests. The plaintext OTP is NEVER
+// stored: only a peppered SHA-256 hash. Never returned, never logged.
+model OtpRequest {
+  id          String    @id @default(cuid())
+  phone       String
+  purpose     String    @default("REGISTER")
+  otpHash     String
+  attempts    Int       @default(0)
+  resendCount Int       @default(0)
+  expiresAt   DateTime
+  verifiedAt  DateTime?
+  consumed    Boolean   @default(false)
+  lastSentAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([phone])
+  @@index([expiresAt])
+}
+
+// Phase 13 — Web Push subscription foundation (browser push lands later).
+// Storing subscriptions now means no rework when the provider is added.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String?
+  auth      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Phase 14 — study material library. Only isActive books are visible to
+// students; visibleTo controls scholarship-student access per book.
+model Book {
+  id           String         @id @default(cuid())
+  title        String
+  description  String?
+  author       String?
+  subject      String?
+  className    String?
+  category     String?
+  coverImageUrl String?
+  pdfUrl       String?
+  externalUrl  String?
+  visibleTo    BookVisibility @default(ALL)
+  isActive     Boolean        @default(true)
+  order        Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([isActive, order])
+  @@index([className])
+  @@index([subject])
+  @@index([category])
+}
+
+model Enquiry {
+  id        String        @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  courseId  String?
+  message   String?
+  status    EnquiryStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  course Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+}
+
+model Announcement {
+  id             String   @id @default(cuid())
+  title          String
+  content        String
+  imageUrl       String?
+  targetAudience String   @default("ALL")
+  startDate      DateTime?
+  endDate        DateTime?
+  isActive       Boolean  @default(true)
+  createdById    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  createdBy User? @relation("AnnouncementCreator", fields: [createdById], references: [id], onDelete: SetNull)
+}
+
+// ================================================================
+// Biometric Device Management (Phase 12A, additive, no rework)
+// ================================================================
+model BiometricDevice {
+  id           String   @id @default(cuid())
+  name         String
+  serialNumber String   @unique
+  deviceType   String   @default("X2000")
+  ipAddress    String?
+  port         Int?
+  protocol     String   @default("ADMS")
+  location     String?
+  isActive     Boolean  @default(true)
+  lastSeenAt   DateTime?
+  totalEvents  Int      @default(0)
+  failedEvents Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([lastSeenAt])
+}
+
+model BiometricDeviceEvent {
+  id              String   @id @default(cuid())
+  deviceId        String?
+  biometricUserId String
+  eventTimestamp  DateTime @default(now())
+  eventType       String
+  payloadHash     String   @db.VarChar(64)
+  processed       Boolean  @default(false)
+  attendanceId    String?
+  receivedAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([deviceId])
+  @@index([biometricUserId])
+  @@index([processed])
+  @@index([eventTimestamp])
+
+  @@unique([deviceId, biometricUserId, eventTimestamp, payloadHash])
 }

@@ -27,16 +27,37 @@ export type AggregateBatch = {
 export type BatchMinAggregateOutputType = {
   id: string | null
   name: string | null
+  courseId: string | null
+  facultyId: string | null
+  startDate: Date | null
+  endDate: Date | null
+  status: $Enums.BatchStatus | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type BatchMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  courseId: string | null
+  facultyId: string | null
+  startDate: Date | null
+  endDate: Date | null
+  status: $Enums.BatchStatus | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type BatchCountAggregateOutputType = {
   id: number
   name: number
+  courseId: number
+  facultyId: number
+  startDate: number
+  endDate: number
+  status: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -44,16 +65,37 @@ export type BatchCountAggregateOutputType = {
 export type BatchMinAggregateInputType = {
   id?: true
   name?: true
+  courseId?: true
+  facultyId?: true
+  startDate?: true
+  endDate?: true
+  status?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type BatchMaxAggregateInputType = {
   id?: true
   name?: true
+  courseId?: true
+  facultyId?: true
+  startDate?: true
+  endDate?: true
+  status?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type BatchCountAggregateInputType = {
   id?: true
   name?: true
+  courseId?: true
+  facultyId?: true
+  startDate?: true
+  endDate?: true
+  status?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -132,6 +174,13 @@ export type BatchGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type BatchGroupByOutputType = {
   id: string
   name: string
+  courseId: string
+  facultyId: string | null
+  startDate: Date | null
+  endDate: Date | null
+  status: $Enums.BatchStatus
+  createdAt: Date
+  updatedAt: Date
   _count: BatchCountAggregateOutputType | null
   _min: BatchMinAggregateOutputType | null
   _max: BatchMaxAggregateOutputType | null
@@ -158,11 +207,37 @@ export type BatchWhereInput = {
   NOT?: Prisma.BatchWhereInput | Prisma.BatchWhereInput[]
   id?: Prisma.StringFilter<"Batch"> | string
   name?: Prisma.StringFilter<"Batch"> | string
+  courseId?: Prisma.StringFilter<"Batch"> | string
+  facultyId?: Prisma.StringNullableFilter<"Batch"> | string | null
+  startDate?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
+  endDate?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
+  status?: Prisma.EnumBatchStatusFilter<"Batch"> | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFilter<"Batch"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Batch"> | Date | string
+  course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
+  faculty?: Prisma.XOR<Prisma.FacultyNullableScalarRelationFilter, Prisma.FacultyWhereInput> | null
+  students?: Prisma.StudentListRelationFilter
+  tests?: Prisma.TestListRelationFilter
+  attendance?: Prisma.AttendanceListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
 }
 
 export type BatchOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
+  facultyId?: Prisma.SortOrderInput | Prisma.SortOrder
+  startDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  endDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  course?: Prisma.CourseOrderByWithRelationInput
+  faculty?: Prisma.FacultyOrderByWithRelationInput
+  students?: Prisma.StudentOrderByRelationAggregateInput
+  tests?: Prisma.TestOrderByRelationAggregateInput
+  attendance?: Prisma.AttendanceOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
 }
 
 export type BatchWhereUniqueInput = Prisma.AtLeast<{
@@ -171,11 +246,31 @@ export type BatchWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.BatchWhereInput[]
   NOT?: Prisma.BatchWhereInput | Prisma.BatchWhereInput[]
   name?: Prisma.StringFilter<"Batch"> | string
+  courseId?: Prisma.StringFilter<"Batch"> | string
+  facultyId?: Prisma.StringNullableFilter<"Batch"> | string | null
+  startDate?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
+  endDate?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
+  status?: Prisma.EnumBatchStatusFilter<"Batch"> | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFilter<"Batch"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Batch"> | Date | string
+  course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
+  faculty?: Prisma.XOR<Prisma.FacultyNullableScalarRelationFilter, Prisma.FacultyWhereInput> | null
+  students?: Prisma.StudentListRelationFilter
+  tests?: Prisma.TestListRelationFilter
+  attendance?: Prisma.AttendanceListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
 }, "id">
 
 export type BatchOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
+  facultyId?: Prisma.SortOrderInput | Prisma.SortOrder
+  startDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  endDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.BatchCountOrderByAggregateInput
   _max?: Prisma.BatchMaxOrderByAggregateInput
   _min?: Prisma.BatchMinOrderByAggregateInput
@@ -187,88 +282,1010 @@ export type BatchScalarWhereWithAggregatesInput = {
   NOT?: Prisma.BatchScalarWhereWithAggregatesInput | Prisma.BatchScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Batch"> | string
   name?: Prisma.StringWithAggregatesFilter<"Batch"> | string
+  courseId?: Prisma.StringWithAggregatesFilter<"Batch"> | string
+  facultyId?: Prisma.StringNullableWithAggregatesFilter<"Batch"> | string | null
+  startDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Batch"> | Date | string | null
+  endDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Batch"> | Date | string | null
+  status?: Prisma.EnumBatchStatusWithAggregatesFilter<"Batch"> | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Batch"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Batch"> | Date | string
 }
 
 export type BatchCreateInput = {
   id?: string
   name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
 }
 
 export type BatchUncheckedCreateInput = {
   id?: string
   name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
 }
 
 export type BatchUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
 }
 
 export type BatchUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
 }
 
 export type BatchCreateManyInput = {
   id?: string
   name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type BatchUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type BatchUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BatchNullableScalarRelationFilter = {
+  is?: Prisma.BatchWhereInput | null
+  isNot?: Prisma.BatchWhereInput | null
+}
+
+export type BatchListRelationFilter = {
+  every?: Prisma.BatchWhereInput
+  some?: Prisma.BatchWhereInput
+  none?: Prisma.BatchWhereInput
+}
+
+export type BatchOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type BatchCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
+  facultyId?: Prisma.SortOrder
+  startDate?: Prisma.SortOrder
+  endDate?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type BatchMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
+  facultyId?: Prisma.SortOrder
+  startDate?: Prisma.SortOrder
+  endDate?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type BatchMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
+  facultyId?: Prisma.SortOrder
+  startDate?: Prisma.SortOrder
+  endDate?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
+export type BatchScalarRelationFilter = {
+  is?: Prisma.BatchWhereInput
+  isNot?: Prisma.BatchWhereInput
+}
+
+export type BatchCreateNestedOneWithoutStudentsInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutStudentsInput, Prisma.BatchUncheckedCreateWithoutStudentsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutStudentsInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneWithoutStudentsNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutStudentsInput, Prisma.BatchUncheckedCreateWithoutStudentsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutStudentsInput
+  upsert?: Prisma.BatchUpsertWithoutStudentsInput
+  disconnect?: Prisma.BatchWhereInput | boolean
+  delete?: Prisma.BatchWhereInput | boolean
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutStudentsInput, Prisma.BatchUpdateWithoutStudentsInput>, Prisma.BatchUncheckedUpdateWithoutStudentsInput>
+}
+
+export type BatchCreateNestedManyWithoutFacultyInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutFacultyInput, Prisma.BatchUncheckedCreateWithoutFacultyInput> | Prisma.BatchCreateWithoutFacultyInput[] | Prisma.BatchUncheckedCreateWithoutFacultyInput[]
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutFacultyInput | Prisma.BatchCreateOrConnectWithoutFacultyInput[]
+  createMany?: Prisma.BatchCreateManyFacultyInputEnvelope
+  connect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+}
+
+export type BatchUncheckedCreateNestedManyWithoutFacultyInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutFacultyInput, Prisma.BatchUncheckedCreateWithoutFacultyInput> | Prisma.BatchCreateWithoutFacultyInput[] | Prisma.BatchUncheckedCreateWithoutFacultyInput[]
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutFacultyInput | Prisma.BatchCreateOrConnectWithoutFacultyInput[]
+  createMany?: Prisma.BatchCreateManyFacultyInputEnvelope
+  connect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+}
+
+export type BatchUpdateManyWithoutFacultyNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutFacultyInput, Prisma.BatchUncheckedCreateWithoutFacultyInput> | Prisma.BatchCreateWithoutFacultyInput[] | Prisma.BatchUncheckedCreateWithoutFacultyInput[]
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutFacultyInput | Prisma.BatchCreateOrConnectWithoutFacultyInput[]
+  upsert?: Prisma.BatchUpsertWithWhereUniqueWithoutFacultyInput | Prisma.BatchUpsertWithWhereUniqueWithoutFacultyInput[]
+  createMany?: Prisma.BatchCreateManyFacultyInputEnvelope
+  set?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  disconnect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  delete?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  connect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  update?: Prisma.BatchUpdateWithWhereUniqueWithoutFacultyInput | Prisma.BatchUpdateWithWhereUniqueWithoutFacultyInput[]
+  updateMany?: Prisma.BatchUpdateManyWithWhereWithoutFacultyInput | Prisma.BatchUpdateManyWithWhereWithoutFacultyInput[]
+  deleteMany?: Prisma.BatchScalarWhereInput | Prisma.BatchScalarWhereInput[]
+}
+
+export type BatchUncheckedUpdateManyWithoutFacultyNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutFacultyInput, Prisma.BatchUncheckedCreateWithoutFacultyInput> | Prisma.BatchCreateWithoutFacultyInput[] | Prisma.BatchUncheckedCreateWithoutFacultyInput[]
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutFacultyInput | Prisma.BatchCreateOrConnectWithoutFacultyInput[]
+  upsert?: Prisma.BatchUpsertWithWhereUniqueWithoutFacultyInput | Prisma.BatchUpsertWithWhereUniqueWithoutFacultyInput[]
+  createMany?: Prisma.BatchCreateManyFacultyInputEnvelope
+  set?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  disconnect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  delete?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  connect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  update?: Prisma.BatchUpdateWithWhereUniqueWithoutFacultyInput | Prisma.BatchUpdateWithWhereUniqueWithoutFacultyInput[]
+  updateMany?: Prisma.BatchUpdateManyWithWhereWithoutFacultyInput | Prisma.BatchUpdateManyWithWhereWithoutFacultyInput[]
+  deleteMany?: Prisma.BatchScalarWhereInput | Prisma.BatchScalarWhereInput[]
+}
+
+export type BatchCreateNestedManyWithoutCourseInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutCourseInput, Prisma.BatchUncheckedCreateWithoutCourseInput> | Prisma.BatchCreateWithoutCourseInput[] | Prisma.BatchUncheckedCreateWithoutCourseInput[]
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutCourseInput | Prisma.BatchCreateOrConnectWithoutCourseInput[]
+  createMany?: Prisma.BatchCreateManyCourseInputEnvelope
+  connect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+}
+
+export type BatchUncheckedCreateNestedManyWithoutCourseInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutCourseInput, Prisma.BatchUncheckedCreateWithoutCourseInput> | Prisma.BatchCreateWithoutCourseInput[] | Prisma.BatchUncheckedCreateWithoutCourseInput[]
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutCourseInput | Prisma.BatchCreateOrConnectWithoutCourseInput[]
+  createMany?: Prisma.BatchCreateManyCourseInputEnvelope
+  connect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+}
+
+export type BatchUpdateManyWithoutCourseNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutCourseInput, Prisma.BatchUncheckedCreateWithoutCourseInput> | Prisma.BatchCreateWithoutCourseInput[] | Prisma.BatchUncheckedCreateWithoutCourseInput[]
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutCourseInput | Prisma.BatchCreateOrConnectWithoutCourseInput[]
+  upsert?: Prisma.BatchUpsertWithWhereUniqueWithoutCourseInput | Prisma.BatchUpsertWithWhereUniqueWithoutCourseInput[]
+  createMany?: Prisma.BatchCreateManyCourseInputEnvelope
+  set?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  disconnect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  delete?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  connect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  update?: Prisma.BatchUpdateWithWhereUniqueWithoutCourseInput | Prisma.BatchUpdateWithWhereUniqueWithoutCourseInput[]
+  updateMany?: Prisma.BatchUpdateManyWithWhereWithoutCourseInput | Prisma.BatchUpdateManyWithWhereWithoutCourseInput[]
+  deleteMany?: Prisma.BatchScalarWhereInput | Prisma.BatchScalarWhereInput[]
+}
+
+export type BatchUncheckedUpdateManyWithoutCourseNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutCourseInput, Prisma.BatchUncheckedCreateWithoutCourseInput> | Prisma.BatchCreateWithoutCourseInput[] | Prisma.BatchUncheckedCreateWithoutCourseInput[]
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutCourseInput | Prisma.BatchCreateOrConnectWithoutCourseInput[]
+  upsert?: Prisma.BatchUpsertWithWhereUniqueWithoutCourseInput | Prisma.BatchUpsertWithWhereUniqueWithoutCourseInput[]
+  createMany?: Prisma.BatchCreateManyCourseInputEnvelope
+  set?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  disconnect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  delete?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  connect?: Prisma.BatchWhereUniqueInput | Prisma.BatchWhereUniqueInput[]
+  update?: Prisma.BatchUpdateWithWhereUniqueWithoutCourseInput | Prisma.BatchUpdateWithWhereUniqueWithoutCourseInput[]
+  updateMany?: Prisma.BatchUpdateManyWithWhereWithoutCourseInput | Prisma.BatchUpdateManyWithWhereWithoutCourseInput[]
+  deleteMany?: Prisma.BatchScalarWhereInput | Prisma.BatchScalarWhereInput[]
+}
+
+export type EnumBatchStatusFieldUpdateOperationsInput = {
+  set?: $Enums.BatchStatus
+}
+
+export type BatchCreateNestedOneWithoutTestsInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutTestsInput, Prisma.BatchUncheckedCreateWithoutTestsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutTestsInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneWithoutTestsNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutTestsInput, Prisma.BatchUncheckedCreateWithoutTestsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutTestsInput
+  upsert?: Prisma.BatchUpsertWithoutTestsInput
+  disconnect?: Prisma.BatchWhereInput | boolean
+  delete?: Prisma.BatchWhereInput | boolean
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutTestsInput, Prisma.BatchUpdateWithoutTestsInput>, Prisma.BatchUncheckedUpdateWithoutTestsInput>
+}
+
+export type BatchCreateNestedOneWithoutAttendanceInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutAttendanceInput, Prisma.BatchUncheckedCreateWithoutAttendanceInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutAttendanceInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneRequiredWithoutAttendanceNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutAttendanceInput, Prisma.BatchUncheckedCreateWithoutAttendanceInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutAttendanceInput
+  upsert?: Prisma.BatchUpsertWithoutAttendanceInput
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutAttendanceInput, Prisma.BatchUpdateWithoutAttendanceInput>, Prisma.BatchUncheckedUpdateWithoutAttendanceInput>
+}
+
+export type BatchCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutNotificationsInput, Prisma.BatchUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutNotificationsInput, Prisma.BatchUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.BatchUpsertWithoutNotificationsInput
+  disconnect?: Prisma.BatchWhereInput | boolean
+  delete?: Prisma.BatchWhereInput | boolean
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutNotificationsInput, Prisma.BatchUpdateWithoutNotificationsInput>, Prisma.BatchUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type BatchCreateWithoutStudentsInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchUncheckedCreateWithoutStudentsInput = {
+  id?: string
+  name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchCreateOrConnectWithoutStudentsInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutStudentsInput, Prisma.BatchUncheckedCreateWithoutStudentsInput>
+}
+
+export type BatchUpsertWithoutStudentsInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutStudentsInput, Prisma.BatchUncheckedUpdateWithoutStudentsInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutStudentsInput, Prisma.BatchUncheckedCreateWithoutStudentsInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutStudentsInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutStudentsInput, Prisma.BatchUncheckedUpdateWithoutStudentsInput>
+}
+
+export type BatchUpdateWithoutStudentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutStudentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchCreateWithoutFacultyInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchUncheckedCreateWithoutFacultyInput = {
+  id?: string
+  name: string
+  courseId: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchCreateOrConnectWithoutFacultyInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutFacultyInput, Prisma.BatchUncheckedCreateWithoutFacultyInput>
+}
+
+export type BatchCreateManyFacultyInputEnvelope = {
+  data: Prisma.BatchCreateManyFacultyInput | Prisma.BatchCreateManyFacultyInput[]
+  skipDuplicates?: boolean
+}
+
+export type BatchUpsertWithWhereUniqueWithoutFacultyInput = {
+  where: Prisma.BatchWhereUniqueInput
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutFacultyInput, Prisma.BatchUncheckedUpdateWithoutFacultyInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutFacultyInput, Prisma.BatchUncheckedCreateWithoutFacultyInput>
+}
+
+export type BatchUpdateWithWhereUniqueWithoutFacultyInput = {
+  where: Prisma.BatchWhereUniqueInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutFacultyInput, Prisma.BatchUncheckedUpdateWithoutFacultyInput>
+}
+
+export type BatchUpdateManyWithWhereWithoutFacultyInput = {
+  where: Prisma.BatchScalarWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateManyMutationInput, Prisma.BatchUncheckedUpdateManyWithoutFacultyInput>
+}
+
+export type BatchScalarWhereInput = {
+  AND?: Prisma.BatchScalarWhereInput | Prisma.BatchScalarWhereInput[]
+  OR?: Prisma.BatchScalarWhereInput[]
+  NOT?: Prisma.BatchScalarWhereInput | Prisma.BatchScalarWhereInput[]
+  id?: Prisma.StringFilter<"Batch"> | string
+  name?: Prisma.StringFilter<"Batch"> | string
+  courseId?: Prisma.StringFilter<"Batch"> | string
+  facultyId?: Prisma.StringNullableFilter<"Batch"> | string | null
+  startDate?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
+  endDate?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
+  status?: Prisma.EnumBatchStatusFilter<"Batch"> | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFilter<"Batch"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Batch"> | Date | string
+}
+
+export type BatchCreateWithoutCourseInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchUncheckedCreateWithoutCourseInput = {
+  id?: string
+  name: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchCreateOrConnectWithoutCourseInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutCourseInput, Prisma.BatchUncheckedCreateWithoutCourseInput>
+}
+
+export type BatchCreateManyCourseInputEnvelope = {
+  data: Prisma.BatchCreateManyCourseInput | Prisma.BatchCreateManyCourseInput[]
+  skipDuplicates?: boolean
+}
+
+export type BatchUpsertWithWhereUniqueWithoutCourseInput = {
+  where: Prisma.BatchWhereUniqueInput
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutCourseInput, Prisma.BatchUncheckedUpdateWithoutCourseInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutCourseInput, Prisma.BatchUncheckedCreateWithoutCourseInput>
+}
+
+export type BatchUpdateWithWhereUniqueWithoutCourseInput = {
+  where: Prisma.BatchWhereUniqueInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutCourseInput, Prisma.BatchUncheckedUpdateWithoutCourseInput>
+}
+
+export type BatchUpdateManyWithWhereWithoutCourseInput = {
+  where: Prisma.BatchScalarWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateManyMutationInput, Prisma.BatchUncheckedUpdateManyWithoutCourseInput>
+}
+
+export type BatchCreateWithoutTestsInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchUncheckedCreateWithoutTestsInput = {
+  id?: string
+  name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchCreateOrConnectWithoutTestsInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutTestsInput, Prisma.BatchUncheckedCreateWithoutTestsInput>
+}
+
+export type BatchUpsertWithoutTestsInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutTestsInput, Prisma.BatchUncheckedUpdateWithoutTestsInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutTestsInput, Prisma.BatchUncheckedCreateWithoutTestsInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutTestsInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutTestsInput, Prisma.BatchUncheckedUpdateWithoutTestsInput>
+}
+
+export type BatchUpdateWithoutTestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutTestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchCreateWithoutAttendanceInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchUncheckedCreateWithoutAttendanceInput = {
+  id?: string
+  name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
+}
+
+export type BatchCreateOrConnectWithoutAttendanceInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutAttendanceInput, Prisma.BatchUncheckedCreateWithoutAttendanceInput>
+}
+
+export type BatchUpsertWithoutAttendanceInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutAttendanceInput, Prisma.BatchUncheckedUpdateWithoutAttendanceInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutAttendanceInput, Prisma.BatchUncheckedCreateWithoutAttendanceInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutAttendanceInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutAttendanceInput, Prisma.BatchUncheckedUpdateWithoutAttendanceInput>
+}
+
+export type BatchUpdateWithoutAttendanceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutAttendanceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+}
+
+export type BatchUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+}
+
+export type BatchCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutNotificationsInput, Prisma.BatchUncheckedCreateWithoutNotificationsInput>
+}
+
+export type BatchUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutNotificationsInput, Prisma.BatchUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutNotificationsInput, Prisma.BatchUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutNotificationsInput, Prisma.BatchUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type BatchUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+}
+
+export type BatchCreateManyFacultyInput = {
+  id?: string
+  name: string
+  courseId: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BatchUpdateWithoutFacultyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutFacultyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchUncheckedUpdateManyWithoutFacultyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BatchCreateManyCourseInput = {
+  id?: string
+  name: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BatchUpdateWithoutCourseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutCourseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
+}
+
+export type BatchUncheckedUpdateManyWithoutCourseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type BatchCountOutputType
+ */
+
+export type BatchCountOutputType = {
+  students: number
+  tests: number
+  attendance: number
+  notifications: number
+}
+
+export type BatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  students?: boolean | BatchCountOutputTypeCountStudentsArgs
+  tests?: boolean | BatchCountOutputTypeCountTestsArgs
+  attendance?: boolean | BatchCountOutputTypeCountAttendanceArgs
+  notifications?: boolean | BatchCountOutputTypeCountNotificationsArgs
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BatchCountOutputType
+   */
+  select?: Prisma.BatchCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountStudentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StudentWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TestWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountAttendanceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
 
 
 export type BatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  courseId?: boolean
+  facultyId?: boolean
+  startDate?: boolean
+  endDate?: boolean
+  status?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  faculty?: boolean | Prisma.Batch$facultyArgs<ExtArgs>
+  students?: boolean | Prisma.Batch$studentsArgs<ExtArgs>
+  tests?: boolean | Prisma.Batch$testsArgs<ExtArgs>
+  attendance?: boolean | Prisma.Batch$attendanceArgs<ExtArgs>
+  notifications?: boolean | Prisma.Batch$notificationsArgs<ExtArgs>
+  _count?: boolean | Prisma.BatchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["batch"]>
 
 export type BatchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  courseId?: boolean
+  facultyId?: boolean
+  startDate?: boolean
+  endDate?: boolean
+  status?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  faculty?: boolean | Prisma.Batch$facultyArgs<ExtArgs>
 }, ExtArgs["result"]["batch"]>
 
 export type BatchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  courseId?: boolean
+  facultyId?: boolean
+  startDate?: boolean
+  endDate?: boolean
+  status?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  faculty?: boolean | Prisma.Batch$facultyArgs<ExtArgs>
 }, ExtArgs["result"]["batch"]>
 
 export type BatchSelectScalar = {
   id?: boolean
   name?: boolean
+  courseId?: boolean
+  facultyId?: boolean
+  startDate?: boolean
+  endDate?: boolean
+  status?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type BatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name", ExtArgs["result"]["batch"]>
+export type BatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "courseId" | "facultyId" | "startDate" | "endDate" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["batch"]>
+export type BatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  faculty?: boolean | Prisma.Batch$facultyArgs<ExtArgs>
+  students?: boolean | Prisma.Batch$studentsArgs<ExtArgs>
+  tests?: boolean | Prisma.Batch$testsArgs<ExtArgs>
+  attendance?: boolean | Prisma.Batch$attendanceArgs<ExtArgs>
+  notifications?: boolean | Prisma.Batch$notificationsArgs<ExtArgs>
+  _count?: boolean | Prisma.BatchCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type BatchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  faculty?: boolean | Prisma.Batch$facultyArgs<ExtArgs>
+}
+export type BatchIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  faculty?: boolean | Prisma.Batch$facultyArgs<ExtArgs>
+}
 
 export type $BatchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Batch"
-  objects: {}
+  objects: {
+    course: Prisma.$CoursePayload<ExtArgs>
+    faculty: Prisma.$FacultyPayload<ExtArgs> | null
+    students: Prisma.$StudentPayload<ExtArgs>[]
+    tests: Prisma.$TestPayload<ExtArgs>[]
+    attendance: Prisma.$AttendancePayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    courseId: string
+    facultyId: string | null
+    startDate: Date | null
+    endDate: Date | null
+    status: $Enums.BatchStatus
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["batch"]>
   composites: {}
 }
@@ -663,6 +1680,12 @@ readonly fields: BatchFieldRefs;
  */
 export interface Prisma__BatchClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  course<T extends Prisma.CourseDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CourseDefaultArgs<ExtArgs>>): Prisma.Prisma__CourseClient<runtime.Types.Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  faculty<T extends Prisma.Batch$facultyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$facultyArgs<ExtArgs>>): Prisma.Prisma__FacultyClient<runtime.Types.Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  students<T extends Prisma.Batch$studentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$studentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tests<T extends Prisma.Batch$testsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$testsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attendance<T extends Prisma.Batch$attendanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$attendanceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.Batch$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -694,6 +1717,13 @@ export interface Prisma__BatchClient<T, Null = never, ExtArgs extends runtime.Ty
 export interface BatchFieldRefs {
   readonly id: Prisma.FieldRef<"Batch", 'String'>
   readonly name: Prisma.FieldRef<"Batch", 'String'>
+  readonly courseId: Prisma.FieldRef<"Batch", 'String'>
+  readonly facultyId: Prisma.FieldRef<"Batch", 'String'>
+  readonly startDate: Prisma.FieldRef<"Batch", 'DateTime'>
+  readonly endDate: Prisma.FieldRef<"Batch", 'DateTime'>
+  readonly status: Prisma.FieldRef<"Batch", 'BatchStatus'>
+  readonly createdAt: Prisma.FieldRef<"Batch", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Batch", 'DateTime'>
 }
     
 
@@ -710,6 +1740,10 @@ export type BatchFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the Batch
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
   /**
    * Filter, which Batch to fetch.
    */
@@ -729,6 +1763,10 @@ export type BatchFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
+  /**
    * Filter, which Batch to fetch.
    */
   where: Prisma.BatchWhereUniqueInput
@@ -746,6 +1784,10 @@ export type BatchFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Batch
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
   /**
    * Filter, which Batch to fetch.
    */
@@ -795,6 +1837,10 @@ export type BatchFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
+  /**
    * Filter, which Batch to fetch.
    */
   where?: Prisma.BatchWhereInput
@@ -842,6 +1888,10 @@ export type BatchFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Batch
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
   /**
    * Filter, which Batches to fetch.
    */
@@ -891,6 +1941,10 @@ export type BatchCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
+  /**
    * The data needed to create a Batch.
    */
   data: Prisma.XOR<Prisma.BatchCreateInput, Prisma.BatchUncheckedCreateInput>
@@ -924,6 +1978,10 @@ export type BatchCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.BatchCreateManyInput | Prisma.BatchCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -938,6 +1996,10 @@ export type BatchUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Batch
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
   /**
    * The data needed to update a Batch.
    */
@@ -990,6 +2052,10 @@ export type BatchUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many Batches to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1004,6 +2070,10 @@ export type BatchUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Batch
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
   /**
    * The filter to search for the Batch to update in case it exists.
    */
@@ -1031,6 +2101,10 @@ export type BatchDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
+  /**
    * Filter which Batch to delete.
    */
   where: Prisma.BatchWhereUniqueInput
@@ -1051,6 +2125,121 @@ export type BatchDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 /**
+ * Batch.faculty
+ */
+export type Batch$facultyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Faculty
+   */
+  select?: Prisma.FacultySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Faculty
+   */
+  omit?: Prisma.FacultyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FacultyInclude<ExtArgs> | null
+  where?: Prisma.FacultyWhereInput
+}
+
+/**
+ * Batch.students
+ */
+export type Batch$studentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Student
+   */
+  select?: Prisma.StudentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Student
+   */
+  omit?: Prisma.StudentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StudentInclude<ExtArgs> | null
+  where?: Prisma.StudentWhereInput
+  orderBy?: Prisma.StudentOrderByWithRelationInput | Prisma.StudentOrderByWithRelationInput[]
+  cursor?: Prisma.StudentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StudentScalarFieldEnum | Prisma.StudentScalarFieldEnum[]
+}
+
+/**
+ * Batch.tests
+ */
+export type Batch$testsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Test
+   */
+  select?: Prisma.TestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Test
+   */
+  omit?: Prisma.TestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TestInclude<ExtArgs> | null
+  where?: Prisma.TestWhereInput
+  orderBy?: Prisma.TestOrderByWithRelationInput | Prisma.TestOrderByWithRelationInput[]
+  cursor?: Prisma.TestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TestScalarFieldEnum | Prisma.TestScalarFieldEnum[]
+}
+
+/**
+ * Batch.attendance
+ */
+export type Batch$attendanceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Attendance
+   */
+  select?: Prisma.AttendanceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Attendance
+   */
+  omit?: Prisma.AttendanceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceInclude<ExtArgs> | null
+  where?: Prisma.AttendanceWhereInput
+  orderBy?: Prisma.AttendanceOrderByWithRelationInput | Prisma.AttendanceOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceScalarFieldEnum | Prisma.AttendanceScalarFieldEnum[]
+}
+
+/**
+ * Batch.notifications
+ */
+export type Batch$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
  * Batch without action
  */
 export type BatchDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1062,4 +2251,8 @@ export type BatchDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Batch
    */
   omit?: Prisma.BatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BatchInclude<ExtArgs> | null
 }

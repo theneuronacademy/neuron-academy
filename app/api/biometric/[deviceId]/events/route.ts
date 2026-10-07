@@ -78,16 +78,17 @@ function determineAttendanceStatus(eventType: string): "PRESENT" | "ABSENT" | "L
 // ---------------------------------------------------------------------------
 export async function GET(
   req: NextRequest,
-  { params }: { params: { deviceId: string } }
+  { params }: { params: Promise<{ deviceId: string }> }
 ) {
   const db = getDb();
   if (!db) return dbNotConfigured("Loading device events");
 
   // 1. Identify the device
+  const { deviceId } = await params;
   const device = await db.biometricDevice.findUnique({
-    where: { id: params.deviceId },
+    where: { id: deviceId },
   });
-  if (!device) return fail(`Unknown biometric device ID "${params.deviceId}".`, 404);
+  if (!device) return fail(`Unknown biometric device ID "${deviceId}".`, 404);
 
   // 2. Return recent events
   const events = await db.biometricDeviceEvent.findMany({
@@ -114,16 +115,17 @@ export async function GET(
 // ---------------------------------------------------------------------------
 export async function POST(
   req: NextRequest,
-  { params }: { params: { deviceId: string } }
+  { params }: { params: Promise<{ deviceId: string }> }
 ) {
   const db = getDb();
   if (!db) return dbNotConfigured("Processing biometric event");
 
   // 1. Identify the device
+  const { deviceId } = await params;
   const device = await db.biometricDevice.findUnique({
-    where: { id: params.deviceId },
+    where: { id: deviceId },
   });
-  if (!device) return fail(`Unknown biometric device ID "${params.deviceId}".`, 404);
+  if (!device) return fail(`Unknown biometric device ID "${deviceId}".`, 404);
   if (!device.isActive) return fail(`Device "${device.name}" is inactive.`, 403);
 
   // 2. Parse and validate payload
