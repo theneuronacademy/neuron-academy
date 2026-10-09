@@ -69,6 +69,7 @@ export const ModelName = {
   Attendance: 'Attendance',
   Notification: 'Notification',
   NotificationRead: 'NotificationRead',
+  NotificationDelivery: 'NotificationDelivery',
   OtpRequest: 'OtpRequest',
   PushSubscription: 'PushSubscription',
   Book: 'Book',
@@ -425,6 +426,9 @@ export const NotificationScalarFieldEnum = {
   type: 'type',
   audience: 'audience',
   channel: 'channel',
+  priority: 'priority',
+  requestedChannels: 'requestedChannels',
+  idempotencyKey: 'idempotencyKey',
   isRead: 'isRead',
   readAt: 'readAt',
   testId: 'testId',
@@ -451,6 +455,35 @@ export const NotificationReadScalarFieldEnum = {
 } as const
 
 export type NotificationReadScalarFieldEnum = (typeof NotificationReadScalarFieldEnum)[keyof typeof NotificationReadScalarFieldEnum]
+
+
+export const NotificationDeliveryScalarFieldEnum = {
+  id: 'id',
+  notificationId: 'notificationId',
+  userId: 'userId',
+  studentId: 'studentId',
+  facultyId: 'facultyId',
+  recipientKey: 'recipientKey',
+  channel: 'channel',
+  status: 'status',
+  priority: 'priority',
+  provider: 'provider',
+  providerMessageId: 'providerMessageId',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  retryable: 'retryable',
+  attemptCount: 'attemptCount',
+  lastAttemptAt: 'lastAttemptAt',
+  nextAttemptAt: 'nextAttemptAt',
+  queuedAt: 'queuedAt',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  failedAt: 'failedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationDeliveryScalarFieldEnum = (typeof NotificationDeliveryScalarFieldEnum)[keyof typeof NotificationDeliveryScalarFieldEnum]
 
 
 export const OtpRequestScalarFieldEnum = {

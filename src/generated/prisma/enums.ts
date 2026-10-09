@@ -170,6 +170,48 @@ export const NotificationChannel = {
 export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
 
 
+export const NotificationPriority = {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type NotificationPriority = (typeof NotificationPriority)[keyof typeof NotificationPriority]
+
+
+export const DeliveryChannel = {
+  SMS: 'SMS',
+  PUSH: 'PUSH',
+  IN_APP: 'IN_APP'
+} as const
+
+export type DeliveryChannel = (typeof DeliveryChannel)[keyof typeof DeliveryChannel]
+
+
+export const DeliveryStatus = {
+  CREATED: 'CREATED',
+  QUEUED: 'QUEUED',
+  PROCESSING: 'PROCESSING',
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED',
+  RETRYING: 'RETRYING',
+  SKIPPED: 'SKIPPED'
+} as const
+
+export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]
+
+
+export const DeliveryProvider = {
+  IN_APP: 'IN_APP',
+  MSG91: 'MSG91',
+  WEB_PUSH: 'WEB_PUSH'
+} as const
+
+export type DeliveryProvider = (typeof DeliveryProvider)[keyof typeof DeliveryProvider]
+
+
 export const EnquiryStatus = {
   NEW: 'NEW',
   CONTACTED: 'CONTACTED',

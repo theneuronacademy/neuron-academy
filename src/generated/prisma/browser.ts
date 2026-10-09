@@ -108,6 +108,11 @@ export type Notification = Prisma.NotificationModel
  */
 export type NotificationRead = Prisma.NotificationReadModel
 /**
+ * Model NotificationDelivery
+ * 
+ */
+export type NotificationDelivery = Prisma.NotificationDeliveryModel
+/**
  * Model OtpRequest
  * 
  */

@@ -415,6 +415,7 @@ export const ModelName = {
   Attendance: 'Attendance',
   Notification: 'Notification',
   NotificationRead: 'NotificationRead',
+  NotificationDelivery: 'NotificationDelivery',
   OtpRequest: 'OtpRequest',
   PushSubscription: 'PushSubscription',
   Book: 'Book',
@@ -437,7 +438,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "otpRequest" | "pushSubscription" | "book" | "enquiry" | "announcement" | "biometricDevice" | "biometricDeviceEvent"
+    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "book" | "enquiry" | "announcement" | "biometricDevice" | "biometricDeviceEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1773,6 +1774,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NotificationDelivery: {
+      payload: Prisma.$NotificationDeliveryPayload<ExtArgs>
+      fields: Prisma.NotificationDeliveryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NotificationDeliveryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NotificationDeliveryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>
+        }
+        findFirst: {
+          args: Prisma.NotificationDeliveryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NotificationDeliveryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>
+        }
+        findMany: {
+          args: Prisma.NotificationDeliveryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>[]
+        }
+        create: {
+          args: Prisma.NotificationDeliveryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>
+        }
+        createMany: {
+          args: Prisma.NotificationDeliveryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NotificationDeliveryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>[]
+        }
+        delete: {
+          args: Prisma.NotificationDeliveryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>
+        }
+        update: {
+          args: Prisma.NotificationDeliveryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>
+        }
+        deleteMany: {
+          args: Prisma.NotificationDeliveryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NotificationDeliveryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NotificationDeliveryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>[]
+        }
+        upsert: {
+          args: Prisma.NotificationDeliveryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationDeliveryPayload>
+        }
+        aggregate: {
+          args: Prisma.NotificationDeliveryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotificationDelivery>
+        }
+        groupBy: {
+          args: Prisma.NotificationDeliveryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationDeliveryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NotificationDeliveryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationDeliveryCountAggregateOutputType> | number
+        }
+      }
+    }
     OtpRequest: {
       payload: Prisma.$OtpRequestPayload<ExtArgs>
       fields: Prisma.OtpRequestFieldRefs
@@ -2661,6 +2736,9 @@ export const NotificationScalarFieldEnum = {
   type: 'type',
   audience: 'audience',
   channel: 'channel',
+  priority: 'priority',
+  requestedChannels: 'requestedChannels',
+  idempotencyKey: 'idempotencyKey',
   isRead: 'isRead',
   readAt: 'readAt',
   testId: 'testId',
@@ -2687,6 +2765,35 @@ export const NotificationReadScalarFieldEnum = {
 } as const
 
 export type NotificationReadScalarFieldEnum = (typeof NotificationReadScalarFieldEnum)[keyof typeof NotificationReadScalarFieldEnum]
+
+
+export const NotificationDeliveryScalarFieldEnum = {
+  id: 'id',
+  notificationId: 'notificationId',
+  userId: 'userId',
+  studentId: 'studentId',
+  facultyId: 'facultyId',
+  recipientKey: 'recipientKey',
+  channel: 'channel',
+  status: 'status',
+  priority: 'priority',
+  provider: 'provider',
+  providerMessageId: 'providerMessageId',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  retryable: 'retryable',
+  attemptCount: 'attemptCount',
+  lastAttemptAt: 'lastAttemptAt',
+  nextAttemptAt: 'nextAttemptAt',
+  queuedAt: 'queuedAt',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  failedAt: 'failedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationDeliveryScalarFieldEnum = (typeof NotificationDeliveryScalarFieldEnum)[keyof typeof NotificationDeliveryScalarFieldEnum]
 
 
 export const OtpRequestScalarFieldEnum = {
@@ -3173,6 +3280,34 @@ export type ListEnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInp
 
 
 /**
+ * Reference to a field of type 'NotificationPriority'
+ */
+export type EnumNotificationPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationPriority'>
+    
+
+
+/**
+ * Reference to a field of type 'NotificationPriority[]'
+ */
+export type ListEnumNotificationPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationPriority[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliveryChannel[]'
+ */
+export type ListEnumDeliveryChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryChannel[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliveryChannel'
+ */
+export type EnumDeliveryChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryChannel'>
+    
+
+
+/**
  * Reference to a field of type 'NotificationStatus'
  */
 export type EnumNotificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationStatus'>
@@ -3183,6 +3318,34 @@ export type EnumNotificationStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'NotificationStatus[]'
  */
 export type ListEnumNotificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliveryStatus'
+ */
+export type EnumDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliveryStatus[]'
+ */
+export type ListEnumDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliveryProvider'
+ */
+export type EnumDeliveryProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryProvider'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliveryProvider[]'
+ */
+export type ListEnumDeliveryProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryProvider[]'>
     
 
 
@@ -3382,6 +3545,7 @@ export type GlobalOmitConfig = {
   attendance?: Prisma.AttendanceOmit
   notification?: Prisma.NotificationOmit
   notificationRead?: Prisma.NotificationReadOmit
+  notificationDelivery?: Prisma.NotificationDeliveryOmit
   otpRequest?: Prisma.OtpRequestOmit
   pushSubscription?: Prisma.PushSubscriptionOmit
   book?: Prisma.BookOmit
