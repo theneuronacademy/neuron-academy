@@ -8,16 +8,17 @@ import { SmartImage } from "@/lib/siteImages";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Faq } from "@/components/website/Faq";
 import { SectionHeader } from "@/components/ui/primitives";
-import { getCourse, getCourses, getFaculty, getFAQ } from "@/services/siteApi";
+import { getFAQ } from "@/services/siteApi";
+import { getPublicCourseBySlug, getPublicCourseList, getPublicFacultyList, getPublishedCourseSlugs } from "@/services/siteServer";
 
 export async function generateStaticParams() {
-  const courses = await getCourses();
-  return courses.map((c) => ({ slug: c.id }));
+  const slugs = await getPublishedCourseSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const course = await getCourse(slug);
+  const course = await getPublicCourseBySlug(slug);
   if (!course) return { title: "Course Not Found | Neuron Academy" };
   return {
     title: `${course.name} | Neuron Academy`,
@@ -27,9 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const course = await getCourse(slug);
+  const course = await getPublicCourseBySlug(slug);
   if (!course) notFound();
-  const [faculty, faqs, all] = await Promise.all([getFaculty(), getFAQ(), getCourses()]);
+  const [faculty, faqs, all] = await Promise.all([getPublicFacultyList(), getFAQ(), getPublicCourseList()]);
   const teachers = faculty.filter((f) => course.subjects.includes(f.subject));
   const shown = teachers.length > 0 ? teachers : faculty.slice(0, 2);
   const related = all.filter((c) => c.id !== course.id && c.category === course.category).slice(0, 3);

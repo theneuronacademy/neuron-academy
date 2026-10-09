@@ -18,6 +18,8 @@
     "student:check": "tsx scripts/student-check.ts",
     "admin:check": "tsx scripts/admin-auth-check.ts",
     "otp:check": "tsx scripts/otp-check.ts",
+    "attempt:check": "tsx scripts/attempt-check.ts",
+    "website:check": "tsx scripts/website-check.ts",
     "msg91:smoke": "tsx scripts/msg91-smoke.ts",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",

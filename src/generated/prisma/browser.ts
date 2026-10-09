@@ -123,6 +123,11 @@ export type OtpRequest = Prisma.OtpRequestModel
  */
 export type PushSubscription = Prisma.PushSubscriptionModel
 /**
+ * Model ResultShowcase
+ * 
+ */
+export type ResultShowcase = Prisma.ResultShowcaseModel
+/**
  * Model Book
  * 
  */

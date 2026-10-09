@@ -772,6 +772,32 @@ model PushSubscription {
   @@index([userId])
 }
 
+// Homepage results-showcase CMS (toppers wall). Display-only marketing rows,
+// deliberately decoupled from the Result marks table: publishing here never
+// exposes student phone, email, login identity, marks history or any private
+// record. Only a display name (+ optional admin-supplied image URL) is
+// stored. Publication requires explicit consent (see isActive rule enforced
+// in app/api/showcase/route.ts): drafts stay invisible until an admin both
+// confirms consent and activates the row.
+model ResultShowcase {
+  id          String   @id @default(cuid())
+  studentName String
+  exam        String   @default("JEE Main")
+  achievement String
+  score       String?
+  year        String   @default("")
+  imageUrl    String?
+  displayOrder Int     @default(0)
+  // Consent/approval for publishing an identifiable name/photo. The public
+  // endpoint only serves rows with consent AND isActive both true.
+  consent     Boolean  @default(false)
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, displayOrder])
+}
+
 // Phase 14 — study material library. Only isActive books are visible to
 // students; visibleTo controls scholarship-student access per book.
 model Book {

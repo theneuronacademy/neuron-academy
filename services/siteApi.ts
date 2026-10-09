@@ -45,11 +45,92 @@ export async function getHero() {
   return ACADEMY.hero;
 }
 
+export interface LiveCourseRow {
+  id: string;
+  slug?: string;
+  name: string;
+  category?: string;
+  description?: string;
+  shortDescription?: string;
+  target?: string;
+  duration?: string;
+  mode?: string;
+  facultyName?: string;
+  image?: string;
+  accent?: string;
+  badge?: string;
+  subjects?: string[];
+  highlights?: string[];
+  status?: string;
+}
+
+export interface LiveFacultyRow {
+  id: string;
+  name: string;
+  designation?: string;
+  subject?: string;
+  qualification?: string;
+  experience?: string;
+  bio?: string;
+  photo?: string;
+}
+
+export interface LiveGalleryRow {
+  id: string;
+  title: string;
+  category?: string;
+  imageUrl?: string;
+}
+
+export interface LiveTestimonialRow {
+  id: string;
+  name: string;
+  role?: string;
+  photo?: string;
+  message?: string;
+  rating?: number;
+}
+
+export interface LiveShowcaseRow {
+  id: string;
+  studentName: string;
+  exam?: string;
+  achievement?: string;
+  score?: string;
+  year?: string;
+  imageUrl?: string;
+}
+
+/**
+ * Published/active CMS rows, or null when the database is unreachable,
+ * empty, or the shape is bad. Never throws, never returns demo rows —
+ * callers pair these with static fallbacks explicitly.
+ */
+export async function getLiveCourses(): Promise<LiveCourseRow[] | null> {
+  return pickDb<LiveCourseRow>(await apiItems("/api/courses"));
+}
+
+export async function getLiveFaculty(): Promise<LiveFacultyRow[] | null> {
+  return pickDb<LiveFacultyRow>(await apiItems("/api/faculty"));
+}
+
+export async function getLiveGallery(): Promise<LiveGalleryRow[] | null> {
+  return pickDb<LiveGalleryRow>(await apiItems("/api/gallery"));
+}
+
+export async function getLiveTestimonials(): Promise<LiveTestimonialRow[] | null> {
+  return pickDb<LiveTestimonialRow>(await apiItems("/api/testimonials"));
+}
+
+/** Published results-showcase rows (consented + active), or null without DB rows. */
+export async function getLiveShowcase(): Promise<LiveShowcaseRow[] | null> {
+  return pickDb<LiveShowcaseRow>(await apiItems("/api/showcase"));
+}
+
 export async function getCourses(): Promise<Course[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = pickDb<any>(await apiItems("/api/courses"));
-  if (db) {
-    return db.map((r, i) => ({
+  const live = await getLiveCourses();
+  if (live) {
+    return live.map((r, i) => ({
       id: String(r.slug ?? r.id),
       name: String(r.name),
       category: String(r.category ?? "Engineering"),
@@ -77,10 +158,9 @@ export async function getCourse(slug: string): Promise<Course | null> {
 }
 
 export async function getFaculty(): Promise<FacultyMember[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = pickDb<any>(await apiItems("/api/faculty"));
-  if (db) {
-    return db.map((f) => ({
+  const live = await getLiveFaculty();
+  if (live) {
+    return live.map((f) => ({
       id: String(f.id),
       name: String(f.name),
       designation: String(f.designation ?? "Faculty"),
@@ -101,10 +181,9 @@ export async function getFacultyMember(slug: string): Promise<FacultyMember | nu
 }
 
 export async function getGallery(): Promise<GalleryItem[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = pickDb<any>(await apiItems("/api/gallery"));
-  if (db) {
-    return db.map((g) => ({
+  const live = await getLiveGallery();
+  if (live) {
+    return live.map((g) => ({
       id: String(g.id),
       title: String(g.title),
       category: String(g.category ?? "Academy"),
@@ -115,10 +194,9 @@ export async function getGallery(): Promise<GalleryItem[]> {
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = pickDb<any>(await apiItems("/api/testimonials"));
-  if (db) {
-    return db.map((t) => ({
+  const live = await getLiveTestimonials();
+  if (live) {
+    return live.map((t) => ({
       id: String(t.id),
       studentName: String(t.name),
       course: String(t.role ?? "Student"),
@@ -257,34 +335,84 @@ export interface EnquiryInput {
   course: string;
   message: string;
   batch?: string;
+  className?: string;
+}
+
+export interface EnquiryResult {
+  ok: boolean;
+  reference: string;
+  /** Human-safe failure message (server message when available). */
+  error?: string;
+  /** Machine code (e.g. ENQUIRY_UNAVAILABLE, ENQUIRY_RATE_LIMITED). */
+  code?: string;
+  /** True when retrying later may succeed (unavailable/rate-limited/offline). */
+  retryable: boolean;
 }
 
 /**
- * Enquiry submission. Tries POST /api/enquiries when the database is live;
- * falls back to the previous mock transport so the form never breaks.
+ * Enquiry submission — honest transport, no mock fallback.
+ * Success returns the real server reference. Every failure returns ok:false
+ * with a safe message: validation errors are final, while service
+ * outages/rate limits/network failures are marked retryable so the UI can
+ * say so and keep the user's input. Nothing is ever faked.
  */
-export async function submitEnquiry(input: EnquiryInput): Promise<{ ok: boolean; reference: string }> {
+export async function submitEnquiry(input: EnquiryInput): Promise<EnquiryResult> {
+  const fail = (error: string, code?: string, retryable = false): EnquiryResult => ({
+    ok: false,
+    reference: "",
+    error,
+    code,
+    retryable,
+  });
   try {
-    if (typeof window !== "undefined") {
-      const res = await fetch("/api/enquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: input.name, phone: input.mobile, email: input.email, message: input.message }),
-      });
-      if (res.ok) {
-        const json = await res.json();
-        if (json && json.success === true) {
-          return { ok: true, reference: `ENQ-${String(json.data?.item?.id ?? Date.now()).slice(-6).toUpperCase()}` };
-        }
-      } else if (res.status !== 503) {
-        await new Promise((r) => setTimeout(r, 900));
-        return { ok: true, reference: `ENQ-${Date.now().toString(36).toUpperCase()}` };
-      }
+    if (typeof window === "undefined") {
+      return fail("Enquiry form needs a browser session.", "ENQUIRY_NO_BROWSER", false);
     }
+    const context: string[] = [];
+    if (input.course.trim()) context.push(`Course: ${input.course.trim().slice(0, 80)}`);
+    if (input.className && input.className.trim()) context.push(`Class: ${input.className.trim().slice(0, 40)}`);
+    if (input.batch && input.batch.trim()) context.push(`Batch: ${input.batch.trim().slice(0, 40)}`);
+    const note = input.message.trim().slice(0, 1000);
+    const message = [...context, note].filter(Boolean).join("\n");
+    const res = await fetch("/api/enquiries", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: input.name.trim().slice(0, 80),
+        phone: input.mobile.trim().slice(0, 20),
+        email: input.email.trim().slice(0, 120),
+        message,
+      }),
+    });
+    const json = (await res.json().catch(() => null)) as {
+      success?: boolean;
+      data?: { item?: { id?: string } };
+      error?: string;
+      code?: string;
+    } | null;
+    if (res.ok && json?.success === true) {
+      return {
+        ok: true,
+        reference: `ENQ-${String(json.data?.item?.id ?? "").slice(-6).toUpperCase() || "SENT"}`,
+        retryable: false,
+      };
+    }
+    const serverMessage = typeof json?.error === "string" && json.error ? json.error : null;
+    if (res.status === 429) {
+      return fail(serverMessage ?? "Too many enquiries. Please try again in a few minutes.", json?.code ?? "ENQUIRY_RATE_LIMITED", true);
+    }
+    if (res.status === 503) {
+      return fail(
+        serverMessage ?? "Enquiry service is temporarily unavailable. Please try again later or call us directly.",
+        json?.code ?? "ENQUIRY_UNAVAILABLE",
+        true
+      );
+    }
+    if (res.status === 400) {
+      return fail(serverMessage ?? "Please check the highlighted fields and try again.", json?.code, false);
+    }
+    return fail(serverMessage ?? "Could not send the enquiry. Please try again.", json?.code, true);
   } catch {
-    /* fall through to mock transport */
+    return fail("Cannot reach the server. Check your connection and try again — your details are kept.", "ENQUIRY_NETWORK", true);
   }
-  await new Promise((r) => setTimeout(r, 900));
-  void input;
-  return { ok: true, reference: `ENQ-${Date.now().toString(36).toUpperCase()}` };
 }

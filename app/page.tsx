@@ -26,9 +26,12 @@ import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
 import { Reveal, Marquee } from "@/components/website/motion";
 import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
-import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, GALLERY_CATEGORIES, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
+import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
+import type { GalleryItem } from "@/data/gallery";
+import type { Testimonial } from "@/data/testimonials";
+import { getLiveCourses, getLiveFaculty, getLiveGallery, getLiveShowcase, getLiveTestimonials } from "@/services/siteApi";
 import { CONTACT } from "@/data/contact";
-import { RESULTS } from "@/data/results";
+import { RESULTS, type AcademyResult } from "@/data/results";
 import type { Course } from "@/data/courses";
 import type { FacultyMember } from "@/data/faculty";
 
@@ -49,11 +52,13 @@ const WHY = [
   { t: "Digital Test App", d: "Attempt from home, get instant ranks, accuracy graphs and solutions." },
 ];
 
-function GallerySection() {
+function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
   const [active, setActive] = useState<number | null>(null);
   const [cat, setCat] = useState<string>("All");
-  const cats = ["All", ...GALLERY_CATEGORIES];
-  const items = cat === "All" ? GALLERY : GALLERY.filter((g) => g.category === cat);
+  const items = propItems ?? GALLERY;
+  const cats = ["All", ...Array.from(new Set(items.map((g) => g.category).filter(Boolean)))];
+  const shown = cat === "All" ? items : items.filter((g) => g.category === cat);
+  const activeItem = active != null ? shown[active] : undefined;
   return (
     <div>
       <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter gallery by category">
@@ -68,11 +73,11 @@ function GallerySection() {
           </button>
         ))}
       </div>
-      {items.length === 0 ? (
+      {shown.length === 0 ? (
         <p className="mt-8 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No gallery items in this category yet.</p>
       ) : (
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {items.map((g, i) => (
+        {shown.map((g, i) => (
           <Reveal key={g.id} delay={(i % 4) * 80}>
             <button
               onClick={() => setActive(i)}
@@ -88,7 +93,6 @@ function GallerySection() {
                   <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-br from-navy-700 via-navy-800 to-teal-700 p-4">
                     <StatusBadge tone="teal">{g.category}</StatusBadge>
                     <p className="mt-2 text-sm font-extrabold text-white">{g.title}</p>
-                    <p className="text-[10px] font-bold text-teal-300">ADD gallery-{g.id}.jpg TO /public/images</p>
                   </div>
                 }
               />
@@ -99,30 +103,30 @@ function GallerySection() {
         ))}
       </div>
       )}
-      {active != null && items[active] ? (
+      {activeItem ? (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-navy-800/80 p-4" role="dialog" aria-modal="true" aria-label="Gallery preview">
           <div className="w-full max-w-2xl overflow-hidden rounded-card bg-white">
             <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
-              <p className="text-sm font-extrabold text-navy-700">{items[active].title}</p>
+              <p className="text-sm font-extrabold text-navy-700">{activeItem.title}</p>
               <button onClick={() => setActive(null)} aria-label="Close gallery" className="rounded-lg p-1.5 hover:bg-silver-100"><X className="h-5 w-5" /></button>
             </div>
             <div className="relative h-72 bg-navy-800">
               <SmartImage
-                src={items[active].image || `/images/gallery-${items[active].id}.jpg`}
-                alt={items[active].title}
+                src={activeItem.image || `/images/gallery-${activeItem.id}.jpg`}
+                alt={activeItem.title}
                 className="absolute inset-0 h-full w-full"
                 imgClassName="h-full w-full object-cover"
                 fallback={
                   <div className="metallic-dark flex h-72 items-center justify-center p-8 text-center">
-                    <p className="text-xl font-extrabold text-white">{items[active].title} — add gallery-{items[active].id}.jpg to /public/images</p>
+                    <p className="text-xl font-extrabold text-white">{activeItem.title}</p>
                   </div>
                 }
               />
             </div>
             <div className="flex items-center justify-between px-4 py-3">
-              <button onClick={() => setActive((active - 1 + items.length) % items.length)} aria-label="Previous image" className="rounded-lg border border-silver-300 p-2"><ChevronLeft className="h-4 w-4" /></button>
-              <p className="text-xs font-bold text-muted">{active + 1} / {items.length}</p>
-              <button onClick={() => setActive((active + 1) % items.length)} aria-label="Next image" className="rounded-lg border border-silver-300 p-2"><ChevronRight className="h-4 w-4" /></button>
+              <button onClick={() => setActive(((active ?? 0) - 1 + shown.length) % shown.length)} aria-label="Previous image" className="rounded-lg border border-silver-300 p-2"><ChevronLeft className="h-4 w-4" /></button>
+              <p className="text-xs font-bold text-muted">{(active ?? 0) + 1} / {shown.length}</p>
+              <button onClick={() => setActive(((active ?? 0) + 1) % shown.length)} aria-label="Next image" className="rounded-lg border border-silver-300 p-2"><ChevronRight className="h-4 w-4" /></button>
             </div>
           </div>
         </div>
@@ -183,8 +187,102 @@ export default function HomePage() {
   const [courseCat, setCourseCat] = useState<string>("All");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [selectedFaculty, setSelectedFaculty] = useState<FacultyMember | null>(null);
-  const courseCats = ["All", ...COURSE_CATEGORIES];
-  const courses = courseCat === "All" ? COURSES : COURSES.filter((c) => c.category === courseCat);
+  // Live CMS rows (published/active only) swap in over the static fallbacks
+  // below. Static-first paint keeps the page instant with no DB; a failed or
+  // empty live fetch simply keeps the fallbacks — never an error screen.
+  const [liveCourses, setLiveCourses] = useState<Course[] | null>(null);
+  const [liveFaculty, setLiveFaculty] = useState<FacultyMember[] | null>(null);
+  const [liveGallery, setLiveGallery] = useState<GalleryItem[] | null>(null);
+  const [liveTestimonials, setLiveTestimonials] = useState<Testimonial[] | null>(null);
+  const [liveWall, setLiveWall] = useState<{ rows: AcademyResult[] } | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [c, f, g, t, w] = await Promise.all([getLiveCourses(), getLiveFaculty(), getLiveGallery(), getLiveTestimonials(), getLiveShowcase()]);
+        if (!mounted) return;
+        // getLive* return null unless the database holds published rows, so a
+        // swap always means fresher admin-published content. Shape-validate
+        // defensively: one bad row must not blank an entire section.
+        if (c && c.every((r) => typeof r.id === "string" && typeof r.name === "string")) {
+          setLiveCourses(c.map((r) => ({
+            id: String(r.slug ?? r.id),
+            name: String(r.name),
+            category: String(r.category ?? "Engineering"),
+            desc: String(r.description ?? r.shortDescription ?? ""),
+            target: String(r.target ?? "Class 11–12"),
+            duration: String(r.duration ?? "1 year"),
+            mode: String(r.mode ?? "Offline + Online"),
+            faculty: String(r.facultyName ?? "Neuron Faculty"),
+            imageLabel: String(r.name),
+            image: String(r.image ?? ""),
+            accent: String(r.accent ?? "#1AA6B5"),
+            badge: String(r.badge ?? ""),
+            subjects: Array.isArray(r.subjects) ? r.subjects.filter((s): s is string => typeof s === "string") : [],
+            highlights: Array.isArray(r.highlights) ? r.highlights.filter((s): s is string => typeof s === "string") : [],
+            admissionOpen: r.status !== "INACTIVE",
+          })) as Course[]);
+        }
+        if (f && f.every((r) => typeof r.id === "string" && typeof r.name === "string")) {
+          setLiveFaculty(f.map((m) => ({
+            id: String(m.id),
+            name: String(m.name),
+            designation: String(m.designation ?? "Faculty"),
+            subject: String(m.subject ?? "General"),
+            qualification: String(m.qualification ?? ""),
+            experience: String(m.experience ?? ""),
+            intro: String(m.bio ?? m.qualification ?? ""),
+            image: String(m.photo ?? ""),
+            profileUrl: "#faculty",
+          })));
+        }
+        if (g && g.every((r) => typeof r.id === "string" && typeof r.title === "string")) {
+          setLiveGallery(g.map((r) => ({ id: String(r.id), title: String(r.title), category: String(r.category ?? "Academy"), image: String(r.imageUrl ?? "") })));
+        }
+        if (t && t.every((r) => typeof r.id === "string" && typeof r.name === "string")) {
+          setLiveTestimonials(t.map((r) => ({
+            id: String(r.id),
+            studentName: String(r.name),
+            course: String(r.role ?? "Student"),
+            photo: String(r.photo ?? ""),
+            testimonial: String(r.message ?? ""),
+            achievement: `Rated ${typeof r.rating === "number" ? r.rating : 5}/5`,
+          })));
+        }
+        // Results showcase: consented + active rows only (server-filtered).
+        // Card accent cycles a fixed palette — no admin styling needed.
+        if (w && w.every((r) => typeof r.id === "string" && typeof r.studentName === "string")) {
+          const palette = ["#1AA6B5", "#F59E0B", "#8B5CF6", "#10B981"];
+          setLiveWall({
+            rows: w.map((r, i) => ({
+              id: String(r.id),
+              name: String(r.studentName),
+              score: String(r.score ?? r.achievement ?? ""),
+              tag: String(r.achievement ?? ""),
+              exam: String(r.exam ?? ""),
+              year: String(r.year ?? ""),
+              color: palette[i % palette.length],
+            })),
+          });
+        }
+      } catch {
+        /* static fallbacks stay */
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+  const courseList = liveCourses ?? COURSES;
+  const facultyList = liveFaculty ?? FACULTY;
+  const galleryList = liveGallery ?? GALLERY;
+  const testimonialList = liveTestimonials ?? undefined;
+  // Showcase wall: live consented rows replace the static set; the DEMO badge
+  // below renders only for static fallback rows, never for published data.
+  const wall = liveWall?.rows ?? RESULTS;
+  const wallLive = liveWall !== null;
+  const courseCats = ["All", ...Array.from(new Set(courseList.map((c) => c.category).filter(Boolean))), ...COURSE_CATEGORIES.filter((c) => !courseList.some((x) => x.category === c))];
+  const courses = courseCat === "All" ? courseList : courseList.filter((c) => c.category === courseCat);
   return (
     <div className="min-h-screen overflow-x-clip bg-background">
       <AnnouncementBar />
@@ -340,11 +438,11 @@ export default function HomePage() {
             <Reveal>
               <SectionHeader eyebrow="FACULTY" title="Learn From Mentors Who've Been There" desc="IIT, medical & AMU/JMI alumni guiding every batch." />
             </Reveal>
-            {FACULTY.length === 0 ? (
+            {facultyList.length === 0 ? (
               <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-background p-8 text-center text-sm font-bold text-muted">No faculty profiles published yet.</p>
             ) : (
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {FACULTY.map((f, i) => (
+              {facultyList.map((f, i) => (
                 <Reveal key={f.id} delay={(i % 4) * 80}>
                   <FacultyCard f={f} onView={setSelectedFaculty} />
                 </Reveal>
@@ -363,10 +461,10 @@ export default function HomePage() {
               <SectionHeader dark eyebrow="RESULTS" title="Progress You Can Measure." desc="Verified selections from our entrance batches will appear here." />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {RESULTS.length === 0 ? (
+              {wall.length === 0 ? (
                 <p className="col-span-full rounded-card border border-dashed border-white/20 p-8 text-center text-sm font-bold text-silver-300">No results published yet.</p>
               ) : null}
-              {RESULTS.map((t, i) => (
+              {wall.map((t, i) => (
                 <Reveal key={t.name} delay={i * 90}>
                   <div className="card-lift group relative overflow-hidden rounded-card border border-white/15 bg-white/5 p-6 backdrop-blur">
                     <span className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${t.color}, transparent)` }} aria-hidden />
@@ -376,7 +474,9 @@ export default function HomePage() {
                     <p className="mt-4 text-2xl font-extrabold text-white">{t.score}</p>
                     <p className="mt-1 text-sm font-extrabold text-silver-200">{t.name}</p>
                     <p className="text-[12px] font-bold" style={{ color: t.color }}>{t.tag}</p>
-                    <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold tracking-widest text-silver-300"><Star className="h-3 w-3" /> DEMO — VERIFY BEFORE PUBLISH</p>
+                    {wallLive ? null : (
+                      <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold tracking-widest text-silver-300"><Star className="h-3 w-3" /> DEMO — VERIFY BEFORE PUBLISH</p>
+                    )}
                   </div>
                 </Reveal>
               ))}
@@ -405,7 +505,7 @@ export default function HomePage() {
               <SectionHeader eyebrow="TESTIMONIALS" title="What Students & Parents Say." desc="Verified reviews from our learners and their families will appear here." />
             </Reveal>
             <Reveal delay={120}>
-              <div className="mt-8"><Testimonials /></div>
+              <div className="mt-8"><Testimonials items={testimonialList} /></div>
             </Reveal>
           </div>
         </section>
@@ -486,7 +586,7 @@ export default function HomePage() {
             <Reveal>
               <SectionHeader eyebrow="GALLERY" title="Life At Neuron Academy" desc="Campus, classrooms and events — add real photos to public/images/ and they appear here." />
             </Reveal>
-            <GallerySection />
+            <GallerySection items={galleryList} />
           </div>
         </section>
 

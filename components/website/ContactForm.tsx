@@ -13,6 +13,10 @@ type Phase = "idle" | "submitting" | "success" | "error";
 export function ContactForm({ admission = false }: { admission?: boolean }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [reference, setReference] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  // Remount the form (clearing inputs) only after a confirmed send — never
+  // on failure, so a network error never wipes what the visitor typed.
+  const [formKey, setFormKey] = useState(0);
 
   if (phase === "success") {
     return (
@@ -20,16 +24,18 @@ export function ContactForm({ admission = false }: { admission?: boolean }) {
         <CheckCircle2 className="mx-auto h-10 w-10 text-teal-600" />
         <h3 className="mt-3 text-lg font-extrabold text-navy-700">Enquiry received.</h3>
         <p className="mt-1 text-sm text-muted">Our counsellor will call you shortly.{reference ? ` Ref: ${reference}` : ""}</p>
-        <button onClick={() => setPhase("idle")} className="mt-4 text-sm font-bold text-teal-600 hover:underline">Send another enquiry</button>
+        <button onClick={() => { setFormKey((k) => k + 1); setReference(""); setError(null); setPhase("idle"); }} className="mt-4 text-sm font-bold text-teal-600 hover:underline">Send another enquiry</button>
       </div>
     );
   }
 
   return (
     <form
+      key={formKey}
       onSubmit={async (e) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
+        setError(null);
         setPhase("submitting");
         try {
           const res = await submitEnquiry({
@@ -37,15 +43,19 @@ export function ContactForm({ admission = false }: { admission?: boolean }) {
             mobile: String(data.get("mobile") || ""),
             email: String(data.get("email") || ""),
             course: String(data.get("course") || ""),
+            className: String(data.get("className") || ""),
+            batch: String(data.get("batch") || ""),
             message: String(data.get("message") || ""),
           });
           if (res.ok) {
             setReference(res.reference);
             setPhase("success");
           } else {
+            setError(res.error ?? "Something went wrong. Please try again or call us directly.");
             setPhase("error");
           }
         } catch {
+          setError("Something went wrong. Please try again or call us directly.");
           setPhase("error");
         }
       }}
@@ -53,7 +63,7 @@ export function ContactForm({ admission = false }: { admission?: boolean }) {
     >
       {phase === "error" ? (
         <p className="flex items-center gap-2 rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">
-          <AlertTriangle className="h-4 w-4" /> Something went wrong. Please try again or call us directly.
+          <AlertTriangle className="h-4 w-4" /> {error ?? "Something went wrong. Please try again or call us directly."}
         </p>
       ) : null}
       <div className="grid gap-3 sm:grid-cols-2">
@@ -69,7 +79,7 @@ export function ContactForm({ admission = false }: { admission?: boolean }) {
       </div>
       {admission ? (
         <div className="grid gap-3 sm:grid-cols-2">
-          <select className={inputCls} aria-label="Class or exam" defaultValue="">
+          <select name="className" className={inputCls} aria-label="Class or exam" defaultValue="">
             <option value="" disabled>Class / Exam</option>
             <option>Class 9</option>
             <option>Class 10</option>
@@ -90,7 +100,7 @@ export function ContactForm({ admission = false }: { admission?: boolean }) {
       <Button type="submit" size="lg" className="w-full" disabled={phase === "submitting"}>
         {phase === "submitting" ? <><Loader2 className="h-4 w-4 animate-spin" /> Sending…</> : admission ? "Start Your Journey" : "Talk To Neuron Academy"}
       </Button>
-      <p className="text-center text-[12px] text-muted">Frontend demo — connects to the backend API later.</p>
+      <p className="text-center text-[12px] text-muted">We usually respond within one working day.</p>
     </form>
   );
 }

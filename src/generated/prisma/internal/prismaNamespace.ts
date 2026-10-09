@@ -418,6 +418,7 @@ export const ModelName = {
   NotificationDelivery: 'NotificationDelivery',
   OtpRequest: 'OtpRequest',
   PushSubscription: 'PushSubscription',
+  ResultShowcase: 'ResultShowcase',
   Book: 'Book',
   Enquiry: 'Enquiry',
   Announcement: 'Announcement',
@@ -438,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "book" | "enquiry" | "announcement" | "biometricDevice" | "biometricDeviceEvent"
+    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "enquiry" | "announcement" | "biometricDevice" | "biometricDeviceEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1996,6 +1997,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ResultShowcase: {
+      payload: Prisma.$ResultShowcasePayload<ExtArgs>
+      fields: Prisma.ResultShowcaseFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ResultShowcaseFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ResultShowcaseFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>
+        }
+        findFirst: {
+          args: Prisma.ResultShowcaseFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ResultShowcaseFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>
+        }
+        findMany: {
+          args: Prisma.ResultShowcaseFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>[]
+        }
+        create: {
+          args: Prisma.ResultShowcaseCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>
+        }
+        createMany: {
+          args: Prisma.ResultShowcaseCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ResultShowcaseCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>[]
+        }
+        delete: {
+          args: Prisma.ResultShowcaseDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>
+        }
+        update: {
+          args: Prisma.ResultShowcaseUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>
+        }
+        deleteMany: {
+          args: Prisma.ResultShowcaseDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ResultShowcaseUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ResultShowcaseUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>[]
+        }
+        upsert: {
+          args: Prisma.ResultShowcaseUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ResultShowcasePayload>
+        }
+        aggregate: {
+          args: Prisma.ResultShowcaseAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateResultShowcase>
+        }
+        groupBy: {
+          args: Prisma.ResultShowcaseGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ResultShowcaseGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ResultShowcaseCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ResultShowcaseCountAggregateOutputType> | number
+        }
+      }
+    }
     Book: {
       payload: Prisma.$BookPayload<ExtArgs>
       fields: Prisma.BookFieldRefs
@@ -2827,6 +2902,24 @@ export const PushSubscriptionScalarFieldEnum = {
 export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
 
 
+export const ResultShowcaseScalarFieldEnum = {
+  id: 'id',
+  studentName: 'studentName',
+  exam: 'exam',
+  achievement: 'achievement',
+  score: 'score',
+  year: 'year',
+  imageUrl: 'imageUrl',
+  displayOrder: 'displayOrder',
+  consent: 'consent',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ResultShowcaseScalarFieldEnum = (typeof ResultShowcaseScalarFieldEnum)[keyof typeof ResultShowcaseScalarFieldEnum]
+
+
 export const BookScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -3548,6 +3641,7 @@ export type GlobalOmitConfig = {
   notificationDelivery?: Prisma.NotificationDeliveryOmit
   otpRequest?: Prisma.OtpRequestOmit
   pushSubscription?: Prisma.PushSubscriptionOmit
+  resultShowcase?: Prisma.ResultShowcaseOmit
   book?: Prisma.BookOmit
   enquiry?: Prisma.EnquiryOmit
   announcement?: Prisma.AnnouncementOmit

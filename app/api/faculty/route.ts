@@ -42,7 +42,13 @@ export async function GET(req: NextRequest) {
   };
   if (!db) return ok({ items: DEMO_FACULTY.map(toPublic), source: "demo" });
   try {
-    const rows = await db.faculty.findMany({ include: { batches: true }, orderBy: { createdAt: "desc" }, take: 200 });
+    // Inactive faculty profiles stay invisible publicly; ADMIN sees all.
+    const rows = await db.faculty.findMany({
+      where: viewer?.role === "ADMIN" ? {} : { status: "ACTIVE" },
+      include: { batches: true },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    });
     if (viewer?.role === "ADMIN") return ok({ items: rows.map(toAdmin), source: "database" });
     return ok({ items: rows.map(toPublic), source: "database" });
   } catch (err) {

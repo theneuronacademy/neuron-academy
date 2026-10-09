@@ -7,16 +7,16 @@ import { Footer } from "@/components/website/Footer";
 import { SmartImage } from "@/lib/siteImages";
 import { ContactForm } from "@/components/website/ContactForm";
 import { SectionHeader } from "@/components/ui/primitives";
-import { getFaculty, getFacultyMember, getCourses } from "@/services/siteApi";
+import { getPublicCourseList, getPublicFacultyBySlug, getPublishedFacultySlugs } from "@/services/siteServer";
 
 export async function generateStaticParams() {
-  const faculty = await getFaculty();
-  return faculty.map((f) => ({ slug: f.id }));
+  const slugs = await getPublishedFacultySlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const m = await getFacultyMember(slug);
+  const m = await getPublicFacultyBySlug(slug);
   if (!m) return { title: "Faculty Not Found | Neuron Academy" };
   return {
     title: `${m.name} — ${m.subject} | Neuron Academy Faculty`,
@@ -26,9 +26,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function FacultyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const member = await getFacultyMember(slug);
+  const member = await getPublicFacultyBySlug(slug);
   if (!member) notFound();
-  const courses = await getCourses();
+  const courses = await getPublicCourseList();
   const teaches = courses.filter((c) => c.subjects.includes(member.subject));
 
   return (

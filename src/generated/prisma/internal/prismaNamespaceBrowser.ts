@@ -72,6 +72,7 @@ export const ModelName = {
   NotificationDelivery: 'NotificationDelivery',
   OtpRequest: 'OtpRequest',
   PushSubscription: 'PushSubscription',
+  ResultShowcase: 'ResultShowcase',
   Book: 'Book',
   Enquiry: 'Enquiry',
   Announcement: 'Announcement',
@@ -515,6 +516,24 @@ export const PushSubscriptionScalarFieldEnum = {
 } as const
 
 export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
+export const ResultShowcaseScalarFieldEnum = {
+  id: 'id',
+  studentName: 'studentName',
+  exam: 'exam',
+  achievement: 'achievement',
+  score: 'score',
+  year: 'year',
+  imageUrl: 'imageUrl',
+  displayOrder: 'displayOrder',
+  consent: 'consent',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ResultShowcaseScalarFieldEnum = (typeof ResultShowcaseScalarFieldEnum)[keyof typeof ResultShowcaseScalarFieldEnum]
 
 
 export const BookScalarFieldEnum = {

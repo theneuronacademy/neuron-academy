@@ -3,23 +3,25 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import { TESTIMONIALS } from "@/data/testimonials";
+import type { Testimonial } from "@/data/testimonials";
 import { cn } from "@/lib/utils";
 
-/** Auto-rotating student testimonials with manual controls. */
-export function Testimonials() {
+/** Auto-rotating student testimonials with manual controls. Accepts live
+ * CMS rows; falls back to the curated static set when none are provided. */
+export function Testimonials({ items = TESTIMONIALS }: { items?: Testimonial[] }) {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused || TESTIMONIALS.length <= 1) return;
-    const t = setInterval(() => setI((x) => (x + 1) % TESTIMONIALS.length), 6000);
+    if (paused || items.length <= 1) return;
+    const t = setInterval(() => setI((x) => (x + 1) % items.length), 6000);
     return () => clearInterval(t);
-  }, [paused]);
+  }, [paused, items.length]);
 
-  if (TESTIMONIALS.length === 0) {
+  if (items.length === 0) {
     return <p className="rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No testimonials yet.</p>;
   }
-  const cur = TESTIMONIALS[i];
+  const cur = items[i % items.length];
 
   return (
     <div
@@ -47,13 +49,13 @@ export function Testimonials() {
       </div>
       <div className="mt-6 flex items-center justify-between">
         <div className="flex gap-2">
-          {TESTIMONIALS.map((t, j) => (
+          {items.map((t, j) => (
             <button key={t.id} onClick={() => setI(j)} aria-label={`Show testimonial ${j + 1}`} className={cn("h-2 rounded-full transition-all", j === i ? "w-8 bg-teal-500" : "w-2 bg-silver-300 hover:bg-silver-400")} />
           ))}
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setI((i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)} aria-label="Previous testimonial" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><ChevronLeft className="h-4 w-4" /></button>
-          <button onClick={() => setI((i + 1) % TESTIMONIALS.length)} aria-label="Next testimonial" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><ChevronRight className="h-4 w-4" /></button>
+          <button onClick={() => setI((i - 1 + items.length) % items.length)} aria-label="Previous testimonial" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><ChevronLeft className="h-4 w-4" /></button>
+          <button onClick={() => setI((i + 1) % items.length)} aria-label="Next testimonial" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><ChevronRight className="h-4 w-4" /></button>
         </div>
       </div>
     </div>
