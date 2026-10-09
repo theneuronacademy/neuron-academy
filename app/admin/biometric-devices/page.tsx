@@ -10,6 +10,7 @@ import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 import { AdminToolbar, SearchBar, FilterBar } from "@/components/admin/SearchBar";
 import { EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
+import { useAdminGuard } from "@/components/admin/useAdminGuard";
 import { cn } from "@/lib/utils";
 
 interface BiometricDeviceRow {
@@ -42,7 +43,7 @@ function getStatusTone(status: string) {
 
 export default function BiometricDevicesPage() {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const ready = useAdminGuard();
   const [rows, setRows] = useState<BiometricDeviceRow[]>([]);
   const [search, setSearch] = useState("");
   const [typeF, setTypeF] = useState("all");
@@ -60,17 +61,12 @@ export default function BiometricDevicesPage() {
     } catch {
       setErr("Cannot load biometric devices.");
     }
-    setReady(true);
   }
 
   useEffect(() => {
-    if (!ready) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!ready) return;
     (async () => {
       await load();
-      setReady(true);
     })();
   }, [router, ready]);
 

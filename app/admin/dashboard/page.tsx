@@ -51,7 +51,7 @@ export default function AdminDashboardPage() {
   const [site, setSite] = useState<{ online: boolean; lastUpdate: string; activeBanners: number; activePopups: number } | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   // Phase 6: live database test-platform stats (hidden in demo mode).
-  const [liveStats, setLiveStats] = useState<{ totalTests: number; publishedTests: number; liveTests: number; scheduledTests: number; completedTests: number; totalResults: number; totalAttempts: number } | null>(null);
+  const [liveStats, setLiveStats] = useState<{ totalTests: number; publishedTests: number; liveTests: number; scheduledTests: number; completedTests: number; totalResults: number; totalAttempts: number; totalStudents: number; activeStudents: number; totalFaculty: number; activeFaculty: number; totalBatches: number; activeBatches: number; totalCourses: number; newEnquiries: number } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -108,7 +108,11 @@ export default function AdminDashboardPage() {
         <div>
           <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">{today.toUpperCase()}</p>
           <h2 className="mt-1 text-xl font-extrabold sm:text-2xl">{greeting()}, Admin</h2>
-          <p className="mt-1 text-[13px] text-silver-200">12 active batches • 34 published tests • website online</p>
+          <p className="mt-1 text-[13px] text-silver-200">
+            {liveStats
+              ? `${liveStats.activeBatches} active batches • ${liveStats.publishedTests} published tests • website online`
+              : "Connecting to live academy data…"}
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link href="/admin/students" className="rounded-xl bg-white px-4 py-2.5 text-[13px] font-bold text-navy-700 hover:bg-silver-100">
@@ -128,14 +132,14 @@ export default function AdminDashboardPage() {
         </p>
       ) : null}
 
-      {/* Stats */}
+      {/* Stats — Phase 17: live database values; demo fallbacks labelled. */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard label="Total Students" value={stats.totalStudents} sub="+12 this month" icon={Users} accent="navy" />
-        <StatCard label="Total Faculty" value={stats.totalFaculty} sub="Across 5 subjects" icon={GraduationCap} accent="teal" />
-        <StatCard label="Active Batches" value={stats.activeBatches} sub="JEE • NEET • AMU • Jamia" icon={Layers} accent="navy" />
-        <StatCard label="Published Tests" value={stats.publishedTests} sub="Live + practice + offline" icon={FileText} accent="teal" />
-        <StatCard label="Pending Enquiries" value={stats.pendingEnquiries} sub="6 new this week" icon={Inbox} accent="crimson" />
-        <StatCard label="Today's Attendance" value={`${stats.todayAttendancePct}%`} sub="11 batches synced" icon={CalendarCheck} accent="teal" />
+        <StatCard label="Total Students" value={liveStats?.totalStudents ?? stats.totalStudents} sub={liveStats ? `${liveStats.activeStudents} active` : "Demo data"} icon={Users} accent="navy" />
+        <StatCard label="Total Faculty" value={liveStats?.totalFaculty ?? stats.totalFaculty} sub={liveStats ? `${liveStats.activeFaculty} active` : "Demo data"} icon={GraduationCap} accent="teal" />
+        <StatCard label="Active Batches" value={liveStats?.activeBatches ?? stats.activeBatches} sub={liveStats ? `Across ${liveStats.totalCourses} courses` : "Demo data"} icon={Layers} accent="navy" />
+        <StatCard label="Published Tests" value={liveStats?.publishedTests ?? stats.publishedTests} sub={liveStats ? `${liveStats.liveTests} live now` : "Demo data"} icon={FileText} accent="teal" />
+        <StatCard label="Pending Enquiries" value={liveStats?.newEnquiries ?? stats.pendingEnquiries} sub={liveStats ? "New enquiries awaiting contact" : "Demo data"} icon={Inbox} accent="crimson" />
+        <StatCard label="Today's Attendance" value={`${stats.todayAttendancePct}%`} sub="Demo preview — see Attendance" icon={CalendarCheck} accent="teal" />
       </div>
 
       {/* Phase 6: live database test-platform stats (demo cards above stay as fallback) */}
@@ -155,7 +159,7 @@ export default function AdminDashboardPage() {
       <div>
         <h3 className="text-sm font-extrabold tracking-widest text-muted">QUICK ACTIONS</h3>
         <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <QuickAction icon={UserPlus} label="Add Student" desc="Enroll a learner" onClick={() => quick("Add Student opens in People → Students (demo).") } />
+          <QuickAction icon={UserPlus} label="Add Student" desc="Enroll a learner" onClick={() => router.push("/admin/students")} />
           <QuickAction icon={UserRoundPlus} label="Add Faculty" desc="Onboard a mentor" onClick={() => router.push("/admin/faculty")} />
           <QuickAction icon={PlusCircle} label="Create Test" desc="Live / offline / practice" onClick={() => router.push("/admin/tests")} />
           <QuickAction icon={Megaphone} label="Publish Announcement" desc="Top running banner" onClick={() => router.push("/admin/website/announcements")} />
@@ -173,7 +177,10 @@ export default function AdminDashboardPage() {
             </Link>
           </div>
           <div className="mt-3 space-y-2.5">
-            {upcoming.map((t) => (
+            {upcoming.length === 0 ? (
+              <p className="rounded-xl bg-silver-50 px-4 py-6 text-center text-[13px] font-bold text-muted">No upcoming tests.</p>
+            ) : (
+            upcoming.map((t) => (
               <div key={t.id} className="flex items-center justify-between gap-3 rounded-xl border border-silver-200 px-3.5 py-2.5">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-extrabold text-navy-700">{t.name}</p>
@@ -183,7 +190,8 @@ export default function AdminDashboardPage() {
                 </div>
                 <AdminStatusBadge tone={statusToneFor(t.status)}>{t.status}</AdminStatusBadge>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </div>
 
@@ -196,7 +204,10 @@ export default function AdminDashboardPage() {
             </Link>
           </div>
           <div className="mt-3 space-y-2.5">
-            {enquiries.map((e) => (
+            {enquiries.length === 0 ? (
+              <p className="rounded-xl bg-silver-50 px-4 py-6 text-center text-[13px] font-bold text-muted">No enquiries yet.</p>
+            ) : (
+            enquiries.map((e) => (
               <div key={e.id} className="flex items-center justify-between gap-3 rounded-xl border border-silver-200 px-3.5 py-2.5">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-extrabold text-navy-700">{e.name}</p>
@@ -206,7 +217,8 @@ export default function AdminDashboardPage() {
                 </div>
                 <AdminStatusBadge tone={statusToneFor(e.status)}>{e.status}</AdminStatusBadge>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </div>
       </div>
@@ -215,9 +227,12 @@ export default function AdminDashboardPage() {
         {/* Attendance */}
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card lg:col-span-1">
           <h3 className="text-[15px] font-extrabold text-navy-700">Attendance Overview</h3>
-          <p className="mt-0.5 text-[12px] font-semibold text-muted">Today • {stats.todayAttendancePct}% average</p>
+          <p className="mt-0.5 text-[12px] font-semibold text-muted">Today • {stats.todayAttendancePct}% average (demo preview)</p>
           <div className="mt-4 space-y-3">
-            {attendance.map((a) => (
+            {attendance.length === 0 ? (
+              <p className="rounded-xl bg-silver-50 px-4 py-6 text-center text-[13px] font-bold text-muted">No attendance data.</p>
+            ) : (
+            attendance.map((a) => (
               <div key={a.batch}>
                 <div className="flex items-center justify-between text-[12px] font-bold">
                   <span className="text-navy-700">{a.batch}</span>
@@ -225,7 +240,8 @@ export default function AdminDashboardPage() {
                 </div>
                 <ProgressBar value={a.pct} className="mt-1.5" tone={a.pct >= 85 ? "teal" : a.pct >= 75 ? "navy" : "red"} />
               </div>
-            ))}
+            ))
+            )}
           </div>
           <Link href="/admin/attendance" className="mt-4 block rounded-xl border border-silver-300 px-4 py-2 text-center text-[13px] font-bold text-navy-700 hover:border-teal-500">
             Open Attendance
@@ -235,6 +251,9 @@ export default function AdminDashboardPage() {
         {/* Recent activity */}
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card lg:col-span-1">
           <h3 className="text-[15px] font-extrabold text-navy-700">Recent Activity</h3>
+          {activity.length === 0 ? (
+            <p className="mt-3 rounded-xl bg-silver-50 px-4 py-6 text-center text-[13px] font-bold text-muted">No recent activity.</p>
+          ) : (
           <ul className="mt-3 space-y-3">
             {activity.map((a) => (
               <li key={a.id} className="flex gap-3">
@@ -246,6 +265,7 @@ export default function AdminDashboardPage() {
               </li>
             ))}
           </ul>
+          )}
         </div>
 
         {/* Website status */}

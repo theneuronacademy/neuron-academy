@@ -5,6 +5,7 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
+import { getUserFromRequest } from "@/lib/session";
 import { isNonEmpty, missingFields, parseDate } from "@/lib/validation";
 import { DEMO_BATCHES } from "@/data/admin";
 
@@ -33,8 +34,24 @@ export async function GET(req: NextRequest) {
   }
   try {
     if (facultyId) {
+      // Phase 17 — the ?facultyId= filter is session-scoped, never
+      // client-controlled: ADMIN may query any faculty; a faculty member
+      // may query only themselves; everyone else gets no filtered view
+      // (prevents anonymous enumeration of a faculty member's batches).
+      const viewer = getUserFromRequest(req);
+      let effectiveId = facultyId;
+      if (!viewer || viewer.role === "STUDENT") {
+        return ok({ items: [], source: "database" });
+      }
+      if (viewer.role === "FACULTY") {
+        const mine = await db.faculty.findUnique({ where: { userId: viewer.id }, select: { id: true } });
+        if (!mine || (facultyId !== viewer.id && facultyId !== mine.id)) {
+          return ok({ items: [], source: "database" });
+        }
+        effectiveId = mine.id;
+      }
       const profile = await db.faculty.findFirst({
-        where: { OR: [{ userId: facultyId }, { id: facultyId }] },
+        where: { OR: [{ userId: effectiveId }, { id: effectiveId }] },
         select: { id: true },
       });
       if (!profile) return ok({ items: [], source: "database" });

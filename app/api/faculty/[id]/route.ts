@@ -91,6 +91,14 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const db = getDb();
   if (!db) return dbNotConfigured("Removing faculty");
   try {
+    // Phase 17 — destructive safety: reassign batches before deleting.
+    const batches = await db.batch.count({ where: { facultyId: id } });
+    if (batches > 0) {
+      return fail(
+        `Cannot delete: this faculty member is assigned to ${batches} batch(es). Reassign the batches or deactivate the faculty instead.`,
+        409
+      );
+    }
     await db.faculty.delete({ where: { id } });
     return ok({ deleted: true });
   } catch (err) {

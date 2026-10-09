@@ -31,6 +31,9 @@ export default function TestimonialsAdminPage() {
   const [course, setCourse] = useState("");
   const [achievement, setAchievement] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
+  // Phase 17 — persistence errors surface honestly (no local writes).
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -65,6 +68,7 @@ export default function TestimonialsAdminPage() {
 
   const save = async () => {
     if (!name.trim()) return;
+    setFormError(null);
     const payload = { studentName: name.trim(), course: course.trim(), achievement: achievement.trim(), isActive: true };
     try {
       if (editing) {
@@ -74,12 +78,15 @@ export default function TestimonialsAdminPage() {
           body: JSON.stringify(payload),
           cache: "no-store",
         });
-        if (res.ok) {
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success !== false) {
           setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, studentName: name.trim(), course: course.trim(), achievement: achievement.trim() } : r)));
           setSaved("Testimonial updated.");
+          setModal(false);
+          setEditing(null);
         } else {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, studentName: name.trim(), course: course.trim(), achievement: achievement.trim() } : r)));
-          setSaved("Testimonial updated locally (database unavailable).");
+          setFormError(json?.error ?? "Could not update testimonial. Nothing was saved.");
+          return;
         }
       } else {
         const res = await fetch("/api/testimonials", {
@@ -93,17 +100,16 @@ export default function TestimonialsAdminPage() {
           const item = json.data.item;
           setRows((p) => [...p, { id: item.id, studentName: item.studentName, course: item.course ?? "", achievement: item.achievement ?? "", active: true }]);
           setSaved("Testimonial added.");
+          setModal(false);
         } else {
-          setRows((p) => [...p, { id: `t-${Date.now()}`, studentName: name.trim(), course: course.trim(), achievement: achievement.trim(), active: true }]);
-          setSaved("Testimonial added locally (database unavailable).");
+          setFormError(json?.error ?? "Could not add testimonial. Nothing was saved.");
+          return;
         }
       }
     } catch {
-      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, studentName: name.trim(), course: course.trim(), achievement: achievement.trim() } : r)));
-      else setRows((p) => [...p, { id: `t-${Date.now()}`, studentName: name.trim(), course: course.trim(), achievement: achievement.trim(), active: true }]);
-      setSaved("Saved locally (database unavailable).");
+      setFormError("Cannot reach the server. Nothing was saved.");
+      return;
     }
-    setModal(false);
     setEditing(null);
     setName("");
     setCourse("");
@@ -111,20 +117,42 @@ export default function TestimonialsAdminPage() {
     window.setTimeout(() => setSaved(null), 2500);
   };
 
+  // Phase 17 — visibility toggle persists immediately.
+  const toggleActive = async (r: Row) => {
+    setPageError(null);
+    const next = !r.active;
+    try {
+      const res = await fetch(`/api/testimonials/${r.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: next }),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success !== false) {
+        setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: next } : x)));
+      } else {
+        setPageError(json?.error ?? "Could not change visibility.");
+      }
+    } catch {
+      setPageError("Cannot reach the server. Visibility unchanged.");
+    }
+  };
+
   const remove = async (r: Row) => {
     if (!window.confirm(`Delete testimonial from "${r.studentName}"?`)) return;
+    setPageError(null);
     try {
       const res = await fetch(`/api/testimonials/${r.id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
       if (res.ok) {
         setRows((p) => p.filter((x) => x.id !== r.id));
         setSaved("Testimonial deleted.");
       } else {
-        setRows((p) => p.filter((x) => x.id !== r.id));
-        setSaved("Deleted locally (database unavailable).");
+        setPageError(json?.error ?? "Could not delete testimonial. Nothing was deleted.");
       }
     } catch {
-      setRows((p) => p.filter((x) => x.id !== r.id));
-      setSaved("Deleted locally (database unavailable).");
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
     window.setTimeout(() => setSaved(null), 2500);
   };
@@ -139,7 +167,12 @@ export default function TestimonialsAdminPage() {
 
   return (
     <AdminLayout title="Testimonials" subtitle="Student success quotes">
-      <AdminPageHeader title="Testimonials" description="Quotes shown on the homepage carousel." actionLabel="Add Testimonial" actionIcon={Plus} onAction={() => { setEditing(null); setName(""); setCourse(""); setAchievement(""); setModal(true); }} />
+      <AdminPageHeader title="Testimonials" description="Quotes shown on the homepage carousel." actionLabel="Add Testimonial" actionIcon={Plus} onAction={() => { setEditing(null); setName(""); setCourse(""); setAchievement(""); setFormError(null); setModal(true); }} />
+      {pageError ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
@@ -159,15 +192,13 @@ export default function TestimonialsAdminPage() {
 {
               key: "s",
               header: "Status",
-              render: (r) => {
-                return (
-                  <button onClick={() => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: !x.active } : x)))}>
-                    <span className={r.active ? "inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold border-emerald-200 bg-emerald-50 text-emerald-700" : "inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold border-silver-200 bg-silver-50 text-muted"}>
-                      {r.active ? "Active" : "Hidden"}
-                    </span>
-                  </button>
-                );
-              },
+              render: (r) => (
+                <button onClick={() => void toggleActive(r)} aria-label={`Toggle visibility of ${r.studentName}`} aria-pressed={r.active}>
+                  <span className={r.active ? "inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold border-emerald-200 bg-emerald-50 text-emerald-700" : "inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold border-silver-200 bg-silver-50 text-muted"}>
+                    {r.active ? "Active" : "Hidden"}
+                  </span>
+                </button>
+              ),
             },
             {
               key: "x",
@@ -181,6 +212,7 @@ export default function TestimonialsAdminPage() {
                       setName(r.studentName);
                       setCourse(r.course);
                       setAchievement(r.achievement);
+                      setFormError(null);
                       setModal(true);
                     }}
                     aria-label={`Edit ${r.studentName}`}
@@ -188,11 +220,7 @@ export default function TestimonialsAdminPage() {
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
-                  <button
-                    onClick={() => remove(r)}
-                    aria-label={`Delete ${r.studentName}`}
-                    className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
-                  >
+                  <button onClick={() => void remove(r)} aria-label={`Delete ${r.studentName}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -215,11 +243,14 @@ export default function TestimonialsAdminPage() {
           Achievement
           <input value={achievement} onChange={(e) => setAchievement(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="AIR 42 — JEE Advanced 2026" />
         </label>
+        {formError ? (
+          <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+        ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => { setModal(false); setEditing(null); }}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={save}>
+          <Button variant="primary" size="sm" onClick={() => void save()}>
             Save
           </Button>
         </div>

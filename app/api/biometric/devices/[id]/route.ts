@@ -64,19 +64,28 @@ export async function PATCH(
   if ("name" in body && String(body.name) !== "") update.name = String(body.name);
   if ("location" in body) update.location = String(body.location);
   if ("isActive" in body) update.isActive = body.isActive === false ? false : true;
+  // Phase 17 — invalid protocol/IP/port values are rejected (400), never
+  // silently dropped: the admin must know the write did not apply.
   if ("protocol" in body) {
     const protocol = String(body.protocol);
-    if (SUPPORTED_PROTOCOLS.includes(protocol as (typeof SUPPORTED_PROTOCOLS)[number])) {
-      update.protocol = protocol;
+    if (!SUPPORTED_PROTOCOLS.includes(protocol as (typeof SUPPORTED_PROTOCOLS)[number])) {
+      return fail(`protocol must be one of: ${SUPPORTED_PROTOCOLS.join(", ")}.`, 400);
     }
+    update.protocol = protocol;
   }
   if ("ipAddress" in body) {
     const ip = String(body.ipAddress);
-    if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) update.ipAddress = ip;
+    if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) {
+      return fail("ipAddress must be a valid IPv4 address.", 400);
+    }
+    update.ipAddress = ip;
   }
   if ("port" in body) {
     const p = Number(body.port);
-    if (!Number.isNaN(p) && p >= 1 && p <= 65535) update.port = p;
+    if (!Number.isInteger(p) || p < 1 || p > 65535) {
+      return fail("port must be an integer between 1 and 65535.", 400);
+    }
+    update.port = p;
   }
   if (Object.keys(update).length === 0) {
     return fail("No valid update fields provided.", 400);
@@ -107,7 +116,8 @@ export async function DELETE(
   if (!db) return dbNotConfigured("Deactivating biometric device");
   const { id } = await params;
   try {
-    const device = await db.biometricDevice.delete({ where: { id } });
+    // Phase 17 — allow-listed columns only (never leak device secrets).
+    const device = await db.biometricDevice.delete({ where: { id }, select: DEVICE_SELECT });
     return ok({ item: device });
   } catch (err) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

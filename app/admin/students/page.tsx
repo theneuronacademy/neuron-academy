@@ -51,6 +51,11 @@ export default function StudentsPage() {
   const [search, setSearch] = useState("");
   const [typeF, setTypeF] = useState("all");
   const [statusF, setStatusF] = useState("all");
+  // Phase 17 — batch filter (deep-linkable from Batches → View).
+  const [batchF, setBatchF] = useState("all");
+  // Phase 17 — client pagination (bounded rendering for large cohorts).
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 20;
   const [edit, setEdit] = useState<Row | null>(null);
   const [view, setView] = useState<Row | null>(null);
   const [busy, setBusy] = useState(false);
@@ -91,6 +96,13 @@ export default function StudentsPage() {
     }
     (async () => {
       await load();
+      // Deep link: /admin/students?batch=<name> preselects the batch filter.
+      try {
+        const q = new URLSearchParams(window.location.search).get("batch");
+        if (q) setBatchF(q);
+      } catch {
+        /* ignore */
+      }
       setReady(true);
     })();
   }, [router]);
@@ -101,10 +113,14 @@ export default function StudentsPage() {
         (r) =>
           (typeF === "all" || r.studentType === typeF) &&
           (statusF === "all" || r.status === statusF) &&
+          (batchF === "all" || r.batch === batchF) &&
           (!search.trim() || `${r.name} ${r.studentId} ${r.email} ${r.phone}`.toLowerCase().includes(search.toLowerCase()))
       ),
-    [rows, search, typeF, statusF]
+    [rows, search, typeF, statusF, batchF]
   );
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const visible = filtered.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
 
   const counts = useMemo(
     () => ({
@@ -203,14 +219,16 @@ export default function StudentsPage() {
       ) : null}
       <div className="mt-3">
         <AdminToolbar>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search name, ID, email, phone…" />
-          <FilterBar value={typeF} onChange={setTypeF} ariaLabel="Filter by type" options={[{ value: "all", label: "All types" }, { value: "REGULAR", label: "Regular" }, { value: "SCHOLARSHIP", label: "Scholarship" }]} />
-          <FilterBar value={statusF} onChange={setStatusF} ariaLabel="Filter by status" options={[{ value: "all", label: "All statuses" }, { value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} />
+          <SearchBar value={search} onChange={(v) => { setSearch(v); setPage(0); }} placeholder="Search name, ID, email, phone…" />
+          <FilterBar value={typeF} onChange={(v) => { setTypeF(v); setPage(0); }} ariaLabel="Filter by type" options={[{ value: "all", label: "All types" }, { value: "REGULAR", label: "Regular" }, { value: "SCHOLARSHIP", label: "Scholarship" }]} />
+          <FilterBar value={statusF} onChange={(v) => { setStatusF(v); setPage(0); }} ariaLabel="Filter by status" options={[{ value: "all", label: "All statuses" }, { value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} />
+          <FilterBar value={batchF} onChange={(v) => { setBatchF(v); setPage(0); }} ariaLabel="Filter by batch" options={[{ value: "all", label: "All batches" }, ...batches.map((b) => ({ value: b.name, label: b.name }))]} />
         </AdminToolbar>
       </div>
       {filtered.length === 0 ? (
         <EmptyState title="No students found" desc="Students appear here after registration — no demo records are created." />
       ) : (
+        <>
         <AdminTable<Row>
           columns={[
             {
@@ -242,8 +260,20 @@ export default function StudentsPage() {
               ),
             },
           ]}
-          rows={filtered}
+          rows={visible}
         />
+        {pageCount > 1 ? (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[12px] font-bold text-muted">
+              Showing {safePage * PAGE_SIZE + 1}–{Math.min(filtered.length, safePage * PAGE_SIZE + PAGE_SIZE)} of {filtered.length}
+            </p>
+            <div className="flex gap-2">
+              <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={safePage === 0} className="rounded-xl border border-silver-300 px-4 py-2 text-[13px] font-bold text-navy-700 disabled:opacity-40">← Prev</button>
+              <button onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))} disabled={safePage >= pageCount - 1} className="rounded-xl border border-silver-300 px-4 py-2 text-[13px] font-bold text-navy-700 disabled:opacity-40">Next →</button>
+            </div>
+          </div>
+        ) : null}
+        </>
       )}
 
       <AdminDrawer open={view !== null} title={view ? view.name : "Student"} onClose={() => setView(null)}>

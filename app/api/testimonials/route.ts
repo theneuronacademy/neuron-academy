@@ -5,12 +5,13 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
+import { getUserFromRequest } from "@/lib/session";
 import { missingFields } from "@/lib/validation";
 import { TESTIMONIALS } from "@/data/testimonials";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const db = getDb();
   if (!db) {
     return ok({
@@ -18,8 +19,14 @@ export async function GET() {
       source: "demo",
     });
   }
+  // Phase 17 — ADMIN sees all testimonials; others only active ones.
+  const viewer = getUserFromRequest(req);
   try {
-    const rows = await db.testimonial.findMany({ orderBy: { displayOrder: "asc" }, take: 200 });
+    const rows = await db.testimonial.findMany({
+      where: viewer?.role === "ADMIN" ? {} : { isActive: true },
+      orderBy: { displayOrder: "asc" },
+      take: 200,
+    });
     return ok({ items: rows, source: "database" });
   } catch (err) {
     return serverError("testimonials:list", err);

@@ -9,7 +9,7 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/session";
 import { requireApiRole } from "@/lib/server-auth";
-import { batchAllowed, canStudentAccessTest, resolveStudent, STUDENT_VISIBLE_STATUSES } from "@/lib/testAccess";
+import { batchAllowed, canStudentAccessTest, facultyMayManageTest, resolveStudent, STUDENT_VISIBLE_STATUSES } from "@/lib/testAccess";
 import { assemblePaper } from "@/lib/testOrdering";
 import { isNonEmpty, missingFields } from "@/lib/validation";
 
@@ -125,6 +125,16 @@ export async function POST(req: NextRequest) {
   }
   const missing = missingFields(body, ["testId", "questionText"]);
   if (missing.length > 0) return fail(`Missing required fields: ${missing.join(", ")}.`, 400);
+  // Phase 17 — faculty create questions only on their own/assigned-batch
+  // tests (answer keys must not be injected into others' tests).
+  if (auth.user.role === "FACULTY") {
+    const targetId = String(body.testId);
+    const target = await db.test.findUnique({ where: { id: targetId }, select: { id: true } });
+    if (!target) return fail("Test not found.", 404);
+    if (!(await facultyMayManageTest(db, auth.user.id, targetId))) {
+      return fail("You can add questions only to your own or assigned-batch tests.", 403);
+    }
+  }
   try {
     const created = await db.question.create({
       data: {

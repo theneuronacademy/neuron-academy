@@ -37,6 +37,11 @@ export default function AdminAdsPage() {
 
   return (
     <AdminLayout title="Advertisements" subtitle="Create hero, banner and popup ads for the public website">
+      {/* Phase 17 — legacy demo surface: edits here never reach the database
+          or the website. Use Website → Banners / Popups for live content. */}
+      <p className="mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-bold text-amber-800" role="note">
+        Demo only — ads created here are stored locally in this browser and do not appear on the website. Manage live banners and popups under Website.
+      </p>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2">
           {FILTERS.map((f) => (

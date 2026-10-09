@@ -19,6 +19,8 @@ interface Row {
   subject: string;
   qualification: string;
   active: boolean;
+  email?: string;
+  phone?: string;
 }
 
 export default function WebsiteFacultyPage() {
@@ -31,6 +33,11 @@ export default function WebsiteFacultyPage() {
   const [name, setName] = useState("");
   const [subject, setSubject] = useState("Physics");
   const [qualification, setQualification] = useState("");
+  // Phase 17 — faculty records require real contact data (never fabricated).
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
 
   useEffect(() => {
@@ -66,6 +73,21 @@ export default function WebsiteFacultyPage() {
 
   const save = async () => {
     if (!name.trim()) return;
+    // Phase 17 — faculty records persist via the API with real contact
+    // data. Failures surface honestly; nothing is written locally.
+    setFormError(null);
+    const mail = email.trim().toLowerCase();
+    const tel = phone.trim();
+    if (!editing) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
+        setFormError("Enter a valid email address.");
+        return;
+      }
+      if (tel.replace(/\D/g, "").length < 10) {
+        setFormError("Enter a valid phone number (min 10 digits).");
+        return;
+      }
+    }
     const payload = { name: name.trim(), subject: subject.trim(), qualification: qualification.trim(), isActive: true };
     try {
       if (editing) {
@@ -75,18 +97,21 @@ export default function WebsiteFacultyPage() {
           body: JSON.stringify(payload),
           cache: "no-store",
         });
-        if (res.ok) {
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success !== false) {
           setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), subject: subject.trim(), qualification: qualification.trim() } : r)));
           setSaved("Faculty profile updated.");
+          setModal(false);
+          setEditing(null);
         } else {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), subject: subject.trim(), qualification: qualification.trim() } : r)));
-          setSaved("Updated locally (database unavailable).");
+          setFormError(json?.error ?? "Could not update profile. Nothing was saved.");
+          return;
         }
       } else {
         const res = await fetch("/api/faculty", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...payload, email: `${name.trim().toLowerCase().replace(/\s+/g, ".")}@neuronacademy.in`, phone: "+91 97119 17317" }),
+          body: JSON.stringify({ ...payload, email: mail, phone: tel }),
           cache: "no-store",
         });
         const json = await res.json().catch(() => null);
@@ -94,40 +119,64 @@ export default function WebsiteFacultyPage() {
           const item = json.data.item;
           setRows((p) => [...p, { id: item.id, name: item.name, subject: item.subject ?? "", qualification: item.qualification ?? "", active: true }]);
           setSaved("Faculty profile added.");
+          setModal(false);
         } else {
-          setRows((p) => [...p, { id: `f-${Date.now()}`, name: name.trim(), subject: subject.trim(), qualification: qualification.trim(), active: true }]);
-          setSaved("Added locally (database unavailable).");
+          setFormError(json?.error ?? "Could not add profile. Check for duplicate email/phone. Nothing was saved.");
+          return;
         }
       }
     } catch {
-      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), subject: subject.trim(), qualification: qualification.trim() } : r)));
-      else setRows((p) => [...p, { id: `f-${Date.now()}`, name: name.trim(), subject: subject.trim(), qualification: qualification.trim(), active: true }]);
-      setSaved("Saved locally (database unavailable).");
+      setFormError("Cannot reach the server. Nothing was saved.");
+      return;
     }
-    setModal(false);
     setEditing(null);
     setName("");
+    setEmail("");
+    setPhone("");
     setSubject("Physics");
     setQualification("");
     window.setTimeout(() => setSaved(null), 2500);
   };
 
   const remove = async (r: Row) => {
-    if (!window.confirm(`Remove "${r.name}" from the website?`)) return;
+    if (!window.confirm(`Remove "${r.name}" from the website? Faculty with assigned batches cannot be deleted — deactivate them instead.`)) return;
+    setPageError(null);
     try {
       const res = await fetch(`/api/faculty/${r.id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
       if (res.ok) {
         setRows((p) => p.filter((x) => x.id !== r.id));
         setSaved("Faculty profile removed.");
       } else {
-        setRows((p) => p.filter((x) => x.id !== r.id));
-        setSaved("Removed locally (database unavailable).");
+        // Phase 17 — 409 dependency guard message reaches the admin verbatim.
+        setPageError(json?.error ?? "Could not remove profile. Nothing was deleted.");
       }
     } catch {
-      setRows((p) => p.filter((x) => x.id !== r.id));
-      setSaved("Removed locally (database unavailable).");
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
     window.setTimeout(() => setSaved(null), 2500);
+  };
+
+  // Phase 17 — visibility persists as faculty status (controls the website).
+  const toggleActive = async (r: Row) => {
+    setPageError(null);
+    const next = !r.active;
+    try {
+      const res = await fetch(`/api/faculty/${r.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: next ? "ACTIVE" : "INACTIVE" }),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success !== false) {
+        setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: next } : x)));
+      } else {
+        setPageError(json?.error ?? "Could not change visibility.");
+      }
+    } catch {
+      setPageError("Cannot reach the server. Visibility unchanged.");
+    }
   };
 
   if (!ready) {
@@ -145,14 +194,13 @@ export default function WebsiteFacultyPage() {
         description={`${filtered.length} profiles • photo, qualification and assigned subjects.`}
         actionLabel="Add Faculty"
         actionIcon={Plus}
-        onAction={() => {
-          setEditing(null);
-          setName("");
-          setSubject("Physics");
-          setQualification("");
-          setModal(true);
-        }}
+        onAction={() => { setEditing(null); setName(""); setEmail(""); setPhone(""); setSubject("Physics"); setQualification(""); setFormError(null); setModal(true); }}
       />
+      {pageError ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
@@ -173,7 +221,7 @@ export default function WebsiteFacultyPage() {
               key: "st",
               header: "Status",
               render: (r) => (
-                <button onClick={() => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: !x.active } : x)))}>
+                <button onClick={() => void toggleActive(r)} aria-label={`Toggle visibility of ${r.name}`} aria-pressed={r.active}>
                   <AdminStatusBadge tone={r.active ? "green" : "gray"}>{r.active ? "Active" : "Hidden"}</AdminStatusBadge>
                 </button>
               ),
@@ -188,8 +236,11 @@ export default function WebsiteFacultyPage() {
                     onClick={() => {
                       setEditing(r);
                       setName(r.name);
+                      setEmail(r.email ?? "");
+                      setPhone(r.phone ?? "");
                       setSubject(r.subject);
                       setQualification(r.qualification);
+                      setFormError(null);
                       setModal(true);
                     }}
                     aria-label={`Edit ${r.name}`}
@@ -197,7 +248,7 @@ export default function WebsiteFacultyPage() {
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
-                  <button onClick={() => remove(r)} aria-label={`Delete ${r.name}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
+                  <button onClick={() => void remove(r)} aria-label={`Delete ${r.name}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -213,6 +264,14 @@ export default function WebsiteFacultyPage() {
           <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="e.g. Dr. S. Rao — Physics" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Email
+          <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="faculty@example.com" inputMode="email" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Phone
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="10-digit mobile" inputMode="tel" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Subject
           <input value={subject} onChange={(e) => setSubject(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="Physics" />
         </label>
@@ -220,11 +279,14 @@ export default function WebsiteFacultyPage() {
           Qualification
           <input value={qualification} onChange={(e) => setQualification(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="M.Sc, Ph.D — 15 yrs exp" />
         </label>
+        {formError ? (
+          <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+        ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => { setModal(false); setEditing(null); }}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={save}>
+          <Button variant="primary" size="sm" onClick={() => void save()}>
             Save
           </Button>
         </div>

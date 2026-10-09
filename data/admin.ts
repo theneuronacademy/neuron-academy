@@ -105,6 +105,21 @@ export interface AdminNotification {
   audience: string;
   date: string;
   status: "Sent" | "Scheduled" | "Draft";
+  // Phase 18c-step3 — persisted delivery analytics (optional for demo rows).
+  event?: string;
+  rawAudience?: string;
+  priority?: string;
+  channels?: string[];
+  overallStatus?: string;
+  recipientCount?: number;
+  smsSent?: number;
+  smsFailed?: number;
+  pushSent?: number;
+  pushFailed?: number;
+  inAppCount?: number;
+  createdAt?: string;
+  scheduledAt?: string | null;
+  sentAt?: string | null;
 }
 
 export interface AdminActivity {

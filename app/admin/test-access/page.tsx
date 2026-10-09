@@ -123,7 +123,10 @@ export default function TestAccessPage() {
     }
   }
 
-  async function revoke(recordId: string) {
+  async function revoke(recordId: string, studentName: string) {
+    // Phase 17 — revoking immediately locks the student out (even
+    // mid-attempt on next submit); require explicit confirmation.
+    if (!window.confirm(`Revoke access for "${studentName}"? They will lose this test immediately.`)) return;
     setBusy(recordId);
     setErr(null);
     setMsg(null);
@@ -231,7 +234,7 @@ export default function TestAccessPage() {
                     </span>
                     {r.status === "ACTIVE" ? (
                       <button
-                        onClick={() => void revoke(r.id)}
+                        onClick={() => void revoke(r.id, r.student.name)}
                         disabled={busy === r.id}
                         className="rounded-lg border border-crimson-200 px-3 py-1.5 text-[12px] font-bold text-crimson hover:bg-crimson-50 disabled:opacity-50"
                       >

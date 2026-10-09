@@ -35,6 +35,9 @@ export default function GalleryAdminPage() {
   const [title, setTitle] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
+  // Phase 17 — persistence errors surface honestly (no local writes).
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -72,6 +75,7 @@ export default function GalleryAdminPage() {
 
   const save = async () => {
     if (!title.trim()) return;
+    setFormError(null);
     const payload = { title: title.trim(), imageUrl: imageUrl || undefined, category: "Academy", isActive: true };
     try {
       const res = await fetch("/api/gallery", {
@@ -85,34 +89,30 @@ export default function GalleryAdminPage() {
         const item = json.data.item;
         setRows((p) => [...p, { id: item.id, title: item.title, category: item.category ?? "Academy", image: item.imageUrl ?? "" }]);
         setSaved("Photo added.");
+        setModal(false);
       } else {
-        setRows((p) => [...p, { id: `g-${Date.now()}`, title: title.trim(), category: "Academy", image: imageUrl }]);
-        setSaved("Photo added locally (database unavailable).");
+        setFormError(json?.error ?? "Could not add photo. Nothing was saved.");
       }
     } catch {
-      setRows((p) => [...p, { id: `g-${Date.now()}`, title: title.trim(), category: "Academy", image: imageUrl }]);
-      setSaved("Saved locally (database unavailable).");
+      setFormError("Cannot reach the server. Nothing was saved.");
     }
-    setModal(false);
-    setTitle("");
-    setImageUrl("");
     window.setTimeout(() => setSaved(null), 2500);
   };
 
   const remove = async (g: Row) => {
     if (!window.confirm(`Delete "${g.title}"?`)) return;
+    setPageError(null);
     try {
       const res = await fetch(`/api/gallery/${g.id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
       if (res.ok) {
         setRows((p) => p.filter((x) => x.id !== g.id));
         setSaved("Photo deleted.");
       } else {
-        setRows((p) => p.filter((x) => x.id !== g.id));
-        setSaved("Deleted locally (database unavailable).");
+        setPageError(json?.error ?? "Could not delete photo. Nothing was deleted.");
       }
     } catch {
-      setRows((p) => p.filter((x) => x.id !== g.id));
-      setSaved("Deleted locally (database unavailable).");
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
     window.setTimeout(() => setSaved(null), 2500);
   };
@@ -127,7 +127,12 @@ export default function GalleryAdminPage() {
 
   return (
     <AdminLayout title="Gallery" subtitle="Homepage photo wall">
-      <AdminPageHeader title="Gallery" description={`${filtered.length} of ${rows.length} photos.`} actionLabel="Add Photo" actionIcon={Plus} onAction={() => { setTitle(""); setImageUrl(""); setModal(true); }} />
+      <AdminPageHeader title="Gallery" description={`${filtered.length} of ${rows.length} photos.`} actionLabel="Add Photo" actionIcon={Plus} onAction={() => { setTitle(""); setImageUrl(""); setFormError(null); setModal(true); }} />
+      {pageError ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
@@ -153,7 +158,7 @@ export default function GalleryAdminPage() {
               <div className="flex items-center justify-between gap-2 p-3">
                 <span className="truncate text-[12px] font-bold text-muted">{g.category}</span>
                 <button
-                  onClick={() => remove(g)}
+                  onClick={() => void remove(g)}
                   aria-label={`Delete ${g.title}`}
                   className="rounded-lg border border-crimson-100 p-1.5 text-crimson hover:bg-crimson-50"
                 >
@@ -174,11 +179,14 @@ export default function GalleryAdminPage() {
           <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://…" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
         </label>
         <p className="mt-2 text-[12px] text-muted">Upload wires to Supabase Storage in production.</p>
+        {formError ? (
+          <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+        ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={save}>
+          <Button variant="primary" size="sm" onClick={() => void save()}>
             Save
           </Button>
         </div>

@@ -135,6 +135,21 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const db = getDb();
   if (!db) return dbNotConfigured("Deleting a student");
   try {
+    // Phase 17 — destructive safety: never silently orphan production
+    // history. Deactivate instead when dependent records exist.
+    const [results, attendance, attempts, grants] = await Promise.all([
+      db.result.count({ where: { studentId: id } }),
+      db.attendance.count({ where: { studentId: id } }),
+      db.testAttempt.count({ where: { studentId: id } }),
+      db.testAccess.count({ where: { studentId: id } }),
+    ]);
+    const dependents = results + attendance + attempts + grants;
+    if (dependents > 0) {
+      return fail(
+        `Cannot delete: this student has ${results} result(s), ${attendance} attendance record(s), ${attempts} attempt(s) and ${grants} access grant(s). Deactivate the student instead to preserve history.`,
+        409
+      );
+    }
     await db.student.delete({ where: { id } });
     return ok({ deleted: true });
   } catch (err) {

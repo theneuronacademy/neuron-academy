@@ -67,3 +67,15 @@ export function verifyOtpHash(candidate: string, phone: string, storedHash: stri
 export function isOtpFormat(v: unknown): v is string {
   return typeof v === "string" && /^\d{4,8}$/.test(v.trim());
 }
+
+/**
+ * Phase 18 — masked phone for SAFE server logs only. Never log the full
+ * phone number: keep country prefix + last 2 digits (e.g. +91******12).
+ * Logs must never contain OTP values, API keys, or full phone numbers.
+ */
+export function maskPhone(canonical: string): string {
+  const digits = canonical.replace(/\D/g, "");
+  if (digits.length < 4) return "***";
+  const cc = digits.length > 10 ? digits.slice(0, digits.length - 10) : "";
+  return `+${cc}******${digits.slice(-2)}`;
+}

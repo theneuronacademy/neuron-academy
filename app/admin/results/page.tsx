@@ -121,7 +121,18 @@ export default function AdminResultsPage() {
           <option value="all">All Tests</option>
           {tests.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
         </select>
-        <button onClick={() => window.alert("Export is UI-only in this demo phase.")} className="rounded-xl border border-silver-300 bg-white px-4 py-2 text-sm font-bold text-navy-700">Export</button>
+        <button onClick={() => {
+          // Phase 17 — real CSV export of the currently filtered rows.
+          const header = "test,student,studentId,marks,totalMarks,percentage,correct,wrong,unanswered,date";
+          const lines = visible.map((r) => [`"${String(r.testTitle).replace(/"/g, '""')}"`, `"${String(r.studentName).replace(/"/g, '""')}"`, r.studentId, r.marks, r.totalMarks, r.percentage, r.correct, r.wrong, r.unanswered, r.date].join(","));
+          const blob = new Blob([[header, ...lines].join("\n")], { type: "text/csv" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `results-${new Date().toISOString().slice(0, 10)}.csv`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }} className="rounded-xl border border-silver-300 bg-white px-4 py-2 text-sm font-bold text-navy-700">Export CSV</button>
       </div>
 
       {visible.length === 0 ? (
@@ -157,8 +168,8 @@ export default function AdminResultsPage() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
-          <h2 className="text-[15px] font-extrabold text-navy-700">Upload Offline Marks (CSV — demo UI)</h2>
-          <p className="mt-1 text-[13px] text-muted">For offline entry use the manual form or the OFFLINE-test form below. Pasted CSV rows only preview parsing.</p>
+          <h2 className="text-[15px] font-extrabold text-navy-700">Check Offline Marks Format (validator only)</h2>
+          <p className="mt-1 text-[13px] text-muted">For offline entry use the manual form or the OFFLINE-test form below. Pasted rows only check the CSV shape — nothing is saved here.</p>
           <textarea
             rows={4}
             placeholder={"STU-1001, Student Name, 16\nSTU-1002, Second Student, 14"}
@@ -167,11 +178,11 @@ export default function AdminResultsPage() {
             onChange={(e) => {
               const rows = e.target.value.split("\n").map((l) => l.trim()).filter(Boolean);
               const ok = rows.filter((r) => r.split(",").length >= 3).length;
-              setCsvMsg(rows.length === 0 ? null : `${ok}/${rows.length} rows look valid (UI-only preview).`);
+              setCsvMsg(rows.length === 0 ? null : `${ok}/${rows.length} rows match the expected shape (validator only — nothing saved).`);
             }}
           />
           {csvMsg ? <p className="mt-2 text-[13px] font-bold text-teal-700">{csvMsg}</p> : null}
-          <Button variant="outline" size="sm" className="mt-2" onClick={() => window.alert("CSV import is presentation-only. Use manual entry or the OFFLINE-test form to save.")}>Validate CSV</Button>
+          <Button variant="outline" size="sm" className="mt-2" onClick={() => setCsvMsg("Format checked above. Use manual entry or the OFFLINE-test form to save.")}>Validate CSV</Button>
         </div>
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
           <h2 className="text-[15px] font-extrabold text-navy-700">Save Result (manual, server)</h2>

@@ -6,7 +6,8 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
-import { safeNotify, notifyMessages } from "@/lib/notify";
+import { notifyMessages } from "@/lib/notify";
+import { dispatchNotification } from "@/services/notificationEngine";
 import { parseDate } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
@@ -56,14 +57,23 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(expiresAt !== undefined ? { expiresAt } : {}),
       },
     });
-    if (nextStatus === "REVOKED") {
+    // Phase 18b — revoke notifies once per transition (already-revoked rows
+    // stay silent), via the centralized engine (ACCESS_REVOKED, idempotent
+    // on test+student): SMS/push/in-app per policy, channels isolated.
+    if (nextStatus === "REVOKED" && row.status !== "REVOKED") {
       const msg = notifyMessages.accessRevoked(row.test.title);
-      await safeNotify(db, {
-        ...msg,
-        audience: "INDIVIDUAL",
-        targetStudentId: row.studentId,
+      await dispatchNotification(db, {
+        event: "ACCESS_REVOKED",
+        actor: { id: auth.user.id, role: auth.user.role },
+        audience: { kind: "INDIVIDUAL", studentId: row.studentId },
+        title: msg.title,
+        message: msg.message,
+        templateKey: "ACCESS_REVOKED",
+        vars: { testName: row.test.title },
         testId: row.testId,
         createdById: auth.user.id,
+        internal: true,
+        idempotencyKey: `ACCESS_REVOKED:${row.testId}:${row.studentId}`,
       });
     }
     return ok({ item: updated });

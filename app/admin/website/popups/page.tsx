@@ -67,6 +67,9 @@ export default function PopupsPage() {
   const [form, setForm] = useState(EMPTY);
   const [preview, setPreview] = useState<AdminPopup | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  // Phase 17 — persistence errors surface honestly (no local writes).
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -114,6 +117,8 @@ export default function PopupsPage() {
   const set = (k: keyof typeof EMPTY, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
   const save = async () => {
     if (!form.title.trim()) return;
+    // Phase 17 — popups persist via the API only (no local writes).
+    setFormError(null);
     const payload = {
       title: form.title,
       message: form.message,
@@ -137,9 +142,10 @@ export default function PopupsPage() {
         if (res.ok) {
           setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
           setSaved("Popup updated.");
+          setModal(false);
         } else {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
-          setSaved("Popup updated locally (database unavailable).");
+          const json = await res.json().catch(() => null);
+          setFormError(json?.error ?? "Could not update popup. Nothing was saved.");
         }
       } else {
         const res = await fetch("/api/popups", {
@@ -165,35 +171,55 @@ export default function PopupsPage() {
             active: item.isActive ?? true,
           }]);
           setSaved("Popup created.");
+          setModal(false);
+          setModal(false);
         } else {
-          setRows((p) => [...p, { ...form, id: `pp-${Date.now()}` }]);
-          setSaved("Popup created locally (database unavailable).");
+          setFormError(json?.error ?? "Could not create popup. Nothing was saved.");
         }
       }
     } catch {
-      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
-      else setRows((p) => [...p, { ...form, id: `pp-${Date.now()}` }]);
-      setSaved("Saved locally (database unavailable).");
+      setFormError("Cannot reach the server. Nothing was saved.");
     }
-    setModal(false);
     window.setTimeout(() => setSaved(null), 2500);
   };
   const remove = async (p: AdminPopup) => {
+    // Phase 17 — single confirmation lives here (callers must not pre-confirm).
     if (!window.confirm(`Delete popup "${p.title}"?`)) return;
+    setPageError(null);
     try {
       const res = await fetch(`/api/popups/${p.id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
       if (res.ok) {
         setRows((rows) => rows.filter((x) => x.id !== p.id));
         setSaved("Popup deleted.");
       } else {
-        setRows((rows) => rows.filter((x) => x.id !== p.id));
-        setSaved("Deleted locally (database unavailable).");
+        setPageError(json?.error ?? "Could not delete popup. Nothing was deleted.");
       }
     } catch {
-      setRows((rows) => rows.filter((x) => x.id !== p.id));
-      setSaved("Deleted locally (database unavailable).");
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
     window.setTimeout(() => setSaved(null), 2500);
+  };
+  const toggleActive = async (p: AdminPopup) => {
+    // Phase 17 — visibility flips persist immediately (controls the website).
+    setPageError(null);
+    const next = !p.active;
+    try {
+      const res = await fetch(`/api/popups/${p.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: next }),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success !== false) {
+        setRows((rows) => rows.map((x) => (x.id === p.id ? { ...x, active: next } : x)));
+      } else {
+        setPageError(json?.error ?? "Could not change visibility.");
+      }
+    } catch {
+      setPageError("Cannot reach the server. Visibility unchanged.");
+    }
   };
 
   if (!ready) {
@@ -226,6 +252,11 @@ export default function PopupsPage() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search popups…" />
         <FilterBar value={filter} onChange={setFilter} options={[{ value: "all", label: "All" }, { value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} />
       </AdminToolbar>
+      {pageError ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {filtered.length === 0 ? (
         <EmptyState title="No popups" desc="Create the first offer popup." action={<Button variant="primary" size="sm" onClick={() => { setEditing(null); setForm(EMPTY); setModal(true); }}>Add Popup</Button>} />
       ) : (
@@ -238,7 +269,7 @@ export default function PopupsPage() {
                   <p className="mt-0.5 line-clamp-2 text-[13px] text-muted">{p.message}</p>
                   <p className="mt-1 text-[11px] font-bold text-muted">{p.frequency} • {p.startDate} → {p.endDate}</p>
                 </div>
-                <button onClick={() => setRows((rows) => rows.map((x) => (x.id === p.id ? { ...x, active: !x.active } : x)))}>
+                <button onClick={() => void toggleActive(p)} aria-label={`Toggle visibility of ${p.title}`} aria-pressed={p.active}>
                   <AdminStatusBadge tone={p.active ? "green" : "gray"}>{p.active ? "Active" : "Inactive"}</AdminStatusBadge>
                 </button>
               </div>
@@ -257,9 +288,7 @@ export default function PopupsPage() {
                   <Pencil className="h-3.5 w-3.5" /> Edit
                 </button>
                 <button
-                  onClick={() => {
-                    if (window.confirm(`Delete popup "${p.title}"?`)) remove(p);
-                  }}
+                  onClick={() => void remove(p)}
                   className="inline-flex items-center gap-1 rounded-lg border border-crimson-100 px-2.5 py-1.5 text-[12px] font-bold text-crimson hover:bg-crimson-50"
                 >
                   <Trash2 className="h-3.5 w-3.5" /> Delete
@@ -319,12 +348,15 @@ export default function PopupsPage() {
           <p className="mb-2 text-[11px] font-bold tracking-widest text-muted">LIVE PREVIEW</p>
           <PopupPreview p={form} />
         </div>
+        {formError ? (
+          <p className="rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+        ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={save}>
-            Save Popup (demo)
+          <Button variant="primary" size="sm" onClick={() => void save()}>
+            Save Popup
           </Button>
         </div>
       </AdminModal>

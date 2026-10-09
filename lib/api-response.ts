@@ -9,8 +9,8 @@ export function ok<T>(data: T, status = 200) {
   return NextResponse.json({ success: true, data }, { status });
 }
 
-export function fail(error: string, status = 500) {
-  return NextResponse.json({ success: false, error }, { status });
+export function fail(error: string, status = 500, code?: string) {
+  return NextResponse.json({ success: false, error, ...(code ? { code } : {}) }, { status });
 }
 
 /** 503 for write attempts when DATABASE_URL is not configured. */

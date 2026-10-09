@@ -12,7 +12,8 @@ import { requireApiRole } from "@/lib/server-auth";
 import { evaluateAnswers, normalizeAnswer } from "@/lib/evaluation";
 import { invertDisplayLetter, isValidQuestionMap, presentLetters } from "@/lib/testOrdering";
 import { canStudentAccessTest, isLiveWindowOpen, resolveStudent } from "@/lib/testAccess";
-import { safeNotify, notifyMessages } from "@/lib/notify";
+import { notifyMessages } from "@/lib/notify";
+import { dispatchNotification } from "@/services/notificationEngine";
 
 export const dynamic = "force-dynamic";
 // Vercel: access re-check + evaluation + attempt/result upserts under LIVE
@@ -130,12 +131,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // Phase 13 — result notification via the centralized helper (never fails submission).
     // Phase 15 — notify only on first release; re-submits/re-evaluations stay
     // silent to avoid notification spam.
+    // Phase 18b — via the centralized engine (RESULT_RELEASED, idempotent on
+    // result id): student self-notify, SMS/push/in-app per policy, isolated.
     if (!existing) {
-      await safeNotify(db, {
-        ...notifyMessages.resultReleased(test.title, evalResult.marks, evalResult.totalMarks, evalResult.percentage),
-        audience: "INDIVIDUAL",
-        targetStudentId: profile.id,
+      const built = notifyMessages.resultReleased(test.title, evalResult.marks, evalResult.totalMarks, evalResult.percentage);
+      await dispatchNotification(db, {
+        event: "RESULT_RELEASED",
+        actor: { id: auth.user.id, role: auth.user.role },
+        audience: { kind: "INDIVIDUAL", studentId: profile.id },
+        title: built.title,
+        message: built.message,
+        templateKey: "RESULT_RELEASED",
+        vars: { testName: test.title, result: `${evalResult.marks}/${evalResult.totalMarks} (${evalResult.percentage}%)` },
         testId,
+        internal: true,
+        idempotencyKey: `RESULT_RELEASED:${result.id}`,
       });
     }
     return ok({

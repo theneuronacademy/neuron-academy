@@ -73,15 +73,18 @@ export default function AttendancePage() {
   return (
     <AdminLayout title="Attendance" subtitle="Today's presence across batches">
       <div className="metallic-dark rounded-card p-5 text-white sm:p-6">
-        <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">TODAY • OCT 3, 2026</p>
-        <p className="mt-1 text-3xl font-extrabold">{avg}% average attendance</p>
-        <p className="mt-1 text-[13px] text-silver-200">Synced from biometric + manual registers.</p>
+        <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">TODAY • {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }).toUpperCase()}</p>
+        <p className="mt-1 text-3xl font-extrabold">{rows.length > 0 ? `${avg}% average attendance` : "No attendance data"}</p>
+        <p className="mt-1 text-[13px] text-silver-200">Manual registers{rows.length > 0 ? " • biometric devices report separately" : ""}.</p>
       </div>
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
         </p>
       ) : null}
+      {rows.length === 0 ? (
+        <p className="rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No attendance overview available. Mark attendance to populate this view.</p>
+      ) : (
       <div className="grid gap-4 sm:grid-cols-2">
         {rows.map((a) => (
           <div key={a.batch} className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
@@ -94,10 +97,11 @@ export default function AttendancePage() {
           </div>
         ))}
       </div>
+      )}
       <button onClick={syncAttendance} disabled={syncing} aria-label="Sync attendance" className="rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">
         {syncing ? "Syncing…" : "Sync Attendance"}
       </button>
-      <p className="text-[12px] text-muted">Biometric + mobile-app sync arrives with the backend integration phase.</p>
+      <p className="text-[12px] text-muted">Refreshes from the attendance register. K90 biometric pairing is not connected — see Biometric Devices.</p>
     </AdminLayout>
   );
 }

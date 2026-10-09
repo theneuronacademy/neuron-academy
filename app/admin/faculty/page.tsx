@@ -23,6 +23,13 @@ export default function FacultyAdminPage() {
   const [status, setStatus] = useState("all");
   const [modal, setModal] = useState(false);
   const [name, setName] = useState("");
+  // Phase 17 — explicit contact fields (never fabricated). API failure is
+  // reported honestly; nothing is appended locally.
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [subject, setSubject] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
   const [view, setView] = useState<AdminFaculty | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -52,15 +59,6 @@ export default function FacultyAdminPage() {
     window.setTimeout(() => setSaved(null), 2500);
   };
 
-  function emailFromName(fullName: string): string {
-    const slug = fullName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, ".")
-      .replace(/^\.+|\.+$/g, "")
-      .slice(0, 40) || "faculty";
-    return `${slug}@neuronacademy.in`;
-  }
-
   /** Demo rows use short ids (f1…) or local f-<ts>; anything else is treated as a DB id. */
   function isDbId(id: string): boolean {
     return !id.startsWith("f-") && id.length >= 10;
@@ -69,38 +67,51 @@ export default function FacultyAdminPage() {
   const onboardFaculty = async () => {
     const trimmed = name.trim();
     if (!trimmed || busy) return;
+    setFormError(null);
+    const mail = email.trim().toLowerCase();
+    const tel = phone.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
+      setFormError("Enter a valid email address.");
+      return;
+    }
+    if (tel.replace(/\D/g, "").length < 10) {
+      setFormError("Enter a valid phone number (min 10 digits).");
+      return;
+    }
     setBusy(true);
-    const payload = { name: trimmed, email: emailFromName(trimmed), phone: "+91 97119 17317" };
     try {
       const res = await fetch("/api/faculty", {
         method: "POST",
         cache: "no-store",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ name: trimmed, email: mail, phone: tel, subject: subject.trim() || undefined }),
       });
-      const json = (await res.json()) as { success?: boolean; data?: { item?: AdminFaculty } };
+      const json = (await res.json().catch(() => null)) as { success?: boolean; data?: { item?: AdminFaculty }; error?: string } | null;
       const created = json?.data?.item;
-      if (json?.success && created) {
+      if (res.ok && json?.success && created) {
         setRows((p) => [created, ...p]);
+        setModal(false);
+        setName("");
+        setEmail("");
+        setPhone("");
+        setSubject("");
+        flashSaved("Faculty onboarded.");
       } else {
-        throw new Error("Onboard failed");
+        setFormError(json?.error ?? "Could not onboard faculty. Check for duplicate email/phone.");
       }
     } catch {
-      setRows((p) => [...p, { id: `f-${Date.now()}`, name: trimmed, photo: "", email: payload.email, phone: payload.phone, subject: "Physics", qualification: "—", experience: "—", batches: [], status: "active" }]);
+      setFormError("Cannot reach the server. Nothing was saved.");
     } finally {
-      setModal(false);
-      setName("");
-      flashSaved("Faculty onboarded.");
       setBusy(false);
     }
   };
 
   const toggleStatus = async (row: AdminFaculty) => {
     const next = row.status === "active" ? "inactive" : "active";
-    const applyLocal = () =>
-      setRows((p) => p.map((x) => (x.id === row.id ? { ...x, status: next } : x)));
+    // Phase 17 — server is authoritative; failures surface honestly.
+    setPageError(null);
     if (!isDbId(row.id)) {
-      applyLocal();
+      setPageError("Demo rows cannot be changed. Onboard faculty to manage status.");
       return;
     }
     try {
@@ -110,26 +121,34 @@ export default function FacultyAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: next === "active" ? "ACTIVE" : "INACTIVE" }),
       });
-      const json = (await res.json()) as { success?: boolean; data?: { item?: AdminFaculty } };
+      const json = (await res.json().catch(() => null)) as { success?: boolean; data?: { item?: AdminFaculty }; error?: string } | null;
       const updated = json?.data?.item;
-      if (json?.success && updated) {
+      if (res.ok && json?.success && updated) {
         setRows((p) => p.map((x) => (x.id === row.id ? updated : x)));
         return;
       }
-      throw new Error("Toggle failed");
+      setPageError(json?.error ?? "Could not change status.");
     } catch {
-      applyLocal();
+      setPageError("Cannot reach the server. Status unchanged.");
     }
   };
 
   const deleteFaculty = async (row: AdminFaculty) => {
-    if (!window.confirm(`Remove faculty "${row.name}"?`)) return;
+    if (!window.confirm(`Remove faculty "${row.name}"? Assigned batches block deletion.`)) return;
+    setPageError(null);
     try {
-      await fetch(`/api/faculty/${row.id}`, { method: "DELETE", cache: "no-store" });
+      const res = await fetch(`/api/faculty/${row.id}`, { method: "DELETE", cache: "no-store" });
+      const json = (await res.json().catch(() => null)) as { success?: boolean; error?: string } | null;
+      if (res.ok && json?.success !== false) {
+        setRows((p) => p.filter((x) => x.id !== row.id));
+        flashSaved("Faculty removed.");
+        return;
+      }
+      // Phase 17 — 409 dependency guard message reaches the admin verbatim.
+      setPageError(json?.error ?? "Could not remove faculty.");
     } catch {
-      // Fall through to local remove.
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
-    setRows((p) => p.filter((x) => x.id !== row.id));
   };
 
   if (!ready) {
@@ -142,7 +161,12 @@ export default function FacultyAdminPage() {
 
   return (
     <AdminLayout title="Faculty" subtitle="Mentors, subjects and batch assignments">
-      <AdminPageHeader title="Faculty Management" description={`${filtered.length} faculty • assign batches and subjects.`} actionLabel="Add Faculty" actionIcon={Plus} onAction={() => { setName(""); setModal(true); }} />
+      <AdminPageHeader title="Faculty Management" description={`${filtered.length} faculty • assign batches and subjects.`} actionLabel="Add Faculty" actionIcon={Plus} onAction={() => { setName(""); setEmail(""); setPhone(""); setSubject(""); setFormError(null); setModal(true); }} />
+      {pageError ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
@@ -208,6 +232,21 @@ export default function FacultyAdminPage() {
           Full name
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Dr. S. Rao" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
         </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Email
+          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="faculty@example.com" inputMode="email" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Phone
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="10-digit mobile" inputMode="tel" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Subject (optional)
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. Physics" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+        </label>
+        {formError ? (
+          <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+        ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
@@ -225,7 +264,7 @@ export default function FacultyAdminPage() {
             <p><span className="font-bold text-navy-700">Email:</span> {view.email}</p>
             <p><span className="font-bold text-navy-700">Phone:</span> {view.phone}</p>
             <p><span className="font-bold text-navy-700">Batches:</span> {view.batches.join(", ") || "Unassigned"}</p>
-            <p className="text-muted">Batch assignment editor and timetable arrive with the backend API.</p>
+            <p className="text-muted">Assign batches from the Batches page (faculty assignment).</p>
           </div>
         ) : null}
       </AdminDrawer>

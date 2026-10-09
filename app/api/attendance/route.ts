@@ -7,7 +7,9 @@ import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { missingFields, parseDate } from "@/lib/validation";
 import { facultyBatchIds } from "@/lib/testAccess";
-import { notifyMessages, safeNotify } from "@/lib/notify";
+import { canonicalNotificationType } from "@/lib/notification-events";
+import { notifyMessages } from "@/lib/notify";
+import { dispatchNotification } from "@/services/notificationEngine";
 import { DEMO_ATTENDANCE_OVERVIEW } from "@/data/admin";
 
 export const dynamic = "force-dynamic";
@@ -92,19 +94,30 @@ export async function POST(req: NextRequest) {
     // to avoid daily notification spam). One alert per student per day max:
     // skip when an attendance-type notification already exists today.
     // Never fails the attendance write.
+    // Phase 18b — via the centralized engine (ATTENDANCE_ABSENT, idempotent
+    // per student/day): SMS/push/in-app per policy, channels isolated.
+    // Phase 18c — the lookup uses the canonical stored type (same value the
+    // engine persists), so creation and search can never disagree.
     if (row.status === "ABSENT") {
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
       const already = await db.notification.findFirst({
-        where: { targetStudentId: studentId, type: "attendance", createdAt: { gte: dayStart } },
+        where: { targetStudentId: studentId, type: canonicalNotificationType("ATTENDANCE_ABSENT"), createdAt: { gte: dayStart } },
         select: { id: true },
       }).catch(() => null);
       if (!already) {
         const dateStr = date.toISOString().slice(0, 10);
-        await safeNotify(db, {
-          ...notifyMessages.attendanceAbsent(dateStr),
-          audience: "INDIVIDUAL",
-          targetStudentId: studentId,
+        const built = notifyMessages.attendanceAbsent(dateStr);
+        await dispatchNotification(db, {
+          event: "ATTENDANCE_ABSENT",
+          actor: { id: auth.user.id, role: auth.user.role },
+          audience: { kind: "INDIVIDUAL", studentId },
+          title: built.title,
+          message: built.message,
+          templateKey: "ATTENDANCE_ABSENT",
+          vars: { testDate: dateStr },
+          internal: true,
+          idempotencyKey: `ATTENDANCE_ABSENT:${studentId}:${dateStr}`,
         });
       }
     }

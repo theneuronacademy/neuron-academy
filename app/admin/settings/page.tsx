@@ -34,6 +34,10 @@ export default function SettingsPage() {
 
   return (
     <AdminLayout title="Settings" subtitle="Academy profile and preferences (demo)">
+      {/* Phase 17 — no settings API exists; edits here are local-only. */}
+      <p className="mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-bold text-amber-800" role="note">
+        Demo only — settings are not saved to the database in this phase.
+      </p>
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> Settings saved (demo — backend sync later).

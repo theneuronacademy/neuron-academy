@@ -109,7 +109,9 @@ export default function ImportReviewPage() {
     rejected: rows.filter((q) => q.reviewStatus === "REJECTED").length,
   }), [rows]);
 
-  const mutate = async (path: string, body: unknown) => {
+  const mutate = async (path: string, body: unknown, confirmMsg?: string) => {
+    // Phase 17 — bulk approve/reject changes the question pool; confirm first.
+    if (confirmMsg && !window.confirm(confirmMsg)) return;
     setBusy(true);
     try {
       const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -167,8 +169,8 @@ export default function ImportReviewPage() {
           </button>
         ))}
         <span className="ml-auto flex gap-2">
-          <button disabled={busy} onClick={() => mutate(`/api/tests/import/${id}/approve`, { approveHigh: true })} className="rounded-lg bg-teal-600 px-3 py-1.5 text-[12px] font-bold text-white disabled:opacity-50">Approve all high-confidence</button>
-          <button disabled={busy} onClick={() => mutate(`/api/tests/import/${id}/reject`, { rejectLow: true })} className="rounded-lg bg-crimson px-3 py-1.5 text-[12px] font-bold text-white disabled:opacity-50">Reject all low-confidence</button>
+          <button disabled={busy} onClick={() => mutate(`/api/tests/import/${id}/approve`, { approveHigh: true }, "Approve ALL high-confidence questions into the pool?")} className="rounded-lg bg-teal-600 px-3 py-1.5 text-[12px] font-bold text-white disabled:opacity-50">Approve all high-confidence</button>
+          <button disabled={busy} onClick={() => mutate(`/api/tests/import/${id}/reject`, { rejectLow: true }, "Reject ALL low-confidence questions? This cannot be undone.")} className="rounded-lg bg-crimson px-3 py-1.5 text-[12px] font-bold text-white disabled:opacity-50">Reject all low-confidence</button>
         </span>
       </div>
 

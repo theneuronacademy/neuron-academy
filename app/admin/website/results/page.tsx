@@ -32,6 +32,9 @@ export default function WebResultsPage() {
   const [exam, setExam] = useState("JEE Main");
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [saved, setSaved] = useState<string | null>(null);
+  // Phase 17 — persistence errors surface honestly (no local writes).
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -67,6 +70,7 @@ export default function WebResultsPage() {
 
   const save = async () => {
     if (!name.trim()) return;
+    setFormError(null);
     const payload = { name: name.trim(), score: score.trim(), exam: exam.trim(), year: year.trim(), isActive: true };
     try {
       const res = await fetch("/api/results/offline", {
@@ -80,34 +84,52 @@ export default function WebResultsPage() {
         const item = json.data.item;
         setRows((p) => [...p, { id: item.id, name: item.name, score: item.score, exam: item.exam, year: item.year, active: true }]);
         setSaved("Result added.");
+        setModal(false);
       } else {
-        setRows((p) => [...p, { id: `r-${Date.now()}`, name: name.trim(), score: score.trim(), exam: exam.trim(), year: year.trim(), active: true }]);
-        setSaved("Result added locally (database unavailable).");
+        setFormError(json?.error ?? "Could not add result. Nothing was saved.");
       }
     } catch {
-      setRows((p) => [...p, { id: `r-${Date.now()}`, name: name.trim(), score: score.trim(), exam: exam.trim(), year: year.trim(), active: true }]);
-      setSaved("Saved locally (database unavailable).");
+      setFormError("Cannot reach the server. Nothing was saved.");
     }
-    setModal(false);
-    setName("");
-    setScore("");
     window.setTimeout(() => setSaved(null), 2500);
+  };
+
+  // Phase 17 — visibility toggle persists immediately.
+  const toggleActive = async (r: Row) => {
+    setPageError(null);
+    const next = !r.active;
+    try {
+      const res = await fetch(`/api/results/offline/${r.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: next }),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success !== false) {
+        setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: next } : x)));
+      } else {
+        setPageError(json?.error ?? "Could not change visibility.");
+      }
+    } catch {
+      setPageError("Cannot reach the server. Visibility unchanged.");
+    }
   };
 
   const remove = async (r: Row) => {
     if (!window.confirm(`Delete result "${r.name}"?`)) return;
+    setPageError(null);
     try {
       const res = await fetch(`/api/results/offline/${r.id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
       if (res.ok) {
         setRows((p) => p.filter((x) => x.id !== r.id));
         setSaved("Result deleted.");
       } else {
-        setRows((p) => p.filter((x) => x.id !== r.id));
-        setSaved("Deleted locally (database unavailable).");
+        setPageError(json?.error ?? "Could not delete result. Nothing was deleted.");
       }
     } catch {
-      setRows((p) => p.filter((x) => x.id !== r.id));
-      setSaved("Deleted locally (database unavailable).");
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
     window.setTimeout(() => setSaved(null), 2500);
   };
@@ -122,7 +144,12 @@ export default function WebResultsPage() {
 
   return (
     <AdminLayout title="Web Results" subtitle="Selections showcased on the homepage">
-      <AdminPageHeader title="Website Results" description="Verified academy results for the homepage." actionLabel="Add Result" actionIcon={Plus} onAction={() => { setName(""); setScore(""); setModal(true); }} />
+      <AdminPageHeader title="Website Results" description="Verified academy results for the homepage." actionLabel="Add Result" actionIcon={Plus} onAction={() => { setName(""); setScore(""); setFormError(null); setModal(true); }} />
+      {pageError ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
@@ -147,18 +174,15 @@ export default function WebResultsPage() {
               render: (r) => (
                 <div className="flex justify-end gap-1.5">
                   <button
-                    onClick={() => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: !x.active } : x)))}
-                    className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"
+                    onClick={() => void toggleActive(r)}
+                    aria-label={`Toggle visibility of ${r.name}`}
+                    aria-pressed={r.active}
                   >
                     <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold ${r.active ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-silver-200 bg-silver-50 text-muted"}`}>
                       {r.active ? "Active" : "Hidden"}
                     </span>
                   </button>
-                  <button
-                    onClick={() => remove(r)}
-                    aria-label={`Delete ${r.name}`}
-                    className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
-                  >
+                  <button onClick={() => void remove(r)} aria-label={`Delete ${r.name}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -192,16 +216,19 @@ export default function WebResultsPage() {
             Year
             <input value={year} onChange={(e) => setYear(e.target.value)} type="number" min={2020} max={2030} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
           </label>
-        </div>
-        <div className="mt-4 flex justify-end gap-2">
-          <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" size="sm" onClick={save}>
-            Save
-          </Button>
-        </div>
-      </AdminModal>
+          {formError ? (
+            <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+          ) : null}
+          </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="sm" onClick={() => void save()}>
+              Save
+            </Button>
+          </div>
+        </AdminModal>
     </AdminLayout>
   );
 }

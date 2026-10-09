@@ -6,16 +6,34 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
+import { getUserFromRequest } from "@/lib/session";
 import { isNonEmpty, missingFields, parseDate } from "@/lib/validation";
 import { DEMO_BANNERS } from "@/data/admin";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const db = getDb();
   if (!db) return ok({ items: DEMO_BANNERS, source: "demo" });
+  // Phase 17 — ADMIN manages the full catalogue (incl. drafts/inactive);
+  // everyone else sees only active, in-window banners (no draft disclosure).
+  const viewer = getUserFromRequest(req);
+  const now = new Date();
   try {
-    const rows = await db.banner.findMany({ orderBy: { displayOrder: "asc" }, take: 100 });
+    const rows = await db.banner.findMany({
+      where:
+        viewer?.role === "ADMIN"
+          ? {}
+          : {
+              isActive: true,
+              AND: [
+                { OR: [{ startDate: null }, { startDate: { lte: now } }] },
+                { OR: [{ endDate: null }, { endDate: { gte: now } }] },
+              ],
+            },
+      orderBy: { displayOrder: "asc" },
+      take: 100,
+    });
     return ok({ items: rows, source: "database" });
   } catch (err) {
     return serverError("banners:list", err);

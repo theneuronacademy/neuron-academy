@@ -102,10 +102,20 @@ export async function POST(req: NextRequest) {
     if (!student) return fail("Student not found.", 404);
     const test = await db.test.findUnique({ where: { id: String(body.testId) } });
     if (!test) return fail("Test not found.", 404);
-    // Faculty may upload only for own/assigned-batch tests.
+    // Faculty may upload only for own/assigned-batch tests, and only for
+    // students in their scope (test creator → any student on that test;
+    // batch-assigned faculty → students of their own batches).
     if (auth.user.role === "FACULTY") {
-      const allowed = test.createdById === auth.user.id || (test.batchId !== null && (await facultyBatchIds(db, auth.user.id)).includes(test.batchId));
-      if (!allowed) return fail("You can upload results only for your own or assigned-batch tests.", 403);
+      if (test.createdById === auth.user.id) {
+        // Own test — any student reachable through it is in scope.
+      } else {
+        const mine = await facultyBatchIds(db, auth.user.id);
+        const testInScope = test.batchId !== null && mine.includes(test.batchId);
+        const studentInScope = student.batchId !== null && mine.includes(student.batchId);
+        if (!testInScope || !studentInScope) {
+          return fail("You can upload results only for students in your assigned batches.", 403);
+        }
+      }
     }
     const marks = typeof body.marks === "number" ? body.marks : 0;
     const totalMarks = typeof body.totalMarks === "number" ? body.totalMarks : test.totalMarks;

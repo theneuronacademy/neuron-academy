@@ -12,7 +12,8 @@ import { getDb } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/session";
 import { requireApiRole } from "@/lib/server-auth";
 import { resolveStudent } from "@/lib/testAccess";
-import { safeNotify, notifyMessages } from "@/lib/notify";
+import { notifyMessages } from "@/lib/notify";
+import { dispatchNotification } from "@/services/notificationEngine";
 import { parseDate } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
@@ -121,7 +122,21 @@ export async function POST(req: NextRequest) {
       },
     });
     const msg = notifyMessages.accessGranted(test.title);
-    await safeNotify(db, { ...msg, audience: "INDIVIDUAL", targetStudentId: studentId, testId, createdById: auth.user.id });
+    // Phase 18b — via the centralized engine (ACCESS_GRANTED, idempotent on
+    // test+student): SMS/push/in-app per policy, channels isolated.
+    await dispatchNotification(db, {
+      event: "ACCESS_GRANTED",
+      actor: { id: auth.user.id, role: auth.user.role },
+      audience: { kind: "INDIVIDUAL", studentId },
+      title: msg.title,
+      message: msg.message,
+      templateKey: "ACCESS_GRANTED",
+      vars: { testName: test.title },
+      testId,
+      createdById: auth.user.id,
+      internal: true,
+      idempotencyKey: `ACCESS_GRANTED:${testId}:${studentId}`,
+    });
     return ok({ item: shape(created) }, 201);
   } catch (err) {
     return serverError("test-access:grant", err);

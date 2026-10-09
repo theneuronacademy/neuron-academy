@@ -7,9 +7,10 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/session";
 import { requireApiRole } from "@/lib/server-auth";
-import { batchAllowed, canStudentAccessTest, facultyBatchIds, normalizeAccessFields, resolveStudent, STUDENT_VISIBLE_STATUSES, validateAccessFields } from "@/lib/testAccess";
+import { batchAllowed, canStudentAccessTest, facultyBatchIds, facultyMayManageTest, normalizeAccessFields, resolveStudent, STUDENT_VISIBLE_STATUSES, validateAccessFields } from "@/lib/testAccess";
 import { parseDate } from "@/lib/validation";
-import { safeNotify, notifyMessages } from "@/lib/notify";
+import { notifyMessages } from "@/lib/notify";
+import { dispatchNotification } from "@/services/notificationEngine";
 
 export const dynamic = "force-dynamic";
 
@@ -117,7 +118,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     // P0: full rows include question data + answer keys — staff only.
     // Anonymous callers are rejected above (401) before any DB lookup.
     // STUDENT is handled above; any other non-staff role is forbidden (403).
+    // Phase 17 — faculty see only tests they created or in assigned batches
+    // (answer keys must not leak cross-batch); others get 404 (no probing).
     if (viewer.role !== "ADMIN" && viewer.role !== "FACULTY") return fail("Forbidden.", 403);
+    if (viewer.role === "FACULTY" && !(await facultyMayManageTest(db, viewer.id, id))) {
+      return fail("Test not found.", 404);
+    }
     return ok({ item: row });
   } catch (err) {
     return serverError("tests:get", err);
@@ -200,14 +206,22 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     });
     // Publish → notify eligible students, but ONLY for FREE tests so paid
     // and private tests are never broadcast. Never fails publishing.
+    // Phase 18b — via the centralized engine (TEST_PUBLISHED, idempotent on
+    // testId): in-app row + SMS/push fan-out per channel policy, isolated.
     if (body.status === "PUBLISHED" && row.accessType === "FREE" && previous?.status !== "PUBLISHED") {
       const msg = notifyMessages.freeTestPublished(row.title);
-      await safeNotify(db, {
-        ...msg,
-        audience: row.batchId ? "BATCH" : "ALL_STUDENTS",
-        targetBatchId: row.batchId ?? undefined,
+      await dispatchNotification(db, {
+        event: "TEST_PUBLISHED",
+        actor: { id: auth.user.id, role: auth.user.role },
+        audience: row.batchId ? { kind: "BATCH", batchId: row.batchId } : { kind: "ALL_STUDENTS" },
+        title: msg.title,
+        message: msg.message,
+        templateKey: "TEST_PUBLISHED",
+        vars: { testName: row.title },
         testId: row.id,
         createdById: auth.user.id,
+        internal: true,
+        idempotencyKey: `TEST_PUBLISHED:${row.id}`,
       });
     }
     return ok({ item: row });
@@ -228,6 +242,21 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return fail("You can delete only your own or assigned-batch tests.", 403);
   }
   try {
+    // Phase 17 — destructive safety: unpublish instead of deleting tests
+    // with student history. Draft questions cascade with the test (they are
+    // test content, not student history), but attempts / results / grants
+    // must never be silently erased.
+    const [attempts, results, grants] = await Promise.all([
+      db.testAttempt.count({ where: { testId: id } }),
+      db.result.count({ where: { testId: id } }),
+      db.testAccess.count({ where: { testId: id } }),
+    ]);
+    if (attempts + results + grants > 0) {
+      return fail(
+        `Cannot delete: this test has ${attempts} attempt(s), ${results} result(s) and ${grants} access grant(s). Unpublish it instead to preserve history.`,
+        409
+      );
+    }
     await db.test.delete({ where: { id } });
     return ok({ deleted: true });
   } catch (err) {

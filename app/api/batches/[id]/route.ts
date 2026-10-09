@@ -60,6 +60,18 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const db = getDb();
   if (!db) return dbNotConfigured("Deleting a batch");
   try {
+    // Phase 17 — destructive safety: reassign or remove dependents first.
+    const [students, tests, attendance] = await Promise.all([
+      db.student.count({ where: { batchId: id } }),
+      db.test.count({ where: { batchId: id } }),
+      db.attendance.count({ where: { batchId: id } }),
+    ]);
+    if (students + tests + attendance > 0) {
+      return fail(
+        `Cannot delete: this batch has ${students} student(s), ${tests} test(s) and ${attendance} attendance record(s). Reassign them or mark the batch COMPLETED instead.`,
+        409
+      );
+    }
     await db.batch.delete({ where: { id } });
     return ok({ deleted: true });
   } catch (err) {

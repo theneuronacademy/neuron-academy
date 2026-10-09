@@ -35,6 +35,9 @@ export default function WebsiteCoursesPage() {
   const [duration, setDuration] = useState("1 year");
   const [mode, setMode] = useState("Offline + Online");
   const [saved, setSaved] = useState<string | null>(null);
+  // Phase 17 — persistence errors surface honestly (no local writes).
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -94,6 +97,8 @@ export default function WebsiteCoursesPage() {
   };
   const save = async () => {
     if (!name.trim()) return;
+    // Phase 17 — courses persist via the API only (no local writes).
+    setFormError(null);
     const payload = { name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), isActive: true };
     try {
       if (editing) {
@@ -103,12 +108,14 @@ export default function WebsiteCoursesPage() {
           body: JSON.stringify(payload),
           cache: "no-store",
         });
-        if (res.ok) {
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success !== false) {
           setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim() } : r)));
           setSaved("Course updated.");
+          setModal(false);
         } else {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim() } : r)));
-          setSaved("Updated locally (database unavailable).");
+          setFormError(json?.error ?? "Could not update course. Nothing was saved.");
+          return;
         }
       } else {
         const res = await fetch("/api/courses", {
@@ -122,37 +129,59 @@ export default function WebsiteCoursesPage() {
           const item = json.data.item;
           setRows((p) => [...p, { id: item.id, name: item.name, category: item.category ?? "Engineering", duration: item.duration ?? "1 year", mode: item.mode ?? "Offline + Online", admissionOpen: true }]);
           setSaved("Course added.");
+          setModal(false);
         } else {
-          setRows((p) => [...p, { id: `c-${Date.now()}`, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), admissionOpen: true }]);
-          setSaved("Added locally (database unavailable).");
+          const errJson = await res.json().catch(() => null);
+          setFormError(errJson?.error ?? "Could not add course. Nothing was saved.");
+          return;
         }
       }
     } catch {
-      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim() } : r)));
-      else setRows((p) => [...p, { id: `c-${Date.now()}`, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), admissionOpen: true }]);
-      setSaved("Saved locally (database unavailable).");
+      setFormError("Cannot reach the server. Nothing was saved.");
+      return;
     }
     setModal(false);
     window.setTimeout(() => setSaved(null), 2500);
   };
   const remove = async (r: Row) => {
-    if (!window.confirm(`Delete "${r.name}" from the website?`)) return;
+    if (!window.confirm(`Delete "${r.name}" from the website? Courses with batches, students or enquiries cannot be deleted — deactivate them instead.`)) return;
+    setPageError(null);
     try {
       const res = await fetch(`/api/courses/${r.id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
       if (res.ok) {
         setRows((p) => p.filter((x) => x.id !== r.id));
         setSaved("Course removed.");
       } else {
-        setRows((p) => p.filter((x) => x.id !== r.id));
-        setSaved("Removed locally (database unavailable).");
+        // Phase 17 — 409 dependency guard message reaches the admin verbatim.
+        setPageError(json?.error ?? "Could not delete course. Nothing was deleted.");
       }
     } catch {
-      setRows((p) => p.filter((x) => x.id !== r.id));
-      setSaved("Removed locally (database unavailable).");
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
     window.setTimeout(() => setSaved(null), 2500);
   };
-  const toggle = (r: Row) => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, admissionOpen: !x.admissionOpen } : x)));
+  // Phase 17 — admission toggle persists as course status (controls catalogue).
+  const toggle = async (r: Row) => {
+    setPageError(null);
+    const next = !r.admissionOpen;
+    try {
+      const res = await fetch(`/api/courses/${r.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: next ? "ACTIVE" : "INACTIVE" }),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success !== false) {
+        setRows((p) => p.map((x) => (x.id === r.id ? { ...x, admissionOpen: next } : x)));
+      } else {
+        setPageError(json?.error ?? "Could not change admission status.");
+      }
+    } catch {
+      setPageError("Cannot reach the server. Status unchanged.");
+    }
+  };
 
   if (!ready) {
     return (
@@ -164,7 +193,12 @@ export default function WebsiteCoursesPage() {
 
   return (
     <AdminLayout title="Courses" subtitle="Control the public course catalogue">
-      <AdminPageHeader title="Website Courses" description={`${filtered.length} of ${rows.length} courses • changes reflect on homepage after backend sync.`} actionLabel="Add Course" actionIcon={Plus} onAction={openAdd} />
+      <AdminPageHeader title="Website Courses" description={`${filtered.length} of ${rows.length} courses • changes reflect on the homepage immediately.`} actionLabel="Add Course" actionIcon={Plus} onAction={openAdd} />
+      {pageError ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
@@ -186,7 +220,7 @@ export default function WebsiteCoursesPage() {
               key: "status",
               header: "Status",
               render: (r) => (
-                <button onClick={() => toggle(r)} title="Toggle admission">
+                <button onClick={() => void toggle(r)} title="Toggle admission" aria-pressed={r.admissionOpen}>
                   <AdminStatusBadge tone={r.admissionOpen ? "green" : "gray"}>{r.admissionOpen ? "Admission open" : "Closed"}</AdminStatusBadge>
                 </button>
               ),
@@ -200,7 +234,7 @@ export default function WebsiteCoursesPage() {
                   <button onClick={() => openEdit(r)} aria-label={`Edit ${r.name}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
                     <Pencil className="h-4 w-4" />
                   </button>
-                  <button onClick={() => remove(r)} aria-label={`Delete ${r.name}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
+                  <button onClick={() => void remove(r)} aria-label={`Delete ${r.name}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -238,12 +272,15 @@ export default function WebsiteCoursesPage() {
             </select>
           </label>
         </div>
-        <p className="mt-2 text-[12px] text-muted">Full field set (faculty, subjects, highlights) arrives with the backend form schema.</p>
+        <p className="mt-2 text-[12px] text-muted">Only these fields are editable here. Admission status toggles from the table.</p>
+        {formError ? (
+          <p className="rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+        ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={save}>
+          <Button variant="primary" size="sm" onClick={() => void save()}>
             Save
           </Button>
         </div>

@@ -35,6 +35,26 @@ export async function facultyBatchIds(db: Db, facultyUserId: string): Promise<st
   return batches.map((b) => b.id);
 }
 
+/**
+ * Phase 17 — staff-side test management scope (server-side, Prisma).
+ * A faculty member may manage (view keys / create / edit questions for) a
+ * test only when they created it or it belongs to an assigned batch.
+ * ADMIN bypasses. Returns false for missing tests so callers 404 safely.
+ * Routes must use this — never reimplement the rule.
+ */
+export async function facultyMayManageTest(db: Db, facultyUserId: string, testId: string): Promise<boolean> {
+  const t = await db.test
+    .findUnique({ where: { id: testId }, select: { createdById: true, batchId: true } })
+    .catch(() => null);
+  if (!t) return false;
+  if (t.createdById === facultyUserId) return true;
+  if (t.batchId) {
+    const allowed = await facultyBatchIds(db, facultyUserId);
+    if (allowed.includes(t.batchId)) return true;
+  }
+  return false;
+}
+
 /** Statuses a student may ever see. Drafts are never visible. */
 export const STUDENT_VISIBLE_STATUSES = ["PUBLISHED", "LIVE", "SCHEDULED", "COMPLETED"] as const;
 

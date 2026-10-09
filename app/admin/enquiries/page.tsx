@@ -54,16 +54,24 @@ export default function EnquiriesPage() {
   );
 
   const changeStatus = async (id: string, s: EnquiryStatus) => {
-    // Real write: PATCH /api/enquiries/[id] with uppercased status, then update local rows.
+    // Phase 17 — status writes are server-authoritative; the row updates
+    // only after the API confirms (demo rows report honestly instead).
     try {
-      await fetch(`/api/enquiries/${id}`, {
+      const res = await fetch(`/api/enquiries/${id}`, {
         method: "PATCH",
         cache: "no-store",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: s.toUpperCase() }),
       });
+      const json = (await res.json().catch(() => null)) as { success?: boolean; error?: string } | null;
+      if (!res.ok || json?.success !== true) {
+        setSaved(null);
+        window.alert(json?.error ?? "Could not update enquiry status. Nothing was changed.");
+        return;
+      }
     } catch {
-      // Fall through to local update so the UI stays responsive.
+      window.alert("Cannot reach the server. Nothing was changed.");
+      return;
     }
     setRows((p) => p.map((x) => (x.id === id ? { ...x, status: s } : x)));
     setSaved(`Enquiry marked as ${s}.`);

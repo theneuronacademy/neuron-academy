@@ -72,6 +72,9 @@ export default function BannersPage() {
   const [form, setForm] = useState(EMPTY);
   const [preview, setPreview] = useState<AdminBanner | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  // Phase 17 — persistence errors surface honestly (no local writes).
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -132,6 +135,9 @@ export default function BannersPage() {
   };
   const save = async () => {
     if (!form.title.trim()) return;
+    // Phase 17 — banners persist via the API only. Failures stay in the
+    // modal as errors; nothing is written locally.
+    setFormError(null);
     const payload = {
       title: form.title,
       subtitle: form.subtitle,
@@ -157,9 +163,9 @@ export default function BannersPage() {
         if (res.ok && json?.success) {
           setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
           setSaved("Banner updated — no code needed.");
+          setModal(false);
         } else {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
-          setSaved("Banner updated locally (database unavailable).");
+          setFormError(json?.error ?? "Could not update banner. Nothing was saved.");
         }
       } else {
         const res = await fetch("/api/banners", {
@@ -186,46 +192,83 @@ export default function BannersPage() {
             order: item.displayOrder ?? 0,
           }]);
           setSaved("Banner created — no code needed.");
+          setModal(false);
         } else {
-          setRows((p) => [...p, { ...form, id: `bn-${Date.now()}` }]);
-          setSaved("Banner created locally (database unavailable).");
+          setFormError(json?.error ?? "Could not create banner. Nothing was saved.");
         }
       }
     } catch {
-      if (editing) setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
-      else setRows((p) => [...p, { ...form, id: `bn-${Date.now()}` }]);
-      setSaved("Saved locally (database unavailable).");
+      setFormError("Cannot reach the server. Nothing was saved.");
     }
-    setModal(false);
     window.setTimeout(() => setSaved(null), 3000);
   };
   const remove = async (r: AdminBanner) => {
     if (!window.confirm(`Delete banner "${r.title}"?`)) return;
+    setPageError(null);
     try {
       const res = await fetch(`/api/banners/${r.id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
       if (res.ok) {
         setRows((p) => p.filter((x) => x.id !== r.id));
         setSaved("Banner deleted.");
       } else {
-        setRows((p) => p.filter((x) => x.id !== r.id));
-        setSaved("Deleted locally (database unavailable).");
+        setPageError(json?.error ?? "Could not delete banner. Nothing was deleted.");
       }
     } catch {
-      setRows((p) => p.filter((x) => x.id !== r.id));
-      setSaved("Deleted locally (database unavailable).");
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
     window.setTimeout(() => setSaved(null), 2500);
   };
-  const move = (r: AdminBanner, dir: -1 | 1) => {
-    setRows((p) => {
-      const sorted = [...p].sort((a, b) => a.order - b.order);
-      const i = sorted.findIndex((x) => x.id === r.id);
-      const j = i + dir;
-      if (j < 0 || j >= sorted.length) return p;
-      const next = [...sorted];
-      [next[i], next[j]] = [next[j], next[i]];
-      return next.map((x, idx) => ({ ...x, order: idx + 1 }));
-    });
+  const toggleActive = async (r: AdminBanner) => {
+    // Phase 17 — visibility flips persist immediately (controls the website).
+    setPageError(null);
+    const next = !r.active;
+    try {
+      const res = await fetch(`/api/banners/${r.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: next }),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success !== false) {
+        setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: next } : x)));
+      } else {
+        setPageError(json?.error ?? "Could not change visibility.");
+      }
+    } catch {
+      setPageError("Cannot reach the server. Visibility unchanged.");
+    }
+  };
+  const move = async (r: AdminBanner, dir: -1 | 1) => {
+    // Phase 17 — ordering persists via displayOrder PATCHes.
+    const sorted = [...rows].sort((a, b) => a.order - b.order);
+    const i = sorted.findIndex((x) => x.id === r.id);
+    const j = i + dir;
+    if (j < 0 || j >= sorted.length) return;
+    const next = [...sorted];
+    [next[i], next[j]] = [next[j], next[i]];
+    const ordered = next.map((x, idx) => ({ ...x, order: idx + 1 }));
+    setPageError(null);
+    try {
+      const results = await Promise.all(
+        [ordered[i], ordered[j]].map((x) =>
+          fetch(`/api/banners/${x.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ displayOrder: x.order }),
+            cache: "no-store",
+          }).then((res) => res.ok).catch(() => false)
+        )
+      );
+      if (results.every(Boolean)) {
+        setRows((p) => p.map((x) => ordered.find((o) => o.id === x.id) ?? x));
+      } else {
+        setPageError("Could not save the new order. Order unchanged.");
+      }
+    } catch {
+      setPageError("Cannot reach the server. Order unchanged.");
+    }
   };
 
   if (!ready) {
@@ -248,6 +291,11 @@ export default function BannersPage() {
         <SearchBar value={search} onChange={setSearch} placeholder="Search banners…" />
         <FilterBar value={filter} onChange={setFilter} options={[{ value: "all", label: "All" }, { value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} />
       </AdminToolbar>
+      {pageError ? (
+        <p className="mt-3 rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {filtered.length === 0 ? (
         <EmptyState title="No banners" desc="Create the first homepage promotion — title, image/video, button and schedule." action={<Button variant="primary" size="sm" onClick={openAdd}>Add Banner</Button>} />
       ) : (
@@ -260,7 +308,7 @@ export default function BannersPage() {
                   <p className="mt-1 truncate text-[15px] font-extrabold text-navy-700">{b.title}</p>
                   <p className="truncate text-[12px] text-muted">{b.subtitle}</p>
                 </div>
-                <button onClick={() => setRows((p) => p.map((x) => (x.id === b.id ? { ...x, active: !x.active } : x)))}>
+                <button onClick={() => void toggleActive(b)} aria-label={`Toggle visibility of ${b.title}`} aria-pressed={b.active}>
                   <AdminStatusBadge tone={b.active ? "green" : "gray"}>{b.active ? "Active" : "Inactive"}</AdminStatusBadge>
                 </button>
               </div>
@@ -271,13 +319,13 @@ export default function BannersPage() {
                 <button onClick={() => openEdit(b)} className="inline-flex items-center gap-1 rounded-lg border border-silver-300 px-2.5 py-1.5 text-[12px] font-bold text-navy-700 hover:border-teal-500">
                   <Pencil className="h-3.5 w-3.5" /> Edit
                 </button>
-                <button onClick={() => move(b, -1)} aria-label="Move up" className="rounded-lg border border-silver-300 p-1.5 text-navy-700 hover:border-teal-500">
+                <button onClick={() => void move(b, -1)} aria-label="Move up" className="rounded-lg border border-silver-300 p-1.5 text-navy-700 hover:border-teal-500">
                   <ArrowUp className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => move(b, 1)} aria-label="Move down" className="rounded-lg border border-silver-300 p-1.5 text-navy-700 hover:border-teal-500">
+                <button onClick={() => void move(b, 1)} aria-label="Move down" className="rounded-lg border border-silver-300 p-1.5 text-navy-700 hover:border-teal-500">
                   <ArrowDown className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => remove(b)} className="inline-flex items-center gap-1 rounded-lg border border-crimson-100 px-2.5 py-1.5 text-[12px] font-bold text-crimson hover:bg-crimson-50">
+                <button onClick={() => void remove(b)} className="inline-flex items-center gap-1 rounded-lg border border-crimson-100 px-2.5 py-1.5 text-[12px] font-bold text-crimson hover:bg-crimson-50">
                   <Trash2 className="h-3.5 w-3.5" /> Delete
                 </button>
               </div>
@@ -327,12 +375,15 @@ export default function BannersPage() {
           <p className="mb-2 text-[11px] font-bold tracking-widest text-muted">LIVE PREVIEW</p>
           <BannerPreview b={form} />
         </div>
+        {formError ? (
+          <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+        ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={save}>
-            Save Banner (demo)
+          <Button variant="primary" size="sm" onClick={() => void save()}>
+            Save Banner
           </Button>
         </div>
       </AdminModal>

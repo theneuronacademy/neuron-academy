@@ -27,6 +27,9 @@ export default function AnnouncementsPage() {
   const [modal, setModal] = useState(false);
   const [text, setText] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
+  // Phase 17 — persistence errors surface honestly (no local writes).
+  const [formError, setFormError] = useState<string | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -58,6 +61,7 @@ export default function AnnouncementsPage() {
 
   const save = async () => {
     if (!text.trim()) return;
+    setFormError(null);
     const payload = { title: text.trim(), content: text.trim(), isActive: true };
     try {
       const res = await fetch("/api/announcements", {
@@ -71,33 +75,53 @@ export default function AnnouncementsPage() {
         const item = json.data.item;
         setRows((p) => [{ id: item.id, text: item.title ?? item.text ?? text.trim(), date: item.startDate ? new Date(item.startDate).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10), active: item.isActive ?? true }, ...p]);
         setSaved("Announcement published.");
+        setModal(false);
+        setText("");
       } else {
-        setRows((p) => [{ id: `an-${Date.now()}`, text: text.trim(), date: new Date().toISOString().slice(0, 10), active: true }, ...p]);
-        setSaved("Announcement published locally (database unavailable).");
+        setFormError(json?.error ?? "Could not publish announcement. Nothing was saved.");
       }
     } catch {
-      setRows((p) => [{ id: `an-${Date.now()}`, text: text.trim(), date: new Date().toISOString().slice(0, 10), active: true }, ...p]);
-      setSaved("Saved locally (database unavailable).");
+      setFormError("Cannot reach the server. Nothing was saved.");
     }
-    setModal(false);
-    setText("");
     window.setTimeout(() => setSaved(null), 2500);
+  };
+
+  // Phase 17 — status toggle persists immediately.
+  const toggleActive = async (r: Row) => {
+    setPageError(null);
+    const next = !r.active;
+    try {
+      const res = await fetch(`/api/announcements/${r.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: next }),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success !== false) {
+        setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: next } : x)));
+      } else {
+        setPageError(json?.error ?? "Could not change status.");
+      }
+    } catch {
+      setPageError("Cannot reach the server. Status unchanged.");
+    }
   };
 
   const remove = async (r: Row) => {
     if (!window.confirm(`Delete announcement "${r.text}"?`)) return;
+    setPageError(null);
     try {
       const res = await fetch(`/api/announcements/${r.id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
       if (res.ok) {
         setRows((p) => p.filter((x) => x.id !== r.id));
         setSaved("Announcement deleted.");
       } else {
-        setRows((p) => p.filter((x) => x.id !== r.id));
-        setSaved("Deleted locally (database unavailable).");
+        setPageError(json?.error ?? "Could not delete announcement. Nothing was deleted.");
       }
     } catch {
-      setRows((p) => p.filter((x) => x.id !== r.id));
-      setSaved("Deleted locally (database unavailable).");
+      setPageError("Cannot reach the server. Nothing was deleted.");
     }
     window.setTimeout(() => setSaved(null), 2500);
   };
@@ -112,7 +136,12 @@ export default function AnnouncementsPage() {
 
   return (
     <AdminLayout title="Announcements" subtitle="Top running ticker on the homepage">
-      <AdminPageHeader title="Announcements" description="Ticker messages rotate above the navbar." actionLabel="Publish Announcement" actionIcon={Plus} onAction={() => { setText(""); setModal(true); }} />
+      <AdminPageHeader title="Announcements" description="Ticker messages rotate above the navbar." actionLabel="Publish Announcement" actionIcon={Plus} onAction={() => { setText(""); setFormError(null); setModal(true); }} />
+      {pageError ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
+          {pageError}
+        </p>
+      ) : null}
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
@@ -129,7 +158,7 @@ export default function AnnouncementsPage() {
               key: "s",
               header: "Status",
               render: (r) => (
-                <button onClick={() => setRows((p) => p.map((x) => (x.id === r.id ? { ...x, active: !x.active } : x)))}>
+                <button onClick={() => void toggleActive(r)} aria-label={`Toggle ${r.text.slice(0, 20)}`} aria-pressed={r.active}>
                   <AdminStatusBadge tone={r.active ? "green" : "gray"}>{r.active ? "Live" : "Paused"}</AdminStatusBadge>
                 </button>
               ),
@@ -140,7 +169,7 @@ export default function AnnouncementsPage() {
               className: "text-right",
               render: (r) => (
                 <button
-                  onClick={() => remove(r)}
+                  onClick={() => void remove(r)}
                   aria-label="Delete announcement"
                   className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
                 >
@@ -157,11 +186,14 @@ export default function AnnouncementsPage() {
           Ticker message
           <input value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. Scholarship Test on Oct 12 — Register Free" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
         </label>
+        {formError ? (
+          <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
+        ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={() => setModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={save}>
+          <Button variant="primary" size="sm" onClick={() => void save()}>
             Publish
           </Button>
         </div>

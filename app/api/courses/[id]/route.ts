@@ -62,6 +62,18 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const db = getDb();
   if (!db) return dbNotConfigured("Deleting a course");
   try {
+    // Phase 17 — destructive safety: dependents must be moved first.
+    const [batches, students, enquiries] = await Promise.all([
+      db.batch.count({ where: { courseId: id } }),
+      db.student.count({ where: { courseId: id } }),
+      db.enquiry.count({ where: { courseId: id } }),
+    ]);
+    if (batches + students + enquiries > 0) {
+      return fail(
+        `Cannot delete: this course has ${batches} batch(es), ${students} student(s) and ${enquiries} enquiry record(s). Reassign them or deactivate the course instead.`,
+        409
+      );
+    }
     await db.course.delete({ where: { id } });
     return ok({ deleted: true });
   } catch (err) {
