@@ -56,7 +56,9 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npx prisma migrate deploy --preview-claim
+      - run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
   security:
     name: Security Check
@@ -68,6 +70,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+      - run: npm ci
       - run: npm run security:check
 
   storage:
@@ -80,6 +83,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+      - run: npm ci
       - run: npm run storage:check
 
   runtime:
@@ -91,6 +95,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+      - run: npm ci
       - run: npm run runtime:check
 
   deploy:
