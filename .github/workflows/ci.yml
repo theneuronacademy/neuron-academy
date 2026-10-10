@@ -11,9 +11,6 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,9 +23,6 @@ jobs:
   generate:
     name: Prisma Generate
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,9 +35,6 @@ jobs:
   build:
     name: Next.js Build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /
     needs: [lint, generate]
     steps:
       - uses: actions/checkout@v4
@@ -57,9 +48,6 @@ jobs:
   migrate:
     name: Database Migrate Deploy
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /
     needs: [build]
     steps:
       - uses: actions/checkout@v4
@@ -73,9 +61,6 @@ jobs:
   security:
     name: Security Check
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /
     needs: [build]
     steps:
       - uses: actions/checkout@v4
@@ -88,9 +73,6 @@ jobs:
   storage:
     name: Storage Check
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /
     needs: [build]
     steps:
       - uses: actions/checkout@v4
@@ -103,9 +85,6 @@ jobs:
   runtime:
     name: Runtime Check
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -117,9 +96,6 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: /
     needs: [lint, generate, build, migrate, security, storage, runtime]
     if: github.ref == 'refs/heads/main'
     steps:
@@ -129,5 +105,5 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: /
+          working-directory: ./
           alias-domains: neuronacademy.in
