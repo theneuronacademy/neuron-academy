@@ -4,9 +4,7 @@
   "outputDirectory": ".next",
   "functions": {
     "app/api/**/*.ts": {
-      "node": {
-        "maxMemory": "1024"
-      }
+      "memory": 1024
     }
   },
   "crons": [
