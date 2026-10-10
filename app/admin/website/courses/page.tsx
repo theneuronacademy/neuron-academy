@@ -58,11 +58,11 @@ export default function WebsiteCoursesPage() {
             admissionOpen: c.isActive ?? c.admissionOpen ?? true,
           })));
         } else {
-          const { COURSES, COURSE_CATEGORIES } = await import("@/data/courses");
+          const { COURSES } = await import("@/data/courses");
           setRows(COURSES.map((c) => ({ id: c.id, name: c.name, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
         }
       } catch {
-        const { COURSES, COURSE_CATEGORIES } = await import("@/data/courses");
+        const { COURSES } = await import("@/data/courses");
         setRows(COURSES.map((c) => ({ id: c.id, name: c.name, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
       }
       setReady(true);

@@ -6,6 +6,8 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { isEmail, isPhone } from "@/lib/validation";
+import { notifyMessages } from "@/lib/notify";
+import { dispatchNotification } from "@/services/notificationEngine";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +57,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (body.email !== undefined && !isEmail(body.email)) return fail("Invalid email.", 400);
   if (body.phone !== undefined && !isPhone(body.phone)) return fail("Invalid phone.", 400);
   try {
+    // Approval transition gate: read pre-update state so repeat approvals
+    // (or unrelated edits) never re-notify. Concurrent double-approvals
+    // share the engine fallback idempotency bucket (same title/message/
+    // audience within 10 min) and converge to a single DUPLICATE.
+    const previous = await db.faculty.findUnique({
+      where: { id },
+      select: { status: true, user: { select: { isActive: true } } },
+    }).catch(() => null);
     const row = await db.faculty.update({
       where: { id },
       data: {
@@ -75,6 +85,26 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       if (body.isActive) {
         await db.faculty.update({ where: { id }, data: { status: "ACTIVE" } });
       }
+    }
+    // Phase 19 — approval notification (transition into active only, never
+    // on unrelated edits or repeat approvals). Never fails the update:
+    // dispatchNotification never throws; channels stay isolated.
+    if (
+      body.isActive === true &&
+      (previous?.status !== "ACTIVE" || previous?.user?.isActive === false)
+    ) {
+      const msg = notifyMessages.facultyApproved();
+      await dispatchNotification(db, {
+        event: "FACULTY_NOTIFICATION",
+        actor: { id: auth.user.id, role: auth.user.role },
+        audience: { kind: "INDIVIDUAL", facultyId: id },
+        title: msg.title,
+        message: msg.message,
+        templateKey: "FACULTY_NOTIFICATION",
+        vars: { message: msg.message },
+        createdById: auth.user.id,
+        internal: true,
+      });
     }
     return ok({ item: toAdmin(row) });
   } catch (err) {

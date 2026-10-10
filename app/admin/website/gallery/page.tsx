@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Plus, Trash2, CheckCircle2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -150,7 +151,7 @@ export default function GalleryAdminPage() {
             <div key={g.id} className="overflow-hidden rounded-card border border-silver-200 bg-white shadow-card">
               <div className="relative aspect-square">
                 {g.image ? (
-                  <img src={g.image} alt={g.title} className="absolute inset-0 h-full w-full object-cover" />
+                  <Image src={g.image} alt={g.title} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw" className="absolute inset-0 h-full w-full object-cover" />
                 ) : (
                   <div className="metallic-dark flex h-full items-center justify-center p-3 text-center text-[12px] font-extrabold text-white">{g.title}</div>
                 )}

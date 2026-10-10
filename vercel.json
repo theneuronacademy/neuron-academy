@@ -9,6 +9,12 @@
       }
     }
   },
+  "crons": [
+    {
+      "path": "/api/cron/notifications?limit=25",
+      "schedule": "*/5 * * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/api/health",

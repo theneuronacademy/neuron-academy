@@ -124,12 +124,42 @@ export const notifyMessages = {
     message: `${title}: ${marks}/${total} (${pct}%). Open the result to review.`,
     type: "RESULT_RELEASED",
   }),
-  // Phase 15 — absence alert only (PRESENT/LATE/LEAVE stay silent to avoid
-  // daily notification spam). One alert per student per day max (see
-  // attendance route dedup check before calling dispatchNotification).
+  // Phase 15 — absence alert (full policy: SMS/push/in-app). One alert per
+  // student per day max (see attendance route dedup check before calling
+  // dispatchNotification).
   attendanceAbsent: (dateStr: string, batchName?: string) => ({
     title: "Absent marked",
     message: `You were marked absent on ${dateStr}${batchName ? ` (${batchName})` : ""}. Contact the academy office if this is incorrect.`,
     type: "ATTENDANCE_ABSENT",
+  }),
+  // Phase 19 (fast-track) — upcoming-test reminder. Same-name template
+  // TEST_REMINDER needs academyName + testName + testDate (+testTime).
+  testReminder: (testName: string, dateStr: string) => ({
+    title: "Upcoming test reminder",
+    message: `${testName} is scheduled on ${dateStr}. Revise and be ready.`,
+    type: "TEST_REMINDER",
+  }),
+  // Phase 19 (fast-track) — non-absent attendance trail (IN_APP record only;
+  // push/SMS stay silent by anti-spam design — see attendance route).
+  attendanceMarked: (dateStr: string, status: string) => ({
+    title: "Attendance marked",
+    message: `Your attendance for ${dateStr} is marked ${status}.`,
+    type: "ATTENDANCE_MARKED",
+  }),
+  // Phase 19 — faculty approval (admin PATCH /api/faculty/[id] approval
+  // transition only). Same-name template FACULTY_NOTIFICATION needs
+  // academyName + facultyName (per-recipient) + message (below).
+  facultyApproved: () => ({
+    title: "Faculty account approved",
+    message: "Your faculty account has been approved. You can now log in and view your batches.",
+    type: "FACULTY_NOTIFICATION",
+  }),
+  // Phase 19 — student registration welcome (post-create, IN_APP only to
+  // keep the auth-critical path free of provider latency). Same-name
+  // template REGISTRATION_UPDATE needs academyName + studentName + message.
+  registrationWelcome: (name: string) => ({
+    title: "Welcome to Neuron Academy",
+    message: `Hi ${name}, your registration is complete. Open your dashboard to get started.`,
+    type: "REGISTRATION_UPDATE",
   }),
 };

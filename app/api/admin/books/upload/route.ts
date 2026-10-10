@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const problem = validateCoverUpload(buf, file.name);
   if (problem) return fail(problem, 400);
   const saved = await saveUpload("covers", buf, file.name);
-  if (!saved.ok) return fail(saved.error, 502);
+  if (!saved.ok) return fail(saved.error, saved.code === "STORAGE_NOT_CONFIGURED" ? 503 : 502);
   // DB-safe reference in coverImageUrl; displayUrl for immediate preview.
   // The admin UI PATCHes coverImageUrl (the durable ref) onto the book.
   return ok({ coverImageUrl: saved.ref, displayUrl: saved.url }, 201);

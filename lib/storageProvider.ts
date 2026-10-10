@@ -125,12 +125,19 @@ function supabaseEnv(): { url: string; key: string; bucket: string } | null {
  * Returns the durable DB reference (`ref`) plus an immediately displayable
  * URL. Local: ref and url are both `/uploads/<scope>/<file>`. Supabase:
  * ref is `supabase://<bucket>/<key>` and url is a signed URL.
+ * Production fail-closed: when the resolved provider is `local` on a
+ * production host, the upload is rejected BEFORE any file is written
+ * (local files vanish on serverless redeploys). Callers map the
+ * STORAGE_NOT_CONFIGURED code to HTTP 503. Development keeps local uploads.
  */
 export async function saveUpload(
   scope: UploadScope,
   data: Buffer,
   originalName: string
-): Promise<{ ok: true; ref: string; url: string } | { ok: false; error: string }> {
+): Promise<{ ok: true; ref: string; url: string } | { ok: false; error: string; code?: string }> {
+  if (storageProvider() === "local" && process.env.NODE_ENV === "production") {
+    return { ok: false, error: "Storage is not configured.", code: "STORAGE_NOT_CONFIGURED" };
+  }
   const rawExt = extOf(originalName);
   const ext = rawExt === "jpeg" ? "jpg" : rawExt;
   const name = safeName(scopePrefix(scope), ext);

@@ -42,10 +42,6 @@ function tokenFor(role: string): string {
   return t;
 }
 
-function deniedStatus(res: ReturnType<typeof requireApiRole>): number | null {
-  return res.ok ? null : res.status;
-}
-
 // 1. anonymous → admin API = 401
 {
   const u = getUserFromRequest(fakeReq());

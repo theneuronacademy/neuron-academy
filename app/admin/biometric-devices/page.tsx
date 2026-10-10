@@ -2,11 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, Loader2, Pencil, XCircle, CheckCircle2 } from "lucide-react";
+import { Eye, Pencil, XCircle, CheckCircle2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminModal } from "@/components/admin/AdminModal";
-import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 import { AdminToolbar, SearchBar, FilterBar } from "@/components/admin/SearchBar";
 import { EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
@@ -99,40 +98,6 @@ export default function BiometricDevicesPage() {
   const [edit, setEdit] = useState<BiometricDeviceRow | null>(null);
   const [editOpen, setEditOpen] = useState(false);
 
-  async function saveEdit() {
-    if (!edit) return;
-    setBusy(true);
-    setErr(null);
-    try {
-      const res = await fetch(`/api/biometric/devices/${edit.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: edit.name,
-          serialNumber: edit.serialNumber,
-          deviceType: edit.deviceType,
-          ipAddress: edit.ipAddress || undefined,
-          port: edit.port ?? undefined,
-          protocol: edit.protocol,
-          location: edit.location || undefined,
-          isActive: edit.isActive,
-        }),
-      });
-      const json = await res.json().catch(() => null);
-      if (!res.ok || json?.success !== true) {
-        setErr(json?.error ?? "Update failed.");
-        return;
-      }
-      setSaved(`Updated ${edit.name}.`);
-      setEditOpen(false);
-      await load();
-      setBusy(false);
-    } catch {
-      setErr("Cannot reach the server.");
-      setBusy(false);
-    }
-  }
-
   async function deleteDevice(id: string) {
     if (!confirm("Are you sure you want to deactivate this biometric device?")) return;
     setBusy(true);
@@ -190,6 +155,7 @@ export default function BiometricDevicesPage() {
           <FilterBar value={typeF} onChange={setTypeF} ariaLabel="Filter by device type" options={[{ value: "all", label: "All types" }, { value: "X2000", label: "X2000" }]} />
           <Button
             onClick={openAdd}
+            disabled={busy}
             className="rounded-xl bg-navy-700 px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-navy-800"
           >
             + Add Device
@@ -248,7 +214,8 @@ export default function BiometricDevicesPage() {
                   </button>
                   <button
                     onClick={() => deleteDevice(r.id)}
-                    className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-crimson-500 text-[10px]"
+                    disabled={busy}
+                    className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-crimson-500 text-[10px] disabled:opacity-50"
                     title="Deactivate device"
                   >
                     <XCircle className="h-3 w-3" />

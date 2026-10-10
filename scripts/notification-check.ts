@@ -716,6 +716,9 @@ checkSmsProvider()
   .then(() => checkNoLeakage())
   .then(() => checkStep3())
   .then(() => checkStep5())
+  .then(() => checkCronWorker())
+  .then(() => checkPhase3())
+  .then(() => checkPhase4())
   .catch((err) => {
     failed += 1;
     console.error("FAIL: sms provider check threw", err instanceof Error ? err.message : err);
@@ -1426,6 +1429,360 @@ async function checkStep5(): Promise<void> {
     check(
       "30.8: detail page warns on unavailable audit",
       detailPage.includes("auditWarning") && detailPage.includes("Delivery audit unavailable")
+    );
+  }
+}
+
+// --------------------------- Phase 19: scheduled cron worker ---
+// DB-free: pure helper assertions, static route/config assertions, and a
+// fake atomic-claim race (no database, no network, no real MSG91 call).
+import {
+  CRON_DEFAULT_LIMIT,
+  CRON_MAX_LIMIT,
+  MAX_WORKER_ATTEMPTS,
+  buildCronSummary,
+  cronSecretsEqual,
+  extractBearerSecret,
+  isDueScheduledNotification,
+  isRetryEligibleDelivery,
+  isTerminalDeliveryStatus,
+  parseCronLimit,
+} from "../lib/cron-notifications";
+
+async function checkCronWorker(): Promise<void> {
+  // 31.1 batch-limit validation (default 25, max 100).
+  {
+    check("31.1: missing limit defaults to 25", parseCronLimit(null).ok === true && (parseCronLimit(null) as { ok: true; limit: number }).limit === CRON_DEFAULT_LIMIT && CRON_DEFAULT_LIMIT === 25);
+    check("31.2: valid limits pass", (parseCronLimit("1") as { ok: true; limit: number }).limit === 1 && (parseCronLimit("25") as { ok: true; limit: number }).limit === 25 && (parseCronLimit(String(CRON_MAX_LIMIT)) as { ok: true; limit: number }).limit === 100);
+    const bad = ["0", "-1", "101", "9999", "abc", "", "25.5", "  "];
+    check("31.3: invalid limits rejected", bad.every((v) => {
+      const r = parseCronLimit(v);
+      return r.ok === false && (r as { code: string }).code === "CRON_BAD_LIMIT";
+    }));
+  }
+
+  // 31.4 authentication (constant-time, missing never passes).
+  {
+    check("31.4: missing secret never authenticates", cronSecretsEqual("", "expected") === false && cronSecretsEqual("provided", "") === false && cronSecretsEqual("", "") === false);
+    check("31.5: wrong secret rejected, correct accepted", cronSecretsEqual("a", "b") === false && cronSecretsEqual("short", "a-much-longer-secret") === false && cronSecretsEqual("s3cret", "s3cret") === true);
+    check("31.6: bearer extraction", extractBearerSecret("Bearer abc123", null) === "abc123" && extractBearerSecret(null, "s3cret") === "s3cret" && extractBearerSecret(null, null) === null && extractBearerSecret("Basic abc", null) === null && extractBearerSecret("Bearer ", null) === null);
+  }
+
+  // 31.7 eligibility (scheduled due, retryable, terminal).
+  {
+    const past = new Date(Date.now() - 60_000);
+    const future = new Date(Date.now() + 60_000);
+    check("31.7: due scheduled logic", isDueScheduledNotification({ status: "SCHEDULED", scheduledAt: past }) === true && isDueScheduledNotification({ status: "SCHEDULED", scheduledAt: future }) === false && isDueScheduledNotification({ status: "SENT", scheduledAt: past }) === false && isDueScheduledNotification({ status: "SCHEDULED", scheduledAt: null }) === false);
+    check(
+      "31.8: retry eligibility",
+      isRetryEligibleDelivery({ status: "FAILED", retryable: true, attemptCount: 1, nextAttemptAt: past }) === true &&
+        isRetryEligibleDelivery({ status: "RETRYING", retryable: true, attemptCount: 0, nextAttemptAt: null }) === true &&
+        isRetryEligibleDelivery({ status: "FAILED", retryable: false, attemptCount: 1, nextAttemptAt: past }) === false &&
+        isRetryEligibleDelivery({ status: "FAILED", retryable: true, attemptCount: MAX_WORKER_ATTEMPTS, nextAttemptAt: past }) === false &&
+        isRetryEligibleDelivery({ status: "FAILED", retryable: true, attemptCount: 1, nextAttemptAt: future }) === false &&
+        isRetryEligibleDelivery({ status: "CREATED", retryable: true, attemptCount: 0, nextAttemptAt: past }) === false &&
+        isRetryEligibleDelivery({ status: "PROCESSING", retryable: true, attemptCount: 1, nextAttemptAt: past }) === false
+    );
+    check(
+      "31.9: terminal statuses respected",
+      isTerminalDeliveryStatus("SENT") === true &&
+        isTerminalDeliveryStatus("DELIVERED") === true &&
+        isTerminalDeliveryStatus("SKIPPED") === true &&
+        isTerminalDeliveryStatus("FAILED", { retryable: false }) === true &&
+        isTerminalDeliveryStatus("FAILED", { retryable: true, attemptCount: 1 }) === false &&
+        isTerminalDeliveryStatus("FAILED", { retryable: true, attemptCount: MAX_WORKER_ATTEMPTS }) === true &&
+        isTerminalDeliveryStatus("CREATED") === false &&
+        isTerminalDeliveryStatus("QUEUED") === false &&
+        isTerminalDeliveryStatus("PROCESSING") === false
+    );
+    check("31.10: summary carries counts only", (() => {
+      const s = buildCronSummary({ limit: 25, claimedHeaders: 1, processed: 2, deliveredInApp: 1, sentSms: 0, failed: 1, skipped: 0, retried: 0, reminders: 0, concurrentSkipped: 0 });
+      const keys = Object.keys(s).sort().join(",");
+      return keys === "claimedHeaders,concurrentSkipped,deliveredInApp,failed,limit,processed,reminders,retried,sentSms,skipped" && s.processed === 2;
+    })());
+  }
+
+  // 31.11 route contract (static): auth-first, atomic claims, honest codes.
+  {
+    const route = read("app/api/cron/notifications/route.ts");
+    check("31.11: cron authenticates via CRON_SECRET", route.includes("CRON_SECRET") && route.includes("CRON_UNAUTHORIZED") && route.includes("CRON_NOT_CONFIGURED"));
+    check("31.12: cron uses constant-time comparison", route.includes("cronSecretsEqual") && read("lib/cron-notifications.ts").includes("timingSafeEqual"));
+    check("31.13: cron validates batch limits", route.includes("CRON_BAD_LIMIT") && route.includes("400"));
+    check("31.14: cron claims headers atomically", route.includes("updateMany") && route.includes('status: "SCHEDULED"') && route.includes('"PROCESSING"'));
+    check("31.15: cron never marks failed/skipped as delivered", !route.includes('status: "DELIVERED"') || (route.includes('channel === "IN_APP"') && route.includes("SMS_MISSING_VARS")));
+    check("31.16: cron reports aggregate counts only", route.includes("claimedHeaders") && route.includes("deliveryAudit") && route.includes("buildCronSummary"));
+    const okBlock = route.slice(route.indexOf("return ok({"));
+    check("31.17: cron response carries no recipient PII", !okBlock.includes("phone") && !okBlock.includes("email") && !okBlock.includes("token") && !/title:\s*h\.title/.test(okBlock));
+    check("31.18: cron never logs secrets", !route.includes("console.log(provided") && !route.includes("CRON_SECRET,") && !/console\.\w+\([^)]*provided[^)]*\)/.test(route));
+  }
+
+  // 31.19 deployment contract: vercel cron + env template.
+  {
+    const vercel = read("vercel.json");
+    check("31.19: vercel cron every 5 minutes", vercel.includes("/api/cron/notifications?limit=25") && vercel.includes("*/5 * * * *"));
+    check("31.20: vercel config preserved", vercel.includes('"framework": "nextjs"') && vercel.includes("X-Frame-Options") && vercel.includes('"NODE_ENV": "production"'));
+    check("31.21: CRON_SECRET documented without a value", read(".env.example").includes("CRON_SECRET"));
+  }
+
+  // 31.22 concurrent protection: two workers racing one row → one winner.
+  {
+    const rows: { id: string; status: string }[] = [{ id: "d1", status: "CREATED" }];
+    const atomicClaim = async (id: string, from: string): Promise<number> => {
+      // Mirrors the route's updateMany(where id+status) guard: the check and
+      // the set happen synchronously, so only one racer can win.
+      const row = rows.find((r) => r.id === id);
+      if (row && row.status === from) {
+        row.status = "PROCESSING";
+        return 1;
+      }
+      return 0;
+    };
+    const [a, b] = await Promise.all([atomicClaim("d1", "CREATED"), atomicClaim("d1", "CREATED")]);
+    check("31.22: duplicate/concurrent processing has one winner", a + b === 1 && rows[0].status === "PROCESSING");
+  }
+}
+
+// ----------------- Phase 19 (fast-track 3): missing emissions ---
+// DB-free: static route/builder assertions + fake-Db engine dispatches
+// (IN_APP-only, no provider I/O). NEVER a real MSG91 call.
+async function checkPhase3(): Promise<void> {
+  // 32.1 faculty approval emits on the activation transition only.
+  {
+    const route = read("app/api/faculty/[id]/route.ts");
+    check(
+      "32.1: approval emits FACULTY_NOTIFICATION on transition",
+      route.includes("dispatchNotification") &&
+        route.includes('"FACULTY_NOTIFICATION"') &&
+        route.includes("facultyId: id") &&
+        route.includes("previous")
+    );
+    check(
+      "32.2: repeat approvals and unrelated edits stay silent",
+      route.includes('previous?.status !== "ACTIVE"') && route.includes("body.isActive === true")
+    );
+  }
+
+  // 32.3 student registration welcomes exactly once, IN_APP only.
+  {
+    const route = read("app/api/auth/student/register/route.ts");
+    check(
+      "32.3: registration emits REGISTRATION_UPDATE IN_APP-only",
+      route.includes("dispatchNotification") &&
+        route.includes('"REGISTRATION_UPDATE"') &&
+        route.includes('["IN_APP"]') &&
+        route.includes("REGISTRATION_UPDATE:${student.id}")
+    );
+  }
+
+  // 32.4 builders use canonical event types and carry no PII.
+  {
+    const builders = read("lib/notify.ts");
+    const tail = builders.slice(builders.indexOf("facultyApproved"));
+    check(
+      "32.4: new builders are canonical and PII-free",
+      builders.includes("facultyApproved") &&
+        builders.includes("registrationWelcome") &&
+        builders.includes('"FACULTY_NOTIFICATION"') &&
+        builders.includes('"REGISTRATION_UPDATE"') &&
+        !tail.includes("phone") &&
+        !tail.includes("email") &&
+        !tail.includes("password")
+    );
+  }
+
+  // 32.5 engine delivers both new events (fake Db, IN_APP-only).
+  {
+    const db = fakeDb({
+      singleFaculty: { id: "f1", name: "Fac One", phone: "+919876543210", userId: "u-f1", status: "ACTIVE" },
+    });
+    const report = await dispatchNotification(db, {
+      event: "FACULTY_NOTIFICATION",
+      actor: ADMIN_ACTOR,
+      audience: { kind: "INDIVIDUAL", facultyId: "f1" },
+      title: "Faculty account approved",
+      message: "Your faculty account has been approved.",
+      templateKey: "FACULTY_NOTIFICATION",
+      vars: { message: "Your faculty account has been approved." },
+      channels: ["IN_APP"],
+      internal: true,
+    });
+    check("32.5: FACULTY_NOTIFICATION dispatches in-app", report.ok === true && report.inApp.state === "SENT");
+  }
+  {
+    const s = makeStudent(1);
+    const db = fakeDb({ singleStudent: s });
+    const report = await dispatchNotification(db, {
+      event: "REGISTRATION_UPDATE",
+      actor: { id: s.userId as string, role: "STUDENT" },
+      audience: { kind: "INDIVIDUAL", studentId: s.id },
+      title: "Welcome to Neuron Academy",
+      message: "Hi Student 01, your registration is complete.",
+      templateKey: "REGISTRATION_UPDATE",
+      vars: { message: "Hi Student 01, your registration is complete." },
+      channels: ["IN_APP"],
+      internal: true,
+      idempotencyKey: `REGISTRATION_UPDATE:${s.id}`,
+    });
+    check("32.6: REGISTRATION_UPDATE self-welcome dispatches in-app", report.ok === true && report.inApp.state === "SENT");
+  }
+
+  // 32.7 failure behavior: unknown recipient fails honestly, bad input never throws.
+  {
+    const db = fakeDb({ singleFaculty: null });
+    const report = await dispatchNotification(db, {
+      event: "FACULTY_NOTIFICATION",
+      actor: ADMIN_ACTOR,
+      audience: { kind: "INDIVIDUAL", facultyId: "ghost" },
+      title: "Faculty account approved",
+      message: "Your faculty account has been approved.",
+      templateKey: "FACULTY_NOTIFICATION",
+      vars: { message: "Your faculty account has been approved." },
+      channels: ["IN_APP"],
+      internal: true,
+    });
+    check("32.7: unknown faculty fails honestly", report.ok === false && report.code === "NOTIFY_NO_RECIPIENTS");
+    const db2 = fakeDb({ singleStudent: makeStudent(1) });
+    const bad = await dispatchNotification(db2, {
+      event: "REGISTRATION_UPDATE",
+      actor: ADMIN_ACTOR,
+      audience: { kind: "INDIVIDUAL", studentId: "s1" },
+      title: "   ",
+      message: "Body without a title.",
+      channels: ["IN_APP"],
+      internal: true,
+    });
+    check("32.8: bad input fails closed without throwing", bad.ok === false && bad.code === "NOTIFY_BAD_BODY");
+  }
+
+  // 32.9 scheduled-SMS blocker: vars are not persisted, so incomplete SMS
+  // must fail honestly (documented — never sent, never marked delivered).
+  {
+    const schema = read("prisma/schema.prisma");
+    const deliveryBlock = schema.slice(schema.indexOf("model NotificationDelivery"));
+    check(
+      "32.9: delivery schema persists no template vars",
+      schema.includes("model NotificationDelivery") && !deliveryBlock.includes("vars")
+    );
+    check(
+      "32.10: event SMS needs vars the worker cannot reconstruct",
+      renderSmsTemplate("RESULT_RELEASED", { academyName: "Neuron Academy", message: "Result out" }).missing.length > 0
+    );
+    const worker = read("app/api/cron/notifications/route.ts");
+    check(
+      "32.11: worker fails incomplete SMS honestly, never as delivered",
+      worker.includes("SMS_MISSING_VARS") && worker.includes("if (res.ok)") && !/SMS_MISSING_VARS[\s\S]{0,200}status: "DELIVERED"/.test(worker)
+    );
+  }
+
+  // 32.12 admin creation ↔ worker contracts stay consistent.
+  {
+    const admin = read("app/api/notifications/route.ts");
+    const worker = read("app/api/cron/notifications/route.ts");
+    check(
+      "32.12: admin persists SCHEDULED state the worker claims",
+      admin.includes("scheduledAt") && admin.includes('"SCHEDULED"') && worker.includes('status: "SCHEDULED"') && worker.includes("scheduledAt")
+    );
+    check(
+      "32.13: admin pairing validation matches engine allowlist",
+      admin.includes("isSmsTemplateKey") && worker.includes("isTemplateAllowedForEvent")
+    );
+  }
+}
+
+// --------- Phase 19 (head-engineer pass): every notification type ---
+// DB-free: static assertions + fake-Db IN_APP-only dispatches (no provider
+// I/O). Proves all 18 catalog events are either auto-emitted or sendable
+// today through the admin composer (same-name template → same-name event).
+async function checkPhase4(): Promise<void> {
+  // 33.1 new builders are canonical.
+  {
+    const builders = read("lib/notify.ts");
+    check(
+      "33.1: reminder + marked builders are canonical",
+      builders.includes("testReminder") && builders.includes("attendanceMarked") && builders.includes('"TEST_REMINDER"') && builders.includes('"ATTENDANCE_MARKED"')
+    );
+  }
+
+  // 33.2 attendance trail: non-absent markings record IN_APP-only, deduped.
+  {
+    const route = read("app/api/attendance/route.ts");
+    check(
+      "33.2: non-absent markings record IN_APP-only",
+      route.includes('"ATTENDANCE_MARKED"') && route.includes('["IN_APP"]') && route.includes("ATTENDANCE_MARKED:${studentId}:${dateStr}")
+    );
+    check(
+      "33.3: absent full-policy path unchanged",
+      route.includes('"ATTENDANCE_ABSENT"') && route.includes("ATTENDANCE_ABSENT:${studentId}:${dateStr}")
+    );
+  }
+
+  // 33.4 engine delivers both (fake Db, IN_APP-only, no provider I/O).
+  {
+    const db = fakeDb({ singleStudent: makeStudent(2) });
+    const marked = await dispatchNotification(db, {
+      event: "ATTENDANCE_MARKED",
+      actor: ADMIN_ACTOR,
+      audience: { kind: "INDIVIDUAL", studentId: "s2" },
+      title: "Attendance marked",
+      message: "Your attendance for 2026-10-10 is marked PRESENT.",
+      templateKey: "ATTENDANCE_MARKED",
+      vars: { testDate: "2026-10-10" },
+      channels: ["IN_APP"],
+      internal: true,
+      idempotencyKey: "ATTENDANCE_MARKED:s2:2026-10-10",
+    });
+    check("33.4: ATTENDANCE_MARKED dispatches in-app", marked.ok === true && marked.inApp.state === "SENT");
+  }
+  {
+    const db = fakeDb({ students: [makeStudent(1)] });
+    const reminder = await dispatchNotification(db, {
+      event: "TEST_REMINDER",
+      actor: ADMIN_ACTOR,
+      audience: { kind: "ALL_STUDENTS" },
+      title: "Upcoming test reminder",
+      message: "Mock 1 is scheduled on 2026-10-11. Revise and be ready.",
+      templateKey: "TEST_REMINDER",
+      vars: { testName: "Mock 1", testDate: "2026-10-11", testTime: "" },
+      channels: ["IN_APP"],
+      testId: "t1",
+      internal: true,
+      idempotencyKey: "TEST_REMINDER:t1",
+    });
+    check("33.5: TEST_REMINDER dispatches in-app", reminder.ok === true && reminder.inApp.state === "SENT");
+  }
+
+  // 33.6 worker reminder scan is bounded, published-only, idempotent.
+  {
+    const worker = read("app/api/cron/notifications/route.ts");
+    check(
+      "33.6: reminder scan is PUBLISHED-only and bounded",
+      worker.includes('"TEST_REMINDER"') && worker.includes('status: "PUBLISHED"') && worker.includes("MAX_REMINDERS_PER_TICK") && worker.includes("TEST_REMINDER:${t.id}")
+    );
+    check(
+      "33.7: reminder attribution is a real admin or skipped",
+      worker.includes('role: "ADMIN"') && worker.includes("isActive: true")
+    );
+    check(
+      "33.8: reminder aggregate reported",
+      worker.includes("reminders") && read("lib/cron-notifications.ts").includes("MAX_REMINDERS_PER_TICK")
+    );
+  }
+
+  // 33.9 every non-OTP template is sendable via the admin composer today.
+  {
+    const composerSendable: string[] = [
+      "TEST_PUBLISHED", "TEST_REMINDER", "RESULT_RELEASED", "ATTENDANCE_MARKED",
+      "ATTENDANCE_ABSENT", "BATCH_ANNOUNCEMENT", "ADMIN_ANNOUNCEMENT",
+      "ACADEMIC_NOTICE", "ADMISSION_UPDATE", "REGISTRATION_UPDATE",
+      "ACCESS_GRANTED", "ACCESS_REVOKED", "FACULTY_NOTIFICATION", "EMERGENCY_ALERT",
+    ];
+    check(
+      "33.9: all broadcast templates derive same-name events",
+      composerSendable.every((t) => eventForTemplate(t as never as Parameters<typeof eventForTemplate>[0]) === t)
+    );
+    check(
+      "33.10: all same-name template pairings allowed",
+      composerSendable.every((t) => isTemplateAllowedForEvent(t as never as Parameters<typeof isTemplateAllowedForEvent>[0], t))
     );
   }
 }

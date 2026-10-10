@@ -49,7 +49,6 @@ export default function AdminDashboardPage() {
   const [enquiries, setEnquiries] = useState<AdminEnquiry[]>([]);
   const [attendance, setAttendance] = useState<{ batch: string; pct: number }[]>([]);
   const [site, setSite] = useState<{ online: boolean; lastUpdate: string; activeBanners: number; activePopups: number } | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
   // Phase 6: live database test-platform stats (hidden in demo mode).
   const [liveStats, setLiveStats] = useState<{ totalTests: number; publishedTests: number; liveTests: number; scheduledTests: number; completedTests: number; totalResults: number; totalAttempts: number; totalStudents: number; activeStudents: number; totalFaculty: number; activeFaculty: number; totalBatches: number; activeBatches: number; totalCourses: number; newEnquiries: number } | null>(null);
 
@@ -96,10 +95,6 @@ export default function AdminDashboardPage() {
   }
 
   const today = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  const quick = (msg: string) => {
-    setSaved(msg);
-    window.setTimeout(() => setSaved(null), 2500);
-  };
 
   return (
     <AdminLayout title="Dashboard" subtitle="Academy control center">
@@ -126,11 +121,6 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
       </div>
-      {saved ? (
-        <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
-          <CheckCircle2 className="h-4 w-4" /> {saved}
-        </p>
-      ) : null}
 
       {/* Stats — Phase 17: live database values; demo fallbacks labelled. */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

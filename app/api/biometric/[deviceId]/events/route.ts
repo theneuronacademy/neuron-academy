@@ -2,7 +2,7 @@
 // GET  /api/biometric/[deviceId]/events     — List recent events for a device
 // POST /api/biometric/[deviceId]/events     — Ingest ADMS event from X2000 device
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { fail, ok, dbNotConfigured } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import crypto from "crypto";

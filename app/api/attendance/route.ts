@@ -120,6 +120,33 @@ export async function POST(req: NextRequest) {
           idempotencyKey: `ATTENDANCE_ABSENT:${studentId}:${dateStr}`,
         });
       }
+    } else {
+      // Phase 19 (fast-track) — non-absent trail (PRESENT/LATE/LEAVE): one
+      // IN_APP record per student per day max. Push/SMS stay silent by
+      // anti-spam design (full policy would ping every family daily).
+      // Never fails the attendance write.
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const already = await db.notification.findFirst({
+        where: { targetStudentId: studentId, type: canonicalNotificationType("ATTENDANCE_MARKED"), createdAt: { gte: dayStart } },
+        select: { id: true },
+      }).catch(() => null);
+      if (!already) {
+        const dateStr = date.toISOString().slice(0, 10);
+        const built = notifyMessages.attendanceMarked(dateStr, row.status);
+        await dispatchNotification(db, {
+          event: "ATTENDANCE_MARKED",
+          actor: { id: auth.user.id, role: auth.user.role },
+          audience: { kind: "INDIVIDUAL", studentId },
+          title: built.title,
+          message: built.message,
+          templateKey: "ATTENDANCE_MARKED",
+          vars: { testDate: dateStr },
+          channels: ["IN_APP"],
+          internal: true,
+          idempotencyKey: `ATTENDANCE_MARKED:${studentId}:${dateStr}`,
+        });
+      }
     }
     return ok({ item: row }, 201);
   } catch (err) {

@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   const problem = validatePdfUpload(buf, file.name);
   if (problem) return fail(problem, 400);
   const saved = await saveUpload("book-pdfs", buf, file.name);
-  if (!saved.ok) return fail(saved.error, 502);
+  if (!saved.ok) return fail(saved.error, saved.code === "STORAGE_NOT_CONFIGURED" ? 503 : 502);
   // DB-safe reference in pdfUrl; displayUrl for immediate checks.
   return ok({ pdfUrl: saved.ref, displayUrl: saved.url }, 201);
 }

@@ -34,7 +34,6 @@ export async function GET(req: NextRequest) {
       select: { id: true, name: true },
       take: 100,
     });
-    const nameById = new Map(batches.map((b) => [b.id, b.name]));
     const rows = await db.attendance.findMany({
       where: allowed ? { batchId: { in: allowed } } : {},
       select: { batchId: true, status: true },

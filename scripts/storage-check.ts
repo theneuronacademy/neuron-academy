@@ -103,8 +103,9 @@ check("supabase unreachable fails closed (no silent success)", refused.ok === fa
 const refusedDel = await deleteStorageObject("supabase://discard-bucket/photos/x.jpg");
 check("supabase delete unreachable returns false", refusedDel === false);
 const refusedResolve = await resolveStorageUrl("supabase://discard-bucket/photos/x.jpg");
-check("unresolvable ref resolves to null", refusedResolve === null);
-restoreEnv();
+  check("unresolvable ref resolves to null", refusedResolve === null);
+  restoreEnv();
+  await productionFailClosed();
 
 // ------------------------------------------------------- local integration ---
 check("local mode active after restore", storageProvider() === "local");
@@ -175,13 +176,78 @@ for (const dir of ["app", "components", "middleware.ts"]) {
     if (src.includes("SUPABASE_SERVICE_KEY")) clientHits.push(f.slice(ROOT.length + 1));
   }
 }
-check("service key never in client/app code", clientHits.length === 0);
-const providerSrc = read("lib/storageProvider.ts");
-check("provider never logs or returns the key", !providerSrc.includes("console.") && providerSrc.includes("Bearer ${env.key}"));
+  check("service key never in client/app code", clientHits.length === 0);
+  const providerSrc = read("lib/storageProvider.ts");
+  check("provider never logs or returns the key", !providerSrc.includes("console.") && providerSrc.includes("Bearer ${env.key}"));
+  check("production local uploads rejected before write", providerSrc.includes('STORAGE_NOT_CONFIGURED'));
+  for (const rel of ["app/api/admin/books/upload/route.ts", "app/api/admin/books/upload-pdf/route.ts", "app/api/students/me/photo/route.ts"]) {
+    check(`${rel} maps misconfig to 503`, read(rel).includes('saved.code === "STORAGE_NOT_CONFIGURED" ? 503 : 502'));
+  }
 
-restoreEnv();
-console.log("storage-check: " + pass + " passed, " + failed + " failed");
-if (failed > 0) process.exit(1);
+  restoreEnv();
+  console.log("storage-check: " + pass + " passed, " + failed + " failed");
+  if (failed > 0) process.exit(1);
+}
+
+async function productionFailClosed(): Promise<void> {
+// Production + local provider must reject BEFORE writing any file (serverless
+// filesystems are ephemeral). Development keeps local uploads. Supabase paths
+// are unaffected. NODE_ENV is saved and restored; no real bucket is touched.
+  const savedNodeEnv = process.env.NODE_ENV;
+  // NODE_ENV is typed read-only: mutate through a plain record view.
+  const env = process.env as Record<string, string | undefined>;
+  const listUploads = (): string[] => {
+    const out: string[] = [];
+    const walkDir = (dir: string): void => {
+      let entries: string[] = [];
+      try {
+        entries = readdirSync(dir);
+      } catch {
+        return;
+      }
+      for (const e of entries) {
+        const p = join(dir, e);
+        try {
+          if (statSync(p).isDirectory()) walkDir(p);
+          else out.push(p);
+        } catch {
+          /* ignore races */
+        }
+      }
+    };
+    walkDir(join(ROOT, "public", "uploads"));
+    return out;
+  };
+  delete process.env.STORAGE_PROVIDER;
+  delete process.env.SUPABASE_URL;
+  delete process.env.SUPABASE_SERVICE_KEY;
+  delete process.env.STORAGE_BUCKET;
+  env.NODE_ENV = "production";
+  check("production without storage config resolves local", storageProvider() === "local");
+  const before = listUploads();
+  for (const scope of ["photos", "covers", "book-pdfs"] as const) {
+    const r = await saveUpload(scope, PNG, "a.png");
+    check(`production+local ${scope} rejected with code`, r.ok === false && (r as { code?: string }).code === "STORAGE_NOT_CONFIGURED");
+  }
+  const after = listUploads();
+  check("production rejection wrote no local file", after.length === before.length);
+  delete env.NODE_ENV;
+  const dev = await saveUpload("photos", PNG, "a.png");
+  check("development+local preserves uploads", dev.ok === true);
+  if (dev.ok === true) await deleteStorageObject(dev.ref);
+  env.NODE_ENV = "production";
+  process.env.STORAGE_PROVIDER = "supabase";
+  process.env.SUPABASE_URL = "http://127.0.0.1:9";
+  process.env.SUPABASE_SERVICE_KEY = "discard-key";
+  process.env.STORAGE_BUCKET = "discard-bucket";
+  const attempted = await saveUpload("photos", PNG, "a.png");
+  check(
+    "production+supabase still attempts provider path (no false misconfig)",
+    attempted.ok === false && (attempted as { code?: string }).code !== "STORAGE_NOT_CONFIGURED"
+  );
+  if (savedNodeEnv === undefined) delete env.NODE_ENV;
+  else env.NODE_ENV = savedNodeEnv;
+  restoreEnv();
 }
 
 void main();

@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, XCircle, } from "lucide-react";
+import { Eye } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { AdminTable } from "@/components/admin/AdminTable";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 import { Button } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
@@ -37,7 +36,7 @@ interface DeviceEventRow {
   receivedAt: string;
 }
 
-function healthStatus(lastSeenAt: string | null, totalEvents: number) {
+function healthStatus(lastSeenAt: string | null) {
   if (!lastSeenAt) return "NEVER CONNECTED";
   const diffHours = (new Date().getTime() - new Date(lastSeenAt).getTime()) / (1000 * 60 * 60);
   if (diffHours > 24) return "STALE";
@@ -56,12 +55,10 @@ export default function BiometricDeviceDetailPage({
   const [ready, setReady] = useState(false);
   const [device, setDevice] = useState<BiometricDeviceDetail | null>(null);
   const [events, setEvents] = useState<DeviceEventRow[]>([]);
-  const [openMapping, setOpenMapping] = useState(false);
   const [mapping, setMapping] = useState<{ biometricUserId: string; userType: "student" | "faculty"; studentId: string; facultyId: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [deviceId, setDeviceId] = useState<string | null>(null);
 
   const loadDevice = async (id: string) => {
     try {
@@ -93,7 +90,6 @@ export default function BiometricDeviceDetailPage({
     (async () => {
       const p = await params;
       if (!live) return;
-      setDeviceId(p.id);
       await loadDevice(p.id);
       await loadEvents(p.id);
       if (live) setReady(true);
@@ -110,11 +106,9 @@ export default function BiometricDeviceDetailPage({
       studentId: "",
       facultyId: "",
     });
-    setOpenMapping(true);
   };
 
   const closeMappingForm = () => {
-    setOpenMapping(false);
     setMapping(null);
     setErr(null);
   };
@@ -139,7 +133,6 @@ export default function BiometricDeviceDetailPage({
         return;
       }
       setSaved(`Mapped ${mapping.biometricUserId} to ${mapping.userType}.`);
-      setOpenMapping(false);
       await loadEvents(device.id);
       setBusy(false);
     } catch {
@@ -166,6 +159,17 @@ export default function BiometricDeviceDetailPage({
         onAction={() => router.push("/admin/biometric-devices")}
       />
 
+      {err ? (
+        <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson-600" role="alert">
+          {err}
+        </p>
+      ) : null}
+      {saved ? (
+        <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-600">
+          {saved}
+        </p>
+      ) : null}
+
       <div className="grid gap-6">
         {/* Device Health Summary */}
         <div className="rounded-card border border-silver-200 bg-white p-6 shadow-card">
@@ -180,8 +184,8 @@ export default function BiometricDeviceDetailPage({
             </div>
             <div>
               <p className="text-[11px] font-bold tracking-widest text-muted">Status</p>
-              <span className={cn("px-2 py-1 rounded text-[10px] font-bold", getTone(healthStatus(device?.lastSeenAt, device?.totalEvents)))}>
-                {healthStatus(device?.lastSeenAt, device?.totalEvents)}
+              <span className={cn("px-2 py-1 rounded text-[10px] font-bold", getTone(healthStatus(device?.lastSeenAt)))}>
+                {healthStatus(device?.lastSeenAt)}
               </span>
             </div>
           </div>

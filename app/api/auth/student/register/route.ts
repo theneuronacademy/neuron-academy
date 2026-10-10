@@ -11,6 +11,8 @@ import { hashPassword, isValidPassword, normalizePhone } from "@/lib/credentials
 import { isEmail, isNonEmpty, missingFields } from "@/lib/validation";
 import { OTP_VERIFIED_TTL_MIN } from "@/lib/otp";
 import { isMsg91Configured } from "@/services/msg91";
+import { notifyMessages } from "@/lib/notify";
+import { dispatchNotification } from "@/services/notificationEngine";
 
 export const dynamic = "force-dynamic";
 // Vercel: bcrypt hash (cost 12) + OTP check + DB writes + cold start (Pro plan).
@@ -93,6 +95,27 @@ export async function POST(req: NextRequest) {
     });
     if (verifiedOtpId) {
       await db.otpRequest.update({ where: { id: verifiedOtpId }, data: { consumed: true } }).catch(() => null);
+    }
+    // Phase 19 — registration welcome (IN_APP only: the auth-critical path
+    // must never wait on SMS/push providers). Self-addressed (the new
+    // student notifies their own record — no privilege escalation), keyed
+    // per student so it fires exactly once. Never fails registration:
+    // dispatchNotification never throws.
+    {
+      const msg = notifyMessages.registrationWelcome(name);
+      await dispatchNotification(db, {
+        event: "REGISTRATION_UPDATE",
+        actor: { id: user.id, role: "STUDENT" },
+        audience: { kind: "INDIVIDUAL", studentId: student.id },
+        title: msg.title,
+        message: msg.message,
+        templateKey: "REGISTRATION_UPDATE",
+        vars: { message: msg.message },
+        channels: ["IN_APP"],
+        createdById: user.id,
+        internal: true,
+        idempotencyKey: `REGISTRATION_UPDATE:${student.id}`,
+      });
     }
     const token = createSessionToken({ id: user.id, email: user.email, name: user.name, role: "STUDENT" });
     if (!token) return fail("Registration needs SESSION_SECRET.", 503);

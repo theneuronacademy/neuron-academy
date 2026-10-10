@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     const problem = validatePhotoUpload(buf, file.name);
     if (problem) return fail(problem, 400);
     const saved = await saveUpload("photos", buf, file.name);
-    if (!saved.ok) return fail(saved.error, 502);
+    if (!saved.ok) return fail(saved.error, saved.code === "STORAGE_NOT_CONFIGURED" ? 503 : 502);
     const prev = await db.student.findUnique({ where: { id: scoped.id }, select: { photoUrl: true } });
     // DB stores the durable reference (supabase://… or local path); the
     // response carries a displayable URL. Previous object cleanup is
