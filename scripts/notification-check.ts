@@ -1519,8 +1519,8 @@ async function checkCronWorker(): Promise<void> {
   // 31.19 deployment contract: vercel cron + env template.
   {
     const vercel = read("vercel.json");
-    check("31.19: vercel cron every 5 minutes", vercel.includes("/api/cron/notifications?limit=25") && vercel.includes("*/5 * * * *"));
-    check("31.20: vercel config preserved", vercel.includes('"framework": "nextjs"') && vercel.includes("X-Frame-Options") && vercel.includes('"NODE_ENV": "production"'));
+    check("31.19: vercel cron is Hobby-deployable (plain path, once-daily)", vercel.includes('"/api/cron/notifications"') && !vercel.includes("notifications?") && vercel.includes('"0 3 * * *"'));
+    check("31.20: vercel config preserved, no reserved PORT override", vercel.includes('"framework": "nextjs"') && vercel.includes("X-Frame-Options") && !vercel.includes('"PORT"'));
     check("31.21: CRON_SECRET documented without a value", read(".env.example").includes("CRON_SECRET"));
   }
 

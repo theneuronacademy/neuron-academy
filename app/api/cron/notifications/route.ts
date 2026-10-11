@@ -1,5 +1,7 @@
 // Phase 19 — scheduled notification worker (SERVER-ONLY cron).
-// GET /api/cron/notifications?limit=25 — every 5 minutes (see vercel.json).
+// GET /api/cron/notifications — daily 03:00 UTC on Hobby (see vercel.json).
+// Needs Vercel Pro (or an external scheduler hitting this endpoint with
+// CRON_SECRET) for sub-daily ticks. Missing ?limit= defaults to 25.
 //
 // Scope (v1, safe subset of the engine):
 // - Claims due SCHEDULED Notification headers atomically (status guard) and

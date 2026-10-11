@@ -1,16 +1,18 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "npm run build",
+  "buildCommand": "prisma generate && next build",
   "outputDirectory": ".next",
   "functions": {
-    "app/api/**/*.ts": {
-      "memory": 1024
+    "app/api/cron/notifications/route.ts": {
+      "memory": 1024,
+      "maxDuration": 60
     }
   },
   "crons": [
     {
-      "path": "/api/cron/notifications?limit=25",
-      "schedule": "*/5 * * * *"
+      "path": "/api/cron/notifications",
+      "schedule": "0 3 * * *"
     }
   ],
   "headers": [
@@ -30,9 +32,5 @@
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "PORT": "3000"
-  }
+  ]
 }
