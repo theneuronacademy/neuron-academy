@@ -5,7 +5,6 @@
   "outputDirectory": ".next",
   "functions": {
     "app/api/cron/notifications/route.ts": {
-      "memory": 1024,
       "maxDuration": 60
     }
   },
