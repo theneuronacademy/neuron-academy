@@ -30,8 +30,8 @@ import { adminLogout } from "@/lib/adminAuth";
 import { Logo } from "@/components/website/Logo";
 import { cn } from "@/lib/utils";
 
-// TODO auth: wrap admin routes with real session check (middleware + server session).
-// Demo guard lives in each page via lib/adminAuth until backend auth lands.
+// Admin routes are protected by edge middleware (middleware.ts) + server session;
+// page-level lib/adminAuth guards remain as a client-side fallback.
 
 const GROUPS: { label: string; items: { href: string; label: string; icon: typeof LayoutDashboard }[] }[] = [
   {

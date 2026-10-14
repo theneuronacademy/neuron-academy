@@ -137,8 +137,9 @@ writes on failure. Errors surface honestly.
 Active/inactive filter for public routes (isActive + date window).
 Admin sees full catalogue; public sees active/in-window only.
 
-Advertisements page + settings page flagged "Demo only — edits here
-never reach the database".
+ Advertisements page is a legacy local preview surface (creation redirects
+ to live Website → Banners; delete copy no longer claims website effect) and
+ the settings page is display-only with no fake save toast.
 
 ## 13. Biometric devices
 
@@ -210,7 +211,9 @@ Lists: client pagination (20), search/filter memoized. No N+1.
 5. No offline test-taking (server engine only).
 6. No cursor pagination on results/marks/books.
 7. K90/ADMS untouched — attendance `source` preserved.
-8. Advertisements + settings pages remain demo-only.
+8. Advertisements is a legacy local preview (live content lives under
+    Website → Banners/Popups); settings is display-only (profile comes from
+    the deployment environment). Neither claims database persistence.
 9. Website faculty duplicate with admin faculty — website page is
    visibility toggle over real records; admin page is full CRUD.
 

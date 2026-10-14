@@ -856,6 +856,13 @@ model Announcement {
 // ================================================================
 // Biometric Device Management (Phase 12A, additive, no rework)
 // ================================================================
+// Device authentication: BiometricDevice.authSecretHash stores a SHA-256 hex
+// of the per-device shared secret. The plaintext secret is shown ONCE at
+// provisioning/rotation and never stored or logged. Ingestion endpoints
+// compare with crypto.timingSafeEqual. Devices without a secret operate in
+// legacy mode (accepted, flagged) until a secret is provisioned.
+// IP allowlist: when BiometricDevice.ipAddress is set, ADMS pushes from any
+// other source IP are rejected (401). Unset = no IP restriction.
 model BiometricDevice {
   id           String   @id @default(cuid())
   name         String
@@ -867,10 +874,18 @@ model BiometricDevice {
   location     String?
   isActive     Boolean  @default(true)
   lastSeenAt   DateTime?
+  // Last device-initiated heartbeat (ADMS registration / ping / getrequest).
+  lastHeartbeatAt DateTime?
+  // Last ingestion failure, human-readable (no secrets, no PII beyond IDs).
+  lastError    String?
+  // SHA-256 hex of the per-device shared secret. NULL = legacy mode.
+  authSecretHash String?
   totalEvents  Int      @default(0)
   failedEvents Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  mappings BiometricUserMap[]
 
   @@index([isActive])
   @@index([lastSeenAt])
@@ -895,4 +910,32 @@ model BiometricDeviceEvent {
   @@index([eventTimestamp])
 
   @@unique([deviceId, biometricUserId, eventTimestamp, payloadHash])
+}
+
+// Persistent biometric enrollment mapping (post-capture schema phase).
+// One row binds a device-local enrollment ID (the PIN the K90 sends) to a
+// Neuron Academy record. Ingestion resolves mappings FIRST; the legacy
+// fuzzy match (studentId/email) is only a fallback for unmapped IDs and
+// never creates attendance for non-student targets.
+enum BiometricUserType {
+  STUDENT
+  FACULTY
+}
+
+model BiometricUserMap {
+  id              String            @id @default(cuid())
+  deviceId        String
+  biometricUserId String
+  userType        BiometricUserType
+  // Student.id or Faculty.id (canonical record id, never a display code).
+  userId          String
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  device BiometricDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@unique([deviceId, biometricUserId])
+  @@index([deviceId])
+  @@index([userType, userId])
 }

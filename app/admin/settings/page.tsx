@@ -33,14 +33,15 @@ export default function SettingsPage() {
   }
 
   return (
-    <AdminLayout title="Settings" subtitle="Academy profile and preferences (demo)">
-      {/* Phase 17 — no settings API exists; edits here are local-only. */}
+    <AdminLayout title="Settings" subtitle="Academy profile and preferences">
+      {/* No settings API exists; this page is display-only. Academy profile
+          is configured via the deployment environment. */}
       <p className="mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-bold text-amber-800" role="note">
-        Demo only — settings are not saved to the database in this phase.
+        Display only — academy profile is configured via the deployment environment. Changes here are not saved anywhere.
       </p>
       {saved ? (
-        <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
-          <CheckCircle2 className="h-4 w-4" /> Settings saved (demo — backend sync later).
+        <p className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-[13px] font-bold text-amber-700">
+          <CheckCircle2 className="h-4 w-4" /> Not saved — contact the developer to change the academy profile.
         </p>
       ) : null}
       <div className="grid gap-4 lg:grid-cols-2">
@@ -61,7 +62,7 @@ export default function SettingsPage() {
             </label>
           </div>
           <Button variant="primary" size="sm" className="mt-4" onClick={() => { setSaved(true); window.setTimeout(() => setSaved(false), 2500); }}>
-            Save Settings (demo)
+            Save Settings
           </Button>
         </div>
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">

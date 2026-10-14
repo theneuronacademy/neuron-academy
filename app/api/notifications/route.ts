@@ -1,6 +1,6 @@
 // Phase 3 — Notifications API. No push provider yet (later phase).
 // Demo fallback when DATABASE_URL is missing.
-// TODO auth: writes need ADMIN role once the session layer lands.
+// Writes enforce ADMIN role via requireApiRole (lib/server-auth.ts).
 // Phase 18b — ADMIN sends go through the centralized notification engine:
 // validate → authorize → resolve audience server-side → channel router
 // (SMS via MSG91 Flow when configured + push + in-app) → delivery report.

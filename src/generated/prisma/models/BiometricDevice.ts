@@ -49,6 +49,9 @@ export type BiometricDeviceMinAggregateOutputType = {
   location: string | null
   isActive: boolean | null
   lastSeenAt: Date | null
+  lastHeartbeatAt: Date | null
+  lastError: string | null
+  authSecretHash: string | null
   totalEvents: number | null
   failedEvents: number | null
   createdAt: Date | null
@@ -66,6 +69,9 @@ export type BiometricDeviceMaxAggregateOutputType = {
   location: string | null
   isActive: boolean | null
   lastSeenAt: Date | null
+  lastHeartbeatAt: Date | null
+  lastError: string | null
+  authSecretHash: string | null
   totalEvents: number | null
   failedEvents: number | null
   createdAt: Date | null
@@ -83,6 +89,9 @@ export type BiometricDeviceCountAggregateOutputType = {
   location: number
   isActive: number
   lastSeenAt: number
+  lastHeartbeatAt: number
+  lastError: number
+  authSecretHash: number
   totalEvents: number
   failedEvents: number
   createdAt: number
@@ -114,6 +123,9 @@ export type BiometricDeviceMinAggregateInputType = {
   location?: true
   isActive?: true
   lastSeenAt?: true
+  lastHeartbeatAt?: true
+  lastError?: true
+  authSecretHash?: true
   totalEvents?: true
   failedEvents?: true
   createdAt?: true
@@ -131,6 +143,9 @@ export type BiometricDeviceMaxAggregateInputType = {
   location?: true
   isActive?: true
   lastSeenAt?: true
+  lastHeartbeatAt?: true
+  lastError?: true
+  authSecretHash?: true
   totalEvents?: true
   failedEvents?: true
   createdAt?: true
@@ -148,6 +163,9 @@ export type BiometricDeviceCountAggregateInputType = {
   location?: true
   isActive?: true
   lastSeenAt?: true
+  lastHeartbeatAt?: true
+  lastError?: true
+  authSecretHash?: true
   totalEvents?: true
   failedEvents?: true
   createdAt?: true
@@ -252,6 +270,9 @@ export type BiometricDeviceGroupByOutputType = {
   location: string | null
   isActive: boolean
   lastSeenAt: Date | null
+  lastHeartbeatAt: Date | null
+  lastError: string | null
+  authSecretHash: string | null
   totalEvents: number
   failedEvents: number
   createdAt: Date
@@ -292,10 +313,14 @@ export type BiometricDeviceWhereInput = {
   location?: Prisma.StringNullableFilter<"BiometricDevice"> | string | null
   isActive?: Prisma.BoolFilter<"BiometricDevice"> | boolean
   lastSeenAt?: Prisma.DateTimeNullableFilter<"BiometricDevice"> | Date | string | null
+  lastHeartbeatAt?: Prisma.DateTimeNullableFilter<"BiometricDevice"> | Date | string | null
+  lastError?: Prisma.StringNullableFilter<"BiometricDevice"> | string | null
+  authSecretHash?: Prisma.StringNullableFilter<"BiometricDevice"> | string | null
   totalEvents?: Prisma.IntFilter<"BiometricDevice"> | number
   failedEvents?: Prisma.IntFilter<"BiometricDevice"> | number
   createdAt?: Prisma.DateTimeFilter<"BiometricDevice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BiometricDevice"> | Date | string
+  mappings?: Prisma.BiometricUserMapListRelationFilter
 }
 
 export type BiometricDeviceOrderByWithRelationInput = {
@@ -309,10 +334,14 @@ export type BiometricDeviceOrderByWithRelationInput = {
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSeenAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastHeartbeatAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastError?: Prisma.SortOrderInput | Prisma.SortOrder
+  authSecretHash?: Prisma.SortOrderInput | Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   failedEvents?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  mappings?: Prisma.BiometricUserMapOrderByRelationAggregateInput
 }
 
 export type BiometricDeviceWhereUniqueInput = Prisma.AtLeast<{
@@ -329,10 +358,14 @@ export type BiometricDeviceWhereUniqueInput = Prisma.AtLeast<{
   location?: Prisma.StringNullableFilter<"BiometricDevice"> | string | null
   isActive?: Prisma.BoolFilter<"BiometricDevice"> | boolean
   lastSeenAt?: Prisma.DateTimeNullableFilter<"BiometricDevice"> | Date | string | null
+  lastHeartbeatAt?: Prisma.DateTimeNullableFilter<"BiometricDevice"> | Date | string | null
+  lastError?: Prisma.StringNullableFilter<"BiometricDevice"> | string | null
+  authSecretHash?: Prisma.StringNullableFilter<"BiometricDevice"> | string | null
   totalEvents?: Prisma.IntFilter<"BiometricDevice"> | number
   failedEvents?: Prisma.IntFilter<"BiometricDevice"> | number
   createdAt?: Prisma.DateTimeFilter<"BiometricDevice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BiometricDevice"> | Date | string
+  mappings?: Prisma.BiometricUserMapListRelationFilter
 }, "id" | "serialNumber">
 
 export type BiometricDeviceOrderByWithAggregationInput = {
@@ -346,6 +379,9 @@ export type BiometricDeviceOrderByWithAggregationInput = {
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSeenAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastHeartbeatAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastError?: Prisma.SortOrderInput | Prisma.SortOrder
+  authSecretHash?: Prisma.SortOrderInput | Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   failedEvents?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -371,6 +407,9 @@ export type BiometricDeviceScalarWhereWithAggregatesInput = {
   location?: Prisma.StringNullableWithAggregatesFilter<"BiometricDevice"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"BiometricDevice"> | boolean
   lastSeenAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BiometricDevice"> | Date | string | null
+  lastHeartbeatAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BiometricDevice"> | Date | string | null
+  lastError?: Prisma.StringNullableWithAggregatesFilter<"BiometricDevice"> | string | null
+  authSecretHash?: Prisma.StringNullableWithAggregatesFilter<"BiometricDevice"> | string | null
   totalEvents?: Prisma.IntWithAggregatesFilter<"BiometricDevice"> | number
   failedEvents?: Prisma.IntWithAggregatesFilter<"BiometricDevice"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BiometricDevice"> | Date | string
@@ -388,10 +427,14 @@ export type BiometricDeviceCreateInput = {
   location?: string | null
   isActive?: boolean
   lastSeenAt?: Date | string | null
+  lastHeartbeatAt?: Date | string | null
+  lastError?: string | null
+  authSecretHash?: string | null
   totalEvents?: number
   failedEvents?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  mappings?: Prisma.BiometricUserMapCreateNestedManyWithoutDeviceInput
 }
 
 export type BiometricDeviceUncheckedCreateInput = {
@@ -405,10 +448,14 @@ export type BiometricDeviceUncheckedCreateInput = {
   location?: string | null
   isActive?: boolean
   lastSeenAt?: Date | string | null
+  lastHeartbeatAt?: Date | string | null
+  lastError?: string | null
+  authSecretHash?: string | null
   totalEvents?: number
   failedEvents?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  mappings?: Prisma.BiometricUserMapUncheckedCreateNestedManyWithoutDeviceInput
 }
 
 export type BiometricDeviceUpdateInput = {
@@ -422,10 +469,14 @@ export type BiometricDeviceUpdateInput = {
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authSecretHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   failedEvents?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mappings?: Prisma.BiometricUserMapUpdateManyWithoutDeviceNestedInput
 }
 
 export type BiometricDeviceUncheckedUpdateInput = {
@@ -439,10 +490,14 @@ export type BiometricDeviceUncheckedUpdateInput = {
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authSecretHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   failedEvents?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mappings?: Prisma.BiometricUserMapUncheckedUpdateManyWithoutDeviceNestedInput
 }
 
 export type BiometricDeviceCreateManyInput = {
@@ -456,6 +511,9 @@ export type BiometricDeviceCreateManyInput = {
   location?: string | null
   isActive?: boolean
   lastSeenAt?: Date | string | null
+  lastHeartbeatAt?: Date | string | null
+  lastError?: string | null
+  authSecretHash?: string | null
   totalEvents?: number
   failedEvents?: number
   createdAt?: Date | string
@@ -473,6 +531,9 @@ export type BiometricDeviceUpdateManyMutationInput = {
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authSecretHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   failedEvents?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -490,6 +551,9 @@ export type BiometricDeviceUncheckedUpdateManyInput = {
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authSecretHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   failedEvents?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -507,6 +571,9 @@ export type BiometricDeviceCountOrderByAggregateInput = {
   location?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSeenAt?: Prisma.SortOrder
+  lastHeartbeatAt?: Prisma.SortOrder
+  lastError?: Prisma.SortOrder
+  authSecretHash?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   failedEvents?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -530,6 +597,9 @@ export type BiometricDeviceMaxOrderByAggregateInput = {
   location?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSeenAt?: Prisma.SortOrder
+  lastHeartbeatAt?: Prisma.SortOrder
+  lastError?: Prisma.SortOrder
+  authSecretHash?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   failedEvents?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -547,6 +617,9 @@ export type BiometricDeviceMinOrderByAggregateInput = {
   location?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   lastSeenAt?: Prisma.SortOrder
+  lastHeartbeatAt?: Prisma.SortOrder
+  lastError?: Prisma.SortOrder
+  authSecretHash?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   failedEvents?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -559,6 +632,150 @@ export type BiometricDeviceSumOrderByAggregateInput = {
   failedEvents?: Prisma.SortOrder
 }
 
+export type BiometricDeviceScalarRelationFilter = {
+  is?: Prisma.BiometricDeviceWhereInput
+  isNot?: Prisma.BiometricDeviceWhereInput
+}
+
+export type BiometricDeviceCreateNestedOneWithoutMappingsInput = {
+  create?: Prisma.XOR<Prisma.BiometricDeviceCreateWithoutMappingsInput, Prisma.BiometricDeviceUncheckedCreateWithoutMappingsInput>
+  connectOrCreate?: Prisma.BiometricDeviceCreateOrConnectWithoutMappingsInput
+  connect?: Prisma.BiometricDeviceWhereUniqueInput
+}
+
+export type BiometricDeviceUpdateOneRequiredWithoutMappingsNestedInput = {
+  create?: Prisma.XOR<Prisma.BiometricDeviceCreateWithoutMappingsInput, Prisma.BiometricDeviceUncheckedCreateWithoutMappingsInput>
+  connectOrCreate?: Prisma.BiometricDeviceCreateOrConnectWithoutMappingsInput
+  upsert?: Prisma.BiometricDeviceUpsertWithoutMappingsInput
+  connect?: Prisma.BiometricDeviceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BiometricDeviceUpdateToOneWithWhereWithoutMappingsInput, Prisma.BiometricDeviceUpdateWithoutMappingsInput>, Prisma.BiometricDeviceUncheckedUpdateWithoutMappingsInput>
+}
+
+export type BiometricDeviceCreateWithoutMappingsInput = {
+  id?: string
+  name: string
+  serialNumber: string
+  deviceType?: string
+  ipAddress?: string | null
+  port?: number | null
+  protocol?: string
+  location?: string | null
+  isActive?: boolean
+  lastSeenAt?: Date | string | null
+  lastHeartbeatAt?: Date | string | null
+  lastError?: string | null
+  authSecretHash?: string | null
+  totalEvents?: number
+  failedEvents?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BiometricDeviceUncheckedCreateWithoutMappingsInput = {
+  id?: string
+  name: string
+  serialNumber: string
+  deviceType?: string
+  ipAddress?: string | null
+  port?: number | null
+  protocol?: string
+  location?: string | null
+  isActive?: boolean
+  lastSeenAt?: Date | string | null
+  lastHeartbeatAt?: Date | string | null
+  lastError?: string | null
+  authSecretHash?: string | null
+  totalEvents?: number
+  failedEvents?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BiometricDeviceCreateOrConnectWithoutMappingsInput = {
+  where: Prisma.BiometricDeviceWhereUniqueInput
+  create: Prisma.XOR<Prisma.BiometricDeviceCreateWithoutMappingsInput, Prisma.BiometricDeviceUncheckedCreateWithoutMappingsInput>
+}
+
+export type BiometricDeviceUpsertWithoutMappingsInput = {
+  update: Prisma.XOR<Prisma.BiometricDeviceUpdateWithoutMappingsInput, Prisma.BiometricDeviceUncheckedUpdateWithoutMappingsInput>
+  create: Prisma.XOR<Prisma.BiometricDeviceCreateWithoutMappingsInput, Prisma.BiometricDeviceUncheckedCreateWithoutMappingsInput>
+  where?: Prisma.BiometricDeviceWhereInput
+}
+
+export type BiometricDeviceUpdateToOneWithWhereWithoutMappingsInput = {
+  where?: Prisma.BiometricDeviceWhereInput
+  data: Prisma.XOR<Prisma.BiometricDeviceUpdateWithoutMappingsInput, Prisma.BiometricDeviceUncheckedUpdateWithoutMappingsInput>
+}
+
+export type BiometricDeviceUpdateWithoutMappingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceType?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  protocol?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authSecretHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  failedEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BiometricDeviceUncheckedUpdateWithoutMappingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceType?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  protocol?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastHeartbeatAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authSecretHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  failedEvents?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type BiometricDeviceCountOutputType
+ */
+
+export type BiometricDeviceCountOutputType = {
+  mappings: number
+}
+
+export type BiometricDeviceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  mappings?: boolean | BiometricDeviceCountOutputTypeCountMappingsArgs
+}
+
+/**
+ * BiometricDeviceCountOutputType without action
+ */
+export type BiometricDeviceCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BiometricDeviceCountOutputType
+   */
+  select?: Prisma.BiometricDeviceCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BiometricDeviceCountOutputType without action
+ */
+export type BiometricDeviceCountOutputTypeCountMappingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BiometricUserMapWhereInput
+}
 
 
 export type BiometricDeviceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -572,10 +789,15 @@ export type BiometricDeviceSelect<ExtArgs extends runtime.Types.Extensions.Inter
   location?: boolean
   isActive?: boolean
   lastSeenAt?: boolean
+  lastHeartbeatAt?: boolean
+  lastError?: boolean
+  authSecretHash?: boolean
   totalEvents?: boolean
   failedEvents?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  mappings?: boolean | Prisma.BiometricDevice$mappingsArgs<ExtArgs>
+  _count?: boolean | Prisma.BiometricDeviceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["biometricDevice"]>
 
 export type BiometricDeviceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -589,6 +811,9 @@ export type BiometricDeviceSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   location?: boolean
   isActive?: boolean
   lastSeenAt?: boolean
+  lastHeartbeatAt?: boolean
+  lastError?: boolean
+  authSecretHash?: boolean
   totalEvents?: boolean
   failedEvents?: boolean
   createdAt?: boolean
@@ -606,6 +831,9 @@ export type BiometricDeviceSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   location?: boolean
   isActive?: boolean
   lastSeenAt?: boolean
+  lastHeartbeatAt?: boolean
+  lastError?: boolean
+  authSecretHash?: boolean
   totalEvents?: boolean
   failedEvents?: boolean
   createdAt?: boolean
@@ -623,17 +851,28 @@ export type BiometricDeviceSelectScalar = {
   location?: boolean
   isActive?: boolean
   lastSeenAt?: boolean
+  lastHeartbeatAt?: boolean
+  lastError?: boolean
+  authSecretHash?: boolean
   totalEvents?: boolean
   failedEvents?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BiometricDeviceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "serialNumber" | "deviceType" | "ipAddress" | "port" | "protocol" | "location" | "isActive" | "lastSeenAt" | "totalEvents" | "failedEvents" | "createdAt" | "updatedAt", ExtArgs["result"]["biometricDevice"]>
+export type BiometricDeviceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "serialNumber" | "deviceType" | "ipAddress" | "port" | "protocol" | "location" | "isActive" | "lastSeenAt" | "lastHeartbeatAt" | "lastError" | "authSecretHash" | "totalEvents" | "failedEvents" | "createdAt" | "updatedAt", ExtArgs["result"]["biometricDevice"]>
+export type BiometricDeviceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  mappings?: boolean | Prisma.BiometricDevice$mappingsArgs<ExtArgs>
+  _count?: boolean | Prisma.BiometricDeviceCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type BiometricDeviceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type BiometricDeviceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $BiometricDevicePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BiometricDevice"
-  objects: {}
+  objects: {
+    mappings: Prisma.$BiometricUserMapPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
@@ -645,6 +884,9 @@ export type $BiometricDevicePayload<ExtArgs extends runtime.Types.Extensions.Int
     location: string | null
     isActive: boolean
     lastSeenAt: Date | null
+    lastHeartbeatAt: Date | null
+    lastError: string | null
+    authSecretHash: string | null
     totalEvents: number
     failedEvents: number
     createdAt: Date
@@ -1043,6 +1285,7 @@ readonly fields: BiometricDeviceFieldRefs;
  */
 export interface Prisma__BiometricDeviceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  mappings<T extends Prisma.BiometricDevice$mappingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BiometricDevice$mappingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BiometricUserMapPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1082,6 +1325,9 @@ export interface BiometricDeviceFieldRefs {
   readonly location: Prisma.FieldRef<"BiometricDevice", 'String'>
   readonly isActive: Prisma.FieldRef<"BiometricDevice", 'Boolean'>
   readonly lastSeenAt: Prisma.FieldRef<"BiometricDevice", 'DateTime'>
+  readonly lastHeartbeatAt: Prisma.FieldRef<"BiometricDevice", 'DateTime'>
+  readonly lastError: Prisma.FieldRef<"BiometricDevice", 'String'>
+  readonly authSecretHash: Prisma.FieldRef<"BiometricDevice", 'String'>
   readonly totalEvents: Prisma.FieldRef<"BiometricDevice", 'Int'>
   readonly failedEvents: Prisma.FieldRef<"BiometricDevice", 'Int'>
   readonly createdAt: Prisma.FieldRef<"BiometricDevice", 'DateTime'>
@@ -1103,6 +1349,10 @@ export type BiometricDeviceFindUniqueArgs<ExtArgs extends runtime.Types.Extensio
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
+  /**
    * Filter, which BiometricDevice to fetch.
    */
   where: Prisma.BiometricDeviceWhereUniqueInput
@@ -1121,6 +1371,10 @@ export type BiometricDeviceFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.E
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
+  /**
    * Filter, which BiometricDevice to fetch.
    */
   where: Prisma.BiometricDeviceWhereUniqueInput
@@ -1138,6 +1392,10 @@ export type BiometricDeviceFindFirstArgs<ExtArgs extends runtime.Types.Extension
    * Omit specific fields from the BiometricDevice
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
   /**
    * Filter, which BiometricDevice to fetch.
    */
@@ -1187,6 +1445,10 @@ export type BiometricDeviceFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
+  /**
    * Filter, which BiometricDevice to fetch.
    */
   where?: Prisma.BiometricDeviceWhereInput
@@ -1234,6 +1496,10 @@ export type BiometricDeviceFindManyArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the BiometricDevice
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
   /**
    * Filter, which BiometricDevices to fetch.
    */
@@ -1283,6 +1549,10 @@ export type BiometricDeviceCreateArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
+  /**
    * The data needed to create a BiometricDevice.
    */
   data: Prisma.XOR<Prisma.BiometricDeviceCreateInput, Prisma.BiometricDeviceUncheckedCreateInput>
@@ -1330,6 +1600,10 @@ export type BiometricDeviceUpdateArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the BiometricDevice
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
   /**
    * The data needed to update a BiometricDevice.
    */
@@ -1397,6 +1671,10 @@ export type BiometricDeviceUpsertArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
+  /**
    * The filter to search for the BiometricDevice to update in case it exists.
    */
   where: Prisma.BiometricDeviceWhereUniqueInput
@@ -1423,6 +1701,10 @@ export type BiometricDeviceDeleteArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
+  /**
    * Filter which BiometricDevice to delete.
    */
   where: Prisma.BiometricDeviceWhereUniqueInput
@@ -1443,6 +1725,30 @@ export type BiometricDeviceDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
+ * BiometricDevice.mappings
+ */
+export type BiometricDevice$mappingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BiometricUserMap
+   */
+  select?: Prisma.BiometricUserMapSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BiometricUserMap
+   */
+  omit?: Prisma.BiometricUserMapOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricUserMapInclude<ExtArgs> | null
+  where?: Prisma.BiometricUserMapWhereInput
+  orderBy?: Prisma.BiometricUserMapOrderByWithRelationInput | Prisma.BiometricUserMapOrderByWithRelationInput[]
+  cursor?: Prisma.BiometricUserMapWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BiometricUserMapScalarFieldEnum | Prisma.BiometricUserMapScalarFieldEnum[]
+}
+
+/**
  * BiometricDevice without action
  */
 export type BiometricDeviceDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1454,4 +1760,8 @@ export type BiometricDeviceDefaultArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the BiometricDevice
    */
   omit?: Prisma.BiometricDeviceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BiometricDeviceInclude<ExtArgs> | null
 }

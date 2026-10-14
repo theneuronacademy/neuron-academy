@@ -23,10 +23,28 @@ interface BiometricDeviceRow {
   location: string | null;
   isActive: boolean;
   lastSeenAt: string | null;
+  lastHeartbeatAt?: string | null;
+  lastError?: string | null;
   totalEvents: number;
   failedEvents: number;
   createdAt: string;
 }
+
+const BLANK_DEVICE: BiometricDeviceRow = {
+  id: "",
+  name: "",
+  serialNumber: "",
+  deviceType: "X2000",
+  protocol: "ADMS",
+  ipAddress: "",
+  port: 8787,
+  location: "",
+  isActive: true,
+  lastSeenAt: null,
+  totalEvents: 0,
+  failedEvents: 0,
+  createdAt: "",
+};
 
 function getStatusText(isActive: boolean, lastSeenAt: string | null) {
   if (!lastSeenAt) return "NEVER CONNECTED";
@@ -79,24 +97,99 @@ export default function BiometricDevicesPage() {
     [rows, search, typeF]
   );
 
+  const [edit, setEdit] = useState<BiometricDeviceRow | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [isNew, setIsNew] = useState(false);
+  const [provisionSecret, setProvisionSecret] = useState(true);
+
   function openAdd() {
     setErr(null);
+    setSaved(null);
+    setEdit({ ...BLANK_DEVICE });
+    setIsNew(true);
+    setProvisionSecret(true);
+    setEditOpen(true);
   }
 
   function openEdit(r: BiometricDeviceRow) {
     setErr(null);
+    setSaved(null);
     setEdit(r);
+    setIsNew(false);
     setEditOpen(true);
   }
 
   function closeEdit() {
     setEditOpen(false);
     setEdit(null);
+    setIsNew(false);
     setErr(null);
   }
 
-  const [edit, setEdit] = useState<BiometricDeviceRow | null>(null);
-  const [editOpen, setEditOpen] = useState(false);
+  async function submitDevice(e: React.FormEvent) {
+    e.preventDefault();
+    if (!edit) return;
+    setErr(null);
+    setBusy(true);
+    try {
+      if (isNew) {
+        const res = await fetch("/api/biometric/devices", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: edit.name,
+            serialNumber: edit.serialNumber,
+            deviceType: edit.deviceType || "X2000",
+            protocol: edit.protocol || "ADMS",
+            ...(edit.ipAddress ? { ipAddress: edit.ipAddress } : {}),
+            ...(edit.port ? { port: edit.port } : {}),
+            ...(edit.location ? { location: edit.location } : {}),
+            isActive: edit.isActive,
+            ...(provisionSecret ? { provisionSecret: true } : {}),
+          }),
+        });
+        const json = await res.json().catch(() => null);
+        if (!res.ok || json?.success !== true) {
+          setErr(json?.error ?? "Device registration failed.");
+          return;
+        }
+        const secret = json?.data?.provisionedSecret as string | undefined;
+        setSaved(
+          secret
+            ? `Registered ${edit.name}. Bridge secret (copy NOW — never shown again): ${secret}`
+            : `Registered ${edit.name}.`
+        );
+      } else {
+        const res = await fetch(`/api/biometric/devices/${edit.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: edit.name,
+            serialNumber: edit.serialNumber,
+            deviceType: edit.deviceType,
+            ipAddress: edit.ipAddress || undefined,
+            port: edit.port ?? undefined,
+            protocol: edit.protocol,
+            location: edit.location || undefined,
+            isActive: edit.isActive,
+          }),
+        });
+        const json = await res.json().catch(() => null);
+        if (!res.ok || json?.success !== true) {
+          setErr(json?.error ?? "Update failed.");
+          return;
+        }
+        setSaved(`Updated ${edit.name}.`);
+      }
+      setEditOpen(false);
+      setEdit(null);
+      await load();
+    } catch {
+      setErr("Cannot reach the server.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function deleteDevice(id: string) {
     if (!confirm("Are you sure you want to deactivate this biometric device?")) return;
@@ -199,7 +292,7 @@ export default function BiometricDevicesPage() {
                 <td className="p-4">{r.totalEvents}</td>
                 <td className="p-4 text-right">
                   <button
-                    onClick={() => router.push(`/admin/biometric/devices/${r.id}`)}
+                    onClick={() => router.push(`/admin/biometric-device?id=${r.id}`)}
                     className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500 text-[10px]"
                     title="View device"
                   >
@@ -227,40 +320,10 @@ export default function BiometricDevicesPage() {
         </table>
       )}
 
-<AdminModal open={editOpen} title={edit ? `Edit Device — ${edit.name}` : "Add Device"} onClose={() => closeEdit()} wide>
+<AdminModal open={editOpen} title={isNew ? "Add Device" : edit ? `Edit Device — ${edit.name}` : "Add Device"} onClose={() => closeEdit()} wide>
           {edit ? (
             <div className="p-4 space-y-3">
-              <form
-                onSubmit={async (e: React.FormEvent) => {
-                  e.preventDefault();
-                  setErr(null);
-                  try {
-                    const res = await fetch(`/api/biometric/devices/${edit.id}`, {
-                      method: "PATCH",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        name: edit.name,
-                        serialNumber: edit.serialNumber,
-                        deviceType: edit.deviceType,
-                        ipAddress: edit.ipAddress || undefined,
-                        port: edit.port ?? undefined,
-                        protocol: edit.protocol,
-                        location: edit.location || undefined,
-                        isActive: edit.isActive,
-                      }),
-                    });
-                    const json = await res.json().catch(() => null);
-                    if (!res.ok || json?.success !== true) {
-                      setErr(json?.error ?? "Update failed.");
-                      return;
-                    }
-                    setSaved(`Updated ${edit.name}.`);
-                    setEditOpen(false);
-                    await load();
-                  } catch {
-                    setErr("Cannot reach the server.");
-                  }
-                }}>
+              <form onSubmit={submitDevice}>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-navy-700">Name</label>
@@ -301,11 +364,26 @@ export default function BiometricDevicesPage() {
                       <option value="false">Inactive</option>
                     </select>
                   </div>
+                  {isNew ? (
+                    <div className="col-span-2 flex items-start gap-2 rounded-xl bg-silver-50 p-3">
+                      <input
+                        id="provision-secret"
+                        type="checkbox"
+                        checked={provisionSecret}
+                        onChange={(e) => setProvisionSecret(e.target.checked)}
+                        className="mt-1"
+                      />
+                      <label htmlFor="provision-secret" className="text-[12px] text-navy-700">
+                        <span className="font-bold">Provision bridge secret (recommended).</span>{" "}
+                        The secret is shown once after registration and pasted into the adms-bridge config.
+                      </label>
+                    </div>
+                  ) : null}
                 </div>
                 <div className="mt-4 flex justify-end gap-2">
                   <button type="button" onClick={() => closeEdit()} className="rounded-xl border border-silver-300 px-4 py-2.5 text-[13px] font-bold text-navy-700 hover:bg-silver-100">Cancel</button>
-                  <button type="submit" className="rounded-xl bg-navy-700 px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-navy-800">
-                    Update
+                  <button type="submit" disabled={busy} className="rounded-xl bg-navy-700 px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">
+                    {isNew ? "Register Device" : "Update"}
                   </button>
                 </div>
               </form>

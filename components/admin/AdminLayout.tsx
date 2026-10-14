@@ -4,8 +4,8 @@ import { useState } from "react";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 
-// TODO auth: protect via middleware + server session later.
-// Pages additionally guard with lib/adminAuth (demo) until then.
+// Protected via edge middleware + server session; pages additionally guard
+// with lib/adminAuth as a client-side fallback.
 
 export function AdminLayout({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);

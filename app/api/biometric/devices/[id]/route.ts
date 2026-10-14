@@ -5,6 +5,7 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
+import { generateDeviceSecret, hashDeviceSecret } from "@/lib/adms";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,8 @@ const DEVICE_SELECT = {
   location: true,
   isActive: true,
   lastSeenAt: true,
+  lastHeartbeatAt: true,
+  lastError: true,
   totalEvents: true,
   failedEvents: true,
   createdAt: true,
@@ -87,12 +90,28 @@ export async function PATCH(
     }
     update.port = p;
   }
-  if (Object.keys(update).length === 0) {
+  if (Object.keys(update).length === 0 && body.rotateSecret !== true && body.clearSecret !== true) {
     return fail("No valid update fields provided.", 400);
+  }
+  // Shared-secret rotation: the new plaintext is returned ONCE and stored hashed.
+  let rotatedSecret: string | null = null;
+  if (body.rotateSecret === true) {
+    rotatedSecret = generateDeviceSecret();
+    update.authSecretHash = hashDeviceSecret(rotatedSecret);
+  } else if (body.clearSecret === true) {
+    update.authSecretHash = null;
   }
   try {
     const device = await db.biometricDevice.update({ where: { id }, data: update, select: DEVICE_SELECT });
-    return ok({ item: device });
+    return ok({
+      item: device,
+      ...(rotatedSecret
+        ? {
+            provisionedSecret: rotatedSecret,
+            secretWarning: "Copy this secret into the adms-bridge configuration NOW — it is never shown again.",
+          }
+        : {}),
+    });
   } catch (err) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const error = err as any;

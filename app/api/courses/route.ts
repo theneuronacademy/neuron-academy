@@ -1,5 +1,5 @@
 // Phase 3 — Courses API. Demo fallback from public catalogue when DB is missing.
-// TODO auth: writes need ADMIN role once the session layer lands.
+// Writes enforce ADMIN role via requireApiRole (lib/server-auth.ts).
 
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";

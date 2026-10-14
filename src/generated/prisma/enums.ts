@@ -229,3 +229,11 @@ export const PopupFrequency = {
 } as const
 
 export type PopupFrequency = (typeof PopupFrequency)[keyof typeof PopupFrequency]
+
+
+export const BiometricUserType = {
+  STUDENT: 'STUDENT',
+  FACULTY: 'FACULTY'
+} as const
+
+export type BiometricUserType = (typeof BiometricUserType)[keyof typeof BiometricUserType]

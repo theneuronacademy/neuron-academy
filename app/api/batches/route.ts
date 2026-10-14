@@ -1,5 +1,5 @@
 // Phase 3 — Batches API. Demo fallback when DATABASE_URL is missing.
-// TODO auth: writes need ADMIN role once the session layer lands.
+// Writes enforce ADMIN role via requireApiRole (lib/server-auth.ts).
 
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";

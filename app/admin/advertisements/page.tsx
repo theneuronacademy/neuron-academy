@@ -37,10 +37,10 @@ export default function AdminAdsPage() {
 
   return (
     <AdminLayout title="Advertisements" subtitle="Create hero, banner and popup ads for the public website">
-      {/* Phase 17 — legacy demo surface: edits here never reach the database
+      {/* Legacy local preview surface: edits here never reach the database
           or the website. Use Website → Banners / Popups for live content. */}
       <p className="mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-bold text-amber-800" role="note">
-        Demo only — ads created here are stored locally in this browser and do not appear on the website. Manage live banners and popups under Website.
+        Legacy preview — ads listed here are stored only in this browser for design preview and never appear on the website. Manage live content under <Link href="/admin/website/banners" className="underline">Website → Banners</Link> and <Link href="/admin/website/popups" className="underline">Website → Popups</Link>.
       </p>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2">
@@ -54,8 +54,8 @@ export default function AdminAdsPage() {
             </button>
           ))}
         </div>
-        <Link href="/admin/advertisements/new" className="inline-flex items-center gap-1.5 rounded-xl bg-crimson px-4 py-2.5 text-sm font-bold text-white hover:bg-crimson-bright">
-          <Plus className="h-4 w-4" /> Create Advertisement
+        <Link href="/admin/website/banners" className="inline-flex items-center gap-1.5 rounded-xl bg-crimson px-4 py-2.5 text-sm font-bold text-white hover:bg-crimson-bright">
+          <Plus className="h-4 w-4" /> Manage Live Banners
         </Link>
       </div>
 
@@ -77,7 +77,7 @@ export default function AdminAdsPage() {
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-navy-800/60 p-4" role="dialog" aria-modal="true" aria-label="Delete advertisement">
           <div className="w-full max-w-sm rounded-card bg-white p-6 text-center">
             <p className="text-lg font-extrabold text-navy-700">Delete this advertisement?</p>
-            <p className="mt-1 text-sm text-muted">It will immediately stop appearing on the website.</p>
+            <p className="mt-1 text-sm text-muted">It will be removed from this local preview list only. Live website content is managed under Website → Banners / Popups.</p>
             <div className="mt-4 grid grid-cols-2 gap-2">
               <button onClick={() => setConfirmId(null)} className="rounded-xl border border-silver-300 px-4 py-2.5 text-sm font-bold">Cancel</button>
               <button

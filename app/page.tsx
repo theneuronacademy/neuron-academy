@@ -158,7 +158,7 @@ function LivePhone() {
   return (
     <div className="animate-float-slow mx-auto w-full max-w-[300px] rounded-[28px] border-8 border-navy-800 bg-white shadow-card">
       <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
-        <div><p className="text-xs font-extrabold text-navy-700">NEET Practice — 07 (demo)</p><p className="text-[11px] text-muted">Live • auto ranks</p></div>
+        <div><p className="text-xs font-extrabold text-navy-700">NEET Practice — 07</p><p className="text-[11px] text-muted">Live • auto ranks</p></div>
         <span className="animate-blink rounded-full bg-crimson px-2 py-0.5 text-[10px] font-extrabold text-white">LIVE</span>
       </div>
       <div className="space-y-2.5 p-4">
@@ -177,7 +177,7 @@ function LivePhone() {
           <span className="text-[12px] font-bold tabular-nums">⏱ {mm}:{ss}</span>
           <span className="rounded-lg bg-teal-500 px-2.5 py-1 text-[11px] font-bold">Submit</span>
         </div>
-        <p className="text-center text-[11px] text-muted">Anonymous demo — no real student info</p>
+        <p className="text-center text-[11px] text-muted">Interactive preview — try a live test below</p>
       </div>
     </div>
   );

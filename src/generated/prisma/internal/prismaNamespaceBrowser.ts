@@ -77,7 +77,8 @@ export const ModelName = {
   Enquiry: 'Enquiry',
   Announcement: 'Announcement',
   BiometricDevice: 'BiometricDevice',
-  BiometricDeviceEvent: 'BiometricDeviceEvent'
+  BiometricDeviceEvent: 'BiometricDeviceEvent',
+  BiometricUserMap: 'BiometricUserMap'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -600,6 +601,9 @@ export const BiometricDeviceScalarFieldEnum = {
   location: 'location',
   isActive: 'isActive',
   lastSeenAt: 'lastSeenAt',
+  lastHeartbeatAt: 'lastHeartbeatAt',
+  lastError: 'lastError',
+  authSecretHash: 'authSecretHash',
   totalEvents: 'totalEvents',
   failedEvents: 'failedEvents',
   createdAt: 'createdAt',
@@ -624,6 +628,20 @@ export const BiometricDeviceEventScalarFieldEnum = {
 } as const
 
 export type BiometricDeviceEventScalarFieldEnum = (typeof BiometricDeviceEventScalarFieldEnum)[keyof typeof BiometricDeviceEventScalarFieldEnum]
+
+
+export const BiometricUserMapScalarFieldEnum = {
+  id: 'id',
+  deviceId: 'deviceId',
+  biometricUserId: 'biometricUserId',
+  userType: 'userType',
+  userId: 'userId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BiometricUserMapScalarFieldEnum = (typeof BiometricUserMapScalarFieldEnum)[keyof typeof BiometricUserMapScalarFieldEnum]
 
 
 export const SortOrder = {

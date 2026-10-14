@@ -6,11 +6,32 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
+import { generateDeviceSecret, hashDeviceSecret } from "@/lib/adms";
 import { missingFields } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
 const SUPPORTED_PROTOCOLS = ["ADMS"] as const;
+
+// Allow-listed read columns — authSecretHash is NEVER selected or returned.
+const DEVICE_SELECT = {
+  id: true,
+  name: true,
+  serialNumber: true,
+  deviceType: true,
+  protocol: true,
+  ipAddress: true,
+  port: true,
+  location: true,
+  isActive: true,
+  lastSeenAt: true,
+  lastHeartbeatAt: true,
+  lastError: true,
+  totalEvents: true,
+  failedEvents: true,
+  createdAt: true,
+  updatedAt: true,
+} as const;
 
 export async function GET(req: NextRequest) {
   const auth = requireApiRole(req, ["ADMIN"]);
@@ -20,22 +41,7 @@ export async function GET(req: NextRequest) {
   try {
     const devices = await db.biometricDevice.findMany({
       orderBy: { lastSeenAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        serialNumber: true,
-        deviceType: true,
-        protocol: true,
-        ipAddress: true,
-        port: true,
-        location: true,
-        isActive: true,
-        lastSeenAt: true,
-        totalEvents: true,
-        failedEvents: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: { ...DEVICE_SELECT },
     });
     return ok({ devices });
   } catch (err) {
@@ -74,35 +80,48 @@ export async function POST(req: NextRequest) {
     return fail("Port must be between 1 and 65535.", 400);
   }
   try {
+    // Optional shared-secret provisioning. The plaintext secret is returned
+    // ONCE in this 201 response — it is stored hashed and never readable again.
+    // Omit both fields to keep the device in legacy (unprovisioned) mode.
+    let provisionedSecret: string | null = null;
+    let authSecretHash: string | undefined;
+    if (body.provisionSecret === true) {
+      provisionedSecret = generateDeviceSecret();
+      authSecretHash = hashDeviceSecret(provisionedSecret);
+    } else if (typeof body.authSecret === "string" && body.authSecret) {
+      if (body.authSecret.length < 16) {
+        return fail("authSecret must be at least 16 characters.", 400);
+      }
+      provisionedSecret = body.authSecret;
+      authSecretHash = hashDeviceSecret(provisionedSecret);
+    }
     const device = await db.biometricDevice.create({
       data: {
         name: String(body.name),
         serialNumber: String(body.serialNumber),
-        deviceType: typeof body.deviceType === "string" && body.deviceType ? body.deviceType : "X2000",
+        deviceType: typeof body.deviceType === "string" && body.deviceType ? String(body.deviceType) : "X2000",
         ipAddress: ipAddress || undefined,
         port: body.port === undefined ? undefined : port,
         protocol,
         location: String(body.location ?? ""),
         isActive: body.isActive !== false, // default true
+        ...(authSecretHash ? { authSecretHash } : {}),
       },
-      select: {
-        id: true,
-        name: true,
-        serialNumber: true,
-        deviceType: true,
-        protocol: true,
-        ipAddress: true,
-        port: true,
-        location: true,
-        isActive: true,
-        lastSeenAt: true,
-        totalEvents: true,
-        failedEvents: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: { ...DEVICE_SELECT },
     });
-    return ok({ item: device }, 201);
+    return ok(
+      {
+        item: device,
+        ...(provisionedSecret
+          ? {
+              provisionedSecret,
+              secretWarning:
+                "Copy this secret into the adms-bridge configuration NOW — it is never shown again.",
+            }
+          : { provisionedSecret: null }),
+      },
+      201
+    );
   } catch (err) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const error = err as any;

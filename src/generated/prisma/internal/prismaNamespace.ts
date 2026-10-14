@@ -423,7 +423,8 @@ export const ModelName = {
   Enquiry: 'Enquiry',
   Announcement: 'Announcement',
   BiometricDevice: 'BiometricDevice',
-  BiometricDeviceEvent: 'BiometricDeviceEvent'
+  BiometricDeviceEvent: 'BiometricDeviceEvent',
+  BiometricUserMap: 'BiometricUserMap'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -439,7 +440,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "enquiry" | "announcement" | "biometricDevice" | "biometricDeviceEvent"
+    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "enquiry" | "announcement" | "biometricDevice" | "biometricDeviceEvent" | "biometricUserMap"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2441,6 +2442,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BiometricUserMap: {
+      payload: Prisma.$BiometricUserMapPayload<ExtArgs>
+      fields: Prisma.BiometricUserMapFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BiometricUserMapFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BiometricUserMapFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>
+        }
+        findFirst: {
+          args: Prisma.BiometricUserMapFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BiometricUserMapFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>
+        }
+        findMany: {
+          args: Prisma.BiometricUserMapFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>[]
+        }
+        create: {
+          args: Prisma.BiometricUserMapCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>
+        }
+        createMany: {
+          args: Prisma.BiometricUserMapCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BiometricUserMapCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>[]
+        }
+        delete: {
+          args: Prisma.BiometricUserMapDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>
+        }
+        update: {
+          args: Prisma.BiometricUserMapUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>
+        }
+        deleteMany: {
+          args: Prisma.BiometricUserMapDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BiometricUserMapUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BiometricUserMapUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>[]
+        }
+        upsert: {
+          args: Prisma.BiometricUserMapUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BiometricUserMapPayload>
+        }
+        aggregate: {
+          args: Prisma.BiometricUserMapAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBiometricUserMap>
+        }
+        groupBy: {
+          args: Prisma.BiometricUserMapGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BiometricUserMapGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BiometricUserMapCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BiometricUserMapCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2984,6 +3059,9 @@ export const BiometricDeviceScalarFieldEnum = {
   location: 'location',
   isActive: 'isActive',
   lastSeenAt: 'lastSeenAt',
+  lastHeartbeatAt: 'lastHeartbeatAt',
+  lastError: 'lastError',
+  authSecretHash: 'authSecretHash',
   totalEvents: 'totalEvents',
   failedEvents: 'failedEvents',
   createdAt: 'createdAt',
@@ -3008,6 +3086,20 @@ export const BiometricDeviceEventScalarFieldEnum = {
 } as const
 
 export type BiometricDeviceEventScalarFieldEnum = (typeof BiometricDeviceEventScalarFieldEnum)[keyof typeof BiometricDeviceEventScalarFieldEnum]
+
+
+export const BiometricUserMapScalarFieldEnum = {
+  id: 'id',
+  deviceId: 'deviceId',
+  biometricUserId: 'biometricUserId',
+  userType: 'userType',
+  userId: 'userId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BiometricUserMapScalarFieldEnum = (typeof BiometricUserMapScalarFieldEnum)[keyof typeof BiometricUserMapScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -3469,6 +3561,20 @@ export type EnumEnquiryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
 export type ListEnumEnquiryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EnquiryStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'BiometricUserType'
+ */
+export type EnumBiometricUserTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BiometricUserType'>
+    
+
+
+/**
+ * Reference to a field of type 'BiometricUserType[]'
+ */
+export type ListEnumBiometricUserTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BiometricUserType[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -3647,6 +3753,7 @@ export type GlobalOmitConfig = {
   announcement?: Prisma.AnnouncementOmit
   biometricDevice?: Prisma.BiometricDeviceOmit
   biometricDeviceEvent?: Prisma.BiometricDeviceEventOmit
+  biometricUserMap?: Prisma.BiometricUserMapOmit
 }
 
 /* Types for Logging */

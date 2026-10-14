@@ -20,6 +20,8 @@ interface BiometricDeviceDetail {
   location: string | null;
   isActive: boolean;
   lastSeenAt: string | null;
+  lastHeartbeatAt: string | null;
+  lastError: string | null;
   totalEvents: number;
   failedEvents: number;
   createdAt: string;
@@ -36,6 +38,15 @@ interface DeviceEventRow {
   receivedAt: string;
 }
 
+interface MappingRow {
+  id: string;
+  biometricUserId: string;
+  userType: "STUDENT" | "FACULTY";
+  userId: string;
+  isActive: boolean;
+  label: string | null;
+}
+
 function healthStatus(lastSeenAt: string | null) {
   if (!lastSeenAt) return "NEVER CONNECTED";
   const diffHours = (new Date().getTime() - new Date(lastSeenAt).getTime()) / (1000 * 60 * 60);
@@ -49,13 +60,16 @@ function getTone(status: string) {
 }
 
 export default function BiometricDeviceDetailPage({
-  params,
-}: { params: Promise<{ id: string }> }) {
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string }>;
+}) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [device, setDevice] = useState<BiometricDeviceDetail | null>(null);
   const [events, setEvents] = useState<DeviceEventRow[]>([]);
-  const [mapping, setMapping] = useState<{ biometricUserId: string; userType: "student" | "faculty"; studentId: string; facultyId: string } | null>(null);
+  const [mappings, setMappings] = useState<MappingRow[]>([]);
+  const [form, setForm] = useState({ biometricUserId: "", userType: "STUDENT", userKey: "" });
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -66,65 +80,75 @@ export default function BiometricDeviceDetailPage({
       const json = await res.json().catch(() => null);
       if (res.ok && json?.success === true && json?.data?.device) {
         setDevice(json.data.device as BiometricDeviceDetail);
+      } else {
+        setErr(json?.error ?? "Device not found.");
       }
     } catch {
       setErr("Cannot load device details.");
     }
-    setReady(true);
   };
 
   const loadEvents = async (id: string) => {
     try {
       const res = await fetch(`/api/biometric/${id}/events`, { cache: "no-store" });
       const json = await res.json().catch(() => null);
-      if (res.ok && json?.success === true && Array.isArray(json?.events)) {
-        setEvents(json.events as DeviceEventRow[]);
+      if (res.ok && json?.success === true && Array.isArray(json?.data?.events)) {
+        setEvents(json.data.events as DeviceEventRow[]);
       }
     } catch {
       setErr("Cannot load device events.");
     }
   };
 
+  const loadMappings = async (id: string) => {
+    try {
+      const res = await fetch(`/api/biometric/devices/${id}/mappings`, { cache: "no-store" });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success === true && Array.isArray(json?.data?.mappings)) {
+        setMappings(json.data.mappings as MappingRow[]);
+      }
+    } catch {
+      /* mappings list is auxiliary; device view must still render */
+    }
+  };
+
   useEffect(() => {
     let live = true;
     (async () => {
-      const p = await params;
+      const sp = await searchParams;
       if (!live) return;
-      await loadDevice(p.id);
-      await loadEvents(p.id);
+      if (!sp.id) {
+        setErr("No device selected. Open a device from Biometric Devices.");
+        setReady(true);
+        return;
+      }
+      await loadDevice(sp.id);
+      await loadEvents(sp.id);
+      await loadMappings(sp.id);
       if (live) setReady(true);
     })();
     return () => {
       live = false;
     };
-  }, [params]);
+  }, [searchParams]);
 
-  const openMappingForm = (biometricUserId: string) => {
-    setMapping({
-      biometricUserId,
-      userType: "student",
-      studentId: "",
-      facultyId: "",
-    });
-  };
-
-  const closeMappingForm = () => {
-    setMapping(null);
-    setErr(null);
-  };
-
-  const saveMapping = async () => {
-    if (!mapping || !device) return;
+  const createMapping = async () => {
+    if (!device) return;
+    if (!form.biometricUserId.trim() || !form.userKey.trim()) {
+      setErr("Enter both the biometric User ID and the Student/Faculty ID or email.");
+      return;
+    }
     setBusy(true);
     setErr(null);
+    setSaved(null);
     try {
-      const res = await fetch("/api/biometric/mapping", {
+      const res = await fetch(`/api/biometric/devices/${device.id}/mappings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          biometricUserId: mapping.biometricUserId,
-          userType: mapping.userType,
-          userId: mapping.userType === "student" ? mapping.studentId || "" : mapping.facultyId || "",
+          biometricUserId: form.biometricUserId.trim(),
+          userType: form.userType,
+          userKey: form.userKey.trim(),
         }),
       });
       const json = await res.json().catch(() => null);
@@ -132,11 +156,83 @@ export default function BiometricDeviceDetailPage({
         setErr(json?.error ?? "Mapping failed.");
         return;
       }
-      setSaved(`Mapped ${mapping.biometricUserId} to ${mapping.userType}.`);
-      await loadEvents(device.id);
-      setBusy(false);
+      setSaved(`Mapped ${form.biometricUserId.trim()} → ${json?.data?.label ?? form.userKey.trim()}.`);
+      setForm({ biometricUserId: "", userType: "STUDENT", userKey: "" });
+      await loadMappings(device.id);
     } catch {
       setErr("Cannot reach the server.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggleMapping = async (m: MappingRow) => {
+    if (!device) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      const res = await fetch(`/api/biometric/devices/${device.id}/mappings/${m.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !m.isActive }),
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || json?.success !== true) {
+        setErr(json?.error ?? "Mapping update failed.");
+        return;
+      }
+      setSaved(m.isActive ? "Mapping disabled." : "Mapping enabled.");
+      await loadMappings(device.id);
+    } catch {
+      setErr("Cannot reach the server.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const deleteMapping = async (m: MappingRow) => {
+    if (!device) return;
+    if (!confirm(`Remove mapping ${m.biometricUserId} → ${m.label ?? m.userId}?`)) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      const res = await fetch(`/api/biometric/devices/${device.id}/mappings/${m.id}`, { method: "DELETE" });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || json?.success !== true) {
+        setErr(json?.error ?? "Mapping delete failed.");
+        return;
+      }
+      setSaved("Mapping removed.");
+      await loadMappings(device.id);
+    } catch {
+      setErr("Cannot reach the server.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const rotateSecret = async () => {
+    if (!device) return;
+    if (!confirm("Rotate the bridge secret? The current secret stops working immediately.")) return;
+    setBusy(true);
+    setErr(null);
+    setSaved(null);
+    try {
+      const res = await fetch(`/api/biometric/devices/${device.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rotateSecret: true }),
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || json?.success !== true) {
+        setErr(json?.error ?? "Secret rotation failed.");
+        return;
+      }
+      const secret = json?.data?.provisionedSecret as string | undefined;
+      setSaved(secret ? `New bridge secret (copy NOW — never shown again): ${secret}` : "Secret rotated.");
+    } catch {
+      setErr("Cannot reach the server.");
+    } finally {
       setBusy(false);
     }
   };
@@ -145,9 +241,21 @@ export default function BiometricDeviceDetailPage({
     return (
       <AdminLayout title="Biometric Device" subtitle="Device details">
         <Eye className="h-6 w-6" /> <span className="ml-2">Loading device details…</span>
+        {err ? (
+          <p className="mt-3 rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson-600" role="alert">
+            {err}
+          </p>
+        ) : null}
+        <div className="mt-3">
+          <Button onClick={() => router.push("/admin/biometric-devices")} className="rounded-xl border border-silver-300 px-4 py-2.5 text-[13px] font-bold text-navy-700">
+            Back to Devices
+          </Button>
+        </div>
       </AdminLayout>
     );
   }
+
+  const inputCls = "mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500";
 
   return (
     <AdminLayout title="Biometric Device" subtitle={`Device: ${device.name}`}>
@@ -165,7 +273,7 @@ export default function BiometricDeviceDetailPage({
         </p>
       ) : null}
       {saved ? (
-        <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-600">
+        <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-600 break-all">
           {saved}
         </p>
       ) : null}
@@ -206,9 +314,23 @@ export default function BiometricDeviceDetailPage({
               </p>
             </div>
             <div>
-              <p className="text-[11px] font-bold tracking-widest text-muted">Created</p>
-              <p className="text-lg text-silver-300">{new Date(device.createdAt).toLocaleDateString()}</p>
+              <p className="text-[11px] font-bold tracking-widest text-muted">Last Heartbeat</p>
+              <p className="text-lg text-silver-300">
+                {device?.lastHeartbeatAt ? new Date(device.lastHeartbeatAt).toLocaleString() : "Never"}
+              </p>
             </div>
+          </div>
+
+          {device?.lastError ? (
+            <p className="mt-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-[12px] font-bold text-amber-800" role="note">
+              Last error: {device.lastError}
+            </p>
+          ) : null}
+
+          <div className="mt-3">
+            <Button onClick={rotateSecret} disabled={busy} className="rounded-xl border border-navy-700 px-4 py-2.5 text-[13px] font-bold text-navy-700 hover:bg-navy-800 hover:text-white disabled:opacity-50">
+              Rotate Bridge Secret
+            </Button>
           </div>
         </div>
 
@@ -241,6 +363,10 @@ export default function BiometricDeviceDetailPage({
               <p className="text-lg font-medium text-navy-700">{device?.location || "—"}</p>
             </div>
           </div>
+          <p className="mt-3 text-[12px] text-muted">
+            Push target for the K90: the VPS bridge on port 8787 (see deployment notes in the biometric status file).
+            When IP allowlist is set, only that source IP is accepted.
+          </p>
         </div>
 
         {/* Recent Events */}
@@ -263,7 +389,7 @@ export default function BiometricDeviceDetailPage({
               <tbody>
                 {events.map((e) => (
                   <tr key={e.id} className="border-b hover:bg-silver-50">
-                    <td className="p-4">{e.eventTimestamp}</td>
+                    <td className="p-4">{new Date(e.eventTimestamp).toLocaleString()}</td>
                     <td className="p-4 font-medium text-navy-700">{e.biometricUserId}</td>
                     <td className="p-4">{e.eventType}</td>
                     <td className="p-4">
@@ -277,9 +403,7 @@ export default function BiometricDeviceDetailPage({
                     </td>
                     <td className="p-4">
                       {e.attendanceId ? (
-                        <a href="#" onClick={() => console.log("Attendance:", e.attendanceId)} className="underline text-navy-700 text-[10px]">
-                          {e.attendanceId.substring(0, 8)}…
-                        </a>
+                        <span className="text-navy-700 text-[10px]">{e.attendanceId.substring(0, 8)}…</span>
                       ) : (
                         <span className="text-[10px] text-silver-500">—</span>
                       )}
@@ -299,60 +423,83 @@ export default function BiometricDeviceDetailPage({
           </h3>
 
           <p className="text-[11px] text-silver-500 mb-4">
-            Map a biometric User ID to a Student or Faculty member. Attendance will
-            be created when the device event is processed with a recognized user.
+            Bind a device enrollment ID (the PIN the K90 sends) to a Student or Faculty record.
+            Student punches create attendance; faculty presence is audit-logged only.
           </p>
 
-{mapping ? (
-            <>
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div>
-                  <label className="block text-[11px] font-bold text-navy-700">
-                    Biometric User ID
-                    <span className="text-[10px] text-silver-500">{mapping.biometricUserId}</span>
-                  </label>
-                  <p className="mt-1 text-[10px] text-silver-500">
-                    {mapping.userType === "student" ? "→ Student" : "→ Faculty"}
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-navy-700">
-                    Target ID
-                    <span className="text-[10px] text-silver-500">
-                      {mapping.userType === "student" ? mapping.studentId || "—" : mapping.facultyId || "—"}
-                    </span>
-                  </label>
-                </div>
-              </div>
-              <Button
-                onClick={() => closeMappingForm()}
-                className="w-full rounded-xl border border-silver-300 px-4 py-2.5 text-[13px] font-bold text-navy-700 hover:bg-silver-100">
-                Cancel
-              </Button>
-              <Button
-                onClick={() => saveMapping()}
-                disabled={busy}
-                className="w-full rounded-xl bg-navy-700 px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-navy-800">
-                {busy ? (
-                  <span>
-                    <span className="h-4 w-4 animate-spin" />
-                    Saving…
-                  </span>
-                ) : "Map User"}
-              </Button>
-            </>
+          {mappings.length > 0 ? (
+            <table className="mb-4 w-full rounded-card border border-silver-200 bg-white">
+              <thead>
+                <tr className="text-xs text-silver-500">
+                  <th className="p-3 text-left">Device ID</th>
+                  <th className="p-3 text-left">Mapped To</th>
+                  <th className="p-3 text-left">Status</th>
+                  <th className="p-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mappings.map((m) => (
+                  <tr key={m.id} className="border-b hover:bg-silver-50">
+                    <td className="p-3 font-medium text-navy-700">{m.biometricUserId}</td>
+                    <td className="p-3 text-[12px]">{m.label ?? `${m.userType} ${m.userId.substring(0, 8)}…`}</td>
+                    <td className="p-3">
+                      <span className={cn("px-2 py-1 rounded text-[10px] font-bold", m.isActive ? "text-teal-600" : "text-silver-500")}>
+                        {m.isActive ? "Active" : "Disabled"}
+                      </span>
+                    </td>
+                    <td className="p-3 text-right">
+                      <button onClick={() => toggleMapping(m)} disabled={busy} className="mr-2 rounded-lg border border-silver-300 px-2.5 py-1.5 text-[11px] font-bold text-navy-700 hover:border-teal-500 disabled:opacity-50">
+                        {m.isActive ? "Disable" : "Enable"}
+                      </button>
+                      <button onClick={() => deleteMapping(m)} disabled={busy} className="rounded-lg border border-silver-300 px-2.5 py-1.5 text-[11px] font-bold text-crimson-600 hover:border-crimson-500 disabled:opacity-50">
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
-            <div>
-              <p className="text-[11px] text-silver-500 mb-3">
-                Enter a biometric User ID to map it to a Student or Faculty member.
-              </p>
-              <Button
-                onClick={() => openMappingForm("")}
-                className="w-full rounded-xl border border-navy-700 px-4 py-2.5 text-[13px] font-bold text-navy-700 hover:bg-navy-800">
-                Map Biometric User
-              </Button>
-            </div>
+            <p className="mb-4 text-[12px] text-silver-500">No mappings yet — unmapped punches are preserved as unprocessed audit events.</p>
           )}
+
+          <div className="grid gap-3 rounded-xl bg-silver-50 p-4 sm:grid-cols-3">
+            <label className="block text-[11px] font-bold text-navy-700">
+              Biometric User ID (device PIN)
+              <input
+                value={form.biometricUserId}
+                onChange={(e) => setForm((f) => ({ ...f, biometricUserId: e.target.value }))}
+                placeholder="e.g. 1042"
+                className={inputCls}
+              />
+            </label>
+            <label className="block text-[11px] font-bold text-navy-700">
+              Record Type
+              <select
+                value={form.userType}
+                onChange={(e) => setForm((f) => ({ ...f, userType: e.target.value }))}
+                className={inputCls}
+              >
+                <option value="STUDENT">Student</option>
+                <option value="FACULTY">Faculty</option>
+              </select>
+            </label>
+            <label className="block text-[11px] font-bold text-navy-700">
+              Student/Faculty ID or Email
+              <input
+                value={form.userKey}
+                onChange={(e) => setForm((f) => ({ ...f, userKey: e.target.value }))}
+                placeholder="e.g. NA-2026-001"
+                className={inputCls}
+              />
+            </label>
+          </div>
+          <Button
+            onClick={createMapping}
+            disabled={busy}
+            className="mt-3 w-full rounded-xl bg-navy-700 px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">
+            {busy ? "Saving…" : "Map User"}
+          </Button>
         </div>
       </div>
     </AdminLayout>

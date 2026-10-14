@@ -1,7 +1,6 @@
-// Phase 3 — Auth status endpoint (demo mode).
-// The current demo login (lib/adminAuth.ts, localStorage) is UNCHANGED.
-// TODO production auth: POST credentials → verify bcrypt hash → httpOnly
-// session/JWT; middleware guards /admin/* by role (ADMIN/FACULTY/STUDENT).
+// Auth status endpoint.
+// Production auth lives in app/api/auth/*/login|register + lib/session.ts
+// (HMAC cookie) + lib/server-auth.ts, guarded by edge middleware.
 
 import { ok } from "@/lib/api-response";
 import { isDbConfigured } from "@/lib/prisma";

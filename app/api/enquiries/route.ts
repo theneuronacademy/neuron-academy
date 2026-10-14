@@ -1,6 +1,6 @@
 // Phase 3 — Enquiries API. Website contact form posts here when DB is live.
 // Demo fallback when DATABASE_URL is missing.
-// TODO auth: status changes need ADMIN role once the session layer lands.
+// Status changes enforce ADMIN role via requireApiRole (lib/server-auth.ts).
 
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";

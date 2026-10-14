@@ -1,5 +1,5 @@
 // Phase 3 — Faculty detail API.
-// TODO auth: enforce ADMIN role once the session layer lands.
+// Writes enforce ADMIN role via requireApiRole (lib/server-auth.ts).
 
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";

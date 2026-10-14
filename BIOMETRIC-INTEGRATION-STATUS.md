@@ -29,23 +29,26 @@
 #### ✅ Completed
 - **BiometricDevice model** - Prisma schema with device registration, health tracking, event counters
 - **BiometricDeviceEvent model** - Audit log with payloadHash for idempotency, processed flag, attendance linkage
+- **BiometricUserMap model** - Persistent enrollment binding (deviceId + PIN → Student/Faculty), migration `20261014000000_biometric_usermap_auth` authored (apply via `db:deploy` at release; code degrades gracefully pre-migration)
+- **Device auth framework** - Per-device shared secret (SHA-256 hash stored, plaintext shown once), constant-time compare, legacy-mode flagging until provisioned
+- **Device health fields** - `lastHeartbeatAt`, `lastError` alongside `lastSeenAt`/counters
 - **Attendance model** - Supports `source=BIOMETRIC`, `deviceId`, `checkIn`/`checkOut`, deduplication via `@@unique([studentId, date])`
-- **Device Admin API** (`/api/biometric/devices`) - CRUD for device registration (admin-only)
-- **Event Ingestion Endpoint** (`POST /api/biometric/[deviceId]/events`) - Internal canonical model ready
-- **Event History Endpoint** (`GET /api/biometric/[deviceId]/events`) - Recent events with attendance linkage
-- **Admin UI** - Device list, details, health, config, events, mapping UI
-- **Mapping UI** - BiometricUserId → Student/Faculty assignment (stored as BiometricDeviceEvent for now)
-- **Capture Listener** - Standalone Node.js server for safe physical traffic capture
-- **Admin API Service** - Device CRUD, event fetching, mapping creation
-- **Schema Validation** - Prisma schema valid, migrations applied
-- **All Regression Checks Pass** - lint, security, runtime, storage, build
+- **Device Admin API** (`/api/biometric/devices`) - CRUD for device registration (admin-only), secret provision/rotation, secrets never selected
+- **Mapping Admin APIs** (`/api/biometric/devices/[id]/mappings`, `.../[mappingId]`) - persistent create/toggle/delete with server-side record resolution
+- **Canonical ingestion** (`POST /api/biometric/[deviceId]/events`) - bearer auth, mapping-first resolve, heartbeat handling, batchless/non-student guards, ABSENT-trigger parity, raw-body 422 guidance
+- **ADMS wire receiver** (`/api/biometric/adms` + `/iclock/*` rewrite) - SN identification, IP allowlist, registration handshake, ATTLOG ingest, always-OK reply semantics; tolerant parser per the documented iClock PUSH family (firmware confirmation pending one live capture)
+- **Shared pipeline** (`lib/biometric-ingest.ts` + `lib/adms.ts`) - single semantics for both entries (no parallel system)
+- **Production bridge** (`adms-bridge.js`) - VPS :8787 listener → canonical forward with retries, health endpoint
+- **Admin UI** - Device list (working add form), detail view (health, last error, secret rotation, events, persistent mappings)
+- **Mocked regression suite** - `npm run biometric:check` (94 checks, no DB needed)
+- **Schema Validation** - Prisma schema valid, clients regenerated, migrations authored (not applied here)
+- **All Regression Checks Pass** - lint clean, build success, all existing suites green
 
-#### ⚠️ In Progress / Pending
-- **BiometricUserMap Model** - Not yet added to schema (design documented, migration pending)
-- **Persistent Mapping API** - Uses BiometricDeviceEvent as temporary store; dedicated table pending
-- **Device Authentication** - **DEVICE_AUTH_GAP**: Current endpoint only validates deviceId + isActive; no cryptographic auth
-- **Physical Traffic Capture** - **PENDING** - Requires VPS deployment + physical device reconfiguration
-- **Actual ADMS Protocol** - **UNKNOWN** - No live traffic captured yet
+#### ⚠️ Remaining (hardware/network-dependent only)
+- **Firmware confirmation capture** - One live K90 capture to confirm exact paths/params/response expectations (receiver is tolerant by design; see "Real-punch test" below)
+- **Secret provisioning** - Provision per-device secrets at deployment (one admin action per device)
+- **VPS bridge deployment** - Bridge host + port 8787 + forwarding config (procedure below)
+- **Production migration apply** - `20261014000000_biometric_usermap_auth` via `db:deploy` at release (standard procedure, see PRISMA_MIGRATIONS.md)
 
 ---
 
@@ -127,15 +130,60 @@ enum UserType {
 | Admin-only device management | ✅ |
 | Device event endpoint deviceId validation | ✅ |
 | Device active status check | ✅ |
+| Per-device shared secret (constant-time, hashed) | ✅ framework (provision at deploy) |
+| IP allowlist on ADMS pushes (when configured) | ✅ |
 | Idempotency (payloadHash SHA-256) | ✅ |
 | Unknown user audit preservation | ✅ |
-| **Device cryptographic authentication** | ❌ **MISSING** (DEVICE_AUTH_GAP) |
+| **Firmware-specific protocol confirmation** | ⚠️ Tolerant receiver live; one capture still required |
 | **Replay protection** | ⚠️ Partial (idempotency only) |
 | Device credentials server-side only | ✅ |
 | IDOR protection | ✅ |
 | No secrets in logs | ✅ |
 
-**DEVICE_AUTH_GAP:** Current ingestion endpoint only validates deviceId + isActive. No cryptographic authentication implemented. Physical device authentication mechanism UNKNOWN pending capture.
+**DEVICE_AUTH_GAP → narrowed:** canonical ingestion now enforces an optional
+per-device bearer secret; unprovisioned devices are accepted in flagged
+legacy mode. Raw ADMS pushes authenticate by network identity (SN +
+optional IP allowlist) — the protocol family defines no stronger mechanism,
+so the bridge (bearer secret to Next.js) is the trusted path.
+
+---
+
+## Network evidence (2026-10-14)
+
+- `52.74.152.9:8787` — **TCP connect SUCCEEDS** (PowerShell
+  Test-NetConnection, TcpTestSucceeded=True; ICMP ping blocked, normal for
+  AWS). Something is listening there. Its software identity is UNKNOWN —
+  do NOT assume it is ours, and do NOT point the device away from it without
+  authorization. It is most likely the previous vendor's ADMS server.
+- Vercel cannot listen on arbitrary TCP ports — the VPS bridge is therefore
+  mandatory for device pushes, regardless of the above.
+
+---
+
+## VPS bridge deployment (production path)
+
+1. Provision a host with a public IP; open TCP 8787 inbound.
+2. Copy `adms-bridge.js` (dependency-free, Node 20+). No `npm install` needed.
+3. Register the K90 in Admin → Biometric Devices (provision secret, copy once).
+4. Run: `PORT=8787 NEXT_API_URL=https://<next-host> DEVICE_ID=<cuid> DEVICE_SECRET=<secret> node adms-bridge.js`
+   (multi-device: `BRIDGE_DEVICES_JSON` instead; keep under a process manager.)
+5. Verify: `GET http://<vps>:8787/healthz` → counters JSON.
+6. Apply the migration at release: `npm run db:deploy` (standard procedure).
+
+---
+
+## Real-punch test (exact instructions, K90 Pro)
+
+Prerequisites: bridge running (above), device mapped (Admin → device →
+mapping PIN → Student ID), student has an assigned batch.
+
+1. **Backup** current K90 config (server=52.74.152.9:8787, Domain=OFF, Proxy=OFF).
+2. Point the K90 server to the VPS IP:8787 (Menu → Comm → Server Setting).
+3. Wait 1–5 min for registration (`/healthz` registrations counter + device Last Heartbeat in admin).
+4. Enroll/scan ONE test fingerprint (note the enrollment PIN, e.g. 1042).
+5. Confirm in Admin → device → Recent Events: event row PROCESSED=Yes with attendance link; check `/admin/attendance` for the BIOMETRIC row.
+6. Scan the SAME finger again → duplicate counter path (no second attendance row).
+7. Restore the device to 52.74.152.9:8787. Report the capture/bridge log only (no secrets).
 
 ---
 
@@ -143,37 +191,44 @@ enum UserType {
 
 | Blocker | Severity | Resolution |
 |---------|----------|------------|
-| **ADMS_PROTOCOL_UNKNOWN** | 🔴 CRITICAL | Capture live traffic with listener |
-| **DEVICE_AUTH_GAP** | 🔴 CRITICAL | Implement protocol-specific auth after capture |
-| **Port 8787 / Vercel incompatibility** | 🟡 HIGH | Deploy VPS + reverse proxy |
-| **Persistent mapping table missing** | 🟡 HIGH | Create BiometricUserMap migration |
-| **No protocol documentation** | 🟡 HIGH | Capture + analyze live traffic |
-| Pre-existing build error (`testimonials/page.tsx`) | 🟢 LOW | Fixed in this PR |
+| **Firmware confirmation capture** | 🟡 MEDIUM | One live capture; receiver is tolerant, not blocked |
+| **Secret provisioning** | 🟡 MEDIUM | One admin action per device at deploy |
+| **VPS bridge deployment** | 🟡 MEDIUM | Host + :8787 + env config (procedure above) |
+| **Migration apply at release** | 🟢 LOW | Standard `db:deploy` (code degrades gracefully until then) |
+| **Port 8787 / Vercel incompatibility** | 🟢 RESOLVED | Bridge architecture (this change set) |
+| **Persistent mapping table** | 🟢 RESOLVED | `BiometricUserMap` + admin APIs (this change set) |
+| **Broken device detail + dead Add button** | 🟢 RESOLVED | searchParams routing + working forms (this change set) |
+| **Missing mapping endpoint** | 🟢 RESOLVED | Persistent CRUD APIs (this change set) |
 
 ---
 
-## Regression Checks (All Pass)
+## Regression Checks (2026-10-14, all PASS)
 
 | Check | Status |
 |-------|--------|
-| `npx prisma generate` | ✅ |
-| `npx prisma validate` | ✅ |
-| `npm run lint` | ⚠️ Pre-existing errors only (testimonials, announcements, etc.) |
+| `npx prisma validate` | ✅ valid |
+| `npx prisma generate` | ✅ both clients |
+| `npm run biometric:check` | ✅ 94 passed (new mocked suite) |
+| `npm run lint` | ✅ 0 errors, 0 warnings |
+| `npm run build` | ✅ |
 | `npm run security:check` | ✅ 97 passed |
 | `npm run runtime:check` | ✅ 36 passed |
-| `npm run storage:check` | ✅ 48 passed |
-| `npm run build` | ✅ Compiles (pre-existing lint errors only) |
+| `npm run storage:check` | ✅ 59 passed |
+| `npm run faculty:check` | ✅ 43 passed |
+| `npm run admin:check` | ✅ 114 passed |
+| `npm run student:check` | ✅ 74 passed |
+| `npm run notification:check` | ✅ 234 passed |
+| `npm run attempt:check` | ✅ 53 passed |
+| `npm run website:check` | ✅ 71 passed |
+| `npm run otp:check` | ✅ 63 passed |
 
 ---
 
 ## Git Status
 
-```
-Modified:
-  - app/admin/biometric-devices/page.tsx
-  - app/admin/website/testimonials/page.tsx (build fix)
-  - app/api/biometric/events/route.ts
-  - app/faculty/dashboard/page.tsx (import fix)
+Working tree contains this change set, uncommitted (commit only on
+explicit approval). No `.env` values read or changed, no database
+operations performed, nothing deployed or pushed.
   - app/globals.css (comment fix)
   - prisma/schema.prisma
 
@@ -186,12 +241,19 @@ Untracked (Capture Infrastructure):
 
 ---
 
-## Commit Information
+## Change Record (uncommitted — approval required)
 
-**Ready for commit:**
-```bash
-git add app/admin/biometric-devices/page.tsx app/admin/website/testimonials/page.tsx app/api/biometric/events/route.ts app/faculty/dashboard/page.tsx app/globals.css prisma/schema.prisma ADMS-CAPTURE-README.md adms-capture-listener.js package-capture.json
-git commit -m "feat(biometric): fix build, harden architecture, add capture listener"
-```
+Files added: `lib/adms.ts`, `lib/biometric-ingest.ts`,
+`app/api/biometric/adms/route.ts`,
+`app/api/biometric/devices/[id]/mappings/route.ts`,
+`app/api/biometric/devices/[id]/mappings/[mappingId]/route.ts`,
+`adms-bridge.js`, `scripts/biometric-check.ts`,
+`prisma/migrations/20261014000000_biometric_usermap_auth/migration.sql`.
+Files modified: `prisma/schema.prisma`, `package.json`, `next.config.mjs`,
+`app/api/biometric/[deviceId]/events/route.ts`,
+`app/api/biometric/devices/route.ts`,
+`app/api/biometric/devices/[id]/route.ts`,
+`app/admin/biometric-devices/page.tsx`,
+`app/admin/biometric-device/page.tsx`, this status file.
 
-**DO NOT PUSH. DO NOT TAG.**
+**DO NOT PUSH. DO NOT TAG. DO NOT DEPLOY without approval.**

@@ -152,3 +152,8 @@ export type BiometricDevice = Prisma.BiometricDeviceModel
  * 
  */
 export type BiometricDeviceEvent = Prisma.BiometricDeviceEventModel
+/**
+ * Model BiometricUserMap
+ * 
+ */
+export type BiometricUserMap = Prisma.BiometricUserMapModel
