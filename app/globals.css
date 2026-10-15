@@ -374,6 +374,10 @@ label {
 @keyframes spin360 {
   to { transform: rotate(360deg); }
 }
+@keyframes wave-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
 @keyframes confetti-fly {
   0% { transform: translate(0, 0) scale(0.4) rotate(0deg); opacity: 1; }
   100% { transform: translate(var(--dx, 0px), var(--dy, -80px)) scale(1.15) rotate(260deg); opacity: 0; }
@@ -476,6 +480,11 @@ label {
 /* Slow-spinning badge for loud circular stickers */
 .animate-spin-slower {
   animation: spin360 16s linear infinite;
+}
+
+/* Drifting wave ribbons (motion.tsx WaveDivider) */
+.wave-divider .wave-a {
+  animation: wave-drift 9s linear infinite;
 }
 
 /* ==========================================================================

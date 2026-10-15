@@ -24,7 +24,7 @@ import { FacultyDetails } from "@/components/website/FacultyDetails";
 import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
-import { Reveal, Marquee, Tilt, FloatingEmojis, ConfettiBurst } from "@/components/website/motion";
+import { Reveal, Marquee, Tilt, FloatingEmojis, ConfettiBurst, ScrollProgress, WaveDivider, BackToTop } from "@/components/website/motion";
 import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
 import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
@@ -42,6 +42,16 @@ const TRUST = [
   { icon: Target, title: "📊 Performance Tracking", desc: "Marks, attendance & growth in one place." },
   { icon: MonitorPlay, title: "💻 Digital Test Platform", desc: "Live tests, instant results, analysis." },
 ];
+
+/** Each WHY card gets its own colour story + motion personality. */
+const WHY_THEMES = [
+  { bg: "from-navy-800 via-navy-700 to-teal-700", chip: "animate-heartbeat", mark: "🎯", reveal: "pop" },
+  { bg: "from-rose-700 via-crimson to-orange-600", chip: "animate-bounce-soft", mark: "👥", reveal: "zoom" },
+  { bg: "from-amber-500 via-orange-500 to-red-500", chip: "animate-wiggle", mark: "📝", reveal: "left" },
+  { bg: "from-violet-700 via-purple-600 to-fuchsia-500", chip: "animate-float", mark: "💡", reveal: "right" },
+  { bg: "from-emerald-600 via-teal-600 to-cyan-600", chip: "animate-blink", mark: "📊", reveal: "up" },
+  { bg: "from-indigo-700 via-blue-600 to-sky-500", chip: "animate-spin-slower", mark: "💻", reveal: "fade" },
+] as const;
 
 const WHY = [
   { t: "🎯 Entrance Specialists", d: "Not a generic tuition — every batch is engineered around JEE, NEET, AMU or Jamia patterns." },
@@ -287,10 +297,12 @@ export default function HomePage() {
   const courses = courseCat === "All" ? courseList : courseList.filter((c) => c.category === courseCat);
   return (
     <div className="min-h-screen overflow-x-clip bg-background">
+      <ScrollProgress />
       <AnnouncementBar />
       <Navbar />
       <SocialSidebar />
       <EnquireFloat />
+      <BackToTop />
       <AdvertisementPopup />
 
       <main>
@@ -331,7 +343,7 @@ export default function HomePage() {
           <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
-              <div className="premium-ring relative min-h-[380px] overflow-hidden rounded-card-lg">
+              <div className="conic-ring premium-ring relative min-h-[380px] overflow-hidden rounded-card-lg">
                 <SmartImage
                   src={SITE_PHOTOS.about}
                   alt="Neuron Academy campus, Shaheen Bagh"
@@ -347,8 +359,12 @@ export default function HomePage() {
                   }
                 />
                 <span className="animate-float absolute bottom-4 left-4 rounded-2xl border border-white/25 bg-navy-800/80 px-4 py-2.5 backdrop-blur">
-                  <span className="block text-lg font-extrabold text-white">Shaheen Bagh</span>
+                  <span className="block text-lg font-extrabold text-white">📍 Shaheen Bagh</span>
                   <span className="block text-[10px] font-bold tracking-widest text-teal-300">NEW DELHI • ENTRANCE FOCUS</span>
+                </span>
+                <span className="animate-wiggle absolute right-4 top-4 rotate-6 rounded-2xl border border-amber-300/60 bg-gradient-to-br from-amber-400 to-orange-500 px-4 py-2.5 text-center shadow-card">
+                  <span className="block text-xl">🎓</span>
+                  <span className="block text-[10px] font-extrabold tracking-widest text-white">ADMISSIONS OPEN</span>
                 </span>
               </div>
             </Reveal>
@@ -378,18 +394,26 @@ export default function HomePage() {
               <SectionHeader eyebrow="💖 WHY NEURON" title="Why Shaheen Bagh Chooses Neuron Academy ✨" desc="Entrance specialists — not a generic tuition centre. 🧠" />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {WHY.map((w, i) => (
-                <Reveal key={w.t} delay={(i % 3) * 90}>
-                  <Tilt max={8}>
-                    <div className={i === 0 ? "conic-ring card-lift relative h-full overflow-hidden rounded-card bg-gradient-to-br from-navy-800 via-navy-700 to-teal-700 p-6 text-white shadow-card" : "card-lift premium-ring h-full rounded-card bg-white p-6"}>
-                      {i === 0 ? <FloatingEmojis emojis={["🧠", "⚡", "✨"]} count={4} /> : null}
-                      <span className="bg-gradient-to-r from-teal-500 to-amber-400 bg-clip-text text-[12px] font-extrabold tracking-[0.18em] text-transparent">0{i + 1}</span>
-                      <p className={`mt-1 text-[16px] font-extrabold tracking-tight ${i === 0 ? "text-white" : "text-navy-700"}`}>{w.t}</p>
-                      <p className={`mt-1.5 text-[13.5px] leading-relaxed ${i === 0 ? "text-silver-200" : "text-muted"}`}>{w.d}</p>
-                    </div>
-                  </Tilt>
-                </Reveal>
-              ))}
+              {WHY.map((w, i) => {
+                const theme = WHY_THEMES[i % WHY_THEMES.length];
+                return (
+                  <Reveal key={w.t} delay={(i % 3) * 90} variant={theme.reveal}>
+                    <Tilt max={10}>
+                      <div className={`shine-sweep card-lift group relative h-full overflow-hidden rounded-card bg-gradient-to-br p-6 text-white shadow-card ${theme.bg}`}>
+                        <span className={`absolute right-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-2xl ring-1 ring-white/30 backdrop-blur transition group-hover:scale-125 ${theme.chip}`} aria-hidden>
+                          {theme.mark}
+                        </span>
+                        <span className="pointer-events-none absolute -bottom-6 -right-2 select-none text-[92px] leading-none opacity-15 transition duration-500 group-hover:scale-110 group-hover:opacity-30" aria-hidden>
+                          {theme.mark}
+                        </span>
+                        <span className="bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text text-[12px] font-extrabold tracking-[0.18em] text-transparent">0{i + 1}</span>
+                        <p className="mt-1 text-[16px] font-extrabold tracking-tight text-white">{w.t}</p>
+                        <p className="mt-1.5 text-[13.5px] leading-relaxed text-white/85">{w.d}</p>
+                      </div>
+                    </Tilt>
+                  </Reveal>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -442,6 +466,8 @@ export default function HomePage() {
         {/* LOUD TAGLINE TAPE */}
         <div className="overflow-hidden border-y-4 border-double border-amber-300 bg-gradient-to-r from-navy-800 via-teal-600 to-navy-800 py-2.5">
           <Marquee
+            reverse
+            speed={20}
             items={["🧠 ACTIVATE YOUR NEURONs ⚡", "🚀 JEE • NEET • AMU • JAMIA 🎯", "📝 WEEKLY MOCKS + RANKS 🏆", "💡 DOUBT LOUNGE TILL 8 PM ✨"]}
             className="text-white"
             itemClassName="text-white"
@@ -469,6 +495,7 @@ export default function HomePage() {
         </section>
 
         {/* RESULTS — cinematic toppers wall */}
+        <WaveDivider className="bg-white text-navy-800" />
         <section id="results" className="metallic-dark relative overflow-hidden">
           <div className="animate-float-slow pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
           <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
@@ -515,6 +542,7 @@ export default function HomePage() {
         </section>
 
         {/* TESTIMONIALS */}
+        <WaveDivider flip className="bg-background text-navy-800" />
         <section className="relative overflow-hidden bg-background">
           <div className="pointer-events-none absolute -left-20 top-10 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-4 py-20 sm:px-6">
@@ -611,7 +639,8 @@ export default function HomePage() {
 
         {/* CONTACT */}
         <section id="contact" className="relative overflow-hidden bg-background">
-          <div className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
+          <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
+          <FloatingEmojis emojis={["📞", "💬", "📍", "✨"]} count={6} />
           <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
@@ -654,6 +683,7 @@ export default function HomePage() {
 
         {/* ADMISSION */}
         <section className="relative overflow-hidden bg-white">
+          <FloatingEmojis emojis={["🎯", "🚀", "🎓", "⭐"]} count={7} />
           <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
@@ -689,6 +719,7 @@ export default function HomePage() {
         </section>
 
         {/* FINAL CTA */}
+        <WaveDivider className="bg-white text-navy-800" />
         <section className="metallic-dark relative overflow-hidden">
           <div className="animate-float-slow pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
           <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-crimson/25 blur-3xl" aria-hidden />

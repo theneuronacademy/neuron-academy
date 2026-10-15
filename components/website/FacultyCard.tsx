@@ -3,7 +3,7 @@ import type { FacultyMember } from "@/data/faculty";
 
 export function FacultyCard({ f, onView }: { f: FacultyMember; onView?: (m: FacultyMember) => void }) {
   return (
-    <article className="card-lift premium-ring flex h-full flex-col overflow-hidden rounded-card bg-white">
+    <article className="card-lift premium-ring shine-sweep group relative flex h-full flex-col overflow-hidden rounded-card bg-white">
       <div className="relative h-56 bg-navy-800">
         <SmartImage
           src={f.image || `/images/faculty-${f.id}.jpg`}
@@ -12,7 +12,7 @@ export function FacultyCard({ f, onView }: { f: FacultyMember; onView?: (m: Facu
           imgClassName="h-full w-full object-cover"
           fallback={
             <div className="metallic-dark absolute inset-0 flex flex-col items-center justify-center p-5 text-center">
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-2xl font-extrabold text-white ring-1 ring-white/20">
+              <span className="wiggle-on-hover flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-2xl font-extrabold text-white ring-1 ring-white/20">
                 {f.name.charAt(0)}
               </span>
               <p className="mt-3 text-sm font-extrabold text-white">{f.subject}</p>

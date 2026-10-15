@@ -133,14 +133,15 @@ export function Hero() {
             ))}
           </div>
           <h1 className="mt-5 text-[42px] font-extrabold leading-[1.02] tracking-tight text-white sm:text-5xl lg:text-[62px]">
-            Crack JEE. NEET.
-            <span className="animate-gradient-text mt-2 block bg-gradient-to-r from-teal-300 via-gold-200 to-crimson-100 bg-clip-text text-transparent">
+            <span className="animate-slide-up block" style={{ animationDelay: "0.05s" }}>Crack JEE. NEET.</span>
+            <span className="animate-gradient-text animate-slide-up mt-2 block bg-gradient-to-r from-teal-300 via-gold-200 to-crimson-100 bg-clip-text text-transparent" style={{ animationDelay: "0.25s" }}>
               AMU. Jamia.
             </span>
           </h1>
           <p className="animate-gradient-text mt-4 bg-gradient-to-r from-amber-200 via-teal-200 to-amber-200 bg-clip-text text-xl font-extrabold tracking-wide text-transparent sm:text-2xl" aria-label="Activate your neurons at Neuron Academy">
             <Typewriter phrases={TAGLINES} />
           </p>
+          <div className="shine-sweep mt-3 h-1.5 w-56 overflow-hidden rounded-full bg-gradient-to-r from-teal-400 via-amber-300 to-crimson" aria-hidden />
           <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-silver-200">
             Shaheen Bagh&apos;s focused coaching for engineering, medical and university entrances — small batches, weekly mocks and mentors who track every mark.
           </p>

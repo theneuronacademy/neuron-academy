@@ -6,7 +6,7 @@ export function CourseCard({ course, index = 0, onDetails }: { course: Course; i
   const accent = course.accent || "#008C9E";
   return (
     <article
-      className="card-lift premium-ring group relative flex h-full flex-col overflow-hidden rounded-card bg-white"
+      className="card-lift premium-ring shine-sweep group relative flex h-full flex-col overflow-hidden rounded-card bg-white"
       style={{ animationDelay: `${index * 80}ms` }}
     >
       <span className="absolute inset-x-0 top-0 z-10 h-1" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} aria-hidden />
@@ -44,7 +44,7 @@ export function CourseCard({ course, index = 0, onDetails }: { course: Course; i
         {course.subjects ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {course.subjects.map((s) => (
-              <span key={s} className="rounded-full bg-silver-50 px-2.5 py-1 text-[11px] font-bold text-navy-700 ring-1 ring-silver-200">{s}</span>
+              <span key={s} className="rounded-full bg-silver-50 px-2.5 py-1 text-[11px] font-bold text-navy-700 ring-1 ring-silver-200 transition hover:scale-105 hover:border-teal-400 hover:text-teal-700">{s}</span>
             ))}
           </div>
         ) : null}
