@@ -6,14 +6,21 @@ import type { Advertisement } from "@/lib/types";
 import { getHeroAds } from "@/lib/mockStore";
 import { getLiveBanners } from "@/services/siteApi";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
-import { Marquee } from "@/components/website/motion";
+import { Marquee, Typewriter, FloatingEmojis } from "@/components/website/motion";
 import { EXAM_TICKER } from "@/lib/websiteData";
 
 const EXAM_PILLS = [
-  { label: "JEE", color: "#1AA6B5" },
-  { label: "NEET", color: "#16A34A" },
-  { label: "AMU Entrance", color: "#D97706" },
-  { label: "Jamia Entrance", color: "#B4453D" },
+  { label: "🚀 JEE", color: "#1AA6B5" },
+  { label: "🩺 NEET", color: "#16A34A" },
+  { label: "🎓 AMU Entrance", color: "#D97706" },
+  { label: "🏛️ Jamia Entrance", color: "#B4453D" },
+];
+
+/** Rotating tagline energy — the academy motto, kept in one place. */
+const TAGLINES = [
+  "ACTIVATE YOUR NEURONs 🧠⚡",
+  "Crack JEE • NEET • AMU • Jamia 🚀",
+  "Small batches. Big ranks. 🏆",
 ];
 
 function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) {
@@ -106,19 +113,20 @@ export function Hero() {
     <section id="home" className="metallic-dark bg-aurora relative overflow-hidden">
       {/* symmetric premium grid + ambient colour fields */}
       <div className="bg-symmetric-grid pointer-events-none absolute inset-0" aria-hidden />
-      <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" aria-hidden />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
+      <div className="animate-float-slow pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" aria-hidden />
+      <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" aria-hidden />
+      <FloatingEmojis emojis={["🧠", "⚡", "✨", "🎯", "📚", "🏆"]} count={10} />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-12 pt-12 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:pt-16">
         <div className="animate-slide-up">
           <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold tracking-[0.16em] text-white backdrop-blur">
             <span className="animate-blink h-1.5 w-1.5 rounded-full bg-teal-300" />
-            ADMISSIONS OPEN 2026–27 • SHAHEEN BAGH
+            🧠 ADMISSIONS OPEN 2026–27 • SHAHEEN BAGH
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {EXAM_PILLS.map((p) => (
-              <span key={p.label} className="rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide text-white ring-1 ring-white/25" style={{ backgroundColor: `${p.color}55` }}>
+              <span key={p.label} className="cursor-default rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide text-white ring-1 ring-white/25 transition duration-300 hover:-translate-y-1 hover:scale-105 hover:ring-teal-300" style={{ backgroundColor: `${p.color}55` }}>
                 {p.label}
               </span>
             ))}
@@ -129,21 +137,24 @@ export function Hero() {
               AMU. Jamia.
             </span>
           </h1>
+          <p className="animate-gradient-text mt-4 bg-gradient-to-r from-amber-200 via-teal-200 to-amber-200 bg-clip-text text-xl font-extrabold tracking-wide text-transparent sm:text-2xl" aria-label="Activate your neurons at Neuron Academy">
+            <Typewriter phrases={TAGLINES} />
+          </p>
           <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-silver-200">
             Shaheen Bagh&apos;s focused coaching for engineering, medical and university entrances — small batches, weekly mocks and mentors who track every mark.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <a href="#courses" className="animate-glow btn-metallic-sheen inline-flex items-center rounded-xl bg-crimson px-7 py-3.5 text-[15px] font-bold text-white hover:bg-crimson-bright">
-              <Sparkles className="mr-1.5 h-4 w-4" /> Explore Courses <ArrowRight className="ml-1 h-4 w-4" />
+            <a href="#courses" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-flex items-center rounded-xl bg-crimson px-7 py-3.5 text-[15px] font-bold text-white hover:bg-crimson-bright">
+              <Sparkles className="mr-1.5 h-4 w-4 animate-wiggle" /> Explore Courses 🚀 <ArrowRight className="ml-1 h-4 w-4" />
             </a>
-            <a href="#contact" className="inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-[15px] font-bold text-white backdrop-blur hover:border-teal-300 hover:text-teal-200">
-              <Phone className="mr-1.5 h-4 w-4" /> Book Free Demo
+            <a href="#contact" className="cta-bounce inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-[15px] font-bold text-white backdrop-blur hover:border-teal-300 hover:text-teal-200">
+              <Phone className="mr-1.5 h-4 w-4" /> Book Free Demo 🎯
             </a>
           </div>
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] font-bold text-silver-200">
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> Mentor-guided batches</span>
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> Weekly mocks with ranks</span>
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> Parent reports</span>
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> 🧑‍🏫 Mentor-guided batches</span>
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> 📝 Weekly mocks with ranks</span>
+            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> 📊 Parent reports</span>
           </div>
           {active ? (
             <div className="mt-6 rounded-2xl border border-teal-300/30 bg-white/10 p-4 backdrop-blur">
@@ -187,17 +198,17 @@ export function Hero() {
                     </div>
                   }
                 />
-                <div className="animate-float absolute left-4 top-4 rounded-2xl border border-white/40 bg-white/90 px-4 py-2.5 shadow-card backdrop-blur">
-                  <p className="text-[10px] font-bold tracking-widest text-muted">WEEKLY MOCKS</p>
-                  <p className="text-sm font-extrabold text-navy-700">+ Ranks & solutions</p>
+                <div className="animate-float absolute left-4 top-4 rounded-2xl border border-white/40 bg-white/90 px-4 py-2.5 shadow-card backdrop-blur transition hover:scale-105">
+                  <p className="text-[10px] font-bold tracking-widest text-muted">📝 WEEKLY MOCKS</p>
+                  <p className="text-sm font-extrabold text-navy-700">+ Ranks & solutions 🏆</p>
                 </div>
-                <div className="animate-float-slow absolute right-4 top-1/3 rounded-2xl border border-white/40 bg-white/90 px-4 py-2.5 shadow-card backdrop-blur">
-                  <p className="text-[10px] font-bold tracking-widest text-muted">DOUBT LOUNGE</p>
-                  <p className="text-sm font-extrabold text-navy-700">Open till 8 PM</p>
+                <div className="animate-float-slow absolute right-4 top-1/3 rounded-2xl border border-white/40 bg-white/90 px-4 py-2.5 shadow-card backdrop-blur transition hover:scale-105">
+                  <p className="text-[10px] font-bold tracking-widest text-muted">💡 DOUBT LOUNGE</p>
+                  <p className="text-sm font-extrabold text-navy-700">Open till 8 PM 🕗</p>
                 </div>
                 <div className="absolute inset-x-4 bottom-4 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl border border-white/40 bg-white/90 p-4 shadow-card backdrop-blur"><p className="text-[10px] font-bold tracking-widest text-muted">ATTENDANCE</p><p className="text-xl font-extrabold text-navy-700">Auto-tracked</p></div>
-                  <div className="rounded-2xl border border-white/40 bg-white/90 p-4 shadow-card backdrop-blur"><p className="text-[10px] font-bold tracking-widest text-muted">TESTS</p><p className="text-xl font-extrabold text-navy-700">Live ranks</p></div>
+                  <div className="rounded-2xl border border-white/40 bg-white/90 p-4 shadow-card backdrop-blur transition hover:scale-[1.03]"><p className="text-[10px] font-bold tracking-widest text-muted">✅ ATTENDANCE</p><p className="text-xl font-extrabold text-navy-700">Auto-tracked ⚡</p></div>
+                  <div className="rounded-2xl border border-white/40 bg-white/90 p-4 shadow-card backdrop-blur transition hover:scale-[1.03]"><p className="text-[10px] font-bold tracking-widest text-muted">🏆 TESTS</p><p className="text-xl font-extrabold text-navy-700">Live ranks 🚀</p></div>
                 </div>
               </div>
             )}

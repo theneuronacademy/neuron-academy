@@ -732,6 +732,23 @@ export type EnumBiometricUserTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel>
 }
 
+export type EnumDoubtStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DoubtStatus | Prisma.EnumDoubtStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDoubtStatusFilter<$PrismaModel> | $Enums.DoubtStatus
+}
+
+export type EnumDoubtStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DoubtStatus | Prisma.EnumDoubtStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDoubtStatusWithAggregatesFilter<$PrismaModel> | $Enums.DoubtStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDoubtStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDoubtStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1412,6 +1429,23 @@ export type NestedEnumBiometricUserTypeWithAggregatesFilter<$PrismaModel = never
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumDoubtStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DoubtStatus | Prisma.EnumDoubtStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDoubtStatusFilter<$PrismaModel> | $Enums.DoubtStatus
+}
+
+export type NestedEnumDoubtStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DoubtStatus | Prisma.EnumDoubtStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDoubtStatusWithAggregatesFilter<$PrismaModel> | $Enums.DoubtStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDoubtStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDoubtStatusFilter<$PrismaModel>
 }
 
 

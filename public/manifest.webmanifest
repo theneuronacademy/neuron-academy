@@ -1,0 +1,13 @@
+{
+  "name": "Neuron Academy",
+  "short_name": "Neuron",
+  "description": "Tests, attendance, results and study material for Neuron Academy students.",
+  "start_url": "/student/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#183653",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/images/logo.png", "sizes": "any", "type": "image/png", "purpose": "any" }
+  ]
+}

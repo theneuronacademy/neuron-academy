@@ -47,6 +47,29 @@ export function DbAttempt({ testId }: { testId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [left, setLeft] = useState(1200);
   const [resumed, setResumed] = useState(false);
+  // Exam focus mode: fullscreen distraction-free attempt (esc exits).
+  const [focus, setFocus] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  function toggleFocus() {
+    try {
+      if (!document.fullscreenElement) {
+        void rootRef.current?.requestFullscreen?.();
+        setFocus(true);
+      } else {
+        void document.exitFullscreen();
+        setFocus(false);
+      }
+    } catch {
+      setFocus((f) => !f);
+    }
+  }
+
+  useEffect(() => {
+    const off = () => setFocus(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", off);
+    return () => document.removeEventListener("fullscreenchange", off);
+  }, []);
   // Fixed point (ms epoch) when time runs out, derived ONCE from server
   // values (attempt.startedAt + serverNow) at begin/resume. Refresh
   // recomputes it from the server — the duration is never restarted.
@@ -419,11 +442,19 @@ export function DbAttempt({ testId }: { testId: string }) {
   const unanswered = paper.length - answered;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div ref={rootRef} className={cn("min-h-screen bg-background", focus && "overflow-y-auto")}>
       <div className="sticky top-0 z-40 border-b border-silver-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2.5 sm:px-6">
           <p className="min-w-0 flex-1 truncate text-sm font-extrabold text-navy-700">{meta.title} <span className="font-semibold text-muted">• Q{idx + 1}/{paper.length}</span></p>
           <div className="flex shrink-0 items-center gap-2">
+            <button
+              onClick={toggleFocus}
+              aria-pressed={focus}
+              title={focus ? "Exit focus mode (esc)" : "Enter distraction-free focus mode"}
+              className={cn("rounded-xl border px-2.5 py-1.5 text-[12px] font-bold", focus ? "border-teal-500 bg-teal-50 text-teal-700" : "border-silver-300 text-muted hover:border-teal-500 hover:text-navy-700")}
+            >
+              {focus ? "⛶ Exit Focus" : "⛶ Focus"}
+            </button>
             <span className="hidden text-[11px] font-bold text-muted sm:inline" role="status" aria-live="polite">
               {saveState === "saving" ? "Saving…" : saveState === "saved" ? "All answers saved ✓" : saveState === "failed" ? (saveError ?? "Save failed — kept locally") : ""}
             </span>

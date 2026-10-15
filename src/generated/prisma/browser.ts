@@ -157,3 +157,28 @@ export type BiometricDeviceEvent = Prisma.BiometricDeviceEventModel
  * 
  */
 export type BiometricUserMap = Prisma.BiometricUserMapModel
+/**
+ * Model Bookmark
+ * 
+ */
+export type Bookmark = Prisma.BookmarkModel
+/**
+ * Model TimetableEntry
+ * 
+ */
+export type TimetableEntry = Prisma.TimetableEntryModel
+/**
+ * Model Doubt
+ * 
+ */
+export type Doubt = Prisma.DoubtModel
+/**
+ * Model DoubtReply
+ * 
+ */
+export type DoubtReply = Prisma.DoubtReplyModel
+/**
+ * Model Material
+ * 
+ */
+export type Material = Prisma.MaterialModel

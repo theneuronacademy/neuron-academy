@@ -237,3 +237,12 @@ export const BiometricUserType = {
 } as const
 
 export type BiometricUserType = (typeof BiometricUserType)[keyof typeof BiometricUserType]
+
+
+export const DoubtStatus = {
+  ASKED: 'ASKED',
+  ANSWERED: 'ANSWERED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type DoubtStatus = (typeof DoubtStatus)[keyof typeof DoubtStatus]

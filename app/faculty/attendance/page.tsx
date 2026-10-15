@@ -120,6 +120,14 @@ export default function FacultyAttendancePage() {
         </select>
         <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="rounded-xl border border-silver-300 px-3 py-2 text-sm" aria-label="Date" />
         <button onClick={() => void save()} disabled={busy || students.length === 0} className="rounded-xl bg-navy-700 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-60">{busy ? "Saving" : "Save Attendance"}</button>
+        <button
+          onClick={() => setMarks(Object.fromEntries(students.map((st) => [st.id, "PRESENT" as AttStatus])))}
+          disabled={busy || students.length === 0}
+          title="Set everyone to PRESENT, then adjust exceptions"
+          className="rounded-xl border border-teal-500 px-4 py-2 text-sm font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60"
+        >
+          ✓ All Present
+        </button>
       </div>
       <p className="mt-2 text-[12px] text-muted">Present: {counts.PRESENT ?? 0} | Absent: {counts.ABSENT ?? 0} | Late: {counts.LATE ?? 0} | Leave: {counts.LEAVE ?? 0}</p>
       {students.length === 0 ? (

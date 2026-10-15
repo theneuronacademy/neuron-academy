@@ -3,22 +3,34 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, FileText, CalendarCheck, Bell, LogOut, User, BarChart3, Layers } from "lucide-react";
+import { LayoutDashboard, Users, FileText, CalendarCheck, Bell, LogOut, User, BarChart3, Layers, CalendarDays, HelpCircle } from "lucide-react";
 import { Logo } from "@/components/website/Logo";
+import { LangProvider, LangToggle, useLang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const FACULTY_ITEMS = [
-  { href: "/faculty/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/faculty/batches", label: "My Batches", icon: Layers },
-  { href: "/faculty/students", label: "Students", icon: Users },
-  { href: "/faculty/attendance", label: "Attendance", icon: CalendarCheck },
-  { href: "/faculty/tests", label: "Tests", icon: FileText },
-  { href: "/faculty/results", label: "Results", icon: BarChart3 },
-  { href: "/faculty/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/faculty/notifications", label: "Notifications", icon: Bell },
-];
+  { href: "/faculty/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
+  { href: "/faculty/batches", labelKey: "batches", icon: Layers },
+  { href: "/faculty/students", labelKey: "students", icon: Users },
+  { href: "/faculty/attendance", labelKey: "attendance", icon: CalendarCheck },
+  { href: "/faculty/tests", labelKey: "tests", icon: FileText },
+  { href: "/faculty/results", labelKey: "results", icon: BarChart3 },
+  { href: "/faculty/analytics", labelKey: "analytics", icon: BarChart3 },
+  { href: "/faculty/timetable", labelKey: "timetable", icon: CalendarDays },
+  { href: "/faculty/doubts", labelKey: "doubts", icon: HelpCircle },
+  { href: "/faculty/notifications", labelKey: "notifications", icon: Bell },
+] as const;
 
 export function FacultyShell({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  return (
+    <LangProvider>
+      <FacultyInner title={title} subtitle={subtitle}>{children}</FacultyInner>
+    </LangProvider>
+  );
+}
+
+function FacultyInner({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  const { t } = useLang();
   const pathname = usePathname();
   const router = useRouter();
   const [unread, setUnread] = React.useState(0);
@@ -53,7 +65,7 @@ export function FacultyShell({ title, subtitle, children }: { title: string; sub
                 href={it.href}
                 className={cn("relative rounded-lg px-3 py-2 text-sm font-bold", pathname.startsWith(it.href) ? "bg-navy-50 text-navy-700" : "text-muted hover:text-navy-700")}
               >
-                {it.label}
+                {t(it.labelKey)}
                 {it.href === "/faculty/notifications" && unread > 0 ? (
                   <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-crimson px-1 text-[10px] font-extrabold text-white">
                     {unread > 99 ? "99+" : unread}
@@ -70,6 +82,7 @@ export function FacultyShell({ title, subtitle, children }: { title: string; sub
             </Link>
           </nav>
           <div className="flex items-center gap-2">
+            <LangToggle />
             <Link href="/" className="hidden rounded-xl px-3 py-2 text-sm font-bold text-muted hover:text-navy-700 sm:block">Website</Link>
             <button
               onClick={async () => {
@@ -93,7 +106,7 @@ export function FacultyShell({ title, subtitle, children }: { title: string; sub
               href={it.href}
               className={cn("relative flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold", pathname.startsWith(it.href) ? "bg-navy-700 text-white" : "text-muted")}
             >
-              <it.icon className="h-3.5 w-3.5" />{it.label}
+              <it.icon className="h-3.5 w-3.5" />{t(it.labelKey)}
               {it.href === "/faculty/notifications" && unread > 0 ? (
                 <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-crimson px-1 text-[10px] font-extrabold text-white">
                   {unread > 99 ? "99+" : unread}

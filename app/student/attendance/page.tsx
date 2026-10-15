@@ -5,6 +5,7 @@ import { CalendarCheck } from "lucide-react";
 import { StudentShell } from "@/components/student/StudentShell";
 import { useStudentGuard } from "@/components/student/useStudentGuard";
 import { Bars, Ring, Skeleton } from "@/components/student/charts";
+import { AttendanceHeatmap } from "@/components/analytics/AttendanceHeatmap";
 import { cn } from "@/lib/utils";
 
 interface AttRow { id: string; date: string; status: string; source: string }
@@ -76,6 +77,11 @@ export default function StudentAttendancePage() {
             <h2 className="flex items-center gap-1.5 text-[15px] font-extrabold text-navy-700"><CalendarCheck className="h-4 w-4" /> Daily Records</h2>
             <input type="month" value={month} onChange={(e) => setMonth(e.target.value)} aria-label="Filter by month" className="rounded-xl border border-silver-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none" />
           </div>
+          {items !== null && items.length > 0 && month ? (
+            <div className="mt-3 max-w-sm">
+              <AttendanceHeatmap month={month} days={items.map((a) => ({ date: String(a.date).slice(0, 10), status: a.status as "PRESENT" | "ABSENT" | "LATE" | "LEAVE" }))} />
+            </div>
+          ) : null}
           {items === null ? (
             <div className="mt-3 space-y-2"><Skeleton className="h-12" /><Skeleton className="h-12" /><Skeleton className="h-12" /></div>
           ) : items.length === 0 ? (

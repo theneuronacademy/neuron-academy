@@ -350,6 +350,8 @@ export type StudentWhereInput = {
   results?: Prisma.ResultListRelationFilter
   targetedNotifications?: Prisma.NotificationListRelationFilter
   testAccesses?: Prisma.TestAccessListRelationFilter
+  bookmarks?: Prisma.BookmarkListRelationFilter
+  doubts?: Prisma.DoubtListRelationFilter
 }
 
 export type StudentOrderByWithRelationInput = {
@@ -386,6 +388,8 @@ export type StudentOrderByWithRelationInput = {
   results?: Prisma.ResultOrderByRelationAggregateInput
   targetedNotifications?: Prisma.NotificationOrderByRelationAggregateInput
   testAccesses?: Prisma.TestAccessOrderByRelationAggregateInput
+  bookmarks?: Prisma.BookmarkOrderByRelationAggregateInput
+  doubts?: Prisma.DoubtOrderByRelationAggregateInput
 }
 
 export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -425,6 +429,8 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   results?: Prisma.ResultListRelationFilter
   targetedNotifications?: Prisma.NotificationListRelationFilter
   testAccesses?: Prisma.TestAccessListRelationFilter
+  bookmarks?: Prisma.BookmarkListRelationFilter
+  doubts?: Prisma.DoubtListRelationFilter
 }, "id" | "userId" | "studentId" | "email">
 
 export type StudentOrderByWithAggregationInput = {
@@ -520,6 +526,8 @@ export type StudentCreateInput = {
   results?: Prisma.ResultCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateInput = {
@@ -553,6 +561,8 @@ export type StudentUncheckedCreateInput = {
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUpdateInput = {
@@ -586,6 +596,8 @@ export type StudentUpdateInput = {
   results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateInput = {
@@ -619,6 +631,8 @@ export type StudentUncheckedUpdateInput = {
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateManyInput = {
@@ -1006,6 +1020,34 @@ export type StudentUpdateOneWithoutTargetedNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutTargetedNotificationsInput, Prisma.StudentUpdateWithoutTargetedNotificationsInput>, Prisma.StudentUncheckedUpdateWithoutTargetedNotificationsInput>
 }
 
+export type StudentCreateNestedOneWithoutBookmarksInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutBookmarksInput, Prisma.StudentUncheckedCreateWithoutBookmarksInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutBookmarksInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUpdateOneRequiredWithoutBookmarksNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutBookmarksInput, Prisma.StudentUncheckedCreateWithoutBookmarksInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutBookmarksInput
+  upsert?: Prisma.StudentUpsertWithoutBookmarksInput
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutBookmarksInput, Prisma.StudentUpdateWithoutBookmarksInput>, Prisma.StudentUncheckedUpdateWithoutBookmarksInput>
+}
+
+export type StudentCreateNestedOneWithoutDoubtsInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutDoubtsInput, Prisma.StudentUncheckedCreateWithoutDoubtsInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutDoubtsInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUpdateOneRequiredWithoutDoubtsNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutDoubtsInput, Prisma.StudentUncheckedCreateWithoutDoubtsInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutDoubtsInput
+  upsert?: Prisma.StudentUpsertWithoutDoubtsInput
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutDoubtsInput, Prisma.StudentUpdateWithoutDoubtsInput>, Prisma.StudentUncheckedUpdateWithoutDoubtsInput>
+}
+
 export type StudentCreateWithoutUserInput = {
   id?: string
   studentId: string
@@ -1036,6 +1078,8 @@ export type StudentCreateWithoutUserInput = {
   results?: Prisma.ResultCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutUserInput = {
@@ -1068,6 +1112,8 @@ export type StudentUncheckedCreateWithoutUserInput = {
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutUserInput = {
@@ -1116,6 +1162,8 @@ export type StudentUpdateWithoutUserInput = {
   results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutUserInput = {
@@ -1148,6 +1196,8 @@ export type StudentUncheckedUpdateWithoutUserInput = {
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutCourseInput = {
@@ -1180,6 +1230,8 @@ export type StudentCreateWithoutCourseInput = {
   results?: Prisma.ResultCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutCourseInput = {
@@ -1212,6 +1264,8 @@ export type StudentUncheckedCreateWithoutCourseInput = {
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutCourseInput = {
@@ -1301,6 +1355,8 @@ export type StudentCreateWithoutBatchInput = {
   results?: Prisma.ResultCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutBatchInput = {
@@ -1333,6 +1389,8 @@ export type StudentUncheckedCreateWithoutBatchInput = {
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutBatchInput = {
@@ -1391,6 +1449,8 @@ export type StudentCreateWithoutResultsInput = {
   attempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutResultsInput = {
@@ -1423,6 +1483,8 @@ export type StudentUncheckedCreateWithoutResultsInput = {
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutResultsInput = {
@@ -1471,6 +1533,8 @@ export type StudentUpdateWithoutResultsInput = {
   attempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutResultsInput = {
@@ -1503,6 +1567,8 @@ export type StudentUncheckedUpdateWithoutResultsInput = {
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutTestAccessesInput = {
@@ -1535,6 +1601,8 @@ export type StudentCreateWithoutTestAccessesInput = {
   attempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutTestAccessesInput = {
@@ -1567,6 +1635,8 @@ export type StudentUncheckedCreateWithoutTestAccessesInput = {
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutTestAccessesInput = {
@@ -1615,6 +1685,8 @@ export type StudentUpdateWithoutTestAccessesInput = {
   attempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutTestAccessesInput = {
@@ -1647,6 +1719,8 @@ export type StudentUncheckedUpdateWithoutTestAccessesInput = {
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutAttemptsInput = {
@@ -1679,6 +1753,8 @@ export type StudentCreateWithoutAttemptsInput = {
   results?: Prisma.ResultCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutAttemptsInput = {
@@ -1711,6 +1787,8 @@ export type StudentUncheckedCreateWithoutAttemptsInput = {
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutAttemptsInput = {
@@ -1759,6 +1837,8 @@ export type StudentUpdateWithoutAttemptsInput = {
   results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutAttemptsInput = {
@@ -1791,6 +1871,8 @@ export type StudentUncheckedUpdateWithoutAttemptsInput = {
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutAttendanceInput = {
@@ -1823,6 +1905,8 @@ export type StudentCreateWithoutAttendanceInput = {
   results?: Prisma.ResultCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutAttendanceInput = {
@@ -1855,6 +1939,8 @@ export type StudentUncheckedCreateWithoutAttendanceInput = {
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutAttendanceInput = {
@@ -1903,6 +1989,8 @@ export type StudentUpdateWithoutAttendanceInput = {
   results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutAttendanceInput = {
@@ -1935,6 +2023,8 @@ export type StudentUncheckedUpdateWithoutAttendanceInput = {
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutTargetedNotificationsInput = {
@@ -1967,6 +2057,8 @@ export type StudentCreateWithoutTargetedNotificationsInput = {
   attempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultCreateNestedManyWithoutStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutTargetedNotificationsInput = {
@@ -1999,6 +2091,8 @@ export type StudentUncheckedCreateWithoutTargetedNotificationsInput = {
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutTargetedNotificationsInput = {
@@ -2047,6 +2141,8 @@ export type StudentUpdateWithoutTargetedNotificationsInput = {
   attempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutTargetedNotificationsInput = {
@@ -2079,6 +2175,312 @@ export type StudentUncheckedUpdateWithoutTargetedNotificationsInput = {
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentCreateWithoutBookmarksInput = {
+  id?: string
+  studentId: string
+  name: string
+  email: string
+  phone: string
+  photo?: string | null
+  joiningDate?: Date | string
+  status?: $Enums.StudentStatus
+  studentType?: $Enums.StudentType
+  dob?: Date | string | null
+  photoUrl?: string | null
+  gender?: string | null
+  address?: string | null
+  city?: string | null
+  school?: string | null
+  className?: string | null
+  parentName?: string | null
+  parentMobile?: string | null
+  enrollmentDate?: Date | string
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
+  course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
+  batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
+  attempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  results?: Prisma.ResultCreateNestedManyWithoutStudentInput
+  targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
+  testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+}
+
+export type StudentUncheckedCreateWithoutBookmarksInput = {
+  id?: string
+  userId?: string | null
+  studentId: string
+  name: string
+  email: string
+  phone: string
+  photo?: string | null
+  courseId?: string | null
+  batchId?: string | null
+  joiningDate?: Date | string
+  status?: $Enums.StudentStatus
+  studentType?: $Enums.StudentType
+  dob?: Date | string | null
+  photoUrl?: string | null
+  gender?: string | null
+  address?: string | null
+  city?: string | null
+  school?: string | null
+  className?: string | null
+  parentName?: string | null
+  parentMobile?: string | null
+  enrollmentDate?: Date | string
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
+  attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
+  targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
+  testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+}
+
+export type StudentCreateOrConnectWithoutBookmarksInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutBookmarksInput, Prisma.StudentUncheckedCreateWithoutBookmarksInput>
+}
+
+export type StudentUpsertWithoutBookmarksInput = {
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutBookmarksInput, Prisma.StudentUncheckedUpdateWithoutBookmarksInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutBookmarksInput, Prisma.StudentUncheckedCreateWithoutBookmarksInput>
+  where?: Prisma.StudentWhereInput
+}
+
+export type StudentUpdateToOneWithWhereWithoutBookmarksInput = {
+  where?: Prisma.StudentWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutBookmarksInput, Prisma.StudentUncheckedUpdateWithoutBookmarksInput>
+}
+
+export type StudentUpdateWithoutBookmarksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  studentType?: Prisma.EnumStudentTypeFieldUpdateOperationsInput | $Enums.StudentType
+  dob?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  school?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentMobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enrollmentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
+  course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
+  batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
+  attempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
+  targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
+  testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutBookmarksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  batchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  studentType?: Prisma.EnumStudentTypeFieldUpdateOperationsInput | $Enums.StudentType
+  dob?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  school?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentMobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enrollmentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+  attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
+  targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
+  testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentCreateWithoutDoubtsInput = {
+  id?: string
+  studentId: string
+  name: string
+  email: string
+  phone: string
+  photo?: string | null
+  joiningDate?: Date | string
+  status?: $Enums.StudentStatus
+  studentType?: $Enums.StudentType
+  dob?: Date | string | null
+  photoUrl?: string | null
+  gender?: string | null
+  address?: string | null
+  city?: string | null
+  school?: string | null
+  className?: string | null
+  parentName?: string | null
+  parentMobile?: string | null
+  enrollmentDate?: Date | string
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
+  course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
+  batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
+  attempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  results?: Prisma.ResultCreateNestedManyWithoutStudentInput
+  targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
+  testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+}
+
+export type StudentUncheckedCreateWithoutDoubtsInput = {
+  id?: string
+  userId?: string | null
+  studentId: string
+  name: string
+  email: string
+  phone: string
+  photo?: string | null
+  courseId?: string | null
+  batchId?: string | null
+  joiningDate?: Date | string
+  status?: $Enums.StudentStatus
+  studentType?: $Enums.StudentType
+  dob?: Date | string | null
+  photoUrl?: string | null
+  gender?: string | null
+  address?: string | null
+  city?: string | null
+  school?: string | null
+  className?: string | null
+  parentName?: string | null
+  parentMobile?: string | null
+  enrollmentDate?: Date | string
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
+  attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
+  targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
+  testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+}
+
+export type StudentCreateOrConnectWithoutDoubtsInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutDoubtsInput, Prisma.StudentUncheckedCreateWithoutDoubtsInput>
+}
+
+export type StudentUpsertWithoutDoubtsInput = {
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutDoubtsInput, Prisma.StudentUncheckedUpdateWithoutDoubtsInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutDoubtsInput, Prisma.StudentUncheckedCreateWithoutDoubtsInput>
+  where?: Prisma.StudentWhereInput
+}
+
+export type StudentUpdateToOneWithWhereWithoutDoubtsInput = {
+  where?: Prisma.StudentWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutDoubtsInput, Prisma.StudentUncheckedUpdateWithoutDoubtsInput>
+}
+
+export type StudentUpdateWithoutDoubtsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  studentType?: Prisma.EnumStudentTypeFieldUpdateOperationsInput | $Enums.StudentType
+  dob?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  school?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentMobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enrollmentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
+  course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
+  batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
+  attempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
+  targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
+  testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutDoubtsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  batchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  studentType?: Prisma.EnumStudentTypeFieldUpdateOperationsInput | $Enums.StudentType
+  dob?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  school?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentMobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enrollmentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+  attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
+  targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
+  testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateManyCourseInput = {
@@ -2138,6 +2540,8 @@ export type StudentUpdateWithoutCourseInput = {
   results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutCourseInput = {
@@ -2170,6 +2574,8 @@ export type StudentUncheckedUpdateWithoutCourseInput = {
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutCourseInput = {
@@ -2256,6 +2662,8 @@ export type StudentUpdateWithoutBatchInput = {
   results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutBatchInput = {
@@ -2288,6 +2696,8 @@ export type StudentUncheckedUpdateWithoutBatchInput = {
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutBatchInput = {
@@ -2328,6 +2738,8 @@ export type StudentCountOutputType = {
   results: number
   targetedNotifications: number
   testAccesses: number
+  bookmarks: number
+  doubts: number
 }
 
 export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2336,6 +2748,8 @@ export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   results?: boolean | StudentCountOutputTypeCountResultsArgs
   targetedNotifications?: boolean | StudentCountOutputTypeCountTargetedNotificationsArgs
   testAccesses?: boolean | StudentCountOutputTypeCountTestAccessesArgs
+  bookmarks?: boolean | StudentCountOutputTypeCountBookmarksArgs
+  doubts?: boolean | StudentCountOutputTypeCountDoubtsArgs
 }
 
 /**
@@ -2383,6 +2797,20 @@ export type StudentCountOutputTypeCountTestAccessesArgs<ExtArgs extends runtime.
   where?: Prisma.TestAccessWhereInput
 }
 
+/**
+ * StudentCountOutputType without action
+ */
+export type StudentCountOutputTypeCountBookmarksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookmarkWhereInput
+}
+
+/**
+ * StudentCountOutputType without action
+ */
+export type StudentCountOutputTypeCountDoubtsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DoubtWhereInput
+}
+
 
 export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2418,6 +2846,8 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   results?: boolean | Prisma.Student$resultsArgs<ExtArgs>
   targetedNotifications?: boolean | Prisma.Student$targetedNotificationsArgs<ExtArgs>
   testAccesses?: boolean | Prisma.Student$testAccessesArgs<ExtArgs>
+  bookmarks?: boolean | Prisma.Student$bookmarksArgs<ExtArgs>
+  doubts?: boolean | Prisma.Student$doubtsArgs<ExtArgs>
   _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
@@ -2521,6 +2951,8 @@ export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   results?: boolean | Prisma.Student$resultsArgs<ExtArgs>
   targetedNotifications?: boolean | Prisma.Student$targetedNotificationsArgs<ExtArgs>
   testAccesses?: boolean | Prisma.Student$testAccessesArgs<ExtArgs>
+  bookmarks?: boolean | Prisma.Student$bookmarksArgs<ExtArgs>
+  doubts?: boolean | Prisma.Student$doubtsArgs<ExtArgs>
   _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StudentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2545,6 +2977,8 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     results: Prisma.$ResultPayload<ExtArgs>[]
     targetedNotifications: Prisma.$NotificationPayload<ExtArgs>[]
     testAccesses: Prisma.$TestAccessPayload<ExtArgs>[]
+    bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
+    doubts: Prisma.$DoubtPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2974,6 +3408,8 @@ export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.
   results<T extends Prisma.Student$resultsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$resultsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   targetedNotifications<T extends Prisma.Student$targetedNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$targetedNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   testAccesses<T extends Prisma.Student$testAccessesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$testAccessesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bookmarks<T extends Prisma.Student$bookmarksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  doubts<T extends Prisma.Student$doubtsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$doubtsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DoubtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3603,6 +4039,54 @@ export type Student$testAccessesArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.TestAccessScalarFieldEnum | Prisma.TestAccessScalarFieldEnum[]
+}
+
+/**
+ * Student.bookmarks
+ */
+export type Student$bookmarksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Bookmark
+   */
+  select?: Prisma.BookmarkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Bookmark
+   */
+  omit?: Prisma.BookmarkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookmarkInclude<ExtArgs> | null
+  where?: Prisma.BookmarkWhereInput
+  orderBy?: Prisma.BookmarkOrderByWithRelationInput | Prisma.BookmarkOrderByWithRelationInput[]
+  cursor?: Prisma.BookmarkWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookmarkScalarFieldEnum | Prisma.BookmarkScalarFieldEnum[]
+}
+
+/**
+ * Student.doubts
+ */
+export type Student$doubtsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Doubt
+   */
+  select?: Prisma.DoubtSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Doubt
+   */
+  omit?: Prisma.DoubtOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DoubtInclude<ExtArgs> | null
+  where?: Prisma.DoubtWhereInput
+  orderBy?: Prisma.DoubtOrderByWithRelationInput | Prisma.DoubtOrderByWithRelationInput[]
+  cursor?: Prisma.DoubtWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DoubtScalarFieldEnum | Prisma.DoubtScalarFieldEnum[]
 }
 
 /**

@@ -91,6 +91,7 @@ export default function FacultyStudentsPage() {
                 <th className="p-3">Attendance</th>
                 <th className="p-3">Tests</th>
                 <th className="p-3">Avg</th>
+                <th className="p-3 text-right">Profile</th>
               </tr>
             </thead>
             <tbody>
@@ -102,6 +103,11 @@ export default function FacultyStudentsPage() {
                   <td className="p-3 text-[13px] font-bold">{r.attendancePct == null ? "—" : `${r.attendancePct}%`}</td>
                   <td className="p-3 text-[13px]">{r.testsTaken}</td>
                   <td className="p-3 text-[13px]">{r.avgScore == null ? "—" : `${r.avgScore}%`}</td>
+                  <td className="p-3 text-right">
+                    <Link href={`/faculty/students/${r.id}`} className="rounded-lg border border-silver-300 px-2.5 py-1.5 text-[11px] font-bold text-navy-700 hover:border-teal-500">
+                      360° →
+                    </Link>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -130,6 +130,18 @@ export async function POST(req: NextRequest) {
     const allowed = await facultyBatchIds(db, auth.user.id);
     if (!allowed.includes(String(body.batchId))) return fail("You can create tests only for your assigned batches.", 403);
   }
+  // Homework is a faculty workflow: PRACTICE + FREE + assigned batch, always.
+  const wantHomework = body.isHomework === true;
+  if (wantHomework) {
+    if (auth.user.role === "FACULTY") {
+      if (!isNonEmpty(body.batchId)) return fail("Homework needs an assigned batch.", 400);
+      const allowed = await facultyBatchIds(db, auth.user.id);
+      if (!allowed.includes(String(body.batchId))) return fail("You can assign homework only to your assigned batches.", 403);
+    } else if (body.batchId !== undefined && body.batchId !== null && body.batchId !== "") {
+      const b = await db.batch.findUnique({ where: { id: String(body.batchId) }, select: { id: true } });
+      if (!b) return fail("Batch not found.", 404);
+    }
+  }
   // Phase 13 — only ADMIN may set access type / price. Faculty tests are FREE.
   if (auth.user.role === "FACULTY" && (body.accessType !== undefined || body.price !== undefined)) {
     return fail("Only admins can set test access type or price.", 403);
@@ -152,6 +164,8 @@ export async function POST(req: NextRequest) {
         status: STATUSES.includes(body.status as (typeof STATUSES)[number]) ? (body.status as (typeof STATUSES)[number]) : "DRAFT",
         questionOrder: body.questionOrder === "RANDOM" ? "RANDOM" : "SERIAL",
         optionOrder: body.optionOrder === "RANDOM" ? "RANDOM" : "SERIAL",
+        // Homework stays PRACTICE + FREE regardless of role input.
+        ...(wantHomework ? { type: "PRACTICE" as const, isHomework: true } : {}),
         ...(auth.user.role === "ADMIN" ? { accessType: access.accessType, price: access.price } : {}),
       },
     });

@@ -3,27 +3,45 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FileText, LogOut, Bell, BookOpen, User } from "lucide-react";
+import { LayoutDashboard, FileText, LogOut, Bell, BookOpen, User, CalendarDays, HelpCircle, Library, Bookmark, ClipboardList } from "lucide-react";
 import { Logo } from "@/components/website/Logo";
 import { studentLogout } from "@/lib/studentAuth";
+import { LangProvider, LangToggle, useLang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const REGULAR_ITEMS = [
-  { href: "/student/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/student/tests", label: "Tests", icon: FileText },
-  { href: "/student/batches", label: "My Batch", icon: LayoutDashboard },
-  { href: "/student/books", label: "Books", icon: BookOpen },
-  { href: "/student/notifications", label: "Notifications", icon: Bell },
-];
+  { href: "/student/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
+  { href: "/student/tests", labelKey: "tests", icon: FileText },
+  { href: "/student/batches", labelKey: "myBatch", icon: LayoutDashboard },
+  { href: "/student/timetable", labelKey: "timetable", icon: CalendarDays },
+  { href: "/student/doubts", labelKey: "doubts", icon: HelpCircle },
+  { href: "/student/books", labelKey: "books", icon: BookOpen },
+  { href: "/student/materials", labelKey: "materials", icon: Library },
+  { href: "/student/revision", labelKey: "revision", icon: Bookmark },
+  { href: "/student/report", labelKey: "report", icon: ClipboardList },
+  { href: "/student/notifications", labelKey: "notifications", icon: Bell },
+] as const;
 
 const SCHOLARSHIP_ITEMS = [
-  { href: "/student/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/student/tests", label: "Tests", icon: FileText },
-  { href: "/student/books", label: "Books", icon: BookOpen },
-  { href: "/student/notifications", label: "Notifications", icon: Bell },
-];
+  { href: "/student/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
+  { href: "/student/tests", labelKey: "tests", icon: FileText },
+  { href: "/student/doubts", labelKey: "doubts", icon: HelpCircle },
+  { href: "/student/books", labelKey: "books", icon: BookOpen },
+  { href: "/student/materials", labelKey: "materials", icon: Library },
+  { href: "/student/revision", labelKey: "revision", icon: Bookmark },
+  { href: "/student/notifications", labelKey: "notifications", icon: Bell },
+] as const;
 
 export function StudentShell({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  return (
+    <LangProvider>
+      <ShellInner title={title} subtitle={subtitle}>{children}</ShellInner>
+    </LangProvider>
+  );
+}
+
+function ShellInner({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  const { t } = useLang();
   const pathname = usePathname();
   const router = useRouter();
   // Phase 13 — in-app unread indicator (API feed; silent when offline).
@@ -69,7 +87,7 @@ export function StudentShell({ title, subtitle, children }: { title: string; sub
                 href={it.href}
                 className={cn("relative rounded-lg px-3 py-2 text-sm font-bold", pathname.startsWith(it.href) ? "bg-navy-50 text-navy-700" : "text-muted hover:text-navy-700")}
               >
-                {it.label}
+                {t(it.labelKey)}
                 {it.href === "/student/notifications" && unread > 0 ? (
                   <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-crimson px-1 text-[10px] font-extrabold text-white" aria-label={`${unread} unread notifications`}>
                     {unread > 99 ? "99+" : unread}
@@ -86,6 +104,7 @@ export function StudentShell({ title, subtitle, children }: { title: string; sub
             </Link>
           </nav>
           <div className="flex items-center gap-2">
+            <LangToggle />
             <Link href="/" className="hidden rounded-xl px-3 py-2 text-sm font-bold text-muted hover:text-navy-700 sm:block">Website</Link>
             <button
               onClick={() => {
@@ -109,7 +128,7 @@ export function StudentShell({ title, subtitle, children }: { title: string; sub
               href={it.href}
               className={cn("relative flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold", pathname.startsWith(it.href) ? "bg-navy-700 text-white" : "text-muted")}
             >
-              <it.icon className="h-3.5 w-3.5" />{it.label}
+              <it.icon className="h-3.5 w-3.5" />{t(it.labelKey)}
               {it.href === "/student/notifications" && unread > 0 ? (
                 <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-crimson px-1 text-[10px] font-extrabold text-white">
                   {unread > 99 ? "99+" : unread}

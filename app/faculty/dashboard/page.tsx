@@ -58,6 +58,7 @@ export default function FacultyDashboardPage() {
   const [activity, setActivity] = React.useState<ActivityItem[]>([]);
   const [notifs, setNotifs] = React.useState<NotifItem[]>([]);
   const [unread, setUnread] = React.useState(0);
+  const [atRisk, setAtRisk] = React.useState<number | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -68,12 +69,13 @@ export default function FacultyDashboardPage() {
         const sj = await s.json().catch(() => null);
         const u = sj?.data?.user;
         if (!u || (u.role !== "FACULTY" && u.role !== "ADMIN")) { router.replace("/faculty/login"); return; }
-        const [bR, dR, tR, aR, nR] = await Promise.all([
+        const [bR, dR, tR, aR, nR, anR] = await Promise.all([
           fetch("/api/faculty/batches", { cache: "no-store" }),
           fetch("/api/faculty/dashboard", { cache: "no-store" }),
           fetch("/api/tests", { cache: "no-store" }),
           fetch("/api/faculty/activity", { cache: "no-store" }),
           fetch("/api/notifications/mine", { cache: "no-store" }),
+          fetch("/api/faculty/analytics", { cache: "no-store" }),
         ]);
         if (!live) return;
         const bJ = await bR.json().catch(() => null);
@@ -95,6 +97,11 @@ export default function FacultyDashboardPage() {
         if (nR.ok && nJ?.success && Array.isArray(nJ.data?.items)) {
           setNotifs(nJ.data.items.slice(0, 5));
           if (typeof nJ.data.unreadCount === "number") setUnread(nJ.data.unreadCount);
+        }
+        const anJ = await anR.json().catch(() => null);
+        if (anR.ok && anJ?.success && Array.isArray(anJ.data?.rows)) {
+          const rows = anJ.data.rows as { attendancePct: number | null; avgScore: number | null }[];
+          setAtRisk(rows.filter((r) => (r.attendancePct != null && r.attendancePct < 75) || (r.avgScore != null && r.avgScore < 40)).length);
         }
       } catch {
         router.replace("/faculty/login");
@@ -122,6 +129,24 @@ export default function FacultyDashboardPage() {
 
   return (
     <FacultyShell title="Dashboard" subtitle="Your academic workspace">
+      {batches.length > 0 ? (
+        <Link
+          href={`/faculty/attendance?batchId=${batches[0].id}`}
+          className="mb-4 flex items-center justify-between gap-3 rounded-card bg-gradient-to-r from-teal-600 to-navy-700 px-5 py-4 text-white shadow-card transition hover:brightness-105"
+        >
+          <div className="min-w-0">
+            <p className="text-[11px] font-extrabold tracking-widest text-white/80">TODAY&apos;S ATTENDANCE — ONE TAP</p>
+            <p className="truncate text-[16px] font-extrabold">{batches[0].name} · {batches[0].studentCount} students</p>
+          </div>
+          <span className="shrink-0 rounded-xl bg-white px-4 py-2 text-sm font-extrabold text-teal-700">Mark Now →</span>
+        </Link>
+      ) : null}
+      {atRisk !== null && atRisk > 0 ? (
+        <Link href="/faculty/analytics" className="mb-4 flex items-center justify-between gap-3 rounded-card border border-amber-300 bg-amber-50 px-5 py-3.5">
+          <p className="text-sm font-extrabold text-amber-800">⚠ {atRisk} student{atRisk === 1 ? "" : "s"} need{atRisk === 1 ? "s" : ""} attention (attendance {"<"} 75% or avg {"<"} 40%)</p>
+          <span className="shrink-0 text-[13px] font-bold text-amber-700 underline">View →</span>
+        </Link>
+      ) : null}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
           <div key={c.label} className="rounded-card border border-silver-200 bg-white p-4 shadow-card">

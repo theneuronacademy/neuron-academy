@@ -20,6 +20,7 @@
     "otp:check": "tsx scripts/otp-check.ts",
     "attempt:check": "tsx scripts/attempt-check.ts",
     "biometric:check": "tsx scripts/biometric-check.ts",
+    "engagement:check": "tsx scripts/engagement-check.ts",
     "website:check": "tsx scripts/website-check.ts",
     "msg91:smoke": "tsx scripts/msg91-smoke.ts",
     "postinstall": "prisma generate",

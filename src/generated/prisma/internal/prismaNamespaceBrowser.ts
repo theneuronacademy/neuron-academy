@@ -78,7 +78,12 @@ export const ModelName = {
   Announcement: 'Announcement',
   BiometricDevice: 'BiometricDevice',
   BiometricDeviceEvent: 'BiometricDeviceEvent',
-  BiometricUserMap: 'BiometricUserMap'
+  BiometricUserMap: 'BiometricUserMap',
+  Bookmark: 'Bookmark',
+  TimetableEntry: 'TimetableEntry',
+  Doubt: 'Doubt',
+  DoubtReply: 'DoubtReply',
+  Material: 'Material'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -331,7 +336,8 @@ export const TestScalarFieldEnum = {
   publishedAt: 'publishedAt',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  isHomework: 'isHomework'
 } as const
 
 export type TestScalarFieldEnum = (typeof TestScalarFieldEnum)[keyof typeof TestScalarFieldEnum]
@@ -642,6 +648,80 @@ export const BiometricUserMapScalarFieldEnum = {
 } as const
 
 export type BiometricUserMapScalarFieldEnum = (typeof BiometricUserMapScalarFieldEnum)[keyof typeof BiometricUserMapScalarFieldEnum]
+
+
+export const BookmarkScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  testId: 'testId',
+  questionId: 'questionId',
+  note: 'note',
+  createdAt: 'createdAt'
+} as const
+
+export type BookmarkScalarFieldEnum = (typeof BookmarkScalarFieldEnum)[keyof typeof BookmarkScalarFieldEnum]
+
+
+export const TimetableEntryScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  subject: 'subject',
+  title: 'title',
+  facultyId: 'facultyId',
+  dayOfWeek: 'dayOfWeek',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  room: 'room',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TimetableEntryScalarFieldEnum = (typeof TimetableEntryScalarFieldEnum)[keyof typeof TimetableEntryScalarFieldEnum]
+
+
+export const DoubtScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  batchId: 'batchId',
+  subject: 'subject',
+  questionText: 'questionText',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DoubtScalarFieldEnum = (typeof DoubtScalarFieldEnum)[keyof typeof DoubtScalarFieldEnum]
+
+
+export const DoubtReplyScalarFieldEnum = {
+  id: 'id',
+  doubtId: 'doubtId',
+  authorRole: 'authorRole',
+  authorUserId: 'authorUserId',
+  authorName: 'authorName',
+  text: 'text',
+  createdAt: 'createdAt'
+} as const
+
+export type DoubtReplyScalarFieldEnum = (typeof DoubtReplyScalarFieldEnum)[keyof typeof DoubtReplyScalarFieldEnum]
+
+
+export const MaterialScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  subject: 'subject',
+  className: 'className',
+  kind: 'kind',
+  url: 'url',
+  description: 'description',
+  isActive: 'isActive',
+  displayOrder: 'displayOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaterialScalarFieldEnum = (typeof MaterialScalarFieldEnum)[keyof typeof MaterialScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -357,6 +357,7 @@ export type QuestionWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Question"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Question"> | Date | string
   test?: Prisma.XOR<Prisma.TestScalarRelationFilter, Prisma.TestWhereInput>
+  bookmarks?: Prisma.BookmarkListRelationFilter
 }
 
 export type QuestionOrderByWithRelationInput = {
@@ -382,6 +383,7 @@ export type QuestionOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   test?: Prisma.TestOrderByWithRelationInput
+  bookmarks?: Prisma.BookmarkOrderByRelationAggregateInput
 }
 
 export type QuestionWhereUniqueInput = Prisma.AtLeast<{
@@ -410,6 +412,7 @@ export type QuestionWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Question"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Question"> | Date | string
   test?: Prisma.XOR<Prisma.TestScalarRelationFilter, Prisma.TestWhereInput>
+  bookmarks?: Prisma.BookmarkListRelationFilter
 }, "id">
 
 export type QuestionOrderByWithAggregationInput = {
@@ -490,6 +493,7 @@ export type QuestionCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   test: Prisma.TestCreateNestedOneWithoutQuestionsInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutQuestionInput
 }
 
 export type QuestionUncheckedCreateInput = {
@@ -514,6 +518,7 @@ export type QuestionUncheckedCreateInput = {
   reviewStatus?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type QuestionUpdateInput = {
@@ -538,6 +543,7 @@ export type QuestionUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   test?: Prisma.TestUpdateOneRequiredWithoutQuestionsNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutQuestionNestedInput
 }
 
 export type QuestionUncheckedUpdateInput = {
@@ -562,6 +568,7 @@ export type QuestionUncheckedUpdateInput = {
   reviewStatus?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type QuestionCreateManyInput = {
@@ -731,6 +738,11 @@ export type QuestionSumOrderByAggregateInput = {
   sourcePage?: Prisma.SortOrder
 }
 
+export type QuestionScalarRelationFilter = {
+  is?: Prisma.QuestionWhereInput
+  isNot?: Prisma.QuestionWhereInput
+}
+
 export type QuestionCreateNestedManyWithoutTestInput = {
   create?: Prisma.XOR<Prisma.QuestionCreateWithoutTestInput, Prisma.QuestionUncheckedCreateWithoutTestInput> | Prisma.QuestionCreateWithoutTestInput[] | Prisma.QuestionUncheckedCreateWithoutTestInput[]
   connectOrCreate?: Prisma.QuestionCreateOrConnectWithoutTestInput | Prisma.QuestionCreateOrConnectWithoutTestInput[]
@@ -777,6 +789,20 @@ export type EnumQuestionTypeFieldUpdateOperationsInput = {
   set?: $Enums.QuestionType
 }
 
+export type QuestionCreateNestedOneWithoutBookmarksInput = {
+  create?: Prisma.XOR<Prisma.QuestionCreateWithoutBookmarksInput, Prisma.QuestionUncheckedCreateWithoutBookmarksInput>
+  connectOrCreate?: Prisma.QuestionCreateOrConnectWithoutBookmarksInput
+  connect?: Prisma.QuestionWhereUniqueInput
+}
+
+export type QuestionUpdateOneRequiredWithoutBookmarksNestedInput = {
+  create?: Prisma.XOR<Prisma.QuestionCreateWithoutBookmarksInput, Prisma.QuestionUncheckedCreateWithoutBookmarksInput>
+  connectOrCreate?: Prisma.QuestionCreateOrConnectWithoutBookmarksInput
+  upsert?: Prisma.QuestionUpsertWithoutBookmarksInput
+  connect?: Prisma.QuestionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.QuestionUpdateToOneWithWhereWithoutBookmarksInput, Prisma.QuestionUpdateWithoutBookmarksInput>, Prisma.QuestionUncheckedUpdateWithoutBookmarksInput>
+}
+
 export type QuestionCreateWithoutTestInput = {
   id?: string
   questionText: string
@@ -798,6 +824,7 @@ export type QuestionCreateWithoutTestInput = {
   reviewStatus?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutQuestionInput
 }
 
 export type QuestionUncheckedCreateWithoutTestInput = {
@@ -821,6 +848,7 @@ export type QuestionUncheckedCreateWithoutTestInput = {
   reviewStatus?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type QuestionCreateOrConnectWithoutTestInput = {
@@ -876,6 +904,118 @@ export type QuestionScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Question"> | Date | string
 }
 
+export type QuestionCreateWithoutBookmarksInput = {
+  id?: string
+  questionText: string
+  questionType?: $Enums.QuestionType
+  optionA?: string | null
+  optionB?: string | null
+  optionC?: string | null
+  optionD?: string | null
+  optionE?: string | null
+  correctAnswer?: string | null
+  marks?: number
+  negativeMarks?: number
+  explanation?: string | null
+  order?: number
+  subject?: string | null
+  sourceFile?: string | null
+  sourcePage?: number | null
+  confidence?: string | null
+  reviewStatus?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  test: Prisma.TestCreateNestedOneWithoutQuestionsInput
+}
+
+export type QuestionUncheckedCreateWithoutBookmarksInput = {
+  id?: string
+  testId: string
+  questionText: string
+  questionType?: $Enums.QuestionType
+  optionA?: string | null
+  optionB?: string | null
+  optionC?: string | null
+  optionD?: string | null
+  optionE?: string | null
+  correctAnswer?: string | null
+  marks?: number
+  negativeMarks?: number
+  explanation?: string | null
+  order?: number
+  subject?: string | null
+  sourceFile?: string | null
+  sourcePage?: number | null
+  confidence?: string | null
+  reviewStatus?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type QuestionCreateOrConnectWithoutBookmarksInput = {
+  where: Prisma.QuestionWhereUniqueInput
+  create: Prisma.XOR<Prisma.QuestionCreateWithoutBookmarksInput, Prisma.QuestionUncheckedCreateWithoutBookmarksInput>
+}
+
+export type QuestionUpsertWithoutBookmarksInput = {
+  update: Prisma.XOR<Prisma.QuestionUpdateWithoutBookmarksInput, Prisma.QuestionUncheckedUpdateWithoutBookmarksInput>
+  create: Prisma.XOR<Prisma.QuestionCreateWithoutBookmarksInput, Prisma.QuestionUncheckedCreateWithoutBookmarksInput>
+  where?: Prisma.QuestionWhereInput
+}
+
+export type QuestionUpdateToOneWithWhereWithoutBookmarksInput = {
+  where?: Prisma.QuestionWhereInput
+  data: Prisma.XOR<Prisma.QuestionUpdateWithoutBookmarksInput, Prisma.QuestionUncheckedUpdateWithoutBookmarksInput>
+}
+
+export type QuestionUpdateWithoutBookmarksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  questionText?: Prisma.StringFieldUpdateOperationsInput | string
+  questionType?: Prisma.EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+  optionA?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  optionB?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  optionC?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  optionD?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  optionE?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  correctAnswer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marks?: Prisma.FloatFieldUpdateOperationsInput | number
+  negativeMarks?: Prisma.FloatFieldUpdateOperationsInput | number
+  explanation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceFile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourcePage?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  confidence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviewStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  test?: Prisma.TestUpdateOneRequiredWithoutQuestionsNestedInput
+}
+
+export type QuestionUncheckedUpdateWithoutBookmarksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testId?: Prisma.StringFieldUpdateOperationsInput | string
+  questionText?: Prisma.StringFieldUpdateOperationsInput | string
+  questionType?: Prisma.EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+  optionA?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  optionB?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  optionC?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  optionD?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  optionE?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  correctAnswer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marks?: Prisma.FloatFieldUpdateOperationsInput | number
+  negativeMarks?: Prisma.FloatFieldUpdateOperationsInput | number
+  explanation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceFile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourcePage?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  confidence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviewStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type QuestionCreateManyTestInput = {
   id?: string
   questionText: string
@@ -920,6 +1060,7 @@ export type QuestionUpdateWithoutTestInput = {
   reviewStatus?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutQuestionNestedInput
 }
 
 export type QuestionUncheckedUpdateWithoutTestInput = {
@@ -943,6 +1084,7 @@ export type QuestionUncheckedUpdateWithoutTestInput = {
   reviewStatus?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type QuestionUncheckedUpdateManyWithoutTestInput = {
@@ -969,6 +1111,35 @@ export type QuestionUncheckedUpdateManyWithoutTestInput = {
 }
 
 
+/**
+ * Count Type QuestionCountOutputType
+ */
+
+export type QuestionCountOutputType = {
+  bookmarks: number
+}
+
+export type QuestionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  bookmarks?: boolean | QuestionCountOutputTypeCountBookmarksArgs
+}
+
+/**
+ * QuestionCountOutputType without action
+ */
+export type QuestionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QuestionCountOutputType
+   */
+  select?: Prisma.QuestionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * QuestionCountOutputType without action
+ */
+export type QuestionCountOutputTypeCountBookmarksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookmarkWhereInput
+}
+
 
 export type QuestionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -993,6 +1164,8 @@ export type QuestionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean
   updatedAt?: boolean
   test?: boolean | Prisma.TestDefaultArgs<ExtArgs>
+  bookmarks?: boolean | Prisma.Question$bookmarksArgs<ExtArgs>
+  _count?: boolean | Prisma.QuestionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["question"]>
 
 export type QuestionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1072,6 +1245,8 @@ export type QuestionSelectScalar = {
 export type QuestionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "testId" | "questionText" | "questionType" | "optionA" | "optionB" | "optionC" | "optionD" | "optionE" | "correctAnswer" | "marks" | "negativeMarks" | "explanation" | "order" | "subject" | "sourceFile" | "sourcePage" | "confidence" | "reviewStatus" | "createdAt" | "updatedAt", ExtArgs["result"]["question"]>
 export type QuestionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   test?: boolean | Prisma.TestDefaultArgs<ExtArgs>
+  bookmarks?: boolean | Prisma.Question$bookmarksArgs<ExtArgs>
+  _count?: boolean | Prisma.QuestionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type QuestionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   test?: boolean | Prisma.TestDefaultArgs<ExtArgs>
@@ -1084,6 +1259,7 @@ export type $QuestionPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "Question"
   objects: {
     test: Prisma.$TestPayload<ExtArgs>
+    bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1502,6 +1678,7 @@ readonly fields: QuestionFieldRefs;
 export interface Prisma__QuestionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   test<T extends Prisma.TestDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TestDefaultArgs<ExtArgs>>): Prisma.Prisma__TestClient<runtime.Types.Result.GetResult<Prisma.$TestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  bookmarks<T extends Prisma.Question$bookmarksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Question$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1950,6 +2127,30 @@ export type QuestionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many Questions to delete.
    */
   limit?: number
+}
+
+/**
+ * Question.bookmarks
+ */
+export type Question$bookmarksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Bookmark
+   */
+  select?: Prisma.BookmarkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Bookmark
+   */
+  omit?: Prisma.BookmarkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookmarkInclude<ExtArgs> | null
+  where?: Prisma.BookmarkWhereInput
+  orderBy?: Prisma.BookmarkOrderByWithRelationInput | Prisma.BookmarkOrderByWithRelationInput[]
+  cursor?: Prisma.BookmarkWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookmarkScalarFieldEnum | Prisma.BookmarkScalarFieldEnum[]
 }
 
 /**

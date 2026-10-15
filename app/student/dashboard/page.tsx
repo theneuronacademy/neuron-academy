@@ -34,6 +34,11 @@ export default function StudentDashboardPage() {
   // Phase 16 — recent server-evaluated results + current batch (REGULAR).
   const [recentResults, setRecentResults] = useState<ResultRow[] | null>(null);
   const [batch, setBatch] = useState<BatchInfo | null>(null);
+  // Engagement — server-derived streak/XP, toppers wall, resumable attempt, today's classes.
+  const [streak, setStreak] = useState<{ currentStreak: number; xp: number } | null>(null);
+  const [toppers, setToppers] = useState<{ studentName: string; achievement: string; exam?: string }[]>([]);
+  const [resume, setResume] = useState<{ testId: string; title: string } | null>(null);
+  const [todayClasses, setTodayClasses] = useState<{ subject: string; startTime: string; endTime: string; title: string | null }[] | null>(null);
 
   const scholarship = profile?.studentType === "SCHOLARSHIP";
 
@@ -93,6 +98,59 @@ export default function StudentDashboardPage() {
       } catch {
         setBatch(null);
       }
+      // Streak + XP (server-derived, cheat-proof).
+      try {
+        const res = await fetch("/api/students/me/streak", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        if (res.ok && json?.success === true) {
+          setStreak({ currentStreak: Number(json.data?.currentStreak ?? 0), xp: Number(json.data?.xp ?? 0) });
+        }
+      } catch {
+        /* streak widget stays hidden */
+      }
+      // Toppers wall (consented public showcase only).
+      try {
+        const res = await fetch("/api/showcase", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        const items = res.ok && json?.success === true && Array.isArray(json.data?.items) ? json.data.items : [];
+        setToppers(items.slice(0, 3).map((t: { studentName: string; achievement: string; exam?: string }) => ({ studentName: t.studentName, achievement: t.achievement, exam: t.exam })));
+      } catch {
+        setToppers([]);
+      }
+      // Resumable attempt (single IN_PROGRESS row, title from catalogue).
+      try {
+        const [aRes, tRes] = await Promise.all([
+          fetch("/api/attempts", { cache: "no-store" }),
+          fetch("/api/tests", { cache: "no-store" }),
+        ]);
+        const aJson = await aRes.json().catch(() => null);
+        const tJson = await tRes.json().catch(() => null);
+        const ins = aRes.ok && aJson?.success === true && Array.isArray(aJson.data?.items)
+          ? (aJson.data.items as { testId: string; status: string }[]).find((a) => a.status === "IN_PROGRESS")
+          : null;
+        if (ins) {
+          const list = tRes.ok && tJson?.success === true && Array.isArray(tJson.data?.items) ? tJson.data.items as { id: string; title: string }[] : [];
+          const match = list.find((t) => t.id === ins.testId);
+          setResume({ testId: ins.testId, title: match?.title ?? "Untitled test" });
+        } else setResume(null);
+      } catch {
+        setResume(null);
+      }
+      // Today's classes (own batch timetable, client-side day filter).
+      try {
+        const res = await fetch("/api/timetable", { cache: "no-store" });
+        const json = await res.json().catch(() => null);
+        const all = res.ok && json?.success === true && Array.isArray(json.data?.items) ? json.data.items : [];
+        const day = new Date().getDay();
+        setTodayClasses(
+          (all as { dayOfWeek: number; subject: string; startTime: string; endTime: string; title: string | null }[])
+            .filter((e) => e.dayOfWeek === day)
+            .sort((a, b) => (a.startTime < b.startTime ? -1 : 1))
+            .slice(0, 4)
+        );
+      } catch {
+        setTodayClasses([]);
+      }
     })();
   }, [session]);
 
@@ -151,6 +209,14 @@ export default function StudentDashboardPage() {
               <p className="text-2xl font-extrabold">{analytics?.tests.averagePercentage === null || analytics?.tests.averagePercentage === undefined ? "—" : `${analytics.tests.averagePercentage}%`}</p>
               <p className="text-[10px] font-bold tracking-widest text-silver-200">AVG SCORE</p>
             </div>
+            <div className="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-amber-200/40" title="Practice streak (server-counted active days)">
+              <p className="text-2xl font-extrabold">{streak === null ? "…" : `${streak.currentStreak}🔥`}</p>
+              <p className="text-[10px] font-bold tracking-widest text-silver-200">STREAK</p>
+            </div>
+            <div className="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/15" title="Experience points from marks earned + present days">
+              <p className="text-2xl font-extrabold">{streak === null ? "…" : streak.xp}</p>
+              <p className="text-[10px] font-bold tracking-widest text-silver-200">XP</p>
+            </div>
             {!scholarship ? (
               <div className="rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/15">
                 <p className="text-2xl font-extrabold">{analytics?.attendance.percentage === null || analytics?.attendance.percentage === undefined ? "—" : `${analytics.attendance.percentage}%`}</p>
@@ -159,6 +225,55 @@ export default function StudentDashboardPage() {
             ) : null}
           </div>
         </div>
+      </div>
+
+      {/* RESUME — single in-progress attempt, impossible to miss */}
+      {resume ? (
+        <Link href={`/student/tests/${resume.testId}`} className="mt-4 flex items-center justify-between gap-3 rounded-card bg-gradient-to-r from-amber-500 to-crimson px-5 py-4 text-white shadow-card transition hover:brightness-105">
+          <div className="min-w-0">
+            <p className="text-[11px] font-extrabold tracking-widest text-white/80">CONTINUE WHERE YOU LEFT OFF</p>
+            <p className="truncate text-[16px] font-extrabold">{resume.title}</p>
+          </div>
+          <span className="shrink-0 rounded-xl bg-white px-4 py-2 text-sm font-extrabold text-crimson">Resume →</span>
+        </Link>
+      ) : null}
+
+      {/* TOPPERS + TODAY */}
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        {toppers.length > 0 ? (
+          <div className="rounded-card border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5 shadow-card">
+            <h2 className="flex items-center gap-1.5 text-[15px] font-extrabold text-navy-700"><Trophy className="h-4 w-4 text-amber-500" /> Academy Toppers</h2>
+            <ul className="mt-3 space-y-2">
+              {toppers.map((tp, i) => (
+                <li key={`${tp.studentName}-${i}`} className="flex items-center gap-3 rounded-xl bg-white/80 px-4 py-2.5 ring-1 ring-amber-100">
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-white ${i === 0 ? "bg-amber-500" : i === 1 ? "bg-silver-400" : "bg-amber-700"}`}>
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-extrabold text-navy-700">{tp.studentName}</p>
+                    <p className="truncate text-[12px] text-muted">{tp.achievement}{tp.exam ? ` · ${tp.exam}` : ""}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        {todayClasses !== null && todayClasses.length > 0 ? (
+          <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-1.5 text-[15px] font-extrabold text-navy-700"><CalendarCheck className="h-4 w-4" /> Today&apos;s Classes</h2>
+              <Link href="/student/timetable" className="text-[13px] font-bold text-teal-600 hover:underline">Full week →</Link>
+            </div>
+            <ul className="mt-3 space-y-2">
+              {todayClasses.map((c, i) => (
+                <li key={i} className="flex items-center justify-between gap-2 rounded-xl bg-silver-50 px-4 py-2.5">
+                  <p className="text-sm font-extrabold text-navy-700">{c.subject}{c.title ? <span className="font-semibold text-muted"> · {c.title}</span> : null}</p>
+                  <p className="shrink-0 text-[12px] font-bold tabular-nums text-muted">{c.startTime}–{c.endTime}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </div>
 
       {/* QUICK ACTIONS */}

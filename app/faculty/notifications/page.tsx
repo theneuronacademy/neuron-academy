@@ -11,6 +11,13 @@ export default function FacultyNotificationsPage() {
   const router = useRouter();
   const [feed, setFeed] = React.useState<FeedItem[] | null>(null);
   const [busy, setBusy] = React.useState<string | null>(null);
+  // Batch messaging composer.
+  const [batches, setBatches] = React.useState<{ id: string; name: string }[]>([]);
+  const [batchId, setBatchId] = React.useState("");
+  const [title, setTitle] = React.useState("");
+  const [message, setMessage] = React.useState("");
+  const [sent, setSent] = React.useState<{ id: string; title: string; message: string; createdAt: string }[]>([]);
+  const [sendState, setSendState] = React.useState<string | null>(null);
 
   async function load() {
     const res = await fetch("/api/notifications/mine?limit=50", { cache: "no-store" });
@@ -20,12 +27,34 @@ export default function FacultyNotificationsPage() {
     else setFeed([]);
   }
 
+  async function loadComposer() {
+    try {
+      const [bR, sR] = await Promise.all([
+        fetch("/api/faculty/batches", { cache: "no-store" }),
+        fetch("/api/faculty/announcements", { cache: "no-store" }),
+      ]);
+      const bJ = await bR.json().catch(() => null);
+      if (bR.ok && bJ?.success && Array.isArray(bJ.data?.items)) {
+        const list = (bJ.data.items as { id: string; name: string }[]).map((b) => ({ id: b.id, name: b.name }));
+        setBatches(list);
+        if (list.length > 0) setBatchId((cur) => cur || list[0].id);
+      }
+      const sJ = await sR.json().catch(() => null);
+      if (sR.ok && sJ?.success && Array.isArray(sJ.data?.items)) setSent(sJ.data.items);
+    } catch {
+      /* composer stays empty */
+    }
+  }
+
   useEffect(() => {
     let live = true;
     (async () => {
       const s = await fetch("/api/auth/session", { cache: "no-store" });
       if (!s.ok) { router.replace("/faculty/login"); return; }
-      if (live) await load();
+      if (live) {
+        await load();
+        await loadComposer();
+      }
     })();
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,8 +86,62 @@ export default function FacultyNotificationsPage() {
 
   const unread = feed.filter((n) => !n.isRead).length;
 
+  async function sendAnnouncement() {
+    if (!batchId) { setSendState("Select a batch first."); return; }
+    if (title.trim().length < 3 || message.trim().length < 3) {
+      setSendState("Title and message need at least 3 characters.");
+      return;
+    }
+    setBusy("send");
+    setSendState(null);
+    try {
+      const res = await fetch("/api/faculty/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ batchId, title: title.trim(), message: message.trim() }),
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || json?.success !== true) {
+        setSendState(json?.error ?? "Could not send announcement.");
+        return;
+      }
+      setTitle("");
+      setMessage("");
+      setSendState("Announcement sent to your batch.");
+      await loadComposer();
+    } catch {
+      setSendState("Cannot reach the server.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
-    <FacultyShell title="Notifications" subtitle={unread > 0 ? `${unread} unread` : "Faculty announcements and updates"}>
+    <FacultyShell title="Notifications" subtitle={unread > 0 ? `${unread} unread` : "Send updates to your batches"}>
+      <div className="mb-4 rounded-card border border-teal-200 bg-teal-50/50 p-4 shadow-card">
+        <p className="text-[14px] font-extrabold text-navy-700">📣 Announce to a batch</p>
+        {sendState ? <p className="mt-2 rounded-xl bg-white px-3 py-2 text-[13px] font-bold text-navy-700" role="status">{sendState}</p> : null}
+        <div className="mt-2 grid gap-2 sm:grid-cols-[200px_1fr]">
+          <select value={batchId} onChange={(e) => setBatchId(e.target.value)} className="rounded-xl border border-silver-300 bg-white px-3 py-2.5 text-sm font-bold text-navy-700">
+            {batches.length === 0 ? <option value="">No batches</option> : null}
+            {batches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+          </select>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Announcement title" maxLength={120} className="rounded-xl border border-silver-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+        </div>
+        <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message for your batch (students get it in their feed)…" rows={2} maxLength={1000} className="mt-2 w-full rounded-xl border border-silver-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+        <button onClick={sendAnnouncement} disabled={busy === "send" || batches.length === 0} className="mt-2 rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">
+          {busy === "send" ? "Sending…" : "Send to Batch"}
+        </button>
+        {sent.length > 0 ? (
+          <ul className="mt-3 space-y-1.5">
+            {sent.slice(0, 3).map((s) => (
+              <li key={s.id} className="rounded-xl bg-white px-3 py-2 text-[12px] text-muted">
+                <span className="font-extrabold text-navy-700">{s.title}</span> — {s.message.slice(0, 80)}{s.message.length > 80 ? "…" : ""}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
       <div className="mb-3 flex justify-end">
         {unread > 0 ? (
           <button onClick={() => void markAll()} disabled={busy === "all"} className="flex items-center gap-1.5 rounded-xl border border-silver-300 bg-white px-4 py-2 text-[13px] font-bold text-navy-700 hover:border-teal-500 disabled:opacity-60">

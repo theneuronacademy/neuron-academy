@@ -15,6 +15,7 @@ export default function FacultyTestsPage() {
   const [batchId, setBatchId] = React.useState("");
   const [batches, setBatches] = React.useState<Array<{ id: string; name: string }>>([]);
   const [err, setErr] = React.useState<string | null>(null);
+  const [asHomework, setAsHomework] = React.useState(false);
 
   async function load() {
     const r = await fetch("/api/tests", { cache: "no-store" });
@@ -46,14 +47,16 @@ export default function FacultyTestsPage() {
 
   async function createTest() {
     if (!title.trim()) { setErr("Title is required."); return; }
+    if (asHomework && !batchId) { setErr("Homework needs a batch — select one."); return; }
     setErr(null);
     const res = await fetch("/api/tests", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: title.trim(), batchId: batchId || undefined, type: "PRACTICE", status: "DRAFT" }),
+      body: JSON.stringify({ title: title.trim(), batchId: batchId || undefined, type: "PRACTICE", status: "DRAFT", ...(asHomework ? { isHomework: true } : {}) }),
     });
     const j = await res.json().catch(() => null);
     if (!res.ok || j?.success !== true) { setErr(j?.error ?? "Create failed. Faculty can create only for assigned batches."); return; }
     setTitle("");
+    setAsHomework(false);
     await load();
   }
 
@@ -69,6 +72,10 @@ export default function FacultyTestsPage() {
             {batches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
           </select>
           <button onClick={() => void createTest()} className="rounded-xl bg-navy-700 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800">Create Draft</button>
+          <label className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-[13px] font-bold text-amber-800">
+            <input type="checkbox" checked={asHomework} onChange={(e) => setAsHomework(e.target.checked)} />
+            Homework
+          </label>
         </div>
         <p className="mt-2 text-[12px] text-muted">Publishing, access type and price remain admin-controlled.</p>
       </div>

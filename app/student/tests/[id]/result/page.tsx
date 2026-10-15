@@ -36,6 +36,7 @@ interface ReviewItem {
   options: (string | null)[];
   yourAnswer: string | null;
   correctAnswer: string | null;
+  explanation: string | null;
   marksAwarded: number;
   maxMarks: number;
   status: string;
@@ -48,6 +49,34 @@ export default function StudentResultPage() {
   const [loaded, setLoaded] = useState(false);
   const [server, setServer] = useState<ServerSummary | null>(null);
   const [review, setReview] = useState<ReviewItem[]>([]);
+  const [myRank, setMyRank] = useState<number | null>(null);
+  const [rankTotal, setRankTotal] = useState<number | null>(null);
+  const [savedMarks, setSavedMarks] = useState<Set<string>>(new Set());
+
+  async function toggleBookmark(questionId: string) {
+    const on = savedMarks.has(questionId);
+    try {
+      if (on) {
+        await fetch(`/api/bookmarks?questionId=${encodeURIComponent(questionId)}`, { method: "DELETE" });
+        setSavedMarks((s) => {
+          const n = new Set(s);
+          n.delete(questionId);
+          return n;
+        });
+      } else {
+        const res = await fetch("/api/bookmarks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ testId: id, questionId }),
+        });
+        if (res.ok) {
+          setSavedMarks((s) => new Set(s).add(questionId));
+        }
+      }
+    } catch {
+      /* silent — bookmark is auxiliary */
+    }
+  }
 
   useEffect(() => {
     if (!session) return;
@@ -76,6 +105,26 @@ export default function StudentResultPage() {
             if (rJson?.success === true && Array.isArray(rJson.data?.items)) setReview(rJson.data.items);
           } catch {
             /* summary still renders */
+          }
+          // Real rank from the leaderboard (results rows keep rank null by design).
+          try {
+            const lRes = await fetch(`/api/tests/${encodeURIComponent(id)}/leaderboard`, { cache: "no-store" });
+            const lJson = await lRes.json().catch(() => null);
+            if (lRes.ok && lJson?.success === true) {
+              setMyRank(typeof lJson.data?.myRank === "number" ? lJson.data.myRank : null);
+              setRankTotal(typeof lJson.data?.total === "number" ? lJson.data.total : null);
+            }
+          } catch {
+            /* rank banner stays hidden */
+          }
+          // Pre-mark already-bookmarked questions.
+          try {
+            const bRes = await fetch("/api/bookmarks", { cache: "no-store" });
+            const bJson = await bRes.json().catch(() => null);
+            const arr = bRes.ok && bJson?.success === true && Array.isArray(bJson.data?.items) ? bJson.data.items : [];
+            setSavedMarks(new Set((arr as { questionId: string }[]).filter((b) => b && typeof b.questionId === "string").map((b) => b.questionId)));
+          } catch {
+            /* ignore */
           }
         }
       } catch {
@@ -127,6 +176,12 @@ export default function StudentResultPage() {
           </div>
         ))}
       </div>
+      {myRank !== null ? (
+        <div className="mt-4 flex items-center justify-between gap-3 rounded-card bg-gradient-to-r from-amber-500 to-amber-600 px-5 py-4 text-white shadow-card">
+          <p className="text-[16px] font-extrabold">🏆 Rank #{myRank}{rankTotal !== null ? ` of ${rankTotal}` : ""}</p>
+          <Link href="/student/tests" className="shrink-0 rounded-xl bg-white px-4 py-2 text-[13px] font-extrabold text-amber-700">Ranks →</Link>
+        </div>
+      ) : null}
       {review.length > 0 ? (
         <>
           <h2 className="mt-6 text-[15px] font-extrabold text-navy-700">Question-wise Review</h2>
@@ -181,6 +236,23 @@ export default function StudentResultPage() {
                 <p className="mt-1.5 text-[12px] font-bold text-muted">
                   Your Answer: {d.yourAnswer ?? "—"} • Correct Answer: {d.correctAnswer ?? "Pending faculty review"}
                 </p>
+                {d.explanation ? (
+                  <p className="mt-1.5 rounded-xl bg-amber-50 px-3 py-2 text-[13px] text-navy-700 ring-1 ring-amber-200">
+                    💡 <span className="font-bold">Why:</span> {d.explanation}
+                  </p>
+                ) : null}
+                <button
+                  onClick={() => toggleBookmark(d.questionId)}
+                  className={cn(
+                    "mt-2 rounded-lg border px-3 py-1.5 text-[12px] font-bold",
+                    savedMarks.has(d.questionId)
+                      ? "border-teal-500 bg-teal-50 text-teal-700"
+                      : "border-silver-300 text-muted hover:border-teal-500 hover:text-navy-700"
+                  )}
+                  aria-pressed={savedMarks.has(d.questionId)}
+                >
+                  {savedMarks.has(d.questionId) ? "★ Saved for revision" : "☆ Revise later"}
+                </button>
               </div>
             ))}
           </div>

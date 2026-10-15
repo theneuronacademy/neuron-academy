@@ -43,6 +43,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         options: [q.optionA, q.optionB, q.optionC, q.optionD, q.optionE],
         yourAnswer: your,
         correctAnswer: q.correctAnswer,
+        explanation: q.explanation ?? null,
         marksAwarded: Math.max(0, Math.round(awarded * 100) / 100),
         maxMarks: q.marks,
         status: q.correctAnswer === null ? "pending" : your === null ? "unattempted" : your === q.correctAnswer.toUpperCase() ? "correct" : "incorrect",

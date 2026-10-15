@@ -25,6 +25,8 @@ import {
   Trophy,
   User,
   Lock,
+  CalendarDays,
+  Library,
 } from "lucide-react";
 import { adminLogout } from "@/lib/adminAuth";
 import { Logo } from "@/components/website/Logo";
@@ -68,6 +70,8 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
       { href: "/admin/test-access", label: "Test Access", icon: Lock },
       { href: "/admin/question-bank", label: "Question Bank", icon: Database },
       { href: "/admin/books", label: "Books", icon: BookOpen },
+      { href: "/admin/materials", label: "Study Material", icon: Library },
+      { href: "/admin/timetable", label: "Timetable", icon: CalendarDays },
       { href: "/admin/results", label: "Results", icon: BarChart3 },
       { href: "/admin/attendance", label: "Attendance", icon: BarChart3 },
     ],

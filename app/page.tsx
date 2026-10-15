@@ -24,7 +24,7 @@ import { FacultyDetails } from "@/components/website/FacultyDetails";
 import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
-import { Reveal, Marquee } from "@/components/website/motion";
+import { Reveal, Marquee, Tilt, FloatingEmojis } from "@/components/website/motion";
 import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
 import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
@@ -36,20 +36,20 @@ import type { Course } from "@/data/courses";
 import type { FacultyMember } from "@/data/faculty";
 
 const TRUST = [
-  { icon: Users, title: "Expert Faculty", desc: "IIT, medical & AMU/JMI alumni mentors." },
-  { icon: BookOpen, title: "Entrance-First Courses", desc: "JEE • NEET • AMU • Jamia mapped syllabus." },
-  { icon: FileText, title: "Weekly Mocks", desc: "Exam-pattern tests with ranks & solutions." },
-  { icon: Target, title: "Performance Tracking", desc: "Marks, attendance & growth in one place." },
-  { icon: MonitorPlay, title: "Digital Test Platform", desc: "Live tests, instant results, analysis." },
+  { icon: Users, title: "⭐ Expert Faculty", desc: "IIT, medical & AMU/JMI alumni mentors." },
+  { icon: BookOpen, title: "🎯 Entrance-First Courses", desc: "JEE • NEET • AMU • Jamia mapped syllabus." },
+  { icon: FileText, title: "📝 Weekly Mocks", desc: "Exam-pattern tests with ranks & solutions." },
+  { icon: Target, title: "📊 Performance Tracking", desc: "Marks, attendance & growth in one place." },
+  { icon: MonitorPlay, title: "💻 Digital Test Platform", desc: "Live tests, instant results, analysis." },
 ];
 
 const WHY = [
-  { t: "Entrance Specialists", d: "Not a generic tuition — every batch is engineered around JEE, NEET, AMU or Jamia patterns." },
-  { t: "Small Focused Batches", d: "Mentors know every student by name, strength and weak chapter." },
-  { t: "Weekly Mocks + PYQs", d: "Saturday full-syllabus mocks, daily PYQ drills and live sprint tests." },
-  { t: "Doubt Lounge Till 8 PM", d: "Walk in with any doubt — walk out with the concept crystal clear." },
-  { t: "Parent Reports", d: "Monthly score cards on WhatsApp + mentor calls after every major test." },
-  { t: "Digital Test App", d: "Attempt from home, get instant ranks, accuracy graphs and solutions." },
+  { t: "🎯 Entrance Specialists", d: "Not a generic tuition — every batch is engineered around JEE, NEET, AMU or Jamia patterns." },
+  { t: "👥 Small Focused Batches", d: "Mentors know every student by name, strength and weak chapter." },
+  { t: "📝 Weekly Mocks + PYQs", d: "Saturday full-syllabus mocks, daily PYQ drills and live sprint tests." },
+  { t: "💡 Doubt Lounge Till 8 PM", d: "Walk in with any doubt — walk out with the concept crystal clear." },
+  { t: "📊 Parent Reports", d: "Monthly score cards on WhatsApp + mentor calls after every major test." },
+  { t: "💻 Digital Test App", d: "Attempt from home, get instant ranks, accuracy graphs and solutions." },
 ];
 
 function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
@@ -96,8 +96,8 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
                   </div>
                 }
               />
-              <span className="absolute inset-0 bg-gradient-to-t from-navy-800/70 to-transparent opacity-80" />
-              <span className="absolute bottom-3 left-3 right-3"><span className="text-[12px] font-extrabold text-white drop-shadow">{g.title}</span></span>
+              <span className="absolute inset-0 bg-gradient-to-t from-navy-800/70 to-transparent opacity-80 transition group-hover:opacity-95" />
+              <span className="absolute bottom-3 left-3 right-3 flex items-center justify-between"><span className="text-[12px] font-extrabold text-white drop-shadow">{g.title}</span><span className="text-lg opacity-0 transition duration-300 group-hover:opacity-100">🔍</span></span>
             </button>
           </Reveal>
         ))}
@@ -158,8 +158,8 @@ function LivePhone() {
   return (
     <div className="animate-float-slow mx-auto w-full max-w-[300px] rounded-[28px] border-8 border-navy-800 bg-white shadow-card">
       <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
-        <div><p className="text-xs font-extrabold text-navy-700">NEET Practice — 07</p><p className="text-[11px] text-muted">Live • auto ranks</p></div>
-        <span className="animate-blink rounded-full bg-crimson px-2 py-0.5 text-[10px] font-extrabold text-white">LIVE</span>
+        <div><p className="text-xs font-extrabold text-navy-700">📱 NEET Practice — 07</p><p className="text-[11px] text-muted">🔴 Live • auto ranks</p></div>
+        <span className="animate-blink rounded-full bg-crimson px-2 py-0.5 text-[10px] font-extrabold text-white">● LIVE</span>
       </div>
       <div className="space-y-2.5 p-4">
         <div key={s} className="animate-fade-in rounded-xl bg-silver-50 p-3 ring-1 ring-silver-200">
@@ -175,9 +175,9 @@ function LivePhone() {
         </div>
         <div className="flex items-center justify-between rounded-xl bg-navy-800 p-3 text-white">
           <span className="text-[12px] font-bold tabular-nums">⏱ {mm}:{ss}</span>
-          <span className="rounded-lg bg-teal-500 px-2.5 py-1 text-[11px] font-bold">Submit</span>
+          <span className="animate-bounce-soft rounded-lg bg-teal-500 px-2.5 py-1 text-[11px] font-bold">Submit 🚀</span>
         </div>
-        <p className="text-center text-[11px] text-muted">Interactive preview — try a live test below</p>
+        <p className="text-center text-[11px] text-muted">👇 Interactive preview — try a live test below ✨</p>
       </div>
     </div>
   );
@@ -302,8 +302,8 @@ export default function HomePage() {
           <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6">
             <Reveal>
               <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
-                {["Small Batches", "Weekly Mocks", "Expert Mentors", "4 Entrance Tracks"].map((l) => (
-                  <div key={l}>
+                {["👥 Small Batches", "📝 Weekly Mocks", "🧑‍🏫 Expert Mentors", "🎯 4 Entrance Tracks"].map((l) => (
+                  <div key={l} className="transition duration-300 hover:-translate-y-1 hover:scale-105">
                     <p className="mt-0.5 text-[11px] font-bold tracking-[0.18em] text-muted">{l.toUpperCase()}</p>
                   </div>
                 ))}
@@ -312,10 +312,12 @@ export default function HomePage() {
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               {TRUST.map((f, i) => (
                 <Reveal key={f.title} delay={i * 70}>
-                  <MetallicCard className="card-lift premium-ring flex h-full gap-3 p-4">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-navy-700 to-teal-600 text-white shadow-card"><f.icon className="h-5 w-5" /></span>
-                    <span><span className="block text-sm font-extrabold tracking-tight text-navy-700">{f.title}</span><span className="mt-0.5 block text-[13px] leading-snug text-muted">{f.desc}</span></span>
-                  </MetallicCard>
+                  <Tilt max={7}>
+                    <MetallicCard className="card-lift premium-ring flex h-full gap-3 p-4">
+                      <span className="wiggle-on-hover flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-navy-700 to-teal-600 text-white shadow-card"><f.icon className="h-5 w-5" /></span>
+                      <span><span className="block text-sm font-extrabold tracking-tight text-navy-700">{f.title}</span><span className="mt-0.5 block text-[13px] leading-snug text-muted">{f.desc}</span></span>
+                    </MetallicCard>
+                  </Tilt>
                 </Reveal>
               ))}
             </div>
@@ -350,17 +352,17 @@ export default function HomePage() {
             </Reveal>
             <Reveal variant="right">
               <div>
-                <SectionHeader eyebrow="ABOUT" title="More Than Classes. A Structured Learning Experience." />
+                <SectionHeader eyebrow="✨ ABOUT" title="More Than Classes 🎓 — A Structured Learning Experience." />
                 <p className="mt-4 text-[15px] leading-relaxed text-muted">
                   In the heart of Shaheen Bagh, Neuron Academy prepares students for JEE, NEET, AMU and Jamia entrances with
-                  small batches, weekly mocks and mentors who track every mark — so students always know what to study next.
+                  small batches, weekly mocks and mentors who track every mark — so students always know what to study next. 🧠⚡
                 </p>
                 <ul className="mt-5 space-y-3 text-[14px] text-ink">
-                  {["Mission: a top rank from every lane of Shaheen Bagh.", "Teaching: concept-first, PYQ-heavy, doubt-supported.", "Environment: disciplined batches with mentor check-ins.", "Technology: digital tests, attendance and instant ranks.", "Assessment: weekly mocks with solutions and parent reports."].map((t) => (
-                    <li key={t} className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" /> {t}</li>
+                  {["🎯 Mission: a top rank from every lane of Shaheen Bagh.", "📚 Teaching: concept-first, PYQ-heavy, doubt-supported.", "🤝 Environment: disciplined batches with mentor check-ins.", "💻 Technology: digital tests, attendance and instant ranks.", "📊 Assessment: weekly mocks with solutions and parent reports."].map((t) => (
+                    <li key={t} className="flex gap-2 rounded-lg px-2 py-1 transition hover:-translate-y-0.5 hover:bg-silver-50"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" /> {t}</li>
                   ))}
                 </ul>
-                <a href="#courses" className="btn-metallic-sheen mt-6 inline-block rounded-xl bg-navy-700 px-6 py-3 text-sm font-bold text-white">See Our Tracks →</a>
+                <a href="#courses" className="btn-metallic-sheen cta-bounce shine-sweep mt-6 inline-block rounded-xl bg-navy-700 px-6 py-3 text-sm font-bold text-white">See Our Tracks 🚀 →</a>
               </div>
             </Reveal>
           </div>
@@ -371,16 +373,19 @@ export default function HomePage() {
           <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="WHY NEURON" title="Why Shaheen Bagh Chooses Neuron Academy" desc="Entrance specialists — not a generic tuition centre." />
+              <SectionHeader eyebrow="💖 WHY NEURON" title="Why Shaheen Bagh Chooses Neuron Academy ✨" desc="Entrance specialists — not a generic tuition centre. 🧠" />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {WHY.map((w, i) => (
                 <Reveal key={w.t} delay={(i % 3) * 90}>
-                  <div className={i === 0 ? "card-lift relative h-full overflow-hidden rounded-card bg-gradient-to-br from-navy-800 via-navy-700 to-teal-700 p-6 text-white shadow-card" : "card-lift premium-ring h-full rounded-card bg-white p-6"}>
-                    <span className="bg-gradient-to-r from-teal-500 to-amber-400 bg-clip-text text-[12px] font-extrabold tracking-[0.18em] text-transparent">0{i + 1}</span>
-                    <p className={`mt-1 text-[16px] font-extrabold tracking-tight ${i === 0 ? "text-white" : "text-navy-700"}`}>{w.t}</p>
-                    <p className={`mt-1.5 text-[13.5px] leading-relaxed ${i === 0 ? "text-silver-200" : "text-muted"}`}>{w.d}</p>
-                  </div>
+                  <Tilt max={8}>
+                    <div className={i === 0 ? "card-lift relative h-full overflow-hidden rounded-card bg-gradient-to-br from-navy-800 via-navy-700 to-teal-700 p-6 text-white shadow-card" : "card-lift premium-ring h-full rounded-card bg-white p-6"}>
+                      {i === 0 ? <FloatingEmojis emojis={["🧠", "⚡", "✨"]} count={4} /> : null}
+                      <span className="bg-gradient-to-r from-teal-500 to-amber-400 bg-clip-text text-[12px] font-extrabold tracking-[0.18em] text-transparent">0{i + 1}</span>
+                      <p className={`mt-1 text-[16px] font-extrabold tracking-tight ${i === 0 ? "text-white" : "text-navy-700"}`}>{w.t}</p>
+                      <p className={`mt-1.5 text-[13.5px] leading-relaxed ${i === 0 ? "text-silver-200" : "text-muted"}`}>{w.d}</p>
+                    </div>
+                  </Tilt>
                 </Reveal>
               ))}
             </div>
@@ -397,7 +402,7 @@ export default function HomePage() {
           <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-crimson/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="COURSES" title="One Academy. Every Entrance." desc="JEE • NEET • AMU • Jamia • Foundation — pick your battlefield." />
+              <SectionHeader eyebrow="📚 COURSES" title="One Academy. Every Entrance. 🚀" desc="JEE • NEET • AMU • Jamia • Foundation — pick your battlefield. ⚔️" />
             </Reveal>
             <Reveal delay={100}>
               <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter courses by category">
@@ -436,7 +441,7 @@ export default function HomePage() {
         <section id="faculty" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="FACULTY" title="Learn From Mentors Who've Been There" desc="IIT, medical & AMU/JMI alumni guiding every batch." />
+              <SectionHeader eyebrow="🧑‍🏫 FACULTY" title="Learn From Mentors Who've Been There 🌟" desc="IIT, medical & AMU/JMI alumni guiding every batch. 💪" />
             </Reveal>
             {facultyList.length === 0 ? (
               <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-background p-8 text-center text-sm font-bold text-muted">No faculty profiles published yet.</p>
@@ -454,11 +459,12 @@ export default function HomePage() {
 
         {/* RESULTS — cinematic toppers wall */}
         <section id="results" className="metallic-dark relative overflow-hidden">
-          <div className="pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
-          <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
+          <div className="animate-float-slow pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
+          <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
+          <FloatingEmojis emojis={["🏆", "🥇", "⭐", "🎉", "🧠"]} count={9} />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader dark eyebrow="RESULTS" title="Progress You Can Measure." desc="Verified selections from our entrance batches will appear here." />
+              <SectionHeader dark eyebrow="🏆 RESULTS" title="Progress You Can Measure. 📈" desc="Verified selections from our entrance batches will appear here. ✨" />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {wall.length === 0 ? (
@@ -484,9 +490,9 @@ export default function HomePage() {
             <Reveal delay={150}>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
                 {[
-                  { l: "Weekly Mocks" },
-                  { l: "Syllabus Coverage" },
-                  { l: "Doubt Lounge" },
+                  { l: "📝 Weekly Mocks" },
+                  { l: "📚 Syllabus Coverage" },
+                  { l: "💡 Doubt Lounge" },
                 ].map((x) => (
                   <div key={x.l}>
                     <p className="text-[11px] font-bold tracking-[0.18em] text-teal-300">{x.l.toUpperCase()}</p>
@@ -502,7 +508,7 @@ export default function HomePage() {
           <div className="pointer-events-none absolute -left-20 top-10 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="TESTIMONIALS" title="What Students & Parents Say." desc="Verified reviews from our learners and their families will appear here." />
+              <SectionHeader eyebrow="💬 TESTIMONIALS" title="What Students & Parents Say. ❤️" desc="Verified reviews from our learners and their families will appear here. 🌟" />
             </Reveal>
             <Reveal delay={120}>
               <div className="mt-8"><Testimonials items={testimonialList} /></div>
@@ -516,15 +522,15 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader eyebrow="TEST PLATFORM" title="Practice. Perform. Improve." desc="Our digital test app — live mocks, instant ranks and question-wise analysis. It's already working: try it below." />
+                <SectionHeader eyebrow="⚡ TEST PLATFORM" title="Practice. Perform. Improve. 🚀" desc="Our digital test app — live mocks, instant ranks and question-wise analysis. It's already working: try it below. 👇" />
                 <ul className="mt-5 grid gap-2.5 text-sm font-semibold text-ink sm:grid-cols-2">
-                  {["Live Tests", "Mock Tests", "Instant Results", "Performance Analysis", "Regular Assessment", "Solutions + Ranks"].map((t) => (
-                    <li key={t} className="card-lift flex items-center gap-2 rounded-xl border border-silver-200 bg-background px-3 py-2.5"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> {t}</li>
+                  {["🔴 Live Tests", "📝 Mock Tests", "⚡ Instant Results", "📊 Performance Analysis", "🗓️ Regular Assessment", "🏆 Solutions + Ranks"].map((t) => (
+                    <li key={t} className="card-lift flex items-center gap-2 rounded-xl border border-silver-200 bg-background px-3 py-2.5 transition hover:-translate-y-1 hover:border-teal-400 hover:shadow-card"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> {t}</li>
                   ))}
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a href="/scholarship-tests" className="animate-glow btn-metallic-sheen inline-block rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">Scholarship Tests →</a>
-                  <a href="/student/login" className="inline-block rounded-xl border border-silver-300 px-6 py-3 text-sm font-bold text-navy-700 hover:border-teal-500">Take a Live Demo Test</a>
+                  <a href="/scholarship-tests" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-block rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">🎓 Scholarship Tests →</a>
+                  <a href="/student/login" className="cta-bounce inline-block rounded-xl border border-silver-300 px-6 py-3 text-sm font-bold text-navy-700 hover:border-teal-500">▶️ Take a Live Demo Test</a>
                 </div>
               </div>
             </Reveal>
@@ -540,18 +546,18 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader dark eyebrow="TECHNOLOGY" title="Traditional Teaching. Modern Assessment." desc="PDF question papers become digital tests with ranks — built right into this website." />
+                <SectionHeader dark eyebrow="💻 TECHNOLOGY" title="Traditional Teaching. Modern Assessment. ⚡" desc="PDF question papers become digital tests with ranks — built right into this website. 🚀" />
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {[
-                    { icon: MonitorPlay, t: "PDF → Digital Tests" },
-                    { icon: CalendarCheck, t: "Attendance" },
-                    { icon: BarChart3, t: "Performance Tracking" },
-                    { icon: Trophy, t: "Instant Ranks" },
-                    { icon: Bell, t: "Notifications" },
-                    { icon: BookOpen, t: "Question Bank" },
+                    { icon: MonitorPlay, t: "📄 PDF → Digital Tests" },
+                    { icon: CalendarCheck, t: "✅ Attendance" },
+                    { icon: BarChart3, t: "📊 Performance Tracking" },
+                    { icon: Trophy, t: "🏆 Instant Ranks" },
+                    { icon: Bell, t: "🔔 Notifications" },
+                    { icon: BookOpen, t: "📚 Question Bank" },
                   ].map((x, i) => (
                     <Reveal key={x.t} delay={i * 60}>
-                      <div className="card-lift flex items-center gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 transition hover:bg-white/10">
+                      <div className="card-lift wiggle-on-hover flex items-center gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 transition hover:bg-white/10">
                         <x.icon className="h-5 w-5 shrink-0 text-teal-300" /><span className="text-sm font-bold text-white">{x.t}</span>
                       </div>
                     </Reveal>
@@ -584,7 +590,7 @@ export default function HomePage() {
         <section id="gallery" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="GALLERY" title="Life At Neuron Academy" desc="Campus, classrooms and events — add real photos to public/images/ and they appear here." />
+              <SectionHeader eyebrow="📸 GALLERY" title="Life At Neuron Academy 🎉" desc="Campus, classrooms and events — add real photos to public/images/ and they appear here. ✨" />
             </Reveal>
             <GallerySection items={galleryList} />
           </div>
@@ -596,7 +602,7 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader eyebrow="CONTACT" title="Let's Plan Your Next Step." desc="Visit us in Shaheen Bagh, call, or drop an enquiry — counsellors reply within a day." />
+                <SectionHeader eyebrow="📞 CONTACT" title="Let's Plan Your Next Step. 🗺️" desc="Visit us in Shaheen Bagh, call, or drop an enquiry — counsellors reply within a day. 😊" />
                 <div className="mt-6 space-y-3">
                   {[
                     { icon: Phone, t: CONTACT_INFO.phone },
@@ -608,8 +614,8 @@ export default function HomePage() {
                     <p key={i} className="card-lift flex items-center gap-3 rounded-xl border border-silver-200 bg-white px-4 py-3 text-sm font-bold text-navy-700"><c.icon className="h-4 w-4 shrink-0 text-teal-600" /> {c.t}</p>
                   ))}
                 </div>
-                <a href={`https://wa.me/91${CONTACT_INFO.whatsapp.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer" className="animate-glow mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-bold text-white">
-                  <MessageCircle className="h-4 w-4" /> Chat on WhatsApp
+                <a href={`https://wa.me/91${CONTACT_INFO.whatsapp.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer" className="animate-glow cta-bounce mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-bold text-white">
+                  <MessageCircle className="h-4 w-4 animate-wiggle" /> 💬 Chat on WhatsApp
                 </a>
                 {CONTACT.MAP_EMBED_URL ? (
                   <iframe
@@ -638,16 +644,16 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader eyebrow="ADMISSION" title="Your Rank Journey Starts With One Demo." desc="Free demo class + diagnostic test + personalised study plan — no fee, no pressure." />
+                <SectionHeader eyebrow="🎯 ADMISSION" title="Your Rank Journey Starts With One Demo. 🚀" desc="Free demo class + diagnostic test + personalised study plan — no fee, no pressure. 😌" />
                 <ul className="mt-4 space-y-2 text-sm font-semibold text-ink">
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> Free demo class in your target exam</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> Diagnostic test + study plan</li>
-                  <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> Transparent fees, honest counselling</li>
+                  <li className="flex gap-2 rounded-lg px-2 py-1 transition hover:-translate-y-0.5 hover:bg-silver-50"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> 🎓 Free demo class in your target exam</li>
+                  <li className="flex gap-2 rounded-lg px-2 py-1 transition hover:-translate-y-0.5 hover:bg-silver-50"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> 📋 Diagnostic test + study plan</li>
+                  <li className="flex gap-2 rounded-lg px-2 py-1 transition hover:-translate-y-0.5 hover:bg-silver-50"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> 🤝 Transparent fees, honest counselling</li>
                 </ul>
                 <div className="mt-5 flex gap-6">
-                  <div><p className="text-2xl font-extrabold text-navy-700">Small</p><p className="text-[11px] font-bold text-muted">BATCHES</p></div>
-                  <div><p className="text-2xl font-extrabold text-navy-700">Weekly</p><p className="text-[11px] font-bold text-muted">MOCKS</p></div>
-                  <div><p className="text-2xl font-extrabold text-navy-700">Expert</p><p className="text-[11px] font-bold text-muted">MENTORS</p></div>
+                  <div className="transition duration-300 hover:-translate-y-1 hover:scale-105"><p className="text-2xl font-extrabold text-navy-700">👥 Small</p><p className="text-[11px] font-bold text-muted">BATCHES</p></div>
+                  <div className="transition duration-300 hover:-translate-y-1 hover:scale-105"><p className="text-2xl font-extrabold text-navy-700">📝 Weekly</p><p className="text-[11px] font-bold text-muted">MOCKS</p></div>
+                  <div className="transition duration-300 hover:-translate-y-1 hover:scale-105"><p className="text-2xl font-extrabold text-navy-700">🌟 Expert</p><p className="text-[11px] font-bold text-muted">MENTORS</p></div>
                 </div>
               </div>
             </Reveal>
@@ -661,7 +667,7 @@ export default function HomePage() {
         <section className="bg-white">
           <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="FAQ" title="Questions, Answered." desc="Everything parents and students ask before joining." />
+              <SectionHeader eyebrow="❓ FAQ" title="Questions, Answered. 💡" desc="Everything parents and students ask before joining. 👨‍👩‍👧‍👦" />
             </Reveal>
             <Reveal delay={120}>
               <div className="mt-8"><Faq items={FAQS} /></div>
@@ -671,16 +677,20 @@ export default function HomePage() {
 
         {/* FINAL CTA */}
         <section className="metallic-dark relative overflow-hidden">
-          <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
-          <div className="pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
+          <div className="animate-float-slow pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
+          <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
+          <FloatingEmojis emojis={["🧠", "⚡", "🏆", "🚀", "✨", "🎯"]} count={12} />
           <div className="relative mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
             <Reveal>
-              <p className="text-[11px] font-bold tracking-[0.24em] text-teal-300">JEE • NEET • AMU • JAMIA • ADMISSIONS OPEN</p>
-              <h2 className="animate-gradient-text mx-auto mt-3 max-w-2xl bg-gradient-to-r from-white via-teal-200 to-amber-200 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl">Your Rank Is Waiting.</h2>
-              <p className="mx-auto mt-3 max-w-xl text-[15px] text-silver-200">Visit Shaheen Bagh, attend a free demo, take the diagnostic — and leave with a plan.</p>
+              <p className="text-[11px] font-bold tracking-[0.24em] text-teal-300">🧠 JEE • NEET • AMU • JAMIA • ADMISSIONS OPEN ⚡</p>
+              <p className="animate-gradient-text mx-auto mt-4 bg-gradient-to-r from-amber-200 via-teal-200 to-amber-200 bg-clip-text text-2xl font-extrabold tracking-wide text-transparent sm:text-3xl">
+                ACTIVATE YOUR NEURONs 🧠⚡
+              </p>
+              <h2 className="mx-auto mt-2 max-w-2xl text-3xl font-extrabold text-white sm:text-5xl">Your Rank Is Waiting. 🏆</h2>
+              <p className="mx-auto mt-3 max-w-xl text-[15px] text-silver-200">Visit Shaheen Bagh, attend a free demo, take the diagnostic — and leave with a plan. 🚀</p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <a href="#courses" className="animate-glow rounded-xl bg-crimson px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright">Explore Courses</a>
-                <a href="#contact" className="rounded-xl border border-white/30 bg-white/5 px-8 py-3.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300">Book Free Demo</a>
+                <a href="#courses" className="animate-glow cta-bounce shine-sweep rounded-xl bg-crimson px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright">🚀 Explore Courses</a>
+                <a href="#contact" className="cta-bounce rounded-xl border border-white/30 bg-white/5 px-8 py-3.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300">🎯 Book Free Demo</a>
               </div>
             </Reveal>
           </div>

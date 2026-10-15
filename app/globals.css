@@ -343,6 +343,98 @@ label {
 }
 
 /* ==========================================================================
+   Playful Motion Utilities — homepage "alive" layer
+   (All animations already respect prefers-reduced-motion via the rule above
+   plus the component-level guards in motion.tsx.)
+   ========================================================================== */
+
+/* Animated gradient headline text (pairs with animate-gradient-text). */
+.animate-gradient-text {
+  background-size: 220% 220%;
+}
+
+/* Ticker track: the Marquee component renders .marquee-track; without this
+   the tape sits still. Duplicated content + -50% loop = seamless scroll. */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+.marquee-track {
+  animation: marquee 28s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Typewriter caret */
+.typewriter-caret {
+  display: inline-block;
+  width: 3px;
+  margin-left: 3px;
+  animation: blink 1s step-end infinite;
+  vertical-align: baseline;
+}
+
+/* 3D tilt cards (motion.tsx Tilt) */
+.tilt-scene {
+  perspective: 900px;
+}
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.18s ease-out, box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+/* Shimmer sweep for CTA buttons */
+.shine-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.shine-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.45) 50%, transparent 60%);
+  transform: translateX(-100%);
+  animation: shimmer 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Floating emoji layer */
+.emoji-float-layer {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Gentle hover wiggle for icon chips */
+.wiggle-on-hover:hover {
+  animation: wiggle 0.6s ease-in-out;
+}
+
+/* Bouncy primary CTAs */
+.cta-bounce {
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+}
+.cta-bounce:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+.cta-bounce:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ==========================================================================
    Reduced Motion Preference
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {

@@ -33,6 +33,8 @@ export interface ApiTest {
   accessType?: TestAccessType;
   price?: number;
   access?: TestAccessState;
+  // Homework flag (faculty-assigned PRACTICE work for a batch).
+  isHomework?: boolean;
 }
 
 export interface TestAccessRecord {
