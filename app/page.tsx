@@ -24,7 +24,7 @@ import { FacultyDetails } from "@/components/website/FacultyDetails";
 import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
-import { Reveal, Marquee, Tilt, FloatingEmojis } from "@/components/website/motion";
+import { Reveal, Marquee, Tilt, FloatingEmojis, ConfettiBurst } from "@/components/website/motion";
 import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
 import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
@@ -78,7 +78,7 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
       ) : (
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {shown.map((g, i) => (
-          <Reveal key={g.id} delay={(i % 4) * 80}>
+          <Reveal key={g.id} delay={(i % 4) * 80} variant="pop">
             <button
               onClick={() => setActive(i)}
               className="group relative h-48 w-full overflow-hidden rounded-card border border-silver-200 bg-navy-800 text-left card-lift"
@@ -156,7 +156,8 @@ function LivePhone() {
   const ss = String(secs % 60).padStart(2, "0");
   const cur = slides[s % slides.length];
   return (
-    <div className="animate-float-slow mx-auto w-full max-w-[300px] rounded-[28px] border-8 border-navy-800 bg-white shadow-card">
+    <div className="conic-ring mx-auto w-full max-w-[300px] rounded-[28px] bg-white shadow-card">
+      <div className="conic-inner animate-float-slow rounded-[28px] border-8 border-navy-800 bg-white">
       <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
         <div><p className="text-xs font-extrabold text-navy-700">📱 NEET Practice — 07</p><p className="text-[11px] text-muted">🔴 Live • auto ranks</p></div>
         <span className="animate-blink rounded-full bg-crimson px-2 py-0.5 text-[10px] font-extrabold text-white">● LIVE</span>
@@ -178,6 +179,7 @@ function LivePhone() {
           <span className="animate-bounce-soft rounded-lg bg-teal-500 px-2.5 py-1 text-[11px] font-bold">Submit 🚀</span>
         </div>
         <p className="text-center text-[11px] text-muted">👇 Interactive preview — try a live test below ✨</p>
+        </div>
       </div>
     </div>
   );
@@ -379,7 +381,7 @@ export default function HomePage() {
               {WHY.map((w, i) => (
                 <Reveal key={w.t} delay={(i % 3) * 90}>
                   <Tilt max={8}>
-                    <div className={i === 0 ? "card-lift relative h-full overflow-hidden rounded-card bg-gradient-to-br from-navy-800 via-navy-700 to-teal-700 p-6 text-white shadow-card" : "card-lift premium-ring h-full rounded-card bg-white p-6"}>
+                    <div className={i === 0 ? "conic-ring card-lift relative h-full overflow-hidden rounded-card bg-gradient-to-br from-navy-800 via-navy-700 to-teal-700 p-6 text-white shadow-card" : "card-lift premium-ring h-full rounded-card bg-white p-6"}>
                       {i === 0 ? <FloatingEmojis emojis={["🧠", "⚡", "✨"]} count={4} /> : null}
                       <span className="bg-gradient-to-r from-teal-500 to-amber-400 bg-clip-text text-[12px] font-extrabold tracking-[0.18em] text-transparent">0{i + 1}</span>
                       <p className={`mt-1 text-[16px] font-extrabold tracking-tight ${i === 0 ? "text-white" : "text-navy-700"}`}>{w.t}</p>
@@ -423,7 +425,7 @@ export default function HomePage() {
             ) : (
               <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {courses.map((c, i) => (
-                  <Reveal key={c.id} delay={(i % 3) * 90}>
+                  <Reveal key={c.id} delay={(i % 3) * 90} variant="pop">
                     <CourseCard course={c} index={i} onDetails={setSelectedCourse} />
                   </Reveal>
                 ))}
@@ -437,6 +439,15 @@ export default function HomePage() {
           <Marquee items={EXAM_TICKER} className="text-white" itemClassName="text-white" />
         </div>
 
+        {/* LOUD TAGLINE TAPE */}
+        <div className="overflow-hidden border-y-4 border-double border-amber-300 bg-gradient-to-r from-navy-800 via-teal-600 to-navy-800 py-2.5">
+          <Marquee
+            items={["🧠 ACTIVATE YOUR NEURONs ⚡", "🚀 JEE • NEET • AMU • JAMIA 🎯", "📝 WEEKLY MOCKS + RANKS 🏆", "💡 DOUBT LOUNGE TILL 8 PM ✨"]}
+            className="text-white"
+            itemClassName="text-white"
+          />
+        </div>
+
         {/* FACULTY */}
         <section id="faculty" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
@@ -448,7 +459,7 @@ export default function HomePage() {
             ) : (
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {facultyList.map((f, i) => (
-                <Reveal key={f.id} delay={(i % 4) * 80}>
+                <Reveal key={f.id} delay={(i % 4) * 80} variant="pop">
                   <FacultyCard f={f} onView={setSelectedFaculty} />
                 </Reveal>
               ))}
@@ -471,10 +482,10 @@ export default function HomePage() {
                 <p className="col-span-full rounded-card border border-dashed border-white/20 p-8 text-center text-sm font-bold text-silver-300">No results published yet.</p>
               ) : null}
               {wall.map((t, i) => (
-                <Reveal key={t.name} delay={i * 90}>
-                  <div className="card-lift group relative overflow-hidden rounded-card border border-white/15 bg-white/5 p-6 backdrop-blur">
+                <Reveal key={t.name} delay={i * 90} variant="pop">
+                  <div className="card-lift group relative overflow-hidden rounded-card border border-white/15 bg-white/5 p-6 backdrop-blur transition hover:bg-white/10">
                     <span className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${t.color}, transparent)` }} aria-hidden />
-                    <span className="flex h-14 w-14 items-center justify-center rounded-2xl text-white transition group-hover:scale-110" style={{ backgroundColor: `${t.color}33`, border: `1px solid ${t.color}66` }}>
+                    <span className="animate-heartbeat flex h-14 w-14 items-center justify-center rounded-2xl text-white transition group-hover:scale-110" style={{ backgroundColor: `${t.color}33`, border: `1px solid ${t.color}66`, animationDelay: `${i * 0.3}s` }}>
                       {i === 0 ? <Trophy className="h-6 w-6" style={{ color: t.color }} /> : <Medal className="h-6 w-6" style={{ color: t.color }} />}
                     </span>
                     <p className="mt-4 text-2xl font-extrabold text-white">{t.score}</p>
@@ -529,7 +540,9 @@ export default function HomePage() {
                   ))}
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a href="/scholarship-tests" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-block rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">🎓 Scholarship Tests →</a>
+                  <ConfettiBurst>
+                    <a href="/scholarship-tests" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-block rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">🎓 Scholarship Tests <span className="animate-heartbeat inline-block">→</span></a>
+                  </ConfettiBurst>
                   <a href="/student/login" className="cta-bounce inline-block rounded-xl border border-silver-300 px-6 py-3 text-sm font-bold text-navy-700 hover:border-teal-500">▶️ Take a Live Demo Test</a>
                 </div>
               </div>
@@ -566,7 +579,7 @@ export default function HomePage() {
               </div>
             </Reveal>
             <Reveal variant="right">
-              <div className="premium-ring rounded-[20px] bg-white p-5 sm:p-6">
+              <div className="conic-ring premium-ring rounded-[20px] bg-white p-5 sm:p-6">
                 <p className="flex items-center gap-2 text-sm font-extrabold text-navy-700"><Sparkles className="h-4 w-4 text-teal-600" /> Performance Dashboard</p>
                 <div className="mt-4 flex items-center gap-4">
                   <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-navy-700 text-xl font-extrabold text-white ring-4 ring-teal-100"><GraduationCap className="h-8 w-8" /></span>
@@ -689,8 +702,12 @@ export default function HomePage() {
               <h2 className="mx-auto mt-2 max-w-2xl text-3xl font-extrabold text-white sm:text-5xl">Your Rank Is Waiting. 🏆</h2>
               <p className="mx-auto mt-3 max-w-xl text-[15px] text-silver-200">Visit Shaheen Bagh, attend a free demo, take the diagnostic — and leave with a plan. 🚀</p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <a href="#courses" className="animate-glow cta-bounce shine-sweep rounded-xl bg-crimson px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright">🚀 Explore Courses</a>
-                <a href="#contact" className="cta-bounce rounded-xl border border-white/30 bg-white/5 px-8 py-3.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300">🎯 Book Free Demo</a>
+                <ConfettiBurst>
+                  <a href="#courses" className="animate-glow cta-bounce shine-sweep rounded-xl bg-crimson px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright"><span className="animate-heartbeat inline-block">🚀</span> Explore Courses</a>
+                </ConfettiBurst>
+                <ConfettiBurst>
+                  <a href="#contact" className="cta-bounce rounded-xl border border-white/30 bg-white/5 px-8 py-3.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300"><span className="animate-heartbeat inline-block">🎯</span> Book Free Demo</a>
+                </ConfettiBurst>
               </div>
             </Reveal>
           </div>

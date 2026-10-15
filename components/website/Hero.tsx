@@ -6,7 +6,7 @@ import type { Advertisement } from "@/lib/types";
 import { getHeroAds } from "@/lib/mockStore";
 import { getLiveBanners } from "@/services/siteApi";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
-import { Marquee, Typewriter, FloatingEmojis } from "@/components/website/motion";
+import { Marquee, Typewriter, FloatingEmojis, MouseGlow, ConfettiBurst } from "@/components/website/motion";
 import { EXAM_TICKER } from "@/lib/websiteData";
 
 const EXAM_PILLS = [
@@ -117,6 +117,7 @@ export function Hero() {
       <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" aria-hidden />
       <FloatingEmojis emojis={["🧠", "⚡", "✨", "🎯", "📚", "🏆"]} count={10} />
+      <MouseGlow />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-12 pt-12 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:pt-16">
         <div className="animate-slide-up">
@@ -125,8 +126,8 @@ export function Hero() {
             🧠 ADMISSIONS OPEN 2026–27 • SHAHEEN BAGH
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {EXAM_PILLS.map((p) => (
-              <span key={p.label} className="cursor-default rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide text-white ring-1 ring-white/25 transition duration-300 hover:-translate-y-1 hover:scale-105 hover:ring-teal-300" style={{ backgroundColor: `${p.color}55` }}>
+            {EXAM_PILLS.map((p, i) => (
+              <span key={p.label} className="animate-bounce-soft cursor-default rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide text-white ring-1 ring-white/25 transition duration-300 hover:scale-110 hover:ring-teal-300" style={{ backgroundColor: `${p.color}55`, animationDelay: `${i * 0.35}s` }}>
                 {p.label}
               </span>
             ))}
@@ -144,11 +145,13 @@ export function Hero() {
             Shaheen Bagh&apos;s focused coaching for engineering, medical and university entrances — small batches, weekly mocks and mentors who track every mark.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <a href="#courses" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-flex items-center rounded-xl bg-crimson px-7 py-3.5 text-[15px] font-bold text-white hover:bg-crimson-bright">
-              <Sparkles className="mr-1.5 h-4 w-4 animate-wiggle" /> Explore Courses 🚀 <ArrowRight className="ml-1 h-4 w-4" />
-            </a>
+            <ConfettiBurst>
+              <a href="#courses" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-flex items-center rounded-xl bg-crimson px-7 py-3.5 text-[15px] font-bold text-white hover:bg-crimson-bright">
+                <Sparkles className="mr-1.5 h-4 w-4 animate-wiggle" /> Explore Courses <span className="animate-heartbeat ml-1 inline-block">🚀</span> <ArrowRight className="ml-1 h-4 w-4" />
+              </a>
+            </ConfettiBurst>
             <a href="#contact" className="cta-bounce inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-[15px] font-bold text-white backdrop-blur hover:border-teal-300 hover:text-teal-200">
-              <Phone className="mr-1.5 h-4 w-4" /> Book Free Demo 🎯
+              <Phone className="mr-1.5 h-4 w-4" /> Book Free Demo <span className="animate-heartbeat ml-1 inline-block">🎯</span>
             </a>
           </div>
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] font-bold text-silver-200">
@@ -171,7 +174,7 @@ export function Hero() {
         </div>
         <div className="relative">
           <div className="absolute -inset-5 rounded-[30px] bg-gradient-to-br from-teal-400/25 via-gold-400/10 to-crimson/25 blur-2xl" aria-hidden />
-          <div className="premium-ring premium-ring-dark relative overflow-hidden rounded-[26px] border border-white/30 bg-navy-800" style={{ minHeight: 440 }}>
+          <div className="conic-ring premium-ring-dark relative overflow-hidden rounded-[26px] border border-white/30 bg-navy-800" style={{ minHeight: 440 }}>
             {active ? (
               <div className="h-[440px] sm:h-[500px]">
                 <AdMedia ad={active} large />

@@ -371,6 +371,13 @@ label {
   0%, 100% { transform: rotate(-5deg); }
   50% { transform: rotate(5deg); }
 }
+@keyframes spin360 {
+  to { transform: rotate(360deg); }
+}
+@keyframes confetti-fly {
+  0% { transform: translate(0, 0) scale(0.4) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--dx, 0px), var(--dy, -80px)) scale(1.15) rotate(260deg); opacity: 0; }
+}
 .marquee-track {
   animation: marquee 28s linear infinite;
 }
@@ -432,6 +439,43 @@ label {
 }
 .cta-bounce:active {
   transform: translateY(0) scale(0.98);
+}
+
+/* Confetti pieces fired by ConfettiBurst */
+.confetti-piece {
+  animation: confetti-fly 0.9s cubic-bezier(0.15, 0.85, 0.45, 1) forwards;
+}
+
+/* Loud rotating conic border (wrap the card, keep radius via inherit) */
+.conic-ring {
+  position: relative;
+  z-index: 0;
+}
+.conic-ring::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, #1aa6b5, #d4af37, #b4453d, #8b5cf6, #1aa6b5);
+  animation: spin360 5s linear infinite;
+  z-index: -1;
+}
+.conic-ring::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  background: inherit;
+  z-index: -1;
+}
+/* Inner surface so the ring reads as a border, not a full-bleed glow */
+.conic-ring > .conic-inner {
+  border-radius: inherit;
+}
+
+/* Slow-spinning badge for loud circular stickers */
+.animate-spin-slower {
+  animation: spin360 16s linear infinite;
 }
 
 /* ==========================================================================

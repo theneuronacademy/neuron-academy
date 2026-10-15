@@ -12,7 +12,7 @@ export function Reveal({
 }: {
   children: React.ReactNode;
   delay?: number;
-  variant?: "up" | "fade" | "left" | "right" | "zoom";
+  variant?: "up" | "fade" | "left" | "right" | "zoom" | "pop";
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -42,12 +42,13 @@ export function Reveal({
     left: "-translate-x-8 opacity-0",
     right: "translate-x-8 opacity-0",
     zoom: "scale-95 opacity-0",
+    pop: "scale-50 -rotate-2 opacity-0",
   };
 
   return (
     <div
       ref={ref}
-      className={cn("transition-all duration-700 ease-out will-change-transform", visible ? "translate-x-0 translate-y-0 scale-100 opacity-100" : hidden[variant], className)}
+      className={cn("transition-all duration-700 ease-out will-change-transform", visible ? "translate-x-0 translate-y-0 scale-100 rotate-0 opacity-100" : hidden[variant], className)}
       style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
@@ -239,6 +240,74 @@ export function Tilt({ children, className, max = 9 }: { children: React.ReactNo
       <div ref={ref} onMouseMove={onMove} onMouseLeave={onLeave} className="tilt-card h-full">
         {children}
       </div>
+    </div>
+  );
+}
+
+/** ConfettiBurst — emoji confetti explosion on click. Decorative. */
+const BURST_PIECES = ["🎉", "✨", "🧠", "⚡", "🏆", "🎯", "⭐", "🚀"];
+export function ConfettiBurst({ children, className }: { children: React.ReactNode; className?: string }) {
+  const [bursts, setBursts] = useState<number[]>([]);
+  const reduceMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const fire = () => {
+    if (reduceMotion) return;
+    const id = Date.now() + Math.random();
+    setBursts((b) => [...b.slice(-2), id]);
+    setTimeout(() => setBursts((b) => b.filter((x) => x !== id)), 1000);
+  };
+  return (
+    <span onClick={fire} className={cn("confetti-launcher relative inline-flex", className)}>
+      {children}
+      {bursts.map((id) => (
+        <span key={id} className="pointer-events-none absolute left-1/2 top-1/2 z-20" aria-hidden>
+          {BURST_PIECES.map((e, i) => {
+            const angle = (i / BURST_PIECES.length) * Math.PI * 2 + Math.random() * 0.5;
+            const dist = 70 + Math.random() * 70;
+            return (
+              <span
+                key={i}
+                className="confetti-piece absolute text-xl"
+                style={{ "--dx": `${Math.cos(angle) * dist}px`, "--dy": `${Math.sin(angle) * dist - 40}px` } as React.CSSProperties}
+              >
+                {e}
+              </span>
+            );
+          })}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/** MouseGlow — soft spotlight that follows the cursor. Desktop only, decorative. */
+export function MouseGlow({ className }: { className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    setOn(true);
+  }, []);
+  if (!on) return null;
+  return (
+    <div
+      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
+      aria-hidden
+      onMouseMove={(e) => {
+        const el = ref.current;
+        if (!el) return;
+        const r = el.parentElement?.getBoundingClientRect();
+        if (!r) return;
+        el.style.transform = `translate(${e.clientX - r.left - 150}px, ${e.clientY - r.top - 150}px)`;
+      }}
+    >
+      <div
+        ref={ref}
+        className="h-[300px] w-[300px] rounded-full opacity-60 blur-3xl transition-transform duration-200 ease-out"
+        style={{ background: "radial-gradient(circle, rgba(26,166,181,0.35) 0%, rgba(212,175,55,0.18) 45%, transparent 70%)" }}
+      />
     </div>
   );
 }
