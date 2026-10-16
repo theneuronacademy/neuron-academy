@@ -11,7 +11,7 @@ export function Button({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: Size }) {
   const base =
-    "btn-metallic-sheen inline-flex items-center justify-center gap-2 font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 disabled:opacity-50 disabled:pointer-events-none";
+    "btn-metallic-sheen cta-bounce inline-flex items-center justify-center gap-2 font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<Variant, string> = {
     primary: "bg-crimson text-white hover:bg-crimson-bright rounded-xl shadow-card",
     secondary: "bg-teal-500 text-white hover:bg-teal-400 rounded-xl shadow-card",
@@ -35,7 +35,7 @@ export function StatusBadge({ tone = "teal", children }: { tone?: "teal" | "navy
     silver: "bg-silver-50 text-muted border-silver-200",
   } as const;
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold tracking-wide", tones[tone])}>
+    <span className={cn("animate-fade-in inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold tracking-wide", tones[tone])}>
       {children}
     </span>
   );
@@ -43,7 +43,7 @@ export function StatusBadge({ tone = "teal", children }: { tone?: "teal" | "navy
 
 export function MetallicCard({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
-    <div className={cn("metallic-surface rounded-card shadow-card", className)}>
+    <div className={cn("metallic-surface card-lift animate-fade-in rounded-card shadow-card", className)}>
       {children}
     </div>
   );
@@ -51,7 +51,7 @@ export function MetallicCard({ className, children }: { className?: string; chil
 
 export function SectionHeader({ eyebrow, title, desc, dark = false }: { eyebrow: string; title: string; desc?: string; dark?: boolean }) {
   return (
-    <div className="max-w-2xl">
+    <div className="animate-slide-up max-w-2xl">
       <p className={cn("eyebrow-line text-[11px] font-bold tracking-[0.22em]", dark ? "text-teal-300" : "text-teal-600")}>{eyebrow}</p>
       <h2 className={cn("mt-3 text-3xl font-extrabold leading-[1.08] tracking-tight sm:text-4xl lg:text-[40px]", dark ? "text-white" : "text-navy-700")}>{title}</h2>
       <div className="metallic-gold-line mt-4 w-24 opacity-80" aria-hidden />

@@ -1,7 +1,17 @@
 import Link from "next/link";
 import { Instagram, Youtube, Facebook, Linkedin, MessageCircle, MapPin, Send } from "lucide-react";
 import { Logo } from "@/components/website/Logo";
+import { FloatingEmojis, Marquee } from "@/components/website/motion";
 import { COURSES, CONTACT_INFO, SOCIAL_LINKS } from "@/lib/websiteData";
+
+const FOOTER_TICKER = [
+  "🎉 Admissions Open 2026",
+  "🧠 Activate Your Neuron",
+  "📝 Weekly Mocks + PYQs",
+  "🏆 JEE • NEET • AMU • Jamia",
+  "💡 Doubt Lounge Till 8 PM",
+  "🚀 Small Batches, Big Ranks",
+];
 
 const SOCIAL_ICONS = {
   instagram: Instagram,
@@ -15,7 +25,10 @@ const SOCIAL_ICONS = {
 export function Footer() {
   return (
     <footer className="metallic-dark relative overflow-hidden text-silver-200">
-      <div className="pointer-events-none absolute -top-20 left-1/3 h-56 w-96 rounded-full bg-teal-400/10 blur-3xl" aria-hidden />
+      <div className="pointer-events-none absolute -top-20 left-1/3 h-56 w-56 animate-float rounded-full bg-teal-400/10 blur-3xl" aria-hidden />
+      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-64 w-64 animate-float-slow rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
+      {/* Emoji rain — decorative rising emojis, pointer-events-none, never interactive. */}
+      <FloatingEmojis emojis={["🎉", "🧠", "⚡", "✨", "🏆", "🎯", "🚀", "⭐"]} count={10} />
       <div className="animate-gradient-pan absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-teal-400 via-amber-300 to-crimson" style={{ backgroundSize: "200% 100%" }} aria-hidden />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
@@ -35,7 +48,7 @@ export function Footer() {
                   rel="noreferrer"
                   aria-label={s.label}
                   title={s.label}
-                  className="rounded-lg bg-white/10 p-2.5 text-white transition hover:-translate-y-1 hover:scale-110 hover:bg-teal-500 hover:shadow-card"
+                  className="wiggle-on-hover rounded-lg bg-white/10 p-2.5 text-white transition hover:-translate-y-1 hover:scale-110 hover:bg-teal-500 hover:shadow-card"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
@@ -71,11 +84,15 @@ export function Footer() {
           </ul>
         </div>
       </div>
+      {/* Celebration ticker — decorative marquee, aria-hidden, no links. */}
+      <div className="relative border-t border-white/10 bg-white/5">
+        <Marquee items={FOOTER_TICKER} speed={30} className="py-2.5 text-silver-200" itemClassName="text-silver-200" />
+      </div>
       <div className="relative border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-[12px] font-semibold text-silver-300 sm:flex-row sm:px-6">
-          <p>© {new Date().getFullYear()} Neuron Academy, Shaheen Bagh — All Rights Reserved.</p>
+          <p className="animate-fade-in">🎓 © {new Date().getFullYear()} Neuron Academy, Shaheen Bagh — All Rights Reserved. ✨</p>
           <p className="animate-gradient-text bg-gradient-to-r from-teal-300 via-amber-200 to-teal-300 bg-clip-text font-extrabold text-transparent">🧠 ACTIVATE YOUR NEURONs ⚡</p>
-          <p>JEE • NEET • AMU • Jamia</p>
+          <p className="animate-fade-in">🎯 JEE • NEET • AMU • Jamia 🚀</p>
         </div>
       </div>
     </footer>

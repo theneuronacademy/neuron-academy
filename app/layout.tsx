@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { BackToTop, FloatingEmojis, ScrollProgress } from "@/components/website/motion";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -61,8 +62,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-background text-ink antialiased">
+        <ScrollProgress />
+        {/* Sitewide decorative emoji drift — pointer-events-none, aria-hidden, never interactive. */}
+        <div aria-hidden className="pointer-events-none fixed inset-0 z-[70] overflow-hidden">
+          <FloatingEmojis count={6} />
+        </div>
         <OrganizationJsonLd />
         {children}
+        <BackToTop />
         {/* PWA service worker: offline shell only (never stale app data). */}
         <script
           dangerouslySetInnerHTML={{

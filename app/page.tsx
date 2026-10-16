@@ -24,7 +24,7 @@ import { FacultyDetails } from "@/components/website/FacultyDetails";
 import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
-import { Reveal, Marquee, Tilt, FloatingEmojis, ConfettiBurst, ScrollProgress, WaveDivider, BackToTop } from "@/components/website/motion";
+import { Reveal, Marquee, Tilt, FloatingEmojis, ConfettiBurst, WaveDivider } from "@/components/website/motion";
 import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
 import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
@@ -297,12 +297,10 @@ export default function HomePage() {
   const courses = courseCat === "All" ? courseList : courseList.filter((c) => c.category === courseCat);
   return (
     <div className="min-h-screen overflow-x-clip bg-background">
-      <ScrollProgress />
       <AnnouncementBar />
       <Navbar />
       <SocialSidebar />
       <EnquireFloat />
-      <BackToTop />
       <AdvertisementPopup />
 
       <main>
