@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GraduationCap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
+import { Msg91Widget } from "@/components/auth/Msg91Widget";
 
 /**
  * Phase 13 — student registration with production mobile OTP.
@@ -12,7 +13,7 @@ import { Button } from "@/components/ui/primitives";
  * When the OTP service is not configured, the legacy single-form flow stays
  * (dev/demo parity). The server enforces OTP whenever MSG91 is configured.
  */
-type Step = "mobile" | "otp" | "details";
+type Step = "mobile" | "otp" | "details" | "widget";
 
 export default function StudentRegisterPage() {
   const router = useRouter();
@@ -97,6 +98,53 @@ export default function StudentRegisterPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function handleWidgetSuccess(accessToken: string) {
+    setError(null);
+    setBusy(true);
+    try {
+      const res = await fetch("/api/auth/widget/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken }),
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.success === true) {
+        try {
+          window.localStorage.setItem(
+            "neuron_student_session",
+            JSON.stringify({
+              studentId: json.data.student.studentId,
+              name: json.data.student.name,
+              loggedInAt: new Date().toISOString(),
+            })
+          );
+        } catch {
+          /* ignore */
+        }
+        router.push("/student/dashboard");
+        return;
+      }
+      if (res.status === 403) {
+        setError(json?.error ?? "This account is deactivated. Contact the academy office.");
+        return;
+      }
+      setError(json?.error ?? "Verification failed. Please try again.");
+    } catch {
+      setError("Cannot reach the server. Check your connection and try again.");
+    } finally {
+      setBusy(false);
+      setStep("mobile");
+    }
+  }
+
+  function handleWidgetError(error: string) {
+    setError(error);
+  }
+
+  function handleWidgetCancel() {
+    setStep("mobile");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -188,6 +236,24 @@ export default function StudentRegisterPage() {
               <Button type="submit" size="lg" className="w-full" disabled={busy}>
                 {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Sending OTP…</> : "Send OTP"}
               </Button>
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-silver-300" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-muted">Or verify with</span>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="w-full"
+                onClick={() => setStep("widget")}
+                disabled={busy}
+              >
+                Verify with OTP Widget
+              </Button>
             </form>
           ) : step === "otp" ? (
             <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); void verifyOtp(); }}>
@@ -206,6 +272,12 @@ export default function StudentRegisterPage() {
                 </button>
               </div>
             </form>
+          ) : step === "widget" ? (
+            <Msg91Widget
+              onSuccess={handleWidgetSuccess}
+              onError={handleWidgetError}
+              onCancel={handleWidgetCancel}
+            />
           ) : (
             <form className="space-y-3" onSubmit={handleSubmit}>
               <p className="text-[13px] font-semibold text-muted">Step 3 of 3 — mobile verified ✓. Complete your details.</p>

@@ -159,3 +159,78 @@ export async function sendSms(
     clearTimeout(timer);
   }
 }
+
+/**
+ * Widget token verification result.
+ */
+export interface WidgetVerifyResult {
+  ok: boolean;
+  code: string;
+  error?: string;
+  /** Canonical phone number from the widget token (e.g., +919876543210). */
+  phone?: string;
+  /** True only for transient faults (timeout/network/5xx). Never retry auth, template, or invalid-recipient errors. */
+  retryable?: boolean;
+}
+
+const WIDGET_VERIFY_TIMEOUT_MS = 10_000;
+export { WIDGET_VERIFY_TIMEOUT_MS };
+export const WIDGET_VERIFY_ERROR = "WIDGET_VERIFY_ERROR";
+export const WIDGET_TOKEN_INVALID = "WIDGET_TOKEN_INVALID";
+export const WIDGET_CONFIGURATION_ERROR = "WIDGET_CONFIGURATION_ERROR";
+
+/**
+ * Verify a widget access token with MSG91.
+ * The widget returns a JWT access token after successful OTP verification on the client side.
+ * This server-side call validates that token with MSG91 before creating a local session.
+ * Requires only MSG91_AUTH_KEY (not TEMPLATE_ID, SENDER_ID, or FLOW_ID).
+ */
+export async function verifyWidgetToken(
+  accessToken: string
+): Promise<WidgetVerifyResult> {
+  const authKey = process.env.MSG91_AUTH_KEY ?? "";
+  if (!authKey) {
+    return { ok: false, code: WIDGET_CONFIGURATION_ERROR, error: "MSG91 widget verification is not configured. Set MSG91_AUTH_KEY to enable it." };
+  }
+  if (!accessToken || typeof accessToken !== "string" || accessToken.trim().length === 0) {
+    return { ok: false, code: WIDGET_TOKEN_INVALID, error: "Invalid or missing access token." };
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), WIDGET_VERIFY_TIMEOUT_MS);
+  try {
+    const res = await fetch("https://control.msg91.com/api/v5/widget/verifyAccessToken", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ authkey: authKey, "access-token": accessToken.trim() }),
+      signal: controller.signal,
+    });
+    const json = (await res.json().catch(() => null)) as { type?: string; message?: string; mobile?: string } | null;
+    if (!res.ok || !json || json.type !== "success") {
+      // Safe diagnostic only: HTTP status + provider type. NEVER log the authkey, token, or raw provider body.
+      const masked = json?.mobile ? maskPhone("+91" + json.mobile.replace(/\D/g, "")) : "unknown";
+      console.error(`[widget:verify] failed for ${masked} status=${res.status} type=${json?.type ?? "unknown"}`);
+      return { ok: false, code: WIDGET_VERIFY_ERROR, error: "Could not verify the token. Please try again.", retryable: res.status >= 500 };
+    }
+    // MSG91 returns mobile as 10-digit or 91-prefixed; normalize to canonical +91...
+    const rawMobile = String(json.mobile ?? "").replace(/\D/g, "");
+    let canonical = "";
+    if (rawMobile.length === 10 && /^[6-9]\d{9}$/.test(rawMobile)) {
+      canonical = "+91" + rawMobile;
+    } else if (rawMobile.length === 12 && rawMobile.startsWith("91")) {
+      canonical = "+" + rawMobile;
+    } else if (rawMobile.length === 11 && rawMobile.startsWith("0")) {
+      canonical = "+91" + rawMobile.slice(1);
+    }
+    if (!canonical) {
+      return { ok: false, code: WIDGET_VERIFY_ERROR, error: "Unexpected mobile format from provider." };
+    }
+    return { ok: true, code: "VERIFIED", phone: canonical };
+  } catch (err) {
+    const timedOut = err instanceof Error && err.name === "AbortError";
+    console.error(`[widget:verify] ${timedOut ? "timeout" : "unreachable"}`);
+    return { ok: false, code: WIDGET_VERIFY_ERROR, error: "Could not reach the verification service.", retryable: true };
+  } finally {
+    clearTimeout(timer);
+  }
+}
