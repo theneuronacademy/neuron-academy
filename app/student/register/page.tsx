@@ -8,16 +8,14 @@ import { Button } from "@/components/ui/primitives";
 import { Msg91Widget } from "@/components/auth/Msg91Widget";
 
 /**
- * Phase 13 — student registration with production mobile OTP.
- * Flow: mobile → Send OTP (MSG91) → Verify OTP → details → Create Account.
- * When the OTP service is not configured, the legacy single-form flow stays
- * (dev/demo parity). The server enforces OTP whenever MSG91 is configured.
+ * Student registration with mandatory mobile OTP verification.
+ * Flow: mobile → Send OTP (MSG91 SMS or Widget) → Verify OTP → Complete details → Create Account.
+ * OTP verification is mandatory - no fallback to password-only registration.
  */
-type Step = "mobile" | "otp" | "details" | "widget";
+type Step = "mobile" | "otp" | "widget" | "details";
 
 export default function StudentRegisterPage() {
   const router = useRouter();
-  const [otpRequired, setOtpRequired] = useState<boolean | null>(null);
   const [step, setStep] = useState<Step>("mobile");
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -28,18 +26,6 @@ export default function StudentRegisterPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("/api/auth/otp/status", { cache: "no-store" });
-        const json = await res.json().catch(() => null);
-        setOtpRequired(json?.success === true ? !!json.data?.otpRequired : false);
-      } catch {
-        setOtpRequired(false);
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -202,31 +188,7 @@ export default function StudentRegisterPage() {
           {error ? <p className="rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">{error}</p> : null}
           {info ? <p className="rounded-xl bg-teal-50 px-4 py-2.5 text-sm font-bold text-teal-700" role="status">{info}</p> : null}
 
-          {otpRequired === null ? (
-            <p className="flex items-center justify-center gap-2 py-6 text-sm font-bold text-muted"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</p>
-          ) : otpRequired === false ? (
-            <form className="space-y-3" onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="rg-name" className={labelCls}>Full Name</label>
-                <input id="rg-name" required minLength={2} maxLength={80} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className={inputCls} />
-              </div>
-              <div>
-                <label htmlFor="rg-mobile" className={labelCls}>Mobile Number</label>
-                <input id="rg-mobile" required inputMode="tel" autoComplete="tel" value={mobile} onChange={(e) => setMobile(e.target.value)} placeholder="e.g. 97119 17317" className={inputCls} />
-              </div>
-              <div>
-                <label htmlFor="rg-email" className={labelCls}>Email</label>
-                <input id="rg-email" required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={inputCls} />
-              </div>
-              <div>
-                <label htmlFor="rg-pw" className={labelCls}>Password (min 8 characters)</label>
-                <input id="rg-pw" required type="password" minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={inputCls} />
-              </div>
-              <Button type="submit" size="lg" className="w-full" disabled={busy}>
-                {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Creating account…</> : "Create Account"}
-              </Button>
-            </form>
-          ) : step === "mobile" ? (
+          {step === "mobile" ? (
             <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); void sendOtp(); }}>
               <p className="text-[13px] font-semibold text-muted">Step 1 of 3 — enter your 10-digit Indian mobile number to receive an OTP.</p>
               <div>
@@ -284,6 +246,10 @@ export default function StudentRegisterPage() {
               <div>
                 <label htmlFor="rg-name" className={labelCls}>Full Name</label>
                 <input id="rg-name" required minLength={2} maxLength={80} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className={inputCls} />
+              </div>
+              <div>
+                <label htmlFor="rg-mobile" className={labelCls}>Mobile Number</label>
+                <input id="rg-mobile" required inputMode="tel" autoComplete="tel" value={mobile} disabled className={`${inputCls} bg-silver-50`} />
               </div>
               <div>
                 <label htmlFor="rg-email" className={labelCls}>Email</label>
