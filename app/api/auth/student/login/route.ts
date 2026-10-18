@@ -8,12 +8,22 @@ import { sanitizeUser } from "@/lib/server-auth";
 import { createSessionToken, isAuthConfigured, sessionCookieHeader } from "@/lib/session";
 import { normalizePhone, verifyPassword } from "@/lib/credentials";
 import { missingFields } from "@/lib/validation";
+import { studentAuthRateLimits, getClientIp, rateLimitResponse } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 // Vercel: bcrypt verify + DB + cold start headroom (Pro plan).
 export const maxDuration = 15;
 
 export async function POST(req: NextRequest) {
+  // Rate limiting
+  const ip = getClientIp(req);
+  const rateLimit = studentAuthRateLimits.login(ip);
+  if (!rateLimit.allowed) {
+    const res = fail(`Too many login attempts. Try again in ${Math.ceil((rateLimit.retryAfterMs ?? 0) / 1000)} seconds.`, 429);
+    rateLimitResponse(rateLimit).forEach((v, k) => res.headers.set(k, v));
+    return res;
+  }
+
   const db = getDb();
   if (!db) return dbNotConfigured("Student login");
   if (!isAuthConfigured()) return fail("Login needs SESSION_SECRET.", 503);
@@ -41,6 +51,8 @@ export async function POST(req: NextRequest) {
       user: sanitizeUser({ id: user.id, name: user.name, email: user.email, role: user.role }),
       student: { id: student.id, studentId: student.studentId, name: student.name, batchId: student.batchId, courseId: student.courseId },
     });
+    // Add rate limit headers
+    rateLimitResponse(rateLimit).forEach((v, k) => res.headers.set(k, v));
     res.headers.set("Set-Cookie", sessionCookieHeader(token));
     return res;
   } catch (err) {

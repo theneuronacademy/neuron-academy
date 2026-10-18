@@ -222,6 +222,9 @@ export type BatchWhereInput = {
   notifications?: Prisma.NotificationListRelationFilter
   timetableEntries?: Prisma.TimetableEntryListRelationFilter
   doubts?: Prisma.DoubtListRelationFilter
+  materials?: Prisma.MaterialListRelationFilter
+  assignments?: Prisma.AssignmentListRelationFilter
+  gradebookConfig?: Prisma.XOR<Prisma.GradebookConfigNullableScalarRelationFilter, Prisma.GradebookConfigWhereInput> | null
 }
 
 export type BatchOrderByWithRelationInput = {
@@ -242,6 +245,9 @@ export type BatchOrderByWithRelationInput = {
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   timetableEntries?: Prisma.TimetableEntryOrderByRelationAggregateInput
   doubts?: Prisma.DoubtOrderByRelationAggregateInput
+  materials?: Prisma.MaterialOrderByRelationAggregateInput
+  assignments?: Prisma.AssignmentOrderByRelationAggregateInput
+  gradebookConfig?: Prisma.GradebookConfigOrderByWithRelationInput
 }
 
 export type BatchWhereUniqueInput = Prisma.AtLeast<{
@@ -265,6 +271,9 @@ export type BatchWhereUniqueInput = Prisma.AtLeast<{
   notifications?: Prisma.NotificationListRelationFilter
   timetableEntries?: Prisma.TimetableEntryListRelationFilter
   doubts?: Prisma.DoubtListRelationFilter
+  materials?: Prisma.MaterialListRelationFilter
+  assignments?: Prisma.AssignmentListRelationFilter
+  gradebookConfig?: Prisma.XOR<Prisma.GradebookConfigNullableScalarRelationFilter, Prisma.GradebookConfigWhereInput> | null
 }, "id">
 
 export type BatchOrderByWithAggregationInput = {
@@ -313,6 +322,9 @@ export type BatchCreateInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateInput = {
@@ -331,6 +343,9 @@ export type BatchUncheckedCreateInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUpdateInput = {
@@ -349,6 +364,9 @@ export type BatchUpdateInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateInput = {
@@ -367,6 +385,9 @@ export type BatchUncheckedUpdateInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchCreateManyInput = {
@@ -639,6 +660,48 @@ export type BatchUpdateOneWithoutDoubtsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutDoubtsInput, Prisma.BatchUpdateWithoutDoubtsInput>, Prisma.BatchUncheckedUpdateWithoutDoubtsInput>
 }
 
+export type BatchCreateNestedOneWithoutMaterialsInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutMaterialsInput, Prisma.BatchUncheckedCreateWithoutMaterialsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutMaterialsInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneRequiredWithoutMaterialsNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutMaterialsInput, Prisma.BatchUncheckedCreateWithoutMaterialsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutMaterialsInput
+  upsert?: Prisma.BatchUpsertWithoutMaterialsInput
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutMaterialsInput, Prisma.BatchUpdateWithoutMaterialsInput>, Prisma.BatchUncheckedUpdateWithoutMaterialsInput>
+}
+
+export type BatchCreateNestedOneWithoutAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutAssignmentsInput, Prisma.BatchUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutAssignmentsInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneRequiredWithoutAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutAssignmentsInput, Prisma.BatchUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutAssignmentsInput
+  upsert?: Prisma.BatchUpsertWithoutAssignmentsInput
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutAssignmentsInput, Prisma.BatchUpdateWithoutAssignmentsInput>, Prisma.BatchUncheckedUpdateWithoutAssignmentsInput>
+}
+
+export type BatchCreateNestedOneWithoutGradebookConfigInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutGradebookConfigInput, Prisma.BatchUncheckedCreateWithoutGradebookConfigInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutGradebookConfigInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneRequiredWithoutGradebookConfigNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutGradebookConfigInput, Prisma.BatchUncheckedCreateWithoutGradebookConfigInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutGradebookConfigInput
+  upsert?: Prisma.BatchUpsertWithoutGradebookConfigInput
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutGradebookConfigInput, Prisma.BatchUpdateWithoutGradebookConfigInput>, Prisma.BatchUncheckedUpdateWithoutGradebookConfigInput>
+}
+
 export type BatchCreateWithoutStudentsInput = {
   id?: string
   name: string
@@ -654,6 +717,9 @@ export type BatchCreateWithoutStudentsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutStudentsInput = {
@@ -671,6 +737,9 @@ export type BatchUncheckedCreateWithoutStudentsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutStudentsInput = {
@@ -704,6 +773,9 @@ export type BatchUpdateWithoutStudentsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutStudentsInput = {
@@ -721,6 +793,9 @@ export type BatchUncheckedUpdateWithoutStudentsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutFacultyInput = {
@@ -738,6 +813,9 @@ export type BatchCreateWithoutFacultyInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutFacultyInput = {
@@ -755,6 +833,9 @@ export type BatchUncheckedCreateWithoutFacultyInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutFacultyInput = {
@@ -813,6 +894,9 @@ export type BatchCreateWithoutCourseInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutCourseInput = {
@@ -830,6 +914,9 @@ export type BatchUncheckedCreateWithoutCourseInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutCourseInput = {
@@ -873,6 +960,9 @@ export type BatchCreateWithoutTestsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutTestsInput = {
@@ -890,6 +980,9 @@ export type BatchUncheckedCreateWithoutTestsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutTestsInput = {
@@ -923,6 +1016,9 @@ export type BatchUpdateWithoutTestsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutTestsInput = {
@@ -940,6 +1036,9 @@ export type BatchUncheckedUpdateWithoutTestsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutAttendanceInput = {
@@ -957,6 +1056,9 @@ export type BatchCreateWithoutAttendanceInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutAttendanceInput = {
@@ -974,6 +1076,9 @@ export type BatchUncheckedCreateWithoutAttendanceInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutAttendanceInput = {
@@ -1007,6 +1112,9 @@ export type BatchUpdateWithoutAttendanceInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutAttendanceInput = {
@@ -1024,6 +1132,9 @@ export type BatchUncheckedUpdateWithoutAttendanceInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutNotificationsInput = {
@@ -1041,6 +1152,9 @@ export type BatchCreateWithoutNotificationsInput = {
   attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
   timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutNotificationsInput = {
@@ -1058,6 +1172,9 @@ export type BatchUncheckedCreateWithoutNotificationsInput = {
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
   timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutNotificationsInput = {
@@ -1091,6 +1208,9 @@ export type BatchUpdateWithoutNotificationsInput = {
   attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutNotificationsInput = {
@@ -1108,6 +1228,9 @@ export type BatchUncheckedUpdateWithoutNotificationsInput = {
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutTimetableEntriesInput = {
@@ -1125,6 +1248,9 @@ export type BatchCreateWithoutTimetableEntriesInput = {
   attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutTimetableEntriesInput = {
@@ -1142,6 +1268,9 @@ export type BatchUncheckedCreateWithoutTimetableEntriesInput = {
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutTimetableEntriesInput = {
@@ -1175,6 +1304,9 @@ export type BatchUpdateWithoutTimetableEntriesInput = {
   attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutTimetableEntriesInput = {
@@ -1192,6 +1324,9 @@ export type BatchUncheckedUpdateWithoutTimetableEntriesInput = {
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutDoubtsInput = {
@@ -1209,6 +1344,9 @@ export type BatchCreateWithoutDoubtsInput = {
   attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutDoubtsInput = {
@@ -1226,6 +1364,9 @@ export type BatchUncheckedCreateWithoutDoubtsInput = {
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
   timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutDoubtsInput = {
@@ -1259,6 +1400,9 @@ export type BatchUpdateWithoutDoubtsInput = {
   attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutDoubtsInput = {
@@ -1276,6 +1420,297 @@ export type BatchUncheckedUpdateWithoutDoubtsInput = {
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
+}
+
+export type BatchCreateWithoutMaterialsInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
+  timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
+}
+
+export type BatchUncheckedCreateWithoutMaterialsInput = {
+  id?: string
+  name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
+  timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
+}
+
+export type BatchCreateOrConnectWithoutMaterialsInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutMaterialsInput, Prisma.BatchUncheckedCreateWithoutMaterialsInput>
+}
+
+export type BatchUpsertWithoutMaterialsInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutMaterialsInput, Prisma.BatchUncheckedUpdateWithoutMaterialsInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutMaterialsInput, Prisma.BatchUncheckedCreateWithoutMaterialsInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutMaterialsInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutMaterialsInput, Prisma.BatchUncheckedUpdateWithoutMaterialsInput>
+}
+
+export type BatchUpdateWithoutMaterialsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
+  timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutMaterialsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
+  timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
+}
+
+export type BatchCreateWithoutAssignmentsInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
+  timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigCreateNestedOneWithoutBatchInput
+}
+
+export type BatchUncheckedCreateWithoutAssignmentsInput = {
+  id?: string
+  name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
+  timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedCreateNestedOneWithoutBatchInput
+}
+
+export type BatchCreateOrConnectWithoutAssignmentsInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutAssignmentsInput, Prisma.BatchUncheckedCreateWithoutAssignmentsInput>
+}
+
+export type BatchUpsertWithoutAssignmentsInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutAssignmentsInput, Prisma.BatchUncheckedUpdateWithoutAssignmentsInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutAssignmentsInput, Prisma.BatchUncheckedCreateWithoutAssignmentsInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutAssignmentsInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutAssignmentsInput, Prisma.BatchUncheckedUpdateWithoutAssignmentsInput>
+}
+
+export type BatchUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
+  timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
+  timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
+}
+
+export type BatchCreateWithoutGradebookConfigInput = {
+  id?: string
+  name: string
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutBatchesInput
+  faculty?: Prisma.FacultyCreateNestedOneWithoutBatchesInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTargetBatchInput
+  timetableEntries?: Prisma.TimetableEntryCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutBatchInput
+}
+
+export type BatchUncheckedCreateWithoutGradebookConfigInput = {
+  id?: string
+  name: string
+  courseId: string
+  facultyId?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  status?: $Enums.BatchStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetBatchInput
+  timetableEntries?: Prisma.TimetableEntryUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  materials?: Prisma.MaterialUncheckedCreateNestedManyWithoutBatchInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutBatchInput
+}
+
+export type BatchCreateOrConnectWithoutGradebookConfigInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutGradebookConfigInput, Prisma.BatchUncheckedCreateWithoutGradebookConfigInput>
+}
+
+export type BatchUpsertWithoutGradebookConfigInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutGradebookConfigInput, Prisma.BatchUncheckedUpdateWithoutGradebookConfigInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutGradebookConfigInput, Prisma.BatchUncheckedCreateWithoutGradebookConfigInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutGradebookConfigInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutGradebookConfigInput, Prisma.BatchUncheckedUpdateWithoutGradebookConfigInput>
+}
+
+export type BatchUpdateWithoutGradebookConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutBatchesNestedInput
+  faculty?: Prisma.FacultyUpdateOneWithoutBatchesNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
+  timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutGradebookConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumBatchStatusFieldUpdateOperationsInput | $Enums.BatchStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
+  timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateManyFacultyInput = {
@@ -1304,6 +1739,9 @@ export type BatchUpdateWithoutFacultyInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutFacultyInput = {
@@ -1321,6 +1759,9 @@ export type BatchUncheckedUpdateWithoutFacultyInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateManyWithoutFacultyInput = {
@@ -1360,6 +1801,9 @@ export type BatchUpdateWithoutCourseInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutCourseInput = {
@@ -1377,6 +1821,9 @@ export type BatchUncheckedUpdateWithoutCourseInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetBatchNestedInput
   timetableEntries?: Prisma.TimetableEntryUncheckedUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  materials?: Prisma.MaterialUncheckedUpdateManyWithoutBatchNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutBatchNestedInput
+  gradebookConfig?: Prisma.GradebookConfigUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateManyWithoutCourseInput = {
@@ -1402,6 +1849,8 @@ export type BatchCountOutputType = {
   notifications: number
   timetableEntries: number
   doubts: number
+  materials: number
+  assignments: number
 }
 
 export type BatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1411,6 +1860,8 @@ export type BatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   notifications?: boolean | BatchCountOutputTypeCountNotificationsArgs
   timetableEntries?: boolean | BatchCountOutputTypeCountTimetableEntriesArgs
   doubts?: boolean | BatchCountOutputTypeCountDoubtsArgs
+  materials?: boolean | BatchCountOutputTypeCountMaterialsArgs
+  assignments?: boolean | BatchCountOutputTypeCountAssignmentsArgs
 }
 
 /**
@@ -1465,6 +1916,20 @@ export type BatchCountOutputTypeCountDoubtsArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.DoubtWhereInput
 }
 
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountMaterialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MaterialWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssignmentWhereInput
+}
+
 
 export type BatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1484,6 +1949,9 @@ export type BatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   notifications?: boolean | Prisma.Batch$notificationsArgs<ExtArgs>
   timetableEntries?: boolean | Prisma.Batch$timetableEntriesArgs<ExtArgs>
   doubts?: boolean | Prisma.Batch$doubtsArgs<ExtArgs>
+  materials?: boolean | Prisma.Batch$materialsArgs<ExtArgs>
+  assignments?: boolean | Prisma.Batch$assignmentsArgs<ExtArgs>
+  gradebookConfig?: boolean | Prisma.Batch$gradebookConfigArgs<ExtArgs>
   _count?: boolean | Prisma.BatchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["batch"]>
 
@@ -1537,6 +2005,9 @@ export type BatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   notifications?: boolean | Prisma.Batch$notificationsArgs<ExtArgs>
   timetableEntries?: boolean | Prisma.Batch$timetableEntriesArgs<ExtArgs>
   doubts?: boolean | Prisma.Batch$doubtsArgs<ExtArgs>
+  materials?: boolean | Prisma.Batch$materialsArgs<ExtArgs>
+  assignments?: boolean | Prisma.Batch$assignmentsArgs<ExtArgs>
+  gradebookConfig?: boolean | Prisma.Batch$gradebookConfigArgs<ExtArgs>
   _count?: boolean | Prisma.BatchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BatchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1559,6 +2030,9 @@ export type $BatchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     timetableEntries: Prisma.$TimetableEntryPayload<ExtArgs>[]
     doubts: Prisma.$DoubtPayload<ExtArgs>[]
+    materials: Prisma.$MaterialPayload<ExtArgs>[]
+    assignments: Prisma.$AssignmentPayload<ExtArgs>[]
+    gradebookConfig: Prisma.$GradebookConfigPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1972,6 +2446,9 @@ export interface Prisma__BatchClient<T, Null = never, ExtArgs extends runtime.Ty
   notifications<T extends Prisma.Batch$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   timetableEntries<T extends Prisma.Batch$timetableEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$timetableEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimetableEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   doubts<T extends Prisma.Batch$doubtsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$doubtsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DoubtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  materials<T extends Prisma.Batch$materialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$materialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignments<T extends Prisma.Batch$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  gradebookConfig<T extends Prisma.Batch$gradebookConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$gradebookConfigArgs<ExtArgs>>): Prisma.Prisma__GradebookConfigClient<runtime.Types.Result.GetResult<Prisma.$GradebookConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2571,6 +3048,73 @@ export type Batch$doubtsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.DoubtScalarFieldEnum | Prisma.DoubtScalarFieldEnum[]
+}
+
+/**
+ * Batch.materials
+ */
+export type Batch$materialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Material
+   */
+  select?: Prisma.MaterialSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Material
+   */
+  omit?: Prisma.MaterialOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MaterialInclude<ExtArgs> | null
+  where?: Prisma.MaterialWhereInput
+  orderBy?: Prisma.MaterialOrderByWithRelationInput | Prisma.MaterialOrderByWithRelationInput[]
+  cursor?: Prisma.MaterialWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MaterialScalarFieldEnum | Prisma.MaterialScalarFieldEnum[]
+}
+
+/**
+ * Batch.assignments
+ */
+export type Batch$assignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Assignment
+   */
+  select?: Prisma.AssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Assignment
+   */
+  omit?: Prisma.AssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssignmentInclude<ExtArgs> | null
+  where?: Prisma.AssignmentWhereInput
+  orderBy?: Prisma.AssignmentOrderByWithRelationInput | Prisma.AssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.AssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssignmentScalarFieldEnum | Prisma.AssignmentScalarFieldEnum[]
+}
+
+/**
+ * Batch.gradebookConfig
+ */
+export type Batch$gradebookConfigArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GradebookConfig
+   */
+  select?: Prisma.GradebookConfigSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GradebookConfig
+   */
+  omit?: Prisma.GradebookConfigOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GradebookConfigInclude<ExtArgs> | null
+  where?: Prisma.GradebookConfigWhereInput
 }
 
 /**

@@ -246,3 +246,33 @@ export const DoubtStatus = {
 } as const
 
 export type DoubtStatus = (typeof DoubtStatus)[keyof typeof DoubtStatus]
+
+
+export const AdminActionType = {
+  CREATE: 'CREATE',
+  READ: 'READ',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE',
+  BULK_CREATE: 'BULK_CREATE',
+  BULK_UPDATE: 'BULK_UPDATE',
+  BULK_DELETE: 'BULK_DELETE',
+  LOGIN: 'LOGIN',
+  LOGOUT: 'LOGOUT',
+  EXPORT: 'EXPORT',
+  IMPORT: 'IMPORT',
+  STATUS_CHANGE: 'STATUS_CHANGE',
+  PERMISSION_GRANT: 'PERMISSION_GRANT',
+  PERMISSION_REVOKE: 'PERMISSION_REVOKE'
+} as const
+
+export type AdminActionType = (typeof AdminActionType)[keyof typeof AdminActionType]
+
+
+export const AdminPermissionScope = {
+  GLOBAL: 'GLOBAL',
+  BRANCH: 'BRANCH',
+  BATCH: 'BATCH',
+  COURSE: 'COURSE'
+} as const
+
+export type AdminPermissionScope = (typeof AdminPermissionScope)[keyof typeof AdminPermissionScope]

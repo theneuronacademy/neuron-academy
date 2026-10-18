@@ -20,8 +20,22 @@ export type StudentModel = runtime.Types.Result.DefaultSelection<Prisma.$Student
 
 export type AggregateStudent = {
   _count: StudentCountAggregateOutputType | null
+  _avg: StudentAvgAggregateOutputType | null
+  _sum: StudentSumAggregateOutputType | null
   _min: StudentMinAggregateOutputType | null
   _max: StudentMaxAggregateOutputType | null
+}
+
+export type StudentAvgAggregateOutputType = {
+  streakDays: number | null
+  longestStreak: number | null
+  dailyGoalMinutes: number | null
+}
+
+export type StudentSumAggregateOutputType = {
+  streakDays: number | null
+  longestStreak: number | null
+  dailyGoalMinutes: number | null
 }
 
 export type StudentMinAggregateOutputType = {
@@ -50,6 +64,12 @@ export type StudentMinAggregateOutputType = {
   lastLoginAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  totpSecret: string | null
+  totpEnabled: boolean | null
+  lastTestAt: Date | null
+  streakDays: number | null
+  longestStreak: number | null
+  dailyGoalMinutes: number | null
 }
 
 export type StudentMaxAggregateOutputType = {
@@ -78,6 +98,12 @@ export type StudentMaxAggregateOutputType = {
   lastLoginAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  totpSecret: string | null
+  totpEnabled: boolean | null
+  lastTestAt: Date | null
+  streakDays: number | null
+  longestStreak: number | null
+  dailyGoalMinutes: number | null
 }
 
 export type StudentCountAggregateOutputType = {
@@ -106,9 +132,28 @@ export type StudentCountAggregateOutputType = {
   lastLoginAt: number
   createdAt: number
   updatedAt: number
+  totpSecret: number
+  totpEnabled: number
+  backupCodes: number
+  lastTestAt: number
+  streakDays: number
+  longestStreak: number
+  dailyGoalMinutes: number
   _all: number
 }
 
+
+export type StudentAvgAggregateInputType = {
+  streakDays?: true
+  longestStreak?: true
+  dailyGoalMinutes?: true
+}
+
+export type StudentSumAggregateInputType = {
+  streakDays?: true
+  longestStreak?: true
+  dailyGoalMinutes?: true
+}
 
 export type StudentMinAggregateInputType = {
   id?: true
@@ -136,6 +181,12 @@ export type StudentMinAggregateInputType = {
   lastLoginAt?: true
   createdAt?: true
   updatedAt?: true
+  totpSecret?: true
+  totpEnabled?: true
+  lastTestAt?: true
+  streakDays?: true
+  longestStreak?: true
+  dailyGoalMinutes?: true
 }
 
 export type StudentMaxAggregateInputType = {
@@ -164,6 +215,12 @@ export type StudentMaxAggregateInputType = {
   lastLoginAt?: true
   createdAt?: true
   updatedAt?: true
+  totpSecret?: true
+  totpEnabled?: true
+  lastTestAt?: true
+  streakDays?: true
+  longestStreak?: true
+  dailyGoalMinutes?: true
 }
 
 export type StudentCountAggregateInputType = {
@@ -192,6 +249,13 @@ export type StudentCountAggregateInputType = {
   lastLoginAt?: true
   createdAt?: true
   updatedAt?: true
+  totpSecret?: true
+  totpEnabled?: true
+  backupCodes?: true
+  lastTestAt?: true
+  streakDays?: true
+  longestStreak?: true
+  dailyGoalMinutes?: true
   _all?: true
 }
 
@@ -233,6 +297,18 @@ export type StudentAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: StudentAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: StudentSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: StudentMinAggregateInputType
@@ -263,6 +339,8 @@ export type StudentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: StudentCountAggregateInputType | true
+  _avg?: StudentAvgAggregateInputType
+  _sum?: StudentSumAggregateInputType
   _min?: StudentMinAggregateInputType
   _max?: StudentMaxAggregateInputType
 }
@@ -293,7 +371,16 @@ export type StudentGroupByOutputType = {
   lastLoginAt: Date | null
   createdAt: Date
   updatedAt: Date
+  totpSecret: string | null
+  totpEnabled: boolean
+  backupCodes: string[]
+  lastTestAt: Date | null
+  streakDays: number
+  longestStreak: number
+  dailyGoalMinutes: number
   _count: StudentCountAggregateOutputType | null
+  _avg: StudentAvgAggregateOutputType | null
+  _sum: StudentSumAggregateOutputType | null
   _min: StudentMinAggregateOutputType | null
   _max: StudentMaxAggregateOutputType | null
 }
@@ -342,6 +429,13 @@ export type StudentWhereInput = {
   lastLoginAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Student"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Student"> | Date | string
+  totpSecret?: Prisma.StringNullableFilter<"Student"> | string | null
+  totpEnabled?: Prisma.BoolFilter<"Student"> | boolean
+  backupCodes?: Prisma.StringNullableListFilter<"Student">
+  lastTestAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
+  streakDays?: Prisma.IntFilter<"Student"> | number
+  longestStreak?: Prisma.IntFilter<"Student"> | number
+  dailyGoalMinutes?: Prisma.IntFilter<"Student"> | number
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   course?: Prisma.XOR<Prisma.CourseNullableScalarRelationFilter, Prisma.CourseWhereInput> | null
   batch?: Prisma.XOR<Prisma.BatchNullableScalarRelationFilter, Prisma.BatchWhereInput> | null
@@ -352,6 +446,8 @@ export type StudentWhereInput = {
   testAccesses?: Prisma.TestAccessListRelationFilter
   bookmarks?: Prisma.BookmarkListRelationFilter
   doubts?: Prisma.DoubtListRelationFilter
+  submissions?: Prisma.SubmissionListRelationFilter
+  parentMessages?: Prisma.ParentMessageListRelationFilter
 }
 
 export type StudentOrderByWithRelationInput = {
@@ -380,6 +476,13 @@ export type StudentOrderByWithRelationInput = {
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  totpSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  totpEnabled?: Prisma.SortOrder
+  backupCodes?: Prisma.SortOrder
+  lastTestAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  streakDays?: Prisma.SortOrder
+  longestStreak?: Prisma.SortOrder
+  dailyGoalMinutes?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   course?: Prisma.CourseOrderByWithRelationInput
   batch?: Prisma.BatchOrderByWithRelationInput
@@ -390,6 +493,8 @@ export type StudentOrderByWithRelationInput = {
   testAccesses?: Prisma.TestAccessOrderByRelationAggregateInput
   bookmarks?: Prisma.BookmarkOrderByRelationAggregateInput
   doubts?: Prisma.DoubtOrderByRelationAggregateInput
+  submissions?: Prisma.SubmissionOrderByRelationAggregateInput
+  parentMessages?: Prisma.ParentMessageOrderByRelationAggregateInput
 }
 
 export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -421,6 +526,13 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   lastLoginAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Student"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Student"> | Date | string
+  totpSecret?: Prisma.StringNullableFilter<"Student"> | string | null
+  totpEnabled?: Prisma.BoolFilter<"Student"> | boolean
+  backupCodes?: Prisma.StringNullableListFilter<"Student">
+  lastTestAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
+  streakDays?: Prisma.IntFilter<"Student"> | number
+  longestStreak?: Prisma.IntFilter<"Student"> | number
+  dailyGoalMinutes?: Prisma.IntFilter<"Student"> | number
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   course?: Prisma.XOR<Prisma.CourseNullableScalarRelationFilter, Prisma.CourseWhereInput> | null
   batch?: Prisma.XOR<Prisma.BatchNullableScalarRelationFilter, Prisma.BatchWhereInput> | null
@@ -431,6 +543,8 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   testAccesses?: Prisma.TestAccessListRelationFilter
   bookmarks?: Prisma.BookmarkListRelationFilter
   doubts?: Prisma.DoubtListRelationFilter
+  submissions?: Prisma.SubmissionListRelationFilter
+  parentMessages?: Prisma.ParentMessageListRelationFilter
 }, "id" | "userId" | "studentId" | "email">
 
 export type StudentOrderByWithAggregationInput = {
@@ -459,9 +573,18 @@ export type StudentOrderByWithAggregationInput = {
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  totpSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  totpEnabled?: Prisma.SortOrder
+  backupCodes?: Prisma.SortOrder
+  lastTestAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  streakDays?: Prisma.SortOrder
+  longestStreak?: Prisma.SortOrder
+  dailyGoalMinutes?: Prisma.SortOrder
   _count?: Prisma.StudentCountOrderByAggregateInput
+  _avg?: Prisma.StudentAvgOrderByAggregateInput
   _max?: Prisma.StudentMaxOrderByAggregateInput
   _min?: Prisma.StudentMinOrderByAggregateInput
+  _sum?: Prisma.StudentSumOrderByAggregateInput
 }
 
 export type StudentScalarWhereWithAggregatesInput = {
@@ -493,6 +616,13 @@ export type StudentScalarWhereWithAggregatesInput = {
   lastLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Student"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Student"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Student"> | Date | string
+  totpSecret?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
+  totpEnabled?: Prisma.BoolWithAggregatesFilter<"Student"> | boolean
+  backupCodes?: Prisma.StringNullableListFilter<"Student">
+  lastTestAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Student"> | Date | string | null
+  streakDays?: Prisma.IntWithAggregatesFilter<"Student"> | number
+  longestStreak?: Prisma.IntWithAggregatesFilter<"Student"> | number
+  dailyGoalMinutes?: Prisma.IntWithAggregatesFilter<"Student"> | number
 }
 
 export type StudentCreateInput = {
@@ -518,6 +648,13 @@ export type StudentCreateInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
@@ -528,6 +665,8 @@ export type StudentCreateInput = {
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateInput = {
@@ -556,6 +695,13 @@ export type StudentUncheckedCreateInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
@@ -563,6 +709,8 @@ export type StudentUncheckedCreateInput = {
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUpdateInput = {
@@ -588,6 +736,13 @@ export type StudentUpdateInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
@@ -598,6 +753,8 @@ export type StudentUpdateInput = {
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateInput = {
@@ -626,6 +783,13 @@ export type StudentUncheckedUpdateInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
@@ -633,6 +797,8 @@ export type StudentUncheckedUpdateInput = {
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateManyInput = {
@@ -661,6 +827,13 @@ export type StudentCreateManyInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
 }
 
 export type StudentUpdateManyMutationInput = {
@@ -686,6 +859,13 @@ export type StudentUpdateManyMutationInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type StudentUncheckedUpdateManyInput = {
@@ -714,11 +894,26 @@ export type StudentUncheckedUpdateManyInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type StudentNullableScalarRelationFilter = {
   is?: Prisma.StudentWhereInput | null
   isNot?: Prisma.StudentWhereInput | null
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type StudentCountOrderByAggregateInput = {
@@ -747,6 +942,19 @@ export type StudentCountOrderByAggregateInput = {
   lastLoginAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  totpSecret?: Prisma.SortOrder
+  totpEnabled?: Prisma.SortOrder
+  backupCodes?: Prisma.SortOrder
+  lastTestAt?: Prisma.SortOrder
+  streakDays?: Prisma.SortOrder
+  longestStreak?: Prisma.SortOrder
+  dailyGoalMinutes?: Prisma.SortOrder
+}
+
+export type StudentAvgOrderByAggregateInput = {
+  streakDays?: Prisma.SortOrder
+  longestStreak?: Prisma.SortOrder
+  dailyGoalMinutes?: Prisma.SortOrder
 }
 
 export type StudentMaxOrderByAggregateInput = {
@@ -775,6 +983,12 @@ export type StudentMaxOrderByAggregateInput = {
   lastLoginAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  totpSecret?: Prisma.SortOrder
+  totpEnabled?: Prisma.SortOrder
+  lastTestAt?: Prisma.SortOrder
+  streakDays?: Prisma.SortOrder
+  longestStreak?: Prisma.SortOrder
+  dailyGoalMinutes?: Prisma.SortOrder
 }
 
 export type StudentMinOrderByAggregateInput = {
@@ -803,6 +1017,18 @@ export type StudentMinOrderByAggregateInput = {
   lastLoginAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  totpSecret?: Prisma.SortOrder
+  totpEnabled?: Prisma.SortOrder
+  lastTestAt?: Prisma.SortOrder
+  streakDays?: Prisma.SortOrder
+  longestStreak?: Prisma.SortOrder
+  dailyGoalMinutes?: Prisma.SortOrder
+}
+
+export type StudentSumOrderByAggregateInput = {
+  streakDays?: Prisma.SortOrder
+  longestStreak?: Prisma.SortOrder
+  dailyGoalMinutes?: Prisma.SortOrder
 }
 
 export type StudentListRelationFilter = {
@@ -852,6 +1078,10 @@ export type StudentUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutUserInput, Prisma.StudentUpdateWithoutUserInput>, Prisma.StudentUncheckedUpdateWithoutUserInput>
 }
 
+export type StudentCreatebackupCodesInput = {
+  set: string[]
+}
+
 export type EnumStudentStatusFieldUpdateOperationsInput = {
   set?: $Enums.StudentStatus
 }
@@ -862,6 +1092,19 @@ export type EnumStudentTypeFieldUpdateOperationsInput = {
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
+}
+
+export type StudentUpdatebackupCodesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type StudentCreateNestedManyWithoutCourseInput = {
@@ -1048,6 +1291,34 @@ export type StudentUpdateOneRequiredWithoutDoubtsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutDoubtsInput, Prisma.StudentUpdateWithoutDoubtsInput>, Prisma.StudentUncheckedUpdateWithoutDoubtsInput>
 }
 
+export type StudentCreateNestedOneWithoutSubmissionsInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutSubmissionsInput, Prisma.StudentUncheckedCreateWithoutSubmissionsInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutSubmissionsInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUpdateOneRequiredWithoutSubmissionsNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutSubmissionsInput, Prisma.StudentUncheckedCreateWithoutSubmissionsInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutSubmissionsInput
+  upsert?: Prisma.StudentUpsertWithoutSubmissionsInput
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutSubmissionsInput, Prisma.StudentUpdateWithoutSubmissionsInput>, Prisma.StudentUncheckedUpdateWithoutSubmissionsInput>
+}
+
+export type StudentCreateNestedOneWithoutParentMessagesInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutParentMessagesInput, Prisma.StudentUncheckedCreateWithoutParentMessagesInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutParentMessagesInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUpdateOneRequiredWithoutParentMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutParentMessagesInput, Prisma.StudentUncheckedCreateWithoutParentMessagesInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutParentMessagesInput
+  upsert?: Prisma.StudentUpsertWithoutParentMessagesInput
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutParentMessagesInput, Prisma.StudentUpdateWithoutParentMessagesInput>, Prisma.StudentUncheckedUpdateWithoutParentMessagesInput>
+}
+
 export type StudentCreateWithoutUserInput = {
   id?: string
   studentId: string
@@ -1071,6 +1342,13 @@ export type StudentCreateWithoutUserInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
   attendance?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -1080,6 +1358,8 @@ export type StudentCreateWithoutUserInput = {
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutUserInput = {
@@ -1107,6 +1387,13 @@ export type StudentUncheckedCreateWithoutUserInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
@@ -1114,6 +1401,8 @@ export type StudentUncheckedCreateWithoutUserInput = {
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutUserInput = {
@@ -1155,6 +1444,13 @@ export type StudentUpdateWithoutUserInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
   attendance?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -1164,6 +1460,8 @@ export type StudentUpdateWithoutUserInput = {
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutUserInput = {
@@ -1191,6 +1489,13 @@ export type StudentUncheckedUpdateWithoutUserInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
@@ -1198,6 +1503,8 @@ export type StudentUncheckedUpdateWithoutUserInput = {
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutCourseInput = {
@@ -1223,6 +1530,13 @@ export type StudentCreateWithoutCourseInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
   attendance?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -1232,6 +1546,8 @@ export type StudentCreateWithoutCourseInput = {
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutCourseInput = {
@@ -1259,6 +1575,13 @@ export type StudentUncheckedCreateWithoutCourseInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
@@ -1266,6 +1589,8 @@ export type StudentUncheckedCreateWithoutCourseInput = {
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutCourseInput = {
@@ -1323,6 +1648,13 @@ export type StudentScalarWhereInput = {
   lastLoginAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Student"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Student"> | Date | string
+  totpSecret?: Prisma.StringNullableFilter<"Student"> | string | null
+  totpEnabled?: Prisma.BoolFilter<"Student"> | boolean
+  backupCodes?: Prisma.StringNullableListFilter<"Student">
+  lastTestAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
+  streakDays?: Prisma.IntFilter<"Student"> | number
+  longestStreak?: Prisma.IntFilter<"Student"> | number
+  dailyGoalMinutes?: Prisma.IntFilter<"Student"> | number
 }
 
 export type StudentCreateWithoutBatchInput = {
@@ -1348,6 +1680,13 @@ export type StudentCreateWithoutBatchInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   attendance?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -1357,6 +1696,8 @@ export type StudentCreateWithoutBatchInput = {
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutBatchInput = {
@@ -1384,6 +1725,13 @@ export type StudentUncheckedCreateWithoutBatchInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
@@ -1391,6 +1739,8 @@ export type StudentUncheckedCreateWithoutBatchInput = {
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutBatchInput = {
@@ -1442,6 +1792,13 @@ export type StudentCreateWithoutResultsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
@@ -1451,6 +1808,8 @@ export type StudentCreateWithoutResultsInput = {
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutResultsInput = {
@@ -1479,12 +1838,21 @@ export type StudentUncheckedCreateWithoutResultsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutResultsInput = {
@@ -1526,6 +1894,13 @@ export type StudentUpdateWithoutResultsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
@@ -1535,6 +1910,8 @@ export type StudentUpdateWithoutResultsInput = {
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutResultsInput = {
@@ -1563,12 +1940,21 @@ export type StudentUncheckedUpdateWithoutResultsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutTestAccessesInput = {
@@ -1594,6 +1980,13 @@ export type StudentCreateWithoutTestAccessesInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
@@ -1603,6 +1996,8 @@ export type StudentCreateWithoutTestAccessesInput = {
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutTestAccessesInput = {
@@ -1631,12 +2026,21 @@ export type StudentUncheckedCreateWithoutTestAccessesInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutTestAccessesInput = {
@@ -1678,6 +2082,13 @@ export type StudentUpdateWithoutTestAccessesInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
@@ -1687,6 +2098,8 @@ export type StudentUpdateWithoutTestAccessesInput = {
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutTestAccessesInput = {
@@ -1715,12 +2128,21 @@ export type StudentUncheckedUpdateWithoutTestAccessesInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutAttemptsInput = {
@@ -1746,6 +2168,13 @@ export type StudentCreateWithoutAttemptsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
@@ -1755,6 +2184,8 @@ export type StudentCreateWithoutAttemptsInput = {
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutAttemptsInput = {
@@ -1783,12 +2214,21 @@ export type StudentUncheckedCreateWithoutAttemptsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutAttemptsInput = {
@@ -1830,6 +2270,13 @@ export type StudentUpdateWithoutAttemptsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
@@ -1839,6 +2286,8 @@ export type StudentUpdateWithoutAttemptsInput = {
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutAttemptsInput = {
@@ -1867,12 +2316,21 @@ export type StudentUncheckedUpdateWithoutAttemptsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutAttendanceInput = {
@@ -1898,6 +2356,13 @@ export type StudentCreateWithoutAttendanceInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
@@ -1907,6 +2372,8 @@ export type StudentCreateWithoutAttendanceInput = {
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutAttendanceInput = {
@@ -1935,12 +2402,21 @@ export type StudentUncheckedCreateWithoutAttendanceInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutAttendanceInput = {
@@ -1982,6 +2458,13 @@ export type StudentUpdateWithoutAttendanceInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
@@ -1991,6 +2474,8 @@ export type StudentUpdateWithoutAttendanceInput = {
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutAttendanceInput = {
@@ -2019,12 +2504,21 @@ export type StudentUncheckedUpdateWithoutAttendanceInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutTargetedNotificationsInput = {
@@ -2050,6 +2544,13 @@ export type StudentCreateWithoutTargetedNotificationsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
@@ -2059,6 +2560,8 @@ export type StudentCreateWithoutTargetedNotificationsInput = {
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutTargetedNotificationsInput = {
@@ -2087,12 +2590,21 @@ export type StudentUncheckedCreateWithoutTargetedNotificationsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutTargetedNotificationsInput = {
@@ -2134,6 +2646,13 @@ export type StudentUpdateWithoutTargetedNotificationsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
@@ -2143,6 +2662,8 @@ export type StudentUpdateWithoutTargetedNotificationsInput = {
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutTargetedNotificationsInput = {
@@ -2171,12 +2692,21 @@ export type StudentUncheckedUpdateWithoutTargetedNotificationsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutBookmarksInput = {
@@ -2202,6 +2732,13 @@ export type StudentCreateWithoutBookmarksInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
@@ -2211,6 +2748,8 @@ export type StudentCreateWithoutBookmarksInput = {
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutBookmarksInput = {
@@ -2239,12 +2778,21 @@ export type StudentUncheckedCreateWithoutBookmarksInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutBookmarksInput = {
@@ -2286,6 +2834,13 @@ export type StudentUpdateWithoutBookmarksInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
@@ -2295,6 +2850,8 @@ export type StudentUpdateWithoutBookmarksInput = {
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutBookmarksInput = {
@@ -2323,12 +2880,21 @@ export type StudentUncheckedUpdateWithoutBookmarksInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutDoubtsInput = {
@@ -2354,6 +2920,13 @@ export type StudentCreateWithoutDoubtsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
   course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
   batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
@@ -2363,6 +2936,8 @@ export type StudentCreateWithoutDoubtsInput = {
   targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutDoubtsInput = {
@@ -2391,12 +2966,21 @@ export type StudentUncheckedCreateWithoutDoubtsInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
   attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
   targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
   testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutDoubtsInput = {
@@ -2438,6 +3022,13 @@ export type StudentUpdateWithoutDoubtsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
@@ -2447,6 +3038,8 @@ export type StudentUpdateWithoutDoubtsInput = {
   targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutDoubtsInput = {
@@ -2475,12 +3068,397 @@ export type StudentUncheckedUpdateWithoutDoubtsInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
   targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentCreateWithoutSubmissionsInput = {
+  id?: string
+  studentId: string
+  name: string
+  email: string
+  phone: string
+  photo?: string | null
+  joiningDate?: Date | string
+  status?: $Enums.StudentStatus
+  studentType?: $Enums.StudentType
+  dob?: Date | string | null
+  photoUrl?: string | null
+  gender?: string | null
+  address?: string | null
+  city?: string | null
+  school?: string | null
+  className?: string | null
+  parentName?: string | null
+  parentMobile?: string | null
+  enrollmentDate?: Date | string
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
+  user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
+  course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
+  batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
+  attempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  results?: Prisma.ResultCreateNestedManyWithoutStudentInput
+  targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
+  testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageCreateNestedManyWithoutStudentInput
+}
+
+export type StudentUncheckedCreateWithoutSubmissionsInput = {
+  id?: string
+  userId?: string | null
+  studentId: string
+  name: string
+  email: string
+  phone: string
+  photo?: string | null
+  courseId?: string | null
+  batchId?: string | null
+  joiningDate?: Date | string
+  status?: $Enums.StudentStatus
+  studentType?: $Enums.StudentType
+  dob?: Date | string | null
+  photoUrl?: string | null
+  gender?: string | null
+  address?: string | null
+  city?: string | null
+  school?: string | null
+  className?: string | null
+  parentName?: string | null
+  parentMobile?: string | null
+  enrollmentDate?: Date | string
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
+  attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
+  targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
+  testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  parentMessages?: Prisma.ParentMessageUncheckedCreateNestedManyWithoutStudentInput
+}
+
+export type StudentCreateOrConnectWithoutSubmissionsInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutSubmissionsInput, Prisma.StudentUncheckedCreateWithoutSubmissionsInput>
+}
+
+export type StudentUpsertWithoutSubmissionsInput = {
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutSubmissionsInput, Prisma.StudentUncheckedUpdateWithoutSubmissionsInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutSubmissionsInput, Prisma.StudentUncheckedCreateWithoutSubmissionsInput>
+  where?: Prisma.StudentWhereInput
+}
+
+export type StudentUpdateToOneWithWhereWithoutSubmissionsInput = {
+  where?: Prisma.StudentWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutSubmissionsInput, Prisma.StudentUncheckedUpdateWithoutSubmissionsInput>
+}
+
+export type StudentUpdateWithoutSubmissionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  studentType?: Prisma.EnumStudentTypeFieldUpdateOperationsInput | $Enums.StudentType
+  dob?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  school?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentMobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enrollmentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
+  course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
+  batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
+  attempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
+  targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
+  testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutSubmissionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  batchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  studentType?: Prisma.EnumStudentTypeFieldUpdateOperationsInput | $Enums.StudentType
+  dob?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  school?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentMobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enrollmentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+  attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
+  targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
+  testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentCreateWithoutParentMessagesInput = {
+  id?: string
+  studentId: string
+  name: string
+  email: string
+  phone: string
+  photo?: string | null
+  joiningDate?: Date | string
+  status?: $Enums.StudentStatus
+  studentType?: $Enums.StudentType
+  dob?: Date | string | null
+  photoUrl?: string | null
+  gender?: string | null
+  address?: string | null
+  city?: string | null
+  school?: string | null
+  className?: string | null
+  parentName?: string | null
+  parentMobile?: string | null
+  enrollmentDate?: Date | string
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
+  user?: Prisma.UserCreateNestedOneWithoutStudentProfileInput
+  course?: Prisma.CourseCreateNestedOneWithoutStudentsInput
+  batch?: Prisma.BatchCreateNestedOneWithoutStudentsInput
+  attendance?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
+  attempts?: Prisma.TestAttemptCreateNestedManyWithoutStudentInput
+  results?: Prisma.ResultCreateNestedManyWithoutStudentInput
+  targetedNotifications?: Prisma.NotificationCreateNestedManyWithoutTargetStudentInput
+  testAccesses?: Prisma.TestAccessCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionCreateNestedManyWithoutStudentInput
+}
+
+export type StudentUncheckedCreateWithoutParentMessagesInput = {
+  id?: string
+  userId?: string | null
+  studentId: string
+  name: string
+  email: string
+  phone: string
+  photo?: string | null
+  courseId?: string | null
+  batchId?: string | null
+  joiningDate?: Date | string
+  status?: $Enums.StudentStatus
+  studentType?: $Enums.StudentType
+  dob?: Date | string | null
+  photoUrl?: string | null
+  gender?: string | null
+  address?: string | null
+  city?: string | null
+  school?: string | null
+  className?: string | null
+  parentName?: string | null
+  parentMobile?: string | null
+  enrollmentDate?: Date | string
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
+  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
+  attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutStudentInput
+  results?: Prisma.ResultUncheckedCreateNestedManyWithoutStudentInput
+  targetedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTargetStudentInput
+  testAccesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutStudentInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutStudentInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutStudentInput
+  submissions?: Prisma.SubmissionUncheckedCreateNestedManyWithoutStudentInput
+}
+
+export type StudentCreateOrConnectWithoutParentMessagesInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutParentMessagesInput, Prisma.StudentUncheckedCreateWithoutParentMessagesInput>
+}
+
+export type StudentUpsertWithoutParentMessagesInput = {
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutParentMessagesInput, Prisma.StudentUncheckedUpdateWithoutParentMessagesInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutParentMessagesInput, Prisma.StudentUncheckedCreateWithoutParentMessagesInput>
+  where?: Prisma.StudentWhereInput
+}
+
+export type StudentUpdateToOneWithWhereWithoutParentMessagesInput = {
+  where?: Prisma.StudentWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutParentMessagesInput, Prisma.StudentUncheckedUpdateWithoutParentMessagesInput>
+}
+
+export type StudentUpdateWithoutParentMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  studentType?: Prisma.EnumStudentTypeFieldUpdateOperationsInput | $Enums.StudentType
+  dob?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  school?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentMobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enrollmentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
+  course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
+  batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
+  attendance?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
+  attempts?: Prisma.TestAttemptUpdateManyWithoutStudentNestedInput
+  results?: Prisma.ResultUpdateManyWithoutStudentNestedInput
+  targetedNotifications?: Prisma.NotificationUpdateManyWithoutTargetStudentNestedInput
+  testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutParentMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  batchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  joiningDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  studentType?: Prisma.EnumStudentTypeFieldUpdateOperationsInput | $Enums.StudentType
+  dob?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  school?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentMobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enrollmentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+  attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
+  results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
+  targetedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutTargetStudentNestedInput
+  testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateManyCourseInput = {
@@ -2508,6 +3486,13 @@ export type StudentCreateManyCourseInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
 }
 
 export type StudentUpdateWithoutCourseInput = {
@@ -2533,6 +3518,13 @@ export type StudentUpdateWithoutCourseInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   batch?: Prisma.BatchUpdateOneWithoutStudentsNestedInput
   attendance?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -2542,6 +3534,8 @@ export type StudentUpdateWithoutCourseInput = {
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutCourseInput = {
@@ -2569,6 +3563,13 @@ export type StudentUncheckedUpdateWithoutCourseInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
@@ -2576,6 +3577,8 @@ export type StudentUncheckedUpdateWithoutCourseInput = {
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutCourseInput = {
@@ -2603,6 +3606,13 @@ export type StudentUncheckedUpdateManyWithoutCourseInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type StudentCreateManyBatchInput = {
@@ -2630,6 +3640,13 @@ export type StudentCreateManyBatchInput = {
   lastLoginAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  totpSecret?: string | null
+  totpEnabled?: boolean
+  backupCodes?: Prisma.StudentCreatebackupCodesInput | string[]
+  lastTestAt?: Date | string | null
+  streakDays?: number
+  longestStreak?: number
+  dailyGoalMinutes?: number
 }
 
 export type StudentUpdateWithoutBatchInput = {
@@ -2655,6 +3672,13 @@ export type StudentUpdateWithoutBatchInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutStudentProfileNestedInput
   course?: Prisma.CourseUpdateOneWithoutStudentsNestedInput
   attendance?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -2664,6 +3688,8 @@ export type StudentUpdateWithoutBatchInput = {
   testAccesses?: Prisma.TestAccessUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutBatchInput = {
@@ -2691,6 +3717,13 @@ export type StudentUncheckedUpdateWithoutBatchInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutStudentNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutStudentNestedInput
@@ -2698,6 +3731,8 @@ export type StudentUncheckedUpdateWithoutBatchInput = {
   testAccesses?: Prisma.TestAccessUncheckedUpdateManyWithoutStudentNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutStudentNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutStudentNestedInput
+  submissions?: Prisma.SubmissionUncheckedUpdateManyWithoutStudentNestedInput
+  parentMessages?: Prisma.ParentMessageUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutBatchInput = {
@@ -2725,6 +3760,13 @@ export type StudentUncheckedUpdateManyWithoutBatchInput = {
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  totpSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totpEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  backupCodes?: Prisma.StudentUpdatebackupCodesInput | string[]
+  lastTestAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  streakDays?: Prisma.IntFieldUpdateOperationsInput | number
+  longestStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyGoalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -2740,6 +3782,8 @@ export type StudentCountOutputType = {
   testAccesses: number
   bookmarks: number
   doubts: number
+  submissions: number
+  parentMessages: number
 }
 
 export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2750,6 +3794,8 @@ export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   testAccesses?: boolean | StudentCountOutputTypeCountTestAccessesArgs
   bookmarks?: boolean | StudentCountOutputTypeCountBookmarksArgs
   doubts?: boolean | StudentCountOutputTypeCountDoubtsArgs
+  submissions?: boolean | StudentCountOutputTypeCountSubmissionsArgs
+  parentMessages?: boolean | StudentCountOutputTypeCountParentMessagesArgs
 }
 
 /**
@@ -2811,6 +3857,20 @@ export type StudentCountOutputTypeCountDoubtsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.DoubtWhereInput
 }
 
+/**
+ * StudentCountOutputType without action
+ */
+export type StudentCountOutputTypeCountSubmissionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubmissionWhereInput
+}
+
+/**
+ * StudentCountOutputType without action
+ */
+export type StudentCountOutputTypeCountParentMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ParentMessageWhereInput
+}
+
 
 export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2838,6 +3898,13 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  totpSecret?: boolean
+  totpEnabled?: boolean
+  backupCodes?: boolean
+  lastTestAt?: boolean
+  streakDays?: boolean
+  longestStreak?: boolean
+  dailyGoalMinutes?: boolean
   user?: boolean | Prisma.Student$userArgs<ExtArgs>
   course?: boolean | Prisma.Student$courseArgs<ExtArgs>
   batch?: boolean | Prisma.Student$batchArgs<ExtArgs>
@@ -2848,6 +3915,8 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   testAccesses?: boolean | Prisma.Student$testAccessesArgs<ExtArgs>
   bookmarks?: boolean | Prisma.Student$bookmarksArgs<ExtArgs>
   doubts?: boolean | Prisma.Student$doubtsArgs<ExtArgs>
+  submissions?: boolean | Prisma.Student$submissionsArgs<ExtArgs>
+  parentMessages?: boolean | Prisma.Student$parentMessagesArgs<ExtArgs>
   _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
@@ -2877,6 +3946,13 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  totpSecret?: boolean
+  totpEnabled?: boolean
+  backupCodes?: boolean
+  lastTestAt?: boolean
+  streakDays?: boolean
+  longestStreak?: boolean
+  dailyGoalMinutes?: boolean
   user?: boolean | Prisma.Student$userArgs<ExtArgs>
   course?: boolean | Prisma.Student$courseArgs<ExtArgs>
   batch?: boolean | Prisma.Student$batchArgs<ExtArgs>
@@ -2908,6 +3984,13 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  totpSecret?: boolean
+  totpEnabled?: boolean
+  backupCodes?: boolean
+  lastTestAt?: boolean
+  streakDays?: boolean
+  longestStreak?: boolean
+  dailyGoalMinutes?: boolean
   user?: boolean | Prisma.Student$userArgs<ExtArgs>
   course?: boolean | Prisma.Student$courseArgs<ExtArgs>
   batch?: boolean | Prisma.Student$batchArgs<ExtArgs>
@@ -2939,9 +4022,16 @@ export type StudentSelectScalar = {
   lastLoginAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  totpSecret?: boolean
+  totpEnabled?: boolean
+  backupCodes?: boolean
+  lastTestAt?: boolean
+  streakDays?: boolean
+  longestStreak?: boolean
+  dailyGoalMinutes?: boolean
 }
 
-export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "studentId" | "name" | "email" | "phone" | "photo" | "courseId" | "batchId" | "joiningDate" | "status" | "studentType" | "dob" | "photoUrl" | "gender" | "address" | "city" | "school" | "className" | "parentName" | "parentMobile" | "enrollmentDate" | "lastLoginAt" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
+export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "studentId" | "name" | "email" | "phone" | "photo" | "courseId" | "batchId" | "joiningDate" | "status" | "studentType" | "dob" | "photoUrl" | "gender" | "address" | "city" | "school" | "className" | "parentName" | "parentMobile" | "enrollmentDate" | "lastLoginAt" | "createdAt" | "updatedAt" | "totpSecret" | "totpEnabled" | "backupCodes" | "lastTestAt" | "streakDays" | "longestStreak" | "dailyGoalMinutes", ExtArgs["result"]["student"]>
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Student$userArgs<ExtArgs>
   course?: boolean | Prisma.Student$courseArgs<ExtArgs>
@@ -2953,6 +4043,8 @@ export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   testAccesses?: boolean | Prisma.Student$testAccessesArgs<ExtArgs>
   bookmarks?: boolean | Prisma.Student$bookmarksArgs<ExtArgs>
   doubts?: boolean | Prisma.Student$doubtsArgs<ExtArgs>
+  submissions?: boolean | Prisma.Student$submissionsArgs<ExtArgs>
+  parentMessages?: boolean | Prisma.Student$parentMessagesArgs<ExtArgs>
   _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StudentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2979,6 +4071,8 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     testAccesses: Prisma.$TestAccessPayload<ExtArgs>[]
     bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
     doubts: Prisma.$DoubtPayload<ExtArgs>[]
+    submissions: Prisma.$SubmissionPayload<ExtArgs>[]
+    parentMessages: Prisma.$ParentMessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3006,6 +4100,13 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     lastLoginAt: Date | null
     createdAt: Date
     updatedAt: Date
+    totpSecret: string | null
+    totpEnabled: boolean
+    backupCodes: string[]
+    lastTestAt: Date | null
+    streakDays: number
+    longestStreak: number
+    dailyGoalMinutes: number
   }, ExtArgs["result"]["student"]>
   composites: {}
 }
@@ -3410,6 +4511,8 @@ export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.
   testAccesses<T extends Prisma.Student$testAccessesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$testAccessesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bookmarks<T extends Prisma.Student$bookmarksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   doubts<T extends Prisma.Student$doubtsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$doubtsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DoubtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  submissions<T extends Prisma.Student$submissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$submissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  parentMessages<T extends Prisma.Student$parentMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$parentMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ParentMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3464,6 +4567,13 @@ export interface StudentFieldRefs {
   readonly lastLoginAt: Prisma.FieldRef<"Student", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Student", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Student", 'DateTime'>
+  readonly totpSecret: Prisma.FieldRef<"Student", 'String'>
+  readonly totpEnabled: Prisma.FieldRef<"Student", 'Boolean'>
+  readonly backupCodes: Prisma.FieldRef<"Student", 'String[]'>
+  readonly lastTestAt: Prisma.FieldRef<"Student", 'DateTime'>
+  readonly streakDays: Prisma.FieldRef<"Student", 'Int'>
+  readonly longestStreak: Prisma.FieldRef<"Student", 'Int'>
+  readonly dailyGoalMinutes: Prisma.FieldRef<"Student", 'Int'>
 }
     
 
@@ -4087,6 +5197,54 @@ export type Student$doubtsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.DoubtScalarFieldEnum | Prisma.DoubtScalarFieldEnum[]
+}
+
+/**
+ * Student.submissions
+ */
+export type Student$submissionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Submission
+   */
+  select?: Prisma.SubmissionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Submission
+   */
+  omit?: Prisma.SubmissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubmissionInclude<ExtArgs> | null
+  where?: Prisma.SubmissionWhereInput
+  orderBy?: Prisma.SubmissionOrderByWithRelationInput | Prisma.SubmissionOrderByWithRelationInput[]
+  cursor?: Prisma.SubmissionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SubmissionScalarFieldEnum | Prisma.SubmissionScalarFieldEnum[]
+}
+
+/**
+ * Student.parentMessages
+ */
+export type Student$parentMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ParentMessage
+   */
+  select?: Prisma.ParentMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ParentMessage
+   */
+  omit?: Prisma.ParentMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ParentMessageInclude<ExtArgs> | null
+  where?: Prisma.ParentMessageWhereInput
+  orderBy?: Prisma.ParentMessageOrderByWithRelationInput | Prisma.ParentMessageOrderByWithRelationInput[]
+  cursor?: Prisma.ParentMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ParentMessageScalarFieldEnum | Prisma.ParentMessageScalarFieldEnum[]
 }
 
 /**

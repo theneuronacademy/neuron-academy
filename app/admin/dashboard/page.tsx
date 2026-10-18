@@ -16,6 +16,9 @@ import {
   Megaphone,
   ImagePlus,
   CheckCircle2,
+  Wifi,
+  WifiOff,
+  RefreshCw,
 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { StatCard } from "@/components/admin/StatCard";
@@ -32,6 +35,7 @@ import {
   getWebsiteStatus,
 } from "@/services/adminApi";
 import type { AdminEnquiry, AdminTest, DashboardStats } from "@/data/admin";
+import { useDashboardSSE } from "@/hooks/useDashboardSSE";
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -51,6 +55,33 @@ export default function AdminDashboardPage() {
   const [site, setSite] = useState<{ online: boolean; lastUpdate: string; activeBanners: number; activePopups: number } | null>(null);
   // Phase 6: live database test-platform stats (hidden in demo mode).
   const [liveStats, setLiveStats] = useState<{ totalTests: number; publishedTests: number; liveTests: number; scheduledTests: number; completedTests: number; totalResults: number; totalAttempts: number; totalStudents: number; activeStudents: number; totalFaculty: number; activeFaculty: number; totalBatches: number; activeBatches: number; totalCourses: number; newEnquiries: number } | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const { connected, lastEvent } = useDashboardSSE((event) => {
+    if (event.type === "test-status-update") {
+      // Refresh upcoming tests when test status changes
+      getUpcomingTests().then(setUpcoming);
+      // Also refresh live stats
+      fetch("/api/dashboard/stats", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((json) => {
+          if (json?.success && json.data?.totalTests) setLiveStats(json.data);
+        });
+    }
+    if (event.type === "attendance-update") {
+      getAttendanceOverview().then(setAttendance);
+      getDashboardStats().then((s) => setStats(s));
+    }
+    if (event.type === "notification-update") {
+      getRecentActivity().then(setActivity);
+    }
+    if (event.type === "biometric-event") {
+      // Could show a toast or update biometric device status
+    }
+    if (event.type === "heartbeat" || event.type === "connected") {
+      setLastUpdated(new Date());
+    }
+  });
 
   useEffect(() => {
     (async () => {
@@ -103,10 +134,21 @@ export default function AdminDashboardPage() {
         <div>
           <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">{today.toUpperCase()}</p>
           <h2 className="mt-1 text-xl font-extrabold sm:text-2xl">{greeting()}, Admin</h2>
-          <p className="mt-1 text-[13px] text-silver-200">
-            {liveStats
-              ? `${liveStats.activeBatches} active batches • ${liveStats.publishedTests} published tests • website online`
-              : "Connecting to live academy data…"}
+          <p className="mt-1 text-[13px] text-silver-200 flex items-center gap-2">
+            {connected ? (
+              <>
+                <Wifi className="h-4 w-4 text-teal-400" />
+                <span>{liveStats ? `${liveStats.activeBatches} active batches • ${liveStats.publishedTests} published tests • website online` : "Live updates connected"}</span>
+              </>
+            ) : (
+              <>
+                <WifiOff className="h-4 w-4 text-amber-400" />
+                <span>{liveStats ? `${liveStats.activeBatches} active batches • ${liveStats.publishedTests} published tests • website online` : "Connecting to live academy data…"}</span>
+              </>
+            )}
+            {lastUpdated && (
+              <span className="text-[11px] text-silver-400">Updated {lastUpdated.toLocaleTimeString()}</span>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

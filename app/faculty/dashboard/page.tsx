@@ -1,29 +1,13 @@
+// Faculty Dashboard Page - Enhanced with React Query hooks
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Layers, Users, FileText, CalendarCheck, Bell, Clock } from "lucide-react";
 import { FacultyShell } from "@/components/faculty/FacultyShell";
+import { useDashboardStats, useFacultyBatches, useFacultyTests, useFacultyActivity, useFacultyNotifications, useFacultyAnalytics } from "@/lib/faculty-hooks";
 import { cn } from "@/lib/utils";
-
-interface FacultyBatch {
-  id: string;
-  name: string;
-  course: string;
-  studentCount: number;
-  startDate: string;
-  endDate: string;
-  status: string;
-}
-
-interface DashboardStats {
-  totalBatches: number;
-  totalStudents: number;
-  upcomingTests: number;
-  pendingEvaluations: number;
-  attendanceRate: number | null;
-}
 
 interface UpcomingTest {
   id: string;
@@ -51,68 +35,51 @@ interface NotifItem {
 
 export default function FacultyDashboardPage() {
   const router = useRouter();
-  const [ready, setReady] = React.useState(false);
-  const [batches, setBatches] = React.useState<FacultyBatch[]>([]);
-  const [stats, setStats] = React.useState<DashboardStats | null>(null);
-  const [tests, setTests] = React.useState<UpcomingTest[]>([]);
-  const [activity, setActivity] = React.useState<ActivityItem[]>([]);
-  const [notifs, setNotifs] = React.useState<NotifItem[]>([]);
-  const [unread, setUnread] = React.useState(0);
-  const [atRisk, setAtRisk] = React.useState<number | null>(null);
 
-  useEffect(() => {
-    let live = true;
-    (async () => {
-      try {
-        const s = await fetch("/api/auth/session", { cache: "no-store" });
-        if (!s.ok) { router.replace("/faculty/login"); return; }
-        const sj = await s.json().catch(() => null);
-        const u = sj?.data?.user;
-        if (!u || (u.role !== "FACULTY" && u.role !== "ADMIN")) { router.replace("/faculty/login"); return; }
-        const [bR, dR, tR, aR, nR, anR] = await Promise.all([
-          fetch("/api/faculty/batches", { cache: "no-store" }),
-          fetch("/api/faculty/dashboard", { cache: "no-store" }),
-          fetch("/api/tests", { cache: "no-store" }),
-          fetch("/api/faculty/activity", { cache: "no-store" }),
-          fetch("/api/notifications/mine", { cache: "no-store" }),
-          fetch("/api/faculty/analytics", { cache: "no-store" }),
-        ]);
-        if (!live) return;
-        const bJ = await bR.json().catch(() => null);
-        if (bR.ok && bJ?.success && Array.isArray(bJ.data?.items)) setBatches(bJ.data.items);
-        const dJ = await dR.json().catch(() => null);
-        if (dR.ok && dJ?.success && dJ.data) setStats(dJ.data);
-        const tJ = await tR.json().catch(() => null);
-        if (tR.ok && tJ?.success && Array.isArray(tJ.data?.items)) {
-          setTests(tJ.data.items.slice(0, 5).map((t: { id: string; title: string; batch?: { name?: string }; startTime?: string; status: string }) => ({
-            id: String(t.id), title: String(t.title), batch: String(t.batch?.name ?? "—"),
-            date: t.startTime ? new Date(t.startTime).toLocaleDateString() : "—",
-            time: t.startTime ? new Date(t.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "",
-            status: String(t.status),
-          })));
-        }
-        const aJ = await aR.json().catch(() => null);
-        if (aR.ok && aJ?.success && Array.isArray(aJ.data?.items)) setActivity(aJ.data.items);
-        const nJ = await nR.json().catch(() => null);
-        if (nR.ok && nJ?.success && Array.isArray(nJ.data?.items)) {
-          setNotifs(nJ.data.items.slice(0, 5));
-          if (typeof nJ.data.unreadCount === "number") setUnread(nJ.data.unreadCount);
-        }
-        const anJ = await anR.json().catch(() => null);
-        if (anR.ok && anJ?.success && Array.isArray(anJ.data?.rows)) {
-          const rows = anJ.data.rows as { attendancePct: number | null; avgScore: number | null }[];
-          setAtRisk(rows.filter((r) => (r.attendancePct != null && r.attendancePct < 75) || (r.avgScore != null && r.avgScore < 40)).length);
-        }
-      } catch {
-        router.replace("/faculty/login");
-        return;
-      }
-      if (live) setReady(true);
-    })();
-    return () => { live = false; };
-  }, [router]);
+  const { data: batches, isLoading: batchesLoading } = useFacultyBatches();
+  const { data: stats, isLoading: statsLoading } = useDashboardStats();
+  const { data: testsData, isLoading: testsLoading } = useFacultyTests();
+  const { data: activity, isLoading: activityLoading } = useFacultyActivity(10);
+  const { data: notifications, isLoading: notifsLoading } = useFacultyNotifications(10);
+  const { data: analytics, isLoading: analyticsLoading } = useFacultyAnalytics();
 
-  if (!ready) {
+  const isLoading = batchesLoading || statsLoading || testsLoading || activityLoading || notifsLoading || analyticsLoading;
+
+  const tests: UpcomingTest[] = React.useMemo(() => {
+    if (!testsData) return [];
+    return testsData.slice(0, 5).map((t) => ({
+      id: t.id,
+      title: t.title,
+      batch: t.batch,
+      date: t.startTime ? new Date(t.startTime).toLocaleDateString() : "—",
+      time: t.startTime ? new Date(t.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "",
+      status: t.status,
+    }));
+  }, [testsData]);
+
+  const notifs = React.useMemo(() => {
+    if (!notifications) return [];
+    return notifications.items?.slice(0, 5) ?? [];
+  }, [notifications]);
+
+  const unread = React.useMemo(() => {
+    if (!notifications) return 0;
+    return notifications.unreadCount ?? 0;
+  }, [notifications]);
+
+  const atRisk = React.useMemo(() => {
+    if (!analytics?.rows) return 0;
+    return analytics.rows.filter((r) => (r.attendancePct != null && r.attendancePct < 75) || (r.avgScore != null && r.avgScore < 40)).length;
+  }, [analytics]);
+
+  const cards = [
+    { label: "My Batches", value: stats?.totalBatches ?? batches?.length ?? 0 },
+    { label: "Total Students", value: stats?.totalStudents ?? 0 },
+    { label: "Upcoming Tests", value: stats?.upcomingTests ?? tests.length },
+    { label: "Pending Evaluations", value: stats?.pendingEvaluations ?? 0 },
+  ];
+
+  if (isLoading) {
     return (
       <FacultyShell title="Dashboard" subtitle="Loading your workspace">
         <p className="rounded-card border border-silver-200 bg-white p-8 text-center text-sm font-bold text-muted">Loading faculty area</p>
@@ -120,16 +87,9 @@ export default function FacultyDashboardPage() {
     );
   }
 
-  const cards = [
-    { label: "My Batches", value: stats?.totalBatches ?? batches.length },
-    { label: "Total Students", value: stats?.totalStudents ?? 0 },
-    { label: "Upcoming Tests", value: stats?.upcomingTests ?? tests.length },
-    { label: "Pending Evaluations", value: stats?.pendingEvaluations ?? 0 },
-  ];
-
   return (
     <FacultyShell title="Dashboard" subtitle="Your academic workspace">
-      {batches.length > 0 ? (
+      {batches && batches.length > 0 ? (
         <Link
           href={`/faculty/attendance?batchId=${batches[0].id}`}
           className="mb-4 flex items-center justify-between gap-3 rounded-card bg-gradient-to-r from-teal-600 to-navy-700 px-5 py-4 text-white shadow-card transition hover:brightness-105"
@@ -141,12 +101,14 @@ export default function FacultyDashboardPage() {
           <span className="shrink-0 rounded-xl bg-white px-4 py-2 text-sm font-extrabold text-teal-700">Mark Now →</span>
         </Link>
       ) : null}
-      {atRisk !== null && atRisk > 0 ? (
+
+      {atRisk > 0 ? (
         <Link href="/faculty/analytics" className="mb-4 flex items-center justify-between gap-3 rounded-card border border-amber-300 bg-amber-50 px-5 py-3.5">
           <p className="text-sm font-extrabold text-amber-800">⚠ {atRisk} student{atRisk === 1 ? "" : "s"} need{atRisk === 1 ? "s" : ""} attention (attendance {"<"} 75% or avg {"<"} 40%)</p>
           <span className="shrink-0 text-[13px] font-bold text-amber-700 underline">View →</span>
         </Link>
       ) : null}
+
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
           <div key={c.label} className="rounded-card border border-silver-200 bg-white p-4 shadow-card">
@@ -163,11 +125,11 @@ export default function FacultyDashboardPage() {
           </p>
           <Link href="/faculty/batches" className="text-[12px] font-bold text-teal-600 hover:underline">View all</Link>
         </div>
-        {batches.length === 0 ? (
+        {batches?.length === 0 ? (
           <p className="rounded-xl border-2 border-dashed border-silver-300 p-8 text-center text-sm font-bold text-muted">No batches assigned yet. Ask the admin to assign you in People to Batches.</p>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {batches.map((b) => (
+            {batches!.map((b) => (
               <Link key={b.id} href={`/faculty/batches/${b.id}`} className="rounded-card border border-silver-200 bg-white p-4 shadow-card transition hover:border-teal-300 hover:shadow-lg">
                 <p className="font-extrabold text-navy-700">{b.name}</p>
                 <p className="text-[12px] text-muted">{b.course}</p>
@@ -221,7 +183,7 @@ export default function FacultyDashboardPage() {
             <ul className="space-y-2.5">
               {notifs.map((n) => (
                 <li key={n.id} className="rounded-xl border border-silver-200 px-3.5 py-2.5">
-                  <p className="text-sm font-extrabold text-navy-700">{n.title}</p>
+                  <p className="text-sm font-extrabold text-navy-700">{n.title} {!n.isRead && <span className="ml-1 rounded-full bg-teal-500 px-2 py-0.5 text-[10px] font-bold text-white">NEW</span>}</p>
                   <p className="truncate text-[12px] text-muted">{n.message}</p>
                 </li>
               ))}
@@ -234,11 +196,11 @@ export default function FacultyDashboardPage() {
         <div className="mb-3 flex items-center justify-between">
           <p className="flex items-center gap-2 text-[15px] font-extrabold text-navy-700"><CalendarCheck className="h-4 w-4 text-teal-600" /> Recent Activity</p>
         </div>
-        {activity.length === 0 ? (
+        {activity?.length === 0 ? (
           <p className="py-4 text-center text-sm font-bold text-muted">No recent activity yet. Mark attendance or publish a test to see it here.</p>
         ) : (
           <ul className="space-y-2.5">
-            {activity.slice(0, 8).map((a) => (
+            {activity!.slice(0, 8).map((a) => (
               <li key={a.id} className="flex items-center justify-between gap-3 rounded-xl border border-silver-200 px-3.5 py-2.5">
                 <p className="truncate text-sm font-bold text-navy-700">{a.text}</p>
                 <p className="shrink-0 text-[11px] text-muted">{a.time}</p>

@@ -27,6 +27,8 @@ import {
   Lock,
   CalendarDays,
   Library,
+  Shield,
+  Key,
 } from "lucide-react";
 import { adminLogout } from "@/lib/adminAuth";
 import { Logo } from "@/components/website/Logo";
@@ -68,6 +70,7 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
     items: [
       { href: "/admin/tests", label: "Tests", icon: FileText },
       { href: "/admin/test-access", label: "Test Access", icon: Lock },
+      { href: "/admin/test-access/grant", label: "Access Grants", icon: Key },
       { href: "/admin/question-bank", label: "Question Bank", icon: Database },
       { href: "/admin/books", label: "Books", icon: BookOpen },
       { href: "/admin/materials", label: "Study Material", icon: Library },
@@ -88,6 +91,7 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
     items: [
       { href: "/admin/profile", label: "Profile", icon: User },
       { href: "/admin/settings", label: "Settings", icon: Settings },
+      { href: "/admin/settings/permissions", label: "Permissions", icon: Shield },
     ],
   },
 ];

@@ -13,6 +13,7 @@ import { OTP_VERIFIED_TTL_MIN } from "@/lib/otp";
 import { isMsg91Configured } from "@/services/msg91";
 import { notifyMessages } from "@/lib/notify";
 import { dispatchNotification } from "@/services/notificationEngine";
+import { studentAuthRateLimits, getClientIp, rateLimitResponse } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 // Vercel: bcrypt hash (cost 12) + OTP check + DB writes + cold start (Pro plan).
@@ -23,6 +24,15 @@ function studentId(): string {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limiting
+  const ip = getClientIp(req);
+  const rateLimit = studentAuthRateLimits.register(ip);
+  if (!rateLimit.allowed) {
+    const res = fail(`Too many registration attempts. Try again in ${Math.ceil((rateLimit.retryAfterMs ?? 0) / 1000)} seconds.`, 429);
+    rateLimitResponse(rateLimit).forEach((v, k) => res.headers.set(k, v));
+    return res;
+  }
+
   const db = getDb();
   if (!db) return dbNotConfigured("Student registration");
   if (!isAuthConfigured()) return fail("Registration needs SESSION_SECRET.", 503);
@@ -123,6 +133,8 @@ export async function POST(req: NextRequest) {
       user: sanitizeUser({ id: user.id, name: user.name, email: user.email, role: user.role }),
       student: { id: student.id, studentId: student.studentId, name: student.name },
     }, 201);
+    // Add rate limit headers
+    rateLimitResponse(rateLimit).forEach((v, k) => res.headers.set(k, v));
     res.headers.set("Set-Cookie", sessionCookieHeader(token));
     return res;
   } catch (err) {

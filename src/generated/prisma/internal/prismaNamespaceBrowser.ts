@@ -83,7 +83,16 @@ export const ModelName = {
   TimetableEntry: 'TimetableEntry',
   Doubt: 'Doubt',
   DoubtReply: 'DoubtReply',
-  Material: 'Material'
+  Material: 'Material',
+  Assignment: 'Assignment',
+  Submission: 'Submission',
+  GradebookConfig: 'GradebookConfig',
+  ParentMessage: 'ParentMessage',
+  AdminAuditLog: 'AdminAuditLog',
+  AdminPermission: 'AdminPermission',
+  AdminRolePermission: 'AdminRolePermission',
+  BiometricBridgeStatus: 'BiometricBridgeStatus',
+  NotificationSchedulerRun: 'NotificationSchedulerRun'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -143,7 +152,14 @@ export const StudentScalarFieldEnum = {
   enrollmentDate: 'enrollmentDate',
   lastLoginAt: 'lastLoginAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  totpSecret: 'totpSecret',
+  totpEnabled: 'totpEnabled',
+  backupCodes: 'backupCodes',
+  lastTestAt: 'lastTestAt',
+  streakDays: 'streakDays',
+  longestStreak: 'longestStreak',
+  dailyGoalMinutes: 'dailyGoalMinutes'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
@@ -294,6 +310,8 @@ export const ResultScalarFieldEnum = {
   correct: 'correct',
   wrong: 'wrong',
   unanswered: 'unanswered',
+  timePerQuestion: 'timePerQuestion',
+  topicBreakdown: 'topicBreakdown',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -337,6 +355,8 @@ export const TestScalarFieldEnum = {
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  maxAttempts: 'maxAttempts',
+  calendarEventId: 'calendarEventId',
   isHomework: 'isHomework'
 } as const
 
@@ -384,7 +404,10 @@ export const TestAttemptScalarFieldEnum = {
   percentage: 'percentage',
   status: 'status',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  attemptNumber: 'attemptNumber',
+  syncedAt: 'syncedAt',
+  offlineAnswers: 'offlineAnswers'
 } as const
 
 export type TestAttemptScalarFieldEnum = (typeof TestAttemptScalarFieldEnum)[keyof typeof TestAttemptScalarFieldEnum]
@@ -558,7 +581,10 @@ export const BookScalarFieldEnum = {
   isActive: 'isActive',
   order: 'order',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  cachedCoverUrl: 'cachedCoverUrl',
+  cachedPdfUrl: 'cachedPdfUrl',
+  cacheExpiresAt: 'cacheExpiresAt'
 } as const
 
 export type BookScalarFieldEnum = (typeof BookScalarFieldEnum)[keyof typeof BookScalarFieldEnum]
@@ -688,7 +714,10 @@ export const DoubtScalarFieldEnum = {
   questionText: 'questionText',
   status: 'status',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  attachmentUrl: 'attachmentUrl',
+  attachmentMimeType: 'attachmentMimeType',
+  attachmentSize: 'attachmentSize'
 } as const
 
 export type DoubtScalarFieldEnum = (typeof DoubtScalarFieldEnum)[keyof typeof DoubtScalarFieldEnum]
@@ -718,10 +747,153 @@ export const MaterialScalarFieldEnum = {
   isActive: 'isActive',
   displayOrder: 'displayOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  batchId: 'batchId'
 } as const
 
 export type MaterialScalarFieldEnum = (typeof MaterialScalarFieldEnum)[keyof typeof MaterialScalarFieldEnum]
+
+
+export const AssignmentScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  batchId: 'batchId',
+  testId: 'testId',
+  dueDate: 'dueDate',
+  maxMarks: 'maxMarks',
+  weight: 'weight',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssignmentScalarFieldEnum = (typeof AssignmentScalarFieldEnum)[keyof typeof AssignmentScalarFieldEnum]
+
+
+export const SubmissionScalarFieldEnum = {
+  id: 'id',
+  assignmentId: 'assignmentId',
+  studentId: 'studentId',
+  submittedAt: 'submittedAt',
+  content: 'content',
+  fileUrl: 'fileUrl',
+  marks: 'marks',
+  feedback: 'feedback',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubmissionScalarFieldEnum = (typeof SubmissionScalarFieldEnum)[keyof typeof SubmissionScalarFieldEnum]
+
+
+export const GradebookConfigScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  categories: 'categories',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GradebookConfigScalarFieldEnum = (typeof GradebookConfigScalarFieldEnum)[keyof typeof GradebookConfigScalarFieldEnum]
+
+
+export const ParentMessageScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  subject: 'subject',
+  message: 'message',
+  channel: 'channel',
+  status: 'status',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ParentMessageScalarFieldEnum = (typeof ParentMessageScalarFieldEnum)[keyof typeof ParentMessageScalarFieldEnum]
+
+
+export const AdminAuditLogScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  adminEmail: 'adminEmail',
+  action: 'action',
+  entity: 'entity',
+  entityId: 'entityId',
+  beforeData: 'beforeData',
+  afterData: 'afterData',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  correlationId: 'correlationId',
+  status: 'status',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminAuditLogScalarFieldEnum = (typeof AdminAuditLogScalarFieldEnum)[keyof typeof AdminAuditLogScalarFieldEnum]
+
+
+export const AdminPermissionScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  name: 'name',
+  description: 'description',
+  resource: 'resource',
+  action: 'action',
+  scope: 'scope',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdminPermissionScalarFieldEnum = (typeof AdminPermissionScalarFieldEnum)[keyof typeof AdminPermissionScalarFieldEnum]
+
+
+export const AdminRolePermissionScalarFieldEnum = {
+  id: 'id',
+  role: 'role',
+  permissionId: 'permissionId',
+  scopeValue: 'scopeValue',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminRolePermissionScalarFieldEnum = (typeof AdminRolePermissionScalarFieldEnum)[keyof typeof AdminRolePermissionScalarFieldEnum]
+
+
+export const BiometricBridgeStatusScalarFieldEnum = {
+  id: 'id',
+  bridgeId: 'bridgeId',
+  version: 'version',
+  configHash: 'configHash',
+  status: 'status',
+  lastHeartbeatAt: 'lastHeartbeatAt',
+  lastEventAt: 'lastEventAt',
+  eventsProcessed: 'eventsProcessed',
+  eventsFailed: 'eventsFailed',
+  cpuUsage: 'cpuUsage',
+  memoryUsage: 'memoryUsage',
+  uptimeSeconds: 'uptimeSeconds',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BiometricBridgeStatusScalarFieldEnum = (typeof BiometricBridgeStatusScalarFieldEnum)[keyof typeof BiometricBridgeStatusScalarFieldEnum]
+
+
+export const NotificationSchedulerRunScalarFieldEnum = {
+  id: 'id',
+  notificationId: 'notificationId',
+  runAt: 'runAt',
+  status: 'status',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationSchedulerRunScalarFieldEnum = (typeof NotificationSchedulerRunScalarFieldEnum)[keyof typeof NotificationSchedulerRunScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -738,6 +910,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

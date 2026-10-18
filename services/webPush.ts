@@ -1,14 +1,12 @@
 // Phase 13 — Web Push service abstraction (SERVER-ONLY foundation).
 // - Subscription storage (subscribe/unsubscribe) works today via Prisma.
-// - DELIVERY is intentionally not implemented in this phase: there is no
-//   push provider dependency installed. sendNotification always returns an
-//   honest WEB_PUSH_NOT_CONFIGURED / WEB_PUSH_PROVIDER_MISSING error and
-//   NEVER claims delivery.
+// - DELIVERY implemented using web-push package with VAPID signing.
 // - Required env (see .env.example): VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY,
 //   VAPID_SUBJECT. The public key is safe to expose to browsers; the
 //   private key never leaves the server.
 
 import type { PrismaClient } from "@prisma/client";
+import webpush from "web-push";
 
 type Db = PrismaClient;
 
@@ -25,17 +23,25 @@ export function webPushEnv(): { publicKey: string; privateKey: string; subject: 
   return { publicKey, privateKey, subject };
 }
 
-/** True when VAPID credentials are present (delivery still needs a provider). */
+/** True when VAPID credentials are present. */
 export function isWebPushConfigured(): boolean {
   return webPushEnv() !== null;
 }
 
+/** Initialize web-push with VAPID credentials. */
+function initWebPush(): boolean {
+  const env = webPushEnv();
+  if (!env) return false;
+  webpush.setVapidDetails(env.subject, env.publicKey, env.privateKey);
+  return true;
+}
+
 /** Store (or refresh) a browser push subscription for a user. */
 export async function subscribe(
-  db: Db,
+  db: PrismaClient,
   userId: string,
   endpoint: string,
-  keys: PushKeys
+  keys: { p256dh?: string; auth?: string }
 ): Promise<{ ok: boolean; error?: string }> {
   if (!endpoint || endpoint.length > 2000) return { ok: false, error: "Invalid subscription endpoint." };
   try {
@@ -51,7 +57,7 @@ export async function subscribe(
 }
 
 /** Remove a browser push subscription. */
-export async function unsubscribe(db: Db, userId: string, endpoint: string): Promise<{ ok: boolean }> {
+export async function unsubscribe(db: PrismaClient, userId: string, endpoint: string): Promise<{ ok: boolean }> {
   try {
     await db.pushSubscription.deleteMany({ where: { userId, endpoint } });
     return { ok: true };
@@ -67,24 +73,70 @@ export interface PushSendResult {
 }
 
 /**
- * Delivery foundation — honest stub. Returns a configuration error until a
- * real provider (e.g. the `web-push` package + VAPID signing) is installed
- * and a browser subscription round-trip has been tested end-to-end.
+ * Send a push notification to all subscriptions for a user.
+ * Returns aggregated result.
  */
 export async function sendNotification(
-  db: Db,
+  db: PrismaClient,
   userId: string,
   payload: { title: string; message: string; url?: string }
 ): Promise<PushSendResult> {
-  void db;
-  void userId;
-  void payload;
-  if (!isWebPushConfigured()) {
+  if (!initWebPush()) {
     return { ok: false, code: "WEB_PUSH_NOT_CONFIGURED", error: "Web Push is not configured. Set VAPID keys to enable it." };
   }
-  return {
-    ok: false,
-    code: "WEB_PUSH_PROVIDER_MISSING",
-    error: "Web Push delivery provider is not installed yet. Subscriptions are stored; delivery lands in a later phase.",
-  };
+
+  try {
+    const subscriptions = await db.pushSubscription.findMany({
+      where: { userId },
+      select: { endpoint: true, p256dh: true, auth: true },
+    });
+
+    if (subscriptions.length === 0) {
+      return { ok: false, code: "NO_SUBSCRIPTIONS", error: "No push subscriptions for user." };
+    }
+
+    const pushPayload = JSON.stringify({
+      title: payload.title,
+      body: payload.message,
+      icon: "/icon-192.png",
+      badge: "/badge-72.png",
+      data: { url: payload.url ?? "/student/notifications" },
+      requireInteraction: true,
+    });
+
+    let sent = 0;
+    let failed = 0;
+
+    for (const sub of subscriptions) {
+      try {
+        await webpush.sendNotification(
+          {
+            endpoint: sub.endpoint,
+            keys: {
+              p256dh: sub.p256dh ?? "",
+              auth: sub.auth ?? "",
+            },
+          },
+          pushPayload
+        );
+        sent++;
+      } catch (err) {
+        failed++;
+        // If subscription is expired/invalid (410/404), delete it
+        if (err instanceof Error && (err as { statusCode?: number }).statusCode === 410) {
+          await db.pushSubscription.deleteMany({ where: { endpoint: sub.endpoint } }).catch(() => undefined);
+        }
+        // Log error but continue with other subscriptions
+        console.error(`[webpush] Failed to send to ${sub.endpoint.slice(0, 50)}...:`, err instanceof Error ? err.message : err);
+      }
+    }
+
+    if (sent > 0) {
+      return { ok: true, code: "SENT", error: failed > 0 ? `${failed} subscriptions failed` : undefined };
+    }
+    return { ok: false, code: "ALL_FAILED", error: "All push deliveries failed." };
+  } catch (err) {
+    console.error("[webpush] Unexpected error:", err);
+    return { ok: false, code: "WEB_PUSH_ERROR", error: "Unexpected error during push delivery." };
+  }
 }

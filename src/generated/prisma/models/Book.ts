@@ -50,6 +50,9 @@ export type BookMinAggregateOutputType = {
   order: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  cachedCoverUrl: string | null
+  cachedPdfUrl: string | null
+  cacheExpiresAt: Date | null
 }
 
 export type BookMaxAggregateOutputType = {
@@ -68,6 +71,9 @@ export type BookMaxAggregateOutputType = {
   order: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  cachedCoverUrl: string | null
+  cachedPdfUrl: string | null
+  cacheExpiresAt: Date | null
 }
 
 export type BookCountAggregateOutputType = {
@@ -86,6 +92,9 @@ export type BookCountAggregateOutputType = {
   order: number
   createdAt: number
   updatedAt: number
+  cachedCoverUrl: number
+  cachedPdfUrl: number
+  cacheExpiresAt: number
   _all: number
 }
 
@@ -114,6 +123,9 @@ export type BookMinAggregateInputType = {
   order?: true
   createdAt?: true
   updatedAt?: true
+  cachedCoverUrl?: true
+  cachedPdfUrl?: true
+  cacheExpiresAt?: true
 }
 
 export type BookMaxAggregateInputType = {
@@ -132,6 +144,9 @@ export type BookMaxAggregateInputType = {
   order?: true
   createdAt?: true
   updatedAt?: true
+  cachedCoverUrl?: true
+  cachedPdfUrl?: true
+  cacheExpiresAt?: true
 }
 
 export type BookCountAggregateInputType = {
@@ -150,6 +165,9 @@ export type BookCountAggregateInputType = {
   order?: true
   createdAt?: true
   updatedAt?: true
+  cachedCoverUrl?: true
+  cachedPdfUrl?: true
+  cacheExpiresAt?: true
   _all?: true
 }
 
@@ -255,6 +273,9 @@ export type BookGroupByOutputType = {
   order: number
   createdAt: Date
   updatedAt: Date
+  cachedCoverUrl: string | null
+  cachedPdfUrl: string | null
+  cacheExpiresAt: Date | null
   _count: BookCountAggregateOutputType | null
   _avg: BookAvgAggregateOutputType | null
   _sum: BookSumAggregateOutputType | null
@@ -296,6 +317,9 @@ export type BookWhereInput = {
   order?: Prisma.IntFilter<"Book"> | number
   createdAt?: Prisma.DateTimeFilter<"Book"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Book"> | Date | string
+  cachedCoverUrl?: Prisma.StringNullableFilter<"Book"> | string | null
+  cachedPdfUrl?: Prisma.StringNullableFilter<"Book"> | string | null
+  cacheExpiresAt?: Prisma.DateTimeNullableFilter<"Book"> | Date | string | null
 }
 
 export type BookOrderByWithRelationInput = {
@@ -314,6 +338,9 @@ export type BookOrderByWithRelationInput = {
   order?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  cachedCoverUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  cachedPdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  cacheExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type BookWhereUniqueInput = Prisma.AtLeast<{
@@ -335,6 +362,9 @@ export type BookWhereUniqueInput = Prisma.AtLeast<{
   order?: Prisma.IntFilter<"Book"> | number
   createdAt?: Prisma.DateTimeFilter<"Book"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Book"> | Date | string
+  cachedCoverUrl?: Prisma.StringNullableFilter<"Book"> | string | null
+  cachedPdfUrl?: Prisma.StringNullableFilter<"Book"> | string | null
+  cacheExpiresAt?: Prisma.DateTimeNullableFilter<"Book"> | Date | string | null
 }, "id">
 
 export type BookOrderByWithAggregationInput = {
@@ -353,6 +383,9 @@ export type BookOrderByWithAggregationInput = {
   order?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  cachedCoverUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  cachedPdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  cacheExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BookCountOrderByAggregateInput
   _avg?: Prisma.BookAvgOrderByAggregateInput
   _max?: Prisma.BookMaxOrderByAggregateInput
@@ -379,6 +412,9 @@ export type BookScalarWhereWithAggregatesInput = {
   order?: Prisma.IntWithAggregatesFilter<"Book"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Book"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Book"> | Date | string
+  cachedCoverUrl?: Prisma.StringNullableWithAggregatesFilter<"Book"> | string | null
+  cachedPdfUrl?: Prisma.StringNullableWithAggregatesFilter<"Book"> | string | null
+  cacheExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Book"> | Date | string | null
 }
 
 export type BookCreateInput = {
@@ -397,6 +433,9 @@ export type BookCreateInput = {
   order?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  cachedCoverUrl?: string | null
+  cachedPdfUrl?: string | null
+  cacheExpiresAt?: Date | string | null
 }
 
 export type BookUncheckedCreateInput = {
@@ -415,6 +454,9 @@ export type BookUncheckedCreateInput = {
   order?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  cachedCoverUrl?: string | null
+  cachedPdfUrl?: string | null
+  cacheExpiresAt?: Date | string | null
 }
 
 export type BookUpdateInput = {
@@ -433,6 +475,9 @@ export type BookUpdateInput = {
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BookUncheckedUpdateInput = {
@@ -451,6 +496,9 @@ export type BookUncheckedUpdateInput = {
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BookCreateManyInput = {
@@ -469,6 +517,9 @@ export type BookCreateManyInput = {
   order?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  cachedCoverUrl?: string | null
+  cachedPdfUrl?: string | null
+  cacheExpiresAt?: Date | string | null
 }
 
 export type BookUpdateManyMutationInput = {
@@ -487,6 +538,9 @@ export type BookUpdateManyMutationInput = {
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BookUncheckedUpdateManyInput = {
@@ -505,6 +559,9 @@ export type BookUncheckedUpdateManyInput = {
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BookCountOrderByAggregateInput = {
@@ -523,6 +580,9 @@ export type BookCountOrderByAggregateInput = {
   order?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  cachedCoverUrl?: Prisma.SortOrder
+  cachedPdfUrl?: Prisma.SortOrder
+  cacheExpiresAt?: Prisma.SortOrder
 }
 
 export type BookAvgOrderByAggregateInput = {
@@ -545,6 +605,9 @@ export type BookMaxOrderByAggregateInput = {
   order?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  cachedCoverUrl?: Prisma.SortOrder
+  cachedPdfUrl?: Prisma.SortOrder
+  cacheExpiresAt?: Prisma.SortOrder
 }
 
 export type BookMinOrderByAggregateInput = {
@@ -563,6 +626,9 @@ export type BookMinOrderByAggregateInput = {
   order?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  cachedCoverUrl?: Prisma.SortOrder
+  cachedPdfUrl?: Prisma.SortOrder
+  cacheExpiresAt?: Prisma.SortOrder
 }
 
 export type BookSumOrderByAggregateInput = {
@@ -591,6 +657,9 @@ export type BookSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   order?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  cachedCoverUrl?: boolean
+  cachedPdfUrl?: boolean
+  cacheExpiresAt?: boolean
 }, ExtArgs["result"]["book"]>
 
 export type BookSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -609,6 +678,9 @@ export type BookSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   order?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  cachedCoverUrl?: boolean
+  cachedPdfUrl?: boolean
+  cacheExpiresAt?: boolean
 }, ExtArgs["result"]["book"]>
 
 export type BookSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -627,6 +699,9 @@ export type BookSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   order?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  cachedCoverUrl?: boolean
+  cachedPdfUrl?: boolean
+  cacheExpiresAt?: boolean
 }, ExtArgs["result"]["book"]>
 
 export type BookSelectScalar = {
@@ -645,9 +720,12 @@ export type BookSelectScalar = {
   order?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  cachedCoverUrl?: boolean
+  cachedPdfUrl?: boolean
+  cacheExpiresAt?: boolean
 }
 
-export type BookOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "author" | "subject" | "className" | "category" | "coverImageUrl" | "pdfUrl" | "externalUrl" | "visibleTo" | "isActive" | "order" | "createdAt" | "updatedAt", ExtArgs["result"]["book"]>
+export type BookOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "author" | "subject" | "className" | "category" | "coverImageUrl" | "pdfUrl" | "externalUrl" | "visibleTo" | "isActive" | "order" | "createdAt" | "updatedAt" | "cachedCoverUrl" | "cachedPdfUrl" | "cacheExpiresAt", ExtArgs["result"]["book"]>
 
 export type $BookPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Book"
@@ -668,6 +746,9 @@ export type $BookPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     order: number
     createdAt: Date
     updatedAt: Date
+    cachedCoverUrl: string | null
+    cachedPdfUrl: string | null
+    cacheExpiresAt: Date | null
   }, ExtArgs["result"]["book"]>
   composites: {}
 }
@@ -1106,6 +1187,9 @@ export interface BookFieldRefs {
   readonly order: Prisma.FieldRef<"Book", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Book", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Book", 'DateTime'>
+  readonly cachedCoverUrl: Prisma.FieldRef<"Book", 'String'>
+  readonly cachedPdfUrl: Prisma.FieldRef<"Book", 'String'>
+  readonly cacheExpiresAt: Prisma.FieldRef<"Book", 'DateTime'>
 }
     
 

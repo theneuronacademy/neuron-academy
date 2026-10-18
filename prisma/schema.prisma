@@ -225,50 +225,61 @@ model User {
 }
 
 model Student {
-  id          String        @id @default(cuid())
-  userId      String?       @unique
-  studentId   String        @unique
-  name        String
-  email       String        @unique
-  phone       String
-  photo       String?
-  courseId    String?
-  batchId     String?
-  joiningDate DateTime      @default(now())
-  status      StudentStatus @default(ACTIVE)
-  // Phase 14 — student type + profile. mobile/email/studentType/batch are
-  // admin-managed; students edit only the allowlisted profile fields.
-  studentType   StudentType @default(REGULAR)
-  dob           DateTime?
-  photoUrl      String?
-  gender        String?
-  address       String?
-  city          String?
-  school        String?
-  className     String?
-  parentName    String?
-  parentMobile  String?
-  enrollmentDate DateTime   @default(now())
-  lastLoginAt   DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+    id          String        @id @default(cuid())
+    userId      String?       @unique
+    studentId   String        @unique
+    name        String
+    email       String        @unique
+    phone       String
+    photo       String?
+    courseId    String?
+    batchId     String?
+    joiningDate DateTime      @default(now())
+    status      StudentStatus @default(ACTIVE)
+    // Phase 14 — student type + profile. mobile/email/studentType/batch are
+    // admin-managed; students edit only the allowlisted profile fields.
+    studentType   StudentType @default(REGULAR)
+    dob           DateTime?
+    photoUrl      String?
+    gender        String?
+    address       String?
+    city          String?
+    school        String?
+    className     String?
+    parentName    String?
+    parentMobile  String?
+    enrollmentDate DateTime   @default(now())
+    lastLoginAt   DateTime?
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    // 2FA / TOTP
+    totpSecret    String?
+    totpEnabled   Boolean     @default(false)
+    backupCodes   String[]    @default([])
+    // Streak tracking
+    lastTestAt    DateTime?
+    streakDays    Int         @default(0)
+    longestStreak Int         @default(0)
+    dailyGoalMinutes Int     @default(30)
 
-  user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  course     Course?      @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  batch      Batch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
-  attendance Attendance[]
-  attempts   TestAttempt[]
-  results    Result[]
-  targetedNotifications Notification[] @relation("NotificationStudent")
-  // Phase 13 — PAID/PRIVATE test grants for this student.
-  testAccesses TestAccess[]
-  // Engagement: revise-later bookmarks + asked doubts.
-  bookmarks Bookmark[]
-  doubts    Doubt[]
+    user       User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+    course     Course?      @relation(fields: [courseId], references: [id], onDelete: SetNull)
+    batch      Batch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
+    attendance Attendance[]
+    attempts   TestAttempt[]
+    results    Result[]
+    targetedNotifications Notification[] @relation("NotificationStudent")
+    // Phase 13 — PAID/PRIVATE test grants for this student.
+    testAccesses TestAccess[]
+    // Engagement: revise-later bookmarks + asked doubts.
+    bookmarks Bookmark[]
+    doubts    Doubt[]
+    submissions Submission[]
+    parentMessages ParentMessage[]
 
-  @@index([studentType])
-  @@index([status])
-  @@index([batchId])
+    @@index([studentType])
+    @@index([status])
+    @@index([batchId])
 }
 
 model Faculty {
@@ -343,6 +354,9 @@ model Batch {
   notifications Notification[] @relation("NotificationBatch")
   timetableEntries TimetableEntry[]
   doubts           Doubt[]
+  materials       Material[]
+  assignments     Assignment[]
+  gradebookConfig GradebookConfig?
 }
 
 model Banner {
@@ -404,28 +418,31 @@ model Testimonial {
 }
 
 model Result {
-  id         String   @id @default(cuid())
-  studentId  String
-  testId     String
-  marks      Float    @default(0)
-  totalMarks Float    @default(0)
-  percentage Float    @default(0)
-  rank       Int?
-  status     String   @default("PUBLISHED")
-  // Server-computed breakdown (Step 13 response fields).
-  attempted  Int      @default(0)
-  correct    Int      @default(0)
-  wrong      Int      @default(0)
-  unanswered Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+    id         String   @id @default(cuid())
+    studentId  String
+    testId     String
+    marks      Float    @default(0)
+    totalMarks Float    @default(0)
+    percentage Float    @default(0)
+    rank       Int?
+    status     String   @default("PUBLISHED")
+    // Server-computed breakdown (Step 13 response fields).
+    attempted  Int      @default(0)
+    correct    Int      @default(0)
+    wrong      Int      @default(0)
+    unanswered Int      @default(0)
+    // Analytics fields
+    timePerQuestion Json?      // { questionId: secondsSpent }
+    topicBreakdown  Json?      // { topic: { correct, total, timeSpent } }
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
+    student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+    test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
 
-  @@index([testId])
-  @@index([studentId])
-  @@index([studentId, testId])
+    @@index([testId])
+    @@index([studentId])
+    @@index([studentId, testId])
 }
 
 // Phase 13 — manual student access grants for PAID/PRIVATE tests.
@@ -459,49 +476,54 @@ model TestAccess {
 // title=name, duration=durationMinutes, totalQuestions=questionIds.length.
 // The localStorage engine (lib/storage.ts) is NOT replaced in this phase.
 model Test {
-  id             String     @id @default(cuid())
-  title          String
-  description    String?
-  batchId        String?
-  createdById    String?
-  type           TestType   @default(PRACTICE)
-  duration       Int        @default(60)
-  totalQuestions Int        @default(0)
-  totalMarks     Int        @default(0)
-  startTime      DateTime?
-  endTime        DateTime?
-  status         TestStatus @default(DRAFT)
-  // Phase 12 — test generator ordering (SERIAL | RANDOM).
-  questionOrder  String     @default("SERIAL")
-  optionOrder    String     @default("SERIAL")
-  // Phase 13 — access model. FREE = open to eligible students, PAID =
-  // admin grants TestAccess after external UPI payment (no gateway),
-  // PRIVATE = invite-only via TestAccess. No payment provider is used.
-  accessType   TestAccessType @default(FREE)
-  // Price in integer rupees. FREE must be 0, PAID must be > 0.
-  price        Int            @default(0)
-  publishedAt  DateTime?
-  isActive     Boolean        @default(true)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+    id             String     @id @default(cuid())
+    title          String
+    description    String?
+    batchId        String?
+    createdById    String?
+    type           TestType   @default(PRACTICE)
+    duration       Int        @default(60)
+    totalQuestions Int        @default(0)
+    totalMarks     Int        @default(0)
+    startTime      DateTime?
+    endTime        DateTime?
+    status         TestStatus @default(DRAFT)
+    // Phase 12 — test generator ordering (SERIAL | RANDOM).
+    questionOrder  String     @default("SERIAL")
+    optionOrder    String     @default("SERIAL")
+    // Phase 13 — access model. FREE = open to eligible students, PAID =
+    // admin grants TestAccess after external UPI payment (no gateway),
+    // PRIVATE = invite-only via TestAccess. No payment provider is used.
+    accessType   TestAccessType @default(FREE)
+    // Price in integer rupees. FREE must be 0, PAID must be > 0.
+    price        Int            @default(0)
+    publishedAt  DateTime?
+    isActive     Boolean        @default(true)
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    // Multi-attempt support
+    maxAttempts  Int            @default(1)
+    // Calendar integration
+    calendarEventId String?
 
-  batch     Batch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
-  createdBy User?        @relation("TestCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  questions Question[]
-  attempts  TestAttempt[]
-  results   Result[]
-  accesses  TestAccess[]
-  bookmarks Bookmark[]
-  // Homework flag: PRACTICE tests assigned as homework (faculty-created for
-  // assigned batches, FREE). No new TestType enum — plain boolean, no
-  // transaction-unsafe enum surgery.
-  isHomework Boolean @default(false)
+    batch     Batch?       @relation(fields: [batchId], references: [id], onDelete: SetNull)
+    createdBy User?        @relation("TestCreator", fields: [createdById], references: [id], onDelete: SetNull)
+    questions Question[]
+    attempts  TestAttempt[]
+    results   Result[]
+    accesses  TestAccess[]
+    bookmarks Bookmark[]
+    assignments Assignment[]
+    // Homework flag: PRACTICE tests assigned as homework (faculty-created for
+    // assigned batches, FREE). No new TestType enum — plain boolean, no
+    // transaction-unsafe enum surgery.
+    isHomework Boolean @default(false)
 
-  @@index([status])
-  @@index([accessType])
-  @@index([publishedAt])
-  @@index([batchId])
-  @@index([isHomework])
+    @@index([status])
+    @@index([accessType])
+    @@index([publishedAt])
+    @@index([batchId])
+    @@index([isHomework])
 }
 
 // questionType supports future types (comprehension, matrix) without
@@ -541,34 +563,40 @@ model Question {
 }
 
 model TestAttempt {
-  id          String        @id @default(cuid())
-  testId      String
-  studentId   String
-  startedAt   DateTime      @default(now())
-  submittedAt DateTime?
-  // Submitted answers { questionId: "A"|"B"|"C"|"D"|null } — persisted so
-  // evaluation is reproducible server-side. Never trust client marks.
-  answers     Json?
-  // Phase 12 — server-generated per-attempt ordering (RANDOM modes).
-  // questionOrder: string[] (question ids in display order).
-  // optionMap: Record<questionId, string[]> display position → original letter.
-  // Stored at attempt start; refresh-safe; evaluation inverts the mapping.
-  questionOrder Json?
-  optionMap     Json?
-  score       Float         @default(0)
-  totalMarks  Float         @default(0)
-  percentage  Float         @default(0)
-  status      AttemptStatus @default(IN_PROGRESS)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+    id          String        @id @default(cuid())
+    testId      String
+    studentId   String
+    startedAt   DateTime      @default(now())
+    submittedAt DateTime?
+    // Submitted answers { questionId: "A"|"B"|"C"|"D"|null } — persisted so
+    // evaluation is reproducible server-side. Never trust client marks.
+    answers     Json?
+    // Phase 12 — server-generated per-attempt ordering (RANDOM modes).
+    // questionOrder: string[] (question ids in display order).
+    // optionMap: Record<questionId, string[]> display position → original letter.
+    // Stored at attempt start; refresh-safe; evaluation inverts the mapping.
+    questionOrder Json?
+    optionMap     Json?
+    score       Float         @default(0)
+    totalMarks  Float         @default(0)
+    percentage  Float         @default(0)
+    status      AttemptStatus @default(IN_PROGRESS)
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    // Multi-attempt tracking
+    attemptNumber Int         @default(1)
+    // Offline sync support
+    syncedAt    DateTime?
+    offlineAnswers Json?
 
-  test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+    test    Test    @relation(fields: [testId], references: [id], onDelete: Cascade)
+    student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  @@index([testId])
-  @@index([studentId])
-  @@index([studentId, testId])
-  @@index([status])
+    @@index([testId])
+    @@index([studentId])
+    @@index([studentId, testId])
+    @@index([status])
+    @@unique([testId, studentId, attemptNumber])
 }
 
 // Phase 12 — PDF import session. Tracks one upload through
@@ -814,26 +842,30 @@ model ResultShowcase {
 // Phase 14 — study material library. Only isActive books are visible to
 // students; visibleTo controls scholarship-student access per book.
 model Book {
-  id           String         @id @default(cuid())
-  title        String
-  description  String?
-  author       String?
-  subject      String?
-  className    String?
-  category     String?
-  coverImageUrl String?
-  pdfUrl       String?
-  externalUrl  String?
-  visibleTo    BookVisibility @default(ALL)
-  isActive     Boolean        @default(true)
-  order        Int            @default(0)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+    id           String         @id @default(cuid())
+    title        String
+    description  String?
+    author       String?
+    subject      String?
+    className    String?
+    category     String?
+    coverImageUrl String?
+    pdfUrl       String?
+    externalUrl  String?
+    visibleTo    BookVisibility @default(ALL)
+    isActive     Boolean        @default(true)
+    order        Int            @default(0)
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    // Cached signed URLs for performance
+    cachedCoverUrl String?
+    cachedPdfUrl   String?
+    cacheExpiresAt DateTime?
 
-  @@index([isActive, order])
-  @@index([className])
-  @@index([subject])
-  @@index([category])
+    @@index([isActive, order])
+    @@index([className])
+    @@index([subject])
+    @@index([category])
 }
 
 model Enquiry {
@@ -1008,21 +1040,25 @@ enum DoubtStatus {
 // Doubt-solving: students ask (own batch context), faculty/Admin answer.
 // v1 is text Q&A; photo upload is a documented follow-up.
 model Doubt {
-  id           String      @id @default(cuid())
-  studentId    String
-  batchId      String?
-  subject      String?
-  questionText String
-  status       DoubtStatus @default(ASKED)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+    id           String      @id @default(cuid())
+    studentId    String
+    batchId      String?
+    subject      String?
+    questionText String
+    status       DoubtStatus @default(ASKED)
+    createdAt    DateTime    @default(now())
+    updatedAt    DateTime    @updatedAt
+    // Attachment support
+    attachmentUrl String?
+    attachmentMimeType String?
+    attachmentSize Int?
 
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  batch   Batch?  @relation(fields: [batchId], references: [id], onDelete: SetNull)
-  replies DoubtReply[]
+    student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+    batch   Batch?  @relation(fields: [batchId], references: [id], onDelete: SetNull)
+    replies DoubtReply[]
 
-  @@index([batchId, status])
-  @@index([studentId])
+    @@index([batchId, status])
+    @@index([studentId])
 }
 
 model DoubtReply {
@@ -1042,6 +1078,7 @@ model DoubtReply {
 // Study material library (notes / videos / links / PDFs live at URLs).
 // Admin-curated; students browse/search. Separate from Books (which are
 // physical-library catalogue rows with storage files).
+// Faculty-scoped: each material belongs to a batch; faculty manage materials for their batches.
 model Material {
   id           String   @id @default(cuid())
   title        String
@@ -1055,5 +1092,208 @@ model Material {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  batchId      String
+  batch        Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
   @@index([isActive])
+  @@index([batchId])
+}
+
+// Faculty Assignments / Homework
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  batchId     String
+  batch       Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  testId      String?
+  test        Test?    @relation(fields: [testId], references: [id], onDelete: SetNull)
+  dueDate     DateTime
+  maxMarks    Float
+  weight      Float    // percentage weight in gradebook
+  status      String   @default("DRAFT") // DRAFT | PUBLISHED | CLOSED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  submissions Submission[]
+
+  @@index([batchId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model Submission {
+  id            String   @id @default(cuid())
+  assignmentId  String
+  assignment    Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  submittedAt   DateTime @default(now())
+  content       String?
+  fileUrl       String?
+  marks         Float?
+  feedback      String?
+  status        String   @default("SUBMITTED") // SUBMITTED | GRADED | LATE
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([assignmentId])
+  @@index([studentId])
+  @@index([status])
+}
+
+// Gradebook Configuration per batch
+model GradebookConfig {
+  id        String   @id @default(cuid())
+  batchId   String   @unique
+  batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  categories Json     // { id, name, weight, color }[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Parent Communication Messages
+model ParentMessage {
+  id           String   @id @default(cuid())
+  studentId    String
+  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject      String
+  message      String
+  channel      String   // SMS | EMAIL | IN_APP
+  status       String   @default("SENT") // SENT | DELIVERED | FAILED
+  sentAt       DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  @@index([studentId])
+  @@index([status])
+  @@index([sentAt])
+}
+
+// ================================================================
+// Admin Audit & RBAC (Phase 19+)
+// ================================================================
+
+enum AdminActionType {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  BULK_CREATE
+  BULK_UPDATE
+  BULK_DELETE
+  LOGIN
+  LOGOUT
+  EXPORT
+  IMPORT
+  STATUS_CHANGE
+  PERMISSION_GRANT
+  PERMISSION_REVOKE
+}
+
+model AdminAuditLog {
+  id           String        @id @default(cuid())
+  adminId      String
+  adminEmail   String
+  action       AdminActionType
+  entity       String
+  entityId     String?
+  beforeData   Json?
+  afterData    Json?
+  ipAddress    String?
+  userAgent    String?
+  correlationId String?
+  status       String        @default("SUCCESS")
+  errorMessage String?
+  createdAt    DateTime      @default(now())
+
+  @@index([adminId])
+  @@index([entity])
+  @@index([entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([correlationId])
+}
+
+enum AdminPermissionScope {
+  GLOBAL
+  BRANCH
+  BATCH
+  COURSE
+}
+
+model AdminPermission {
+  id          String               @id @default(cuid())
+  key         String               @unique
+  name        String
+  description String?
+  resource    String
+  action      String
+  scope       AdminPermissionScope @default(GLOBAL)
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  roles AdminRolePermission[]
+
+  @@index([resource, action])
+  @@index([isActive])
+}
+
+model AdminRolePermission {
+  id            String @id @default(cuid())
+  role          Role
+  permissionId  String
+  permission    AdminPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  scopeValue    String?
+  createdAt     DateTime @default(now())
+
+  @@unique([role, permissionId, scopeValue])
+  @@index([role])
+  @@index([permissionId])
+}
+
+// ================================================================
+// Biometric Bridge Status & Health
+// ================================================================
+
+model BiometricBridgeStatus {
+  id              String   @id @default(cuid())
+  bridgeId        String   @unique
+  version         String
+  configHash      String
+  status          String   @default("STARTING")
+  lastHeartbeatAt DateTime?
+  lastEventAt     DateTime?
+  eventsProcessed Int      @default(0)
+  eventsFailed    Int      @default(0)
+  cpuUsage        Float?
+  memoryUsage     Float?
+  uptimeSeconds   Int?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([bridgeId])
+  @@index([status])
+  @@index([lastHeartbeatAt])
+}
+
+// ================================================================
+// Notification Scheduler Tracking
+// ================================================================
+
+model NotificationSchedulerRun {
+  id            String   @id @default(cuid())
+  notificationId String
+  runAt         DateTime
+  status        String   @default("PENDING")
+  attempts      Int      @default(0)
+  lastError     String?
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([notificationId, runAt])
+  @@index([status, runAt])
+  @@index([notificationId])
 }

@@ -1,4 +1,4 @@
-// Phase 5 — Results API with role scoping.
+// Phase 5 — Results API with role scoping and cursor pagination.
 // ADMIN: all (+ filters testId/studentId). FACULTY: permitted tests only.
 // STUDENT: own results only — any studentId filter is ignored.
 // No rank is invented: rank stays null unless explicitly set.
@@ -31,6 +31,9 @@ function shape(r: any) {
     wrong: r.wrong ?? 0,
     unanswered: r.unanswered ?? 0,
     date: r.createdAt ? new Date(r.createdAt).toISOString().slice(0, 10) : "",
+    // Analytics fields
+    timePerQuestion: r.timePerQuestion,
+    topicBreakdown: r.topicBreakdown,
   };
 }
 
@@ -45,39 +48,60 @@ export async function GET(req: NextRequest) {
   try {
     const params = new URL(req.url).searchParams;
     const testId = params.get("testId");
+    const cursor = params.get("cursor"); // ISO date string for cursor pagination
+    const limit = Math.min(parseInt(params.get("limit") ?? "50"), 100);
+
+    const whereBase: Record<string, unknown> = {};
+    if (testId) whereBase.testId = testId;
+
     if (viewer.role === "STUDENT") {
       const profile = await resolveStudent(db, viewer.id, viewer.email);
-      if (!profile) return ok({ items: [], source: "database" });
+      if (!profile) return ok({ items: [], nextCursor: null, source: "database" });
+      const where = { studentId: profile.id, ...whereBase };
       const rows = await db.result.findMany({
-        where: { studentId: profile.id, ...(testId ? { testId } : {}) },
+        where,
         include: { student: true, test: true },
         orderBy: { createdAt: "desc" },
-        take: 200,
+        take: limit + 1, // fetch one extra to detect next page
+        ...(cursor ? { cursor: { createdAt: new Date(cursor) }, skip: 1 } : {}),
       });
-      return ok({ items: rows.map(shape), source: "database" });
+      const hasMore = rows.length > limit;
+      const items = hasMore ? rows.slice(0, limit) : rows;
+      const nextCursor = hasMore ? items[items.length - 1].createdAt.toISOString() : null;
+      return ok({ items: items.map(shape), nextCursor, source: "database" });
     }
     if (viewer.role === "FACULTY") {
       const batchIds = await facultyBatchIds(db, viewer.id);
+      const where = {
+        ...whereBase,
+        test: { OR: [{ createdById: viewer.id }, ...(batchIds.length > 0 ? [{ batchId: { in: batchIds } }] : [])] },
+      };
       const rows = await db.result.findMany({
-        where: {
-          ...(testId ? { testId } : {}),
-          test: { OR: [{ createdById: viewer.id }, ...(batchIds.length > 0 ? [{ batchId: { in: batchIds } }] : [])] },
-        },
+        where,
         include: { student: true, test: true },
         orderBy: { createdAt: "desc" },
-        take: 500,
+        take: limit + 1,
+        ...(cursor ? { cursor: { createdAt: new Date(cursor) }, skip: 1 } : {}),
       });
-      return ok({ items: rows.map(shape), source: "database" });
+      const hasMore = rows.length > limit;
+      const items = hasMore ? rows.slice(0, limit) : rows;
+      const nextCursor = hasMore ? items[items.length - 1].createdAt.toISOString() : null;
+      return ok({ items: items.map(shape), nextCursor, source: "database" });
     }
     if (viewer.role !== "ADMIN") return fail("Forbidden.", 403);
     const studentId = params.get("studentId");
+    const where = { ...whereBase, ...(studentId ? { studentId } : {}) };
     const rows = await db.result.findMany({
-      where: { ...(testId ? { testId } : {}), ...(studentId ? { studentId } : {}) },
+      where,
       include: { student: true, test: true },
       orderBy: { createdAt: "desc" },
-      take: 500,
+      take: limit + 1,
+      ...(cursor ? { cursor: { createdAt: new Date(cursor) }, skip: 1 } : {}),
     });
-    return ok({ items: rows.map(shape), source: "database" });
+    const hasMore = rows.length > limit;
+    const items = hasMore ? rows.slice(0, limit) : rows;
+    const nextCursor = hasMore ? items[items.length - 1].createdAt.toISOString() : null;
+    return ok({ items: items.map(shape), nextCursor, source: "database" });
   } catch (err) {
     return serverError("results:list", err);
   }

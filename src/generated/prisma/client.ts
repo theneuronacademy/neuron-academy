@@ -206,3 +206,48 @@ export type DoubtReply = Prisma.DoubtReplyModel
  * 
  */
 export type Material = Prisma.MaterialModel
+/**
+ * Model Assignment
+ * 
+ */
+export type Assignment = Prisma.AssignmentModel
+/**
+ * Model Submission
+ * 
+ */
+export type Submission = Prisma.SubmissionModel
+/**
+ * Model GradebookConfig
+ * 
+ */
+export type GradebookConfig = Prisma.GradebookConfigModel
+/**
+ * Model ParentMessage
+ * 
+ */
+export type ParentMessage = Prisma.ParentMessageModel
+/**
+ * Model AdminAuditLog
+ * 
+ */
+export type AdminAuditLog = Prisma.AdminAuditLogModel
+/**
+ * Model AdminPermission
+ * 
+ */
+export type AdminPermission = Prisma.AdminPermissionModel
+/**
+ * Model AdminRolePermission
+ * 
+ */
+export type AdminRolePermission = Prisma.AdminRolePermissionModel
+/**
+ * Model BiometricBridgeStatus
+ * 
+ */
+export type BiometricBridgeStatus = Prisma.BiometricBridgeStatusModel
+/**
+ * Model NotificationSchedulerRun
+ * 
+ */
+export type NotificationSchedulerRun = Prisma.NotificationSchedulerRunModel

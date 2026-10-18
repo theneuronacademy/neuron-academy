@@ -31,6 +31,7 @@ export type TestAvgAggregateOutputType = {
   totalQuestions: number | null
   totalMarks: number | null
   price: number | null
+  maxAttempts: number | null
 }
 
 export type TestSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type TestSumAggregateOutputType = {
   totalQuestions: number | null
   totalMarks: number | null
   price: number | null
+  maxAttempts: number | null
 }
 
 export type TestMinAggregateOutputType = {
@@ -61,6 +63,8 @@ export type TestMinAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  maxAttempts: number | null
+  calendarEventId: string | null
   isHomework: boolean | null
 }
 
@@ -85,6 +89,8 @@ export type TestMaxAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  maxAttempts: number | null
+  calendarEventId: string | null
   isHomework: boolean | null
 }
 
@@ -109,6 +115,8 @@ export type TestCountAggregateOutputType = {
   isActive: number
   createdAt: number
   updatedAt: number
+  maxAttempts: number
+  calendarEventId: number
   isHomework: number
   _all: number
 }
@@ -119,6 +127,7 @@ export type TestAvgAggregateInputType = {
   totalQuestions?: true
   totalMarks?: true
   price?: true
+  maxAttempts?: true
 }
 
 export type TestSumAggregateInputType = {
@@ -126,6 +135,7 @@ export type TestSumAggregateInputType = {
   totalQuestions?: true
   totalMarks?: true
   price?: true
+  maxAttempts?: true
 }
 
 export type TestMinAggregateInputType = {
@@ -149,6 +159,8 @@ export type TestMinAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  maxAttempts?: true
+  calendarEventId?: true
   isHomework?: true
 }
 
@@ -173,6 +185,8 @@ export type TestMaxAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  maxAttempts?: true
+  calendarEventId?: true
   isHomework?: true
 }
 
@@ -197,6 +211,8 @@ export type TestCountAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  maxAttempts?: true
+  calendarEventId?: true
   isHomework?: true
   _all?: true
 }
@@ -308,6 +324,8 @@ export type TestGroupByOutputType = {
   isActive: boolean
   createdAt: Date
   updatedAt: Date
+  maxAttempts: number
+  calendarEventId: string | null
   isHomework: boolean
   _count: TestCountAggregateOutputType | null
   _avg: TestAvgAggregateOutputType | null
@@ -355,6 +373,8 @@ export type TestWhereInput = {
   isActive?: Prisma.BoolFilter<"Test"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Test"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Test"> | Date | string
+  maxAttempts?: Prisma.IntFilter<"Test"> | number
+  calendarEventId?: Prisma.StringNullableFilter<"Test"> | string | null
   isHomework?: Prisma.BoolFilter<"Test"> | boolean
   batch?: Prisma.XOR<Prisma.BatchNullableScalarRelationFilter, Prisma.BatchWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -363,6 +383,7 @@ export type TestWhereInput = {
   results?: Prisma.ResultListRelationFilter
   accesses?: Prisma.TestAccessListRelationFilter
   bookmarks?: Prisma.BookmarkListRelationFilter
+  assignments?: Prisma.AssignmentListRelationFilter
 }
 
 export type TestOrderByWithRelationInput = {
@@ -386,6 +407,8 @@ export type TestOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  calendarEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   isHomework?: Prisma.SortOrder
   batch?: Prisma.BatchOrderByWithRelationInput
   createdBy?: Prisma.UserOrderByWithRelationInput
@@ -394,6 +417,7 @@ export type TestOrderByWithRelationInput = {
   results?: Prisma.ResultOrderByRelationAggregateInput
   accesses?: Prisma.TestAccessOrderByRelationAggregateInput
   bookmarks?: Prisma.BookmarkOrderByRelationAggregateInput
+  assignments?: Prisma.AssignmentOrderByRelationAggregateInput
 }
 
 export type TestWhereUniqueInput = Prisma.AtLeast<{
@@ -420,6 +444,8 @@ export type TestWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"Test"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Test"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Test"> | Date | string
+  maxAttempts?: Prisma.IntFilter<"Test"> | number
+  calendarEventId?: Prisma.StringNullableFilter<"Test"> | string | null
   isHomework?: Prisma.BoolFilter<"Test"> | boolean
   batch?: Prisma.XOR<Prisma.BatchNullableScalarRelationFilter, Prisma.BatchWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -428,6 +454,7 @@ export type TestWhereUniqueInput = Prisma.AtLeast<{
   results?: Prisma.ResultListRelationFilter
   accesses?: Prisma.TestAccessListRelationFilter
   bookmarks?: Prisma.BookmarkListRelationFilter
+  assignments?: Prisma.AssignmentListRelationFilter
 }, "id">
 
 export type TestOrderByWithAggregationInput = {
@@ -451,6 +478,8 @@ export type TestOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  calendarEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   isHomework?: Prisma.SortOrder
   _count?: Prisma.TestCountOrderByAggregateInput
   _avg?: Prisma.TestAvgOrderByAggregateInput
@@ -483,6 +512,8 @@ export type TestScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"Test"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Test"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Test"> | Date | string
+  maxAttempts?: Prisma.IntWithAggregatesFilter<"Test"> | number
+  calendarEventId?: Prisma.StringNullableWithAggregatesFilter<"Test"> | string | null
   isHomework?: Prisma.BoolWithAggregatesFilter<"Test"> | boolean
 }
 
@@ -505,6 +536,8 @@ export type TestCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   batch?: Prisma.BatchCreateNestedOneWithoutTestsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedTestsInput
@@ -513,6 +546,7 @@ export type TestCreateInput = {
   results?: Prisma.ResultCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTestInput
 }
 
 export type TestUncheckedCreateInput = {
@@ -536,12 +570,15 @@ export type TestUncheckedCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutTestInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutTestInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTestInput
 }
 
 export type TestUpdateInput = {
@@ -563,6 +600,8 @@ export type TestUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   batch?: Prisma.BatchUpdateOneWithoutTestsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutCreatedTestsNestedInput
@@ -571,6 +610,7 @@ export type TestUpdateInput = {
   results?: Prisma.ResultUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateInput = {
@@ -594,12 +634,15 @@ export type TestUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutTestNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUncheckedUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTestNestedInput
 }
 
 export type TestCreateManyInput = {
@@ -623,6 +666,8 @@ export type TestCreateManyInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
 }
 
@@ -645,6 +690,8 @@ export type TestUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -669,6 +716,8 @@ export type TestUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -708,6 +757,8 @@ export type TestCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  calendarEventId?: Prisma.SortOrder
   isHomework?: Prisma.SortOrder
 }
 
@@ -716,6 +767,7 @@ export type TestAvgOrderByAggregateInput = {
   totalQuestions?: Prisma.SortOrder
   totalMarks?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
 }
 
 export type TestMaxOrderByAggregateInput = {
@@ -739,6 +791,8 @@ export type TestMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  calendarEventId?: Prisma.SortOrder
   isHomework?: Prisma.SortOrder
 }
 
@@ -763,6 +817,8 @@ export type TestMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  calendarEventId?: Prisma.SortOrder
   isHomework?: Prisma.SortOrder
 }
 
@@ -771,6 +827,12 @@ export type TestSumOrderByAggregateInput = {
   totalQuestions?: Prisma.SortOrder
   totalMarks?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+}
+
+export type TestNullableScalarRelationFilter = {
+  is?: Prisma.TestWhereInput | null
+  isNot?: Prisma.TestWhereInput | null
 }
 
 export type TestCreateNestedManyWithoutCreatedByInput = {
@@ -939,6 +1001,22 @@ export type TestUpdateOneRequiredWithoutBookmarksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TestUpdateToOneWithWhereWithoutBookmarksInput, Prisma.TestUpdateWithoutBookmarksInput>, Prisma.TestUncheckedUpdateWithoutBookmarksInput>
 }
 
+export type TestCreateNestedOneWithoutAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.TestCreateWithoutAssignmentsInput, Prisma.TestUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.TestCreateOrConnectWithoutAssignmentsInput
+  connect?: Prisma.TestWhereUniqueInput
+}
+
+export type TestUpdateOneWithoutAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.TestCreateWithoutAssignmentsInput, Prisma.TestUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.TestCreateOrConnectWithoutAssignmentsInput
+  upsert?: Prisma.TestUpsertWithoutAssignmentsInput
+  disconnect?: Prisma.TestWhereInput | boolean
+  delete?: Prisma.TestWhereInput | boolean
+  connect?: Prisma.TestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TestUpdateToOneWithWhereWithoutAssignmentsInput, Prisma.TestUpdateWithoutAssignmentsInput>, Prisma.TestUncheckedUpdateWithoutAssignmentsInput>
+}
+
 export type TestCreateWithoutCreatedByInput = {
   id?: string
   title: string
@@ -958,6 +1036,8 @@ export type TestCreateWithoutCreatedByInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   batch?: Prisma.BatchCreateNestedOneWithoutTestsInput
   questions?: Prisma.QuestionCreateNestedManyWithoutTestInput
@@ -965,6 +1045,7 @@ export type TestCreateWithoutCreatedByInput = {
   results?: Prisma.ResultCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTestInput
 }
 
 export type TestUncheckedCreateWithoutCreatedByInput = {
@@ -987,12 +1068,15 @@ export type TestUncheckedCreateWithoutCreatedByInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutTestInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutTestInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTestInput
 }
 
 export type TestCreateOrConnectWithoutCreatedByInput = {
@@ -1045,6 +1129,8 @@ export type TestScalarWhereInput = {
   isActive?: Prisma.BoolFilter<"Test"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Test"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Test"> | Date | string
+  maxAttempts?: Prisma.IntFilter<"Test"> | number
+  calendarEventId?: Prisma.StringNullableFilter<"Test"> | string | null
   isHomework?: Prisma.BoolFilter<"Test"> | boolean
 }
 
@@ -1067,6 +1153,8 @@ export type TestCreateWithoutBatchInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedTestsInput
   questions?: Prisma.QuestionCreateNestedManyWithoutTestInput
@@ -1074,6 +1162,7 @@ export type TestCreateWithoutBatchInput = {
   results?: Prisma.ResultCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTestInput
 }
 
 export type TestUncheckedCreateWithoutBatchInput = {
@@ -1096,12 +1185,15 @@ export type TestUncheckedCreateWithoutBatchInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutTestInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutTestInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTestInput
 }
 
 export type TestCreateOrConnectWithoutBatchInput = {
@@ -1149,6 +1241,8 @@ export type TestCreateWithoutResultsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   batch?: Prisma.BatchCreateNestedOneWithoutTestsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedTestsInput
@@ -1156,6 +1250,7 @@ export type TestCreateWithoutResultsInput = {
   attempts?: Prisma.TestAttemptCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTestInput
 }
 
 export type TestUncheckedCreateWithoutResultsInput = {
@@ -1179,11 +1274,14 @@ export type TestUncheckedCreateWithoutResultsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutTestInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTestInput
 }
 
 export type TestCreateOrConnectWithoutResultsInput = {
@@ -1221,6 +1319,8 @@ export type TestUpdateWithoutResultsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   batch?: Prisma.BatchUpdateOneWithoutTestsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutCreatedTestsNestedInput
@@ -1228,6 +1328,7 @@ export type TestUpdateWithoutResultsInput = {
   attempts?: Prisma.TestAttemptUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateWithoutResultsInput = {
@@ -1251,11 +1352,14 @@ export type TestUncheckedUpdateWithoutResultsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutTestNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUncheckedUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTestNestedInput
 }
 
 export type TestCreateWithoutAccessesInput = {
@@ -1277,6 +1381,8 @@ export type TestCreateWithoutAccessesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   batch?: Prisma.BatchCreateNestedOneWithoutTestsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedTestsInput
@@ -1284,6 +1390,7 @@ export type TestCreateWithoutAccessesInput = {
   attempts?: Prisma.TestAttemptCreateNestedManyWithoutTestInput
   results?: Prisma.ResultCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTestInput
 }
 
 export type TestUncheckedCreateWithoutAccessesInput = {
@@ -1307,11 +1414,14 @@ export type TestUncheckedCreateWithoutAccessesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutTestInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutTestInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTestInput
 }
 
 export type TestCreateOrConnectWithoutAccessesInput = {
@@ -1349,6 +1459,8 @@ export type TestUpdateWithoutAccessesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   batch?: Prisma.BatchUpdateOneWithoutTestsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutCreatedTestsNestedInput
@@ -1356,6 +1468,7 @@ export type TestUpdateWithoutAccessesInput = {
   attempts?: Prisma.TestAttemptUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateWithoutAccessesInput = {
@@ -1379,11 +1492,14 @@ export type TestUncheckedUpdateWithoutAccessesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutTestNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTestNestedInput
 }
 
 export type TestCreateWithoutQuestionsInput = {
@@ -1405,6 +1521,8 @@ export type TestCreateWithoutQuestionsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   batch?: Prisma.BatchCreateNestedOneWithoutTestsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedTestsInput
@@ -1412,6 +1530,7 @@ export type TestCreateWithoutQuestionsInput = {
   results?: Prisma.ResultCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTestInput
 }
 
 export type TestUncheckedCreateWithoutQuestionsInput = {
@@ -1435,11 +1554,14 @@ export type TestUncheckedCreateWithoutQuestionsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutTestInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTestInput
 }
 
 export type TestCreateOrConnectWithoutQuestionsInput = {
@@ -1477,6 +1599,8 @@ export type TestUpdateWithoutQuestionsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   batch?: Prisma.BatchUpdateOneWithoutTestsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutCreatedTestsNestedInput
@@ -1484,6 +1608,7 @@ export type TestUpdateWithoutQuestionsInput = {
   results?: Prisma.ResultUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateWithoutQuestionsInput = {
@@ -1507,11 +1632,14 @@ export type TestUncheckedUpdateWithoutQuestionsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUncheckedUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTestNestedInput
 }
 
 export type TestCreateWithoutAttemptsInput = {
@@ -1533,6 +1661,8 @@ export type TestCreateWithoutAttemptsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   batch?: Prisma.BatchCreateNestedOneWithoutTestsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedTestsInput
@@ -1540,6 +1670,7 @@ export type TestCreateWithoutAttemptsInput = {
   results?: Prisma.ResultCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTestInput
 }
 
 export type TestUncheckedCreateWithoutAttemptsInput = {
@@ -1563,11 +1694,14 @@ export type TestUncheckedCreateWithoutAttemptsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutTestInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutTestInput
   bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTestInput
 }
 
 export type TestCreateOrConnectWithoutAttemptsInput = {
@@ -1605,6 +1739,8 @@ export type TestUpdateWithoutAttemptsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   batch?: Prisma.BatchUpdateOneWithoutTestsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutCreatedTestsNestedInput
@@ -1612,6 +1748,7 @@ export type TestUpdateWithoutAttemptsInput = {
   results?: Prisma.ResultUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateWithoutAttemptsInput = {
@@ -1635,11 +1772,14 @@ export type TestUncheckedUpdateWithoutAttemptsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUncheckedUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTestNestedInput
 }
 
 export type TestCreateWithoutBookmarksInput = {
@@ -1661,6 +1801,8 @@ export type TestCreateWithoutBookmarksInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   batch?: Prisma.BatchCreateNestedOneWithoutTestsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutCreatedTestsInput
@@ -1668,6 +1810,7 @@ export type TestCreateWithoutBookmarksInput = {
   attempts?: Prisma.TestAttemptCreateNestedManyWithoutTestInput
   results?: Prisma.ResultCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutTestInput
 }
 
 export type TestUncheckedCreateWithoutBookmarksInput = {
@@ -1691,11 +1834,14 @@ export type TestUncheckedCreateWithoutBookmarksInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
   questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutTestInput
   attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutTestInput
   results?: Prisma.ResultUncheckedCreateNestedManyWithoutTestInput
   accesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutTestInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutTestInput
 }
 
 export type TestCreateOrConnectWithoutBookmarksInput = {
@@ -1733,6 +1879,8 @@ export type TestUpdateWithoutBookmarksInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   batch?: Prisma.BatchUpdateOneWithoutTestsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutCreatedTestsNestedInput
@@ -1740,6 +1888,7 @@ export type TestUpdateWithoutBookmarksInput = {
   attempts?: Prisma.TestAttemptUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateWithoutBookmarksInput = {
@@ -1763,11 +1912,154 @@ export type TestUncheckedUpdateWithoutBookmarksInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutTestNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUncheckedUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTestNestedInput
+}
+
+export type TestCreateWithoutAssignmentsInput = {
+  id?: string
+  title: string
+  description?: string | null
+  type?: $Enums.TestType
+  duration?: number
+  totalQuestions?: number
+  totalMarks?: number
+  startTime?: Date | string | null
+  endTime?: Date | string | null
+  status?: $Enums.TestStatus
+  questionOrder?: string
+  optionOrder?: string
+  accessType?: $Enums.TestAccessType
+  price?: number
+  publishedAt?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
+  isHomework?: boolean
+  batch?: Prisma.BatchCreateNestedOneWithoutTestsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedTestsInput
+  questions?: Prisma.QuestionCreateNestedManyWithoutTestInput
+  attempts?: Prisma.TestAttemptCreateNestedManyWithoutTestInput
+  results?: Prisma.ResultCreateNestedManyWithoutTestInput
+  accesses?: Prisma.TestAccessCreateNestedManyWithoutTestInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutTestInput
+}
+
+export type TestUncheckedCreateWithoutAssignmentsInput = {
+  id?: string
+  title: string
+  description?: string | null
+  batchId?: string | null
+  createdById?: string | null
+  type?: $Enums.TestType
+  duration?: number
+  totalQuestions?: number
+  totalMarks?: number
+  startTime?: Date | string | null
+  endTime?: Date | string | null
+  status?: $Enums.TestStatus
+  questionOrder?: string
+  optionOrder?: string
+  accessType?: $Enums.TestAccessType
+  price?: number
+  publishedAt?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
+  isHomework?: boolean
+  questions?: Prisma.QuestionUncheckedCreateNestedManyWithoutTestInput
+  attempts?: Prisma.TestAttemptUncheckedCreateNestedManyWithoutTestInput
+  results?: Prisma.ResultUncheckedCreateNestedManyWithoutTestInput
+  accesses?: Prisma.TestAccessUncheckedCreateNestedManyWithoutTestInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutTestInput
+}
+
+export type TestCreateOrConnectWithoutAssignmentsInput = {
+  where: Prisma.TestWhereUniqueInput
+  create: Prisma.XOR<Prisma.TestCreateWithoutAssignmentsInput, Prisma.TestUncheckedCreateWithoutAssignmentsInput>
+}
+
+export type TestUpsertWithoutAssignmentsInput = {
+  update: Prisma.XOR<Prisma.TestUpdateWithoutAssignmentsInput, Prisma.TestUncheckedUpdateWithoutAssignmentsInput>
+  create: Prisma.XOR<Prisma.TestCreateWithoutAssignmentsInput, Prisma.TestUncheckedCreateWithoutAssignmentsInput>
+  where?: Prisma.TestWhereInput
+}
+
+export type TestUpdateToOneWithWhereWithoutAssignmentsInput = {
+  where?: Prisma.TestWhereInput
+  data: Prisma.XOR<Prisma.TestUpdateWithoutAssignmentsInput, Prisma.TestUncheckedUpdateWithoutAssignmentsInput>
+}
+
+export type TestUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTestTypeFieldUpdateOperationsInput | $Enums.TestType
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
+  totalQuestions?: Prisma.IntFieldUpdateOperationsInput | number
+  totalMarks?: Prisma.IntFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTestStatusFieldUpdateOperationsInput | $Enums.TestStatus
+  questionOrder?: Prisma.StringFieldUpdateOperationsInput | string
+  optionOrder?: Prisma.StringFieldUpdateOperationsInput | string
+  accessType?: Prisma.EnumTestAccessTypeFieldUpdateOperationsInput | $Enums.TestAccessType
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  batch?: Prisma.BatchUpdateOneWithoutTestsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedTestsNestedInput
+  questions?: Prisma.QuestionUpdateManyWithoutTestNestedInput
+  attempts?: Prisma.TestAttemptUpdateManyWithoutTestNestedInput
+  results?: Prisma.ResultUpdateManyWithoutTestNestedInput
+  accesses?: Prisma.TestAccessUpdateManyWithoutTestNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutTestNestedInput
+}
+
+export type TestUncheckedUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  batchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumTestTypeFieldUpdateOperationsInput | $Enums.TestType
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
+  totalQuestions?: Prisma.IntFieldUpdateOperationsInput | number
+  totalMarks?: Prisma.IntFieldUpdateOperationsInput | number
+  startTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumTestStatusFieldUpdateOperationsInput | $Enums.TestStatus
+  questionOrder?: Prisma.StringFieldUpdateOperationsInput | string
+  optionOrder?: Prisma.StringFieldUpdateOperationsInput | string
+  accessType?: Prisma.EnumTestAccessTypeFieldUpdateOperationsInput | $Enums.TestAccessType
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  questions?: Prisma.QuestionUncheckedUpdateManyWithoutTestNestedInput
+  attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutTestNestedInput
+  results?: Prisma.ResultUncheckedUpdateManyWithoutTestNestedInput
+  accesses?: Prisma.TestAccessUncheckedUpdateManyWithoutTestNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutTestNestedInput
 }
 
 export type TestCreateManyCreatedByInput = {
@@ -1790,6 +2082,8 @@ export type TestCreateManyCreatedByInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
 }
 
@@ -1812,6 +2106,8 @@ export type TestUpdateWithoutCreatedByInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   batch?: Prisma.BatchUpdateOneWithoutTestsNestedInput
   questions?: Prisma.QuestionUpdateManyWithoutTestNestedInput
@@ -1819,6 +2115,7 @@ export type TestUpdateWithoutCreatedByInput = {
   results?: Prisma.ResultUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateWithoutCreatedByInput = {
@@ -1841,12 +2138,15 @@ export type TestUncheckedUpdateWithoutCreatedByInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutTestNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUncheckedUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateManyWithoutCreatedByInput = {
@@ -1869,6 +2169,8 @@ export type TestUncheckedUpdateManyWithoutCreatedByInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -1892,6 +2194,8 @@ export type TestCreateManyBatchInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  maxAttempts?: number
+  calendarEventId?: string | null
   isHomework?: boolean
 }
 
@@ -1914,6 +2218,8 @@ export type TestUpdateWithoutBatchInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdBy?: Prisma.UserUpdateOneWithoutCreatedTestsNestedInput
   questions?: Prisma.QuestionUpdateManyWithoutTestNestedInput
@@ -1921,6 +2227,7 @@ export type TestUpdateWithoutBatchInput = {
   results?: Prisma.ResultUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateWithoutBatchInput = {
@@ -1943,12 +2250,15 @@ export type TestUncheckedUpdateWithoutBatchInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
   questions?: Prisma.QuestionUncheckedUpdateManyWithoutTestNestedInput
   attempts?: Prisma.TestAttemptUncheckedUpdateManyWithoutTestNestedInput
   results?: Prisma.ResultUncheckedUpdateManyWithoutTestNestedInput
   accesses?: Prisma.TestAccessUncheckedUpdateManyWithoutTestNestedInput
   bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutTestNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutTestNestedInput
 }
 
 export type TestUncheckedUpdateManyWithoutBatchInput = {
@@ -1971,6 +2281,8 @@ export type TestUncheckedUpdateManyWithoutBatchInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  calendarEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isHomework?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -1985,6 +2297,7 @@ export type TestCountOutputType = {
   results: number
   accesses: number
   bookmarks: number
+  assignments: number
 }
 
 export type TestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1993,6 +2306,7 @@ export type TestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   results?: boolean | TestCountOutputTypeCountResultsArgs
   accesses?: boolean | TestCountOutputTypeCountAccessesArgs
   bookmarks?: boolean | TestCountOutputTypeCountBookmarksArgs
+  assignments?: boolean | TestCountOutputTypeCountAssignmentsArgs
 }
 
 /**
@@ -2040,6 +2354,13 @@ export type TestCountOutputTypeCountBookmarksArgs<ExtArgs extends runtime.Types.
   where?: Prisma.BookmarkWhereInput
 }
 
+/**
+ * TestCountOutputType without action
+ */
+export type TestCountOutputTypeCountAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssignmentWhereInput
+}
+
 
 export type TestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2062,6 +2383,8 @@ export type TestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  maxAttempts?: boolean
+  calendarEventId?: boolean
   isHomework?: boolean
   batch?: boolean | Prisma.Test$batchArgs<ExtArgs>
   createdBy?: boolean | Prisma.Test$createdByArgs<ExtArgs>
@@ -2070,6 +2393,7 @@ export type TestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   results?: boolean | Prisma.Test$resultsArgs<ExtArgs>
   accesses?: boolean | Prisma.Test$accessesArgs<ExtArgs>
   bookmarks?: boolean | Prisma.Test$bookmarksArgs<ExtArgs>
+  assignments?: boolean | Prisma.Test$assignmentsArgs<ExtArgs>
   _count?: boolean | Prisma.TestCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["test"]>
 
@@ -2094,6 +2418,8 @@ export type TestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  maxAttempts?: boolean
+  calendarEventId?: boolean
   isHomework?: boolean
   batch?: boolean | Prisma.Test$batchArgs<ExtArgs>
   createdBy?: boolean | Prisma.Test$createdByArgs<ExtArgs>
@@ -2120,6 +2446,8 @@ export type TestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  maxAttempts?: boolean
+  calendarEventId?: boolean
   isHomework?: boolean
   batch?: boolean | Prisma.Test$batchArgs<ExtArgs>
   createdBy?: boolean | Prisma.Test$createdByArgs<ExtArgs>
@@ -2146,10 +2474,12 @@ export type TestSelectScalar = {
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  maxAttempts?: boolean
+  calendarEventId?: boolean
   isHomework?: boolean
 }
 
-export type TestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "batchId" | "createdById" | "type" | "duration" | "totalQuestions" | "totalMarks" | "startTime" | "endTime" | "status" | "questionOrder" | "optionOrder" | "accessType" | "price" | "publishedAt" | "isActive" | "createdAt" | "updatedAt" | "isHomework", ExtArgs["result"]["test"]>
+export type TestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "batchId" | "createdById" | "type" | "duration" | "totalQuestions" | "totalMarks" | "startTime" | "endTime" | "status" | "questionOrder" | "optionOrder" | "accessType" | "price" | "publishedAt" | "isActive" | "createdAt" | "updatedAt" | "maxAttempts" | "calendarEventId" | "isHomework", ExtArgs["result"]["test"]>
 export type TestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   batch?: boolean | Prisma.Test$batchArgs<ExtArgs>
   createdBy?: boolean | Prisma.Test$createdByArgs<ExtArgs>
@@ -2158,6 +2488,7 @@ export type TestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   results?: boolean | Prisma.Test$resultsArgs<ExtArgs>
   accesses?: boolean | Prisma.Test$accessesArgs<ExtArgs>
   bookmarks?: boolean | Prisma.Test$bookmarksArgs<ExtArgs>
+  assignments?: boolean | Prisma.Test$assignmentsArgs<ExtArgs>
   _count?: boolean | Prisma.TestCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2179,6 +2510,7 @@ export type $TestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     results: Prisma.$ResultPayload<ExtArgs>[]
     accesses: Prisma.$TestAccessPayload<ExtArgs>[]
     bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
+    assignments: Prisma.$AssignmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2201,6 +2533,8 @@ export type $TestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isActive: boolean
     createdAt: Date
     updatedAt: Date
+    maxAttempts: number
+    calendarEventId: string | null
     isHomework: boolean
   }, ExtArgs["result"]["test"]>
   composites: {}
@@ -2603,6 +2937,7 @@ export interface Prisma__TestClient<T, Null = never, ExtArgs extends runtime.Typ
   results<T extends Prisma.Test$resultsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Test$resultsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accesses<T extends Prisma.Test$accessesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Test$accessesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestAccessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bookmarks<T extends Prisma.Test$bookmarksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Test$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignments<T extends Prisma.Test$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Test$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2652,6 +2987,8 @@ export interface TestFieldRefs {
   readonly isActive: Prisma.FieldRef<"Test", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Test", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Test", 'DateTime'>
+  readonly maxAttempts: Prisma.FieldRef<"Test", 'Int'>
+  readonly calendarEventId: Prisma.FieldRef<"Test", 'String'>
   readonly isHomework: Prisma.FieldRef<"Test", 'Boolean'>
 }
     
@@ -3209,6 +3546,30 @@ export type Test$bookmarksArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.BookmarkScalarFieldEnum | Prisma.BookmarkScalarFieldEnum[]
+}
+
+/**
+ * Test.assignments
+ */
+export type Test$assignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Assignment
+   */
+  select?: Prisma.AssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Assignment
+   */
+  omit?: Prisma.AssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssignmentInclude<ExtArgs> | null
+  where?: Prisma.AssignmentWhereInput
+  orderBy?: Prisma.AssignmentOrderByWithRelationInput | Prisma.AssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.AssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssignmentScalarFieldEnum | Prisma.AssignmentScalarFieldEnum[]
 }
 
 /**

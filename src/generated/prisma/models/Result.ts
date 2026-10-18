@@ -95,6 +95,8 @@ export type ResultCountAggregateOutputType = {
   correct: number
   wrong: number
   unanswered: number
+  timePerQuestion: number
+  topicBreakdown: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -170,6 +172,8 @@ export type ResultCountAggregateInputType = {
   correct?: true
   wrong?: true
   unanswered?: true
+  timePerQuestion?: true
+  topicBreakdown?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -274,6 +278,8 @@ export type ResultGroupByOutputType = {
   correct: number
   wrong: number
   unanswered: number
+  timePerQuestion: runtime.JsonValue | null
+  topicBreakdown: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
   _count: ResultCountAggregateOutputType | null
@@ -314,6 +320,8 @@ export type ResultWhereInput = {
   correct?: Prisma.IntFilter<"Result"> | number
   wrong?: Prisma.IntFilter<"Result"> | number
   unanswered?: Prisma.IntFilter<"Result"> | number
+  timePerQuestion?: Prisma.JsonNullableFilter<"Result">
+  topicBreakdown?: Prisma.JsonNullableFilter<"Result">
   createdAt?: Prisma.DateTimeFilter<"Result"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Result"> | Date | string
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
@@ -333,6 +341,8 @@ export type ResultOrderByWithRelationInput = {
   correct?: Prisma.SortOrder
   wrong?: Prisma.SortOrder
   unanswered?: Prisma.SortOrder
+  timePerQuestion?: Prisma.SortOrderInput | Prisma.SortOrder
+  topicBreakdown?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
@@ -355,6 +365,8 @@ export type ResultWhereUniqueInput = Prisma.AtLeast<{
   correct?: Prisma.IntFilter<"Result"> | number
   wrong?: Prisma.IntFilter<"Result"> | number
   unanswered?: Prisma.IntFilter<"Result"> | number
+  timePerQuestion?: Prisma.JsonNullableFilter<"Result">
+  topicBreakdown?: Prisma.JsonNullableFilter<"Result">
   createdAt?: Prisma.DateTimeFilter<"Result"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Result"> | Date | string
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
@@ -374,6 +386,8 @@ export type ResultOrderByWithAggregationInput = {
   correct?: Prisma.SortOrder
   wrong?: Prisma.SortOrder
   unanswered?: Prisma.SortOrder
+  timePerQuestion?: Prisma.SortOrderInput | Prisma.SortOrder
+  topicBreakdown?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ResultCountOrderByAggregateInput
@@ -399,6 +413,8 @@ export type ResultScalarWhereWithAggregatesInput = {
   correct?: Prisma.IntWithAggregatesFilter<"Result"> | number
   wrong?: Prisma.IntWithAggregatesFilter<"Result"> | number
   unanswered?: Prisma.IntWithAggregatesFilter<"Result"> | number
+  timePerQuestion?: Prisma.JsonNullableWithAggregatesFilter<"Result">
+  topicBreakdown?: Prisma.JsonNullableWithAggregatesFilter<"Result">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Result"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Result"> | Date | string
 }
@@ -414,6 +430,8 @@ export type ResultCreateInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutResultsInput
@@ -433,6 +451,8 @@ export type ResultUncheckedCreateInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -448,6 +468,8 @@ export type ResultUpdateInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutResultsNestedInput
@@ -467,6 +489,8 @@ export type ResultUncheckedUpdateInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -484,6 +508,8 @@ export type ResultCreateManyInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -499,6 +525,8 @@ export type ResultUpdateManyMutationInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -516,6 +544,8 @@ export type ResultUncheckedUpdateManyInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -543,6 +573,8 @@ export type ResultCountOrderByAggregateInput = {
   correct?: Prisma.SortOrder
   wrong?: Prisma.SortOrder
   unanswered?: Prisma.SortOrder
+  timePerQuestion?: Prisma.SortOrder
+  topicBreakdown?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -714,6 +746,8 @@ export type ResultCreateWithoutStudentInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   test: Prisma.TestCreateNestedOneWithoutResultsInput
@@ -731,6 +765,8 @@ export type ResultUncheckedCreateWithoutStudentInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -777,6 +813,8 @@ export type ResultScalarWhereInput = {
   correct?: Prisma.IntFilter<"Result"> | number
   wrong?: Prisma.IntFilter<"Result"> | number
   unanswered?: Prisma.IntFilter<"Result"> | number
+  timePerQuestion?: Prisma.JsonNullableFilter<"Result">
+  topicBreakdown?: Prisma.JsonNullableFilter<"Result">
   createdAt?: Prisma.DateTimeFilter<"Result"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Result"> | Date | string
 }
@@ -792,6 +830,8 @@ export type ResultCreateWithoutTestInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutResultsInput
@@ -809,6 +849,8 @@ export type ResultUncheckedCreateWithoutTestInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -851,6 +893,8 @@ export type ResultCreateManyStudentInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -866,6 +910,8 @@ export type ResultUpdateWithoutStudentInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   test?: Prisma.TestUpdateOneRequiredWithoutResultsNestedInput
@@ -883,6 +929,8 @@ export type ResultUncheckedUpdateWithoutStudentInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -899,6 +947,8 @@ export type ResultUncheckedUpdateManyWithoutStudentInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -915,6 +965,8 @@ export type ResultCreateManyTestInput = {
   correct?: number
   wrong?: number
   unanswered?: number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -930,6 +982,8 @@ export type ResultUpdateWithoutTestInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutResultsNestedInput
@@ -947,6 +1001,8 @@ export type ResultUncheckedUpdateWithoutTestInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -963,6 +1019,8 @@ export type ResultUncheckedUpdateManyWithoutTestInput = {
   correct?: Prisma.IntFieldUpdateOperationsInput | number
   wrong?: Prisma.IntFieldUpdateOperationsInput | number
   unanswered?: Prisma.IntFieldUpdateOperationsInput | number
+  timePerQuestion?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  topicBreakdown?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -982,6 +1040,8 @@ export type ResultSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   correct?: boolean
   wrong?: boolean
   unanswered?: boolean
+  timePerQuestion?: boolean
+  topicBreakdown?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
@@ -1001,6 +1061,8 @@ export type ResultSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   correct?: boolean
   wrong?: boolean
   unanswered?: boolean
+  timePerQuestion?: boolean
+  topicBreakdown?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
@@ -1020,6 +1082,8 @@ export type ResultSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   correct?: boolean
   wrong?: boolean
   unanswered?: boolean
+  timePerQuestion?: boolean
+  topicBreakdown?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
@@ -1039,11 +1103,13 @@ export type ResultSelectScalar = {
   correct?: boolean
   wrong?: boolean
   unanswered?: boolean
+  timePerQuestion?: boolean
+  topicBreakdown?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ResultOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "testId" | "marks" | "totalMarks" | "percentage" | "rank" | "status" | "attempted" | "correct" | "wrong" | "unanswered" | "createdAt" | "updatedAt", ExtArgs["result"]["result"]>
+export type ResultOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "testId" | "marks" | "totalMarks" | "percentage" | "rank" | "status" | "attempted" | "correct" | "wrong" | "unanswered" | "timePerQuestion" | "topicBreakdown" | "createdAt" | "updatedAt", ExtArgs["result"]["result"]>
 export type ResultInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   test?: boolean | Prisma.TestDefaultArgs<ExtArgs>
@@ -1076,6 +1142,8 @@ export type $ResultPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     correct: number
     wrong: number
     unanswered: number
+    timePerQuestion: runtime.JsonValue | null
+    topicBreakdown: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["result"]>
@@ -1515,6 +1583,8 @@ export interface ResultFieldRefs {
   readonly correct: Prisma.FieldRef<"Result", 'Int'>
   readonly wrong: Prisma.FieldRef<"Result", 'Int'>
   readonly unanswered: Prisma.FieldRef<"Result", 'Int'>
+  readonly timePerQuestion: Prisma.FieldRef<"Result", 'Json'>
+  readonly topicBreakdown: Prisma.FieldRef<"Result", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Result", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Result", 'DateTime'>
 }

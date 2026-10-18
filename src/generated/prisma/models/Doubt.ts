@@ -20,8 +20,18 @@ export type DoubtModel = runtime.Types.Result.DefaultSelection<Prisma.$DoubtPayl
 
 export type AggregateDoubt = {
   _count: DoubtCountAggregateOutputType | null
+  _avg: DoubtAvgAggregateOutputType | null
+  _sum: DoubtSumAggregateOutputType | null
   _min: DoubtMinAggregateOutputType | null
   _max: DoubtMaxAggregateOutputType | null
+}
+
+export type DoubtAvgAggregateOutputType = {
+  attachmentSize: number | null
+}
+
+export type DoubtSumAggregateOutputType = {
+  attachmentSize: number | null
 }
 
 export type DoubtMinAggregateOutputType = {
@@ -33,6 +43,9 @@ export type DoubtMinAggregateOutputType = {
   status: $Enums.DoubtStatus | null
   createdAt: Date | null
   updatedAt: Date | null
+  attachmentUrl: string | null
+  attachmentMimeType: string | null
+  attachmentSize: number | null
 }
 
 export type DoubtMaxAggregateOutputType = {
@@ -44,6 +57,9 @@ export type DoubtMaxAggregateOutputType = {
   status: $Enums.DoubtStatus | null
   createdAt: Date | null
   updatedAt: Date | null
+  attachmentUrl: string | null
+  attachmentMimeType: string | null
+  attachmentSize: number | null
 }
 
 export type DoubtCountAggregateOutputType = {
@@ -55,9 +71,20 @@ export type DoubtCountAggregateOutputType = {
   status: number
   createdAt: number
   updatedAt: number
+  attachmentUrl: number
+  attachmentMimeType: number
+  attachmentSize: number
   _all: number
 }
 
+
+export type DoubtAvgAggregateInputType = {
+  attachmentSize?: true
+}
+
+export type DoubtSumAggregateInputType = {
+  attachmentSize?: true
+}
 
 export type DoubtMinAggregateInputType = {
   id?: true
@@ -68,6 +95,9 @@ export type DoubtMinAggregateInputType = {
   status?: true
   createdAt?: true
   updatedAt?: true
+  attachmentUrl?: true
+  attachmentMimeType?: true
+  attachmentSize?: true
 }
 
 export type DoubtMaxAggregateInputType = {
@@ -79,6 +109,9 @@ export type DoubtMaxAggregateInputType = {
   status?: true
   createdAt?: true
   updatedAt?: true
+  attachmentUrl?: true
+  attachmentMimeType?: true
+  attachmentSize?: true
 }
 
 export type DoubtCountAggregateInputType = {
@@ -90,6 +123,9 @@ export type DoubtCountAggregateInputType = {
   status?: true
   createdAt?: true
   updatedAt?: true
+  attachmentUrl?: true
+  attachmentMimeType?: true
+  attachmentSize?: true
   _all?: true
 }
 
@@ -131,6 +167,18 @@ export type DoubtAggregateArgs<ExtArgs extends runtime.Types.Extensions.Internal
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: DoubtAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: DoubtSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: DoubtMinAggregateInputType
@@ -161,6 +209,8 @@ export type DoubtGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   _count?: DoubtCountAggregateInputType | true
+  _avg?: DoubtAvgAggregateInputType
+  _sum?: DoubtSumAggregateInputType
   _min?: DoubtMinAggregateInputType
   _max?: DoubtMaxAggregateInputType
 }
@@ -174,7 +224,12 @@ export type DoubtGroupByOutputType = {
   status: $Enums.DoubtStatus
   createdAt: Date
   updatedAt: Date
+  attachmentUrl: string | null
+  attachmentMimeType: string | null
+  attachmentSize: number | null
   _count: DoubtCountAggregateOutputType | null
+  _avg: DoubtAvgAggregateOutputType | null
+  _sum: DoubtSumAggregateOutputType | null
   _min: DoubtMinAggregateOutputType | null
   _max: DoubtMaxAggregateOutputType | null
 }
@@ -206,6 +261,9 @@ export type DoubtWhereInput = {
   status?: Prisma.EnumDoubtStatusFilter<"Doubt"> | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFilter<"Doubt"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Doubt"> | Date | string
+  attachmentUrl?: Prisma.StringNullableFilter<"Doubt"> | string | null
+  attachmentMimeType?: Prisma.StringNullableFilter<"Doubt"> | string | null
+  attachmentSize?: Prisma.IntNullableFilter<"Doubt"> | number | null
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   batch?: Prisma.XOR<Prisma.BatchNullableScalarRelationFilter, Prisma.BatchWhereInput> | null
   replies?: Prisma.DoubtReplyListRelationFilter
@@ -220,6 +278,9 @@ export type DoubtOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  attachmentMimeType?: Prisma.SortOrderInput | Prisma.SortOrder
+  attachmentSize?: Prisma.SortOrderInput | Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
   batch?: Prisma.BatchOrderByWithRelationInput
   replies?: Prisma.DoubtReplyOrderByRelationAggregateInput
@@ -237,6 +298,9 @@ export type DoubtWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumDoubtStatusFilter<"Doubt"> | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFilter<"Doubt"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Doubt"> | Date | string
+  attachmentUrl?: Prisma.StringNullableFilter<"Doubt"> | string | null
+  attachmentMimeType?: Prisma.StringNullableFilter<"Doubt"> | string | null
+  attachmentSize?: Prisma.IntNullableFilter<"Doubt"> | number | null
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   batch?: Prisma.XOR<Prisma.BatchNullableScalarRelationFilter, Prisma.BatchWhereInput> | null
   replies?: Prisma.DoubtReplyListRelationFilter
@@ -251,9 +315,14 @@ export type DoubtOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  attachmentMimeType?: Prisma.SortOrderInput | Prisma.SortOrder
+  attachmentSize?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DoubtCountOrderByAggregateInput
+  _avg?: Prisma.DoubtAvgOrderByAggregateInput
   _max?: Prisma.DoubtMaxOrderByAggregateInput
   _min?: Prisma.DoubtMinOrderByAggregateInput
+  _sum?: Prisma.DoubtSumOrderByAggregateInput
 }
 
 export type DoubtScalarWhereWithAggregatesInput = {
@@ -268,6 +337,9 @@ export type DoubtScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumDoubtStatusWithAggregatesFilter<"Doubt"> | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Doubt"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Doubt"> | Date | string
+  attachmentUrl?: Prisma.StringNullableWithAggregatesFilter<"Doubt"> | string | null
+  attachmentMimeType?: Prisma.StringNullableWithAggregatesFilter<"Doubt"> | string | null
+  attachmentSize?: Prisma.IntNullableWithAggregatesFilter<"Doubt"> | number | null
 }
 
 export type DoubtCreateInput = {
@@ -277,6 +349,9 @@ export type DoubtCreateInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
   student: Prisma.StudentCreateNestedOneWithoutDoubtsInput
   batch?: Prisma.BatchCreateNestedOneWithoutDoubtsInput
   replies?: Prisma.DoubtReplyCreateNestedManyWithoutDoubtInput
@@ -291,6 +366,9 @@ export type DoubtUncheckedCreateInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
   replies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutDoubtInput
 }
 
@@ -301,6 +379,9 @@ export type DoubtUpdateInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   student?: Prisma.StudentUpdateOneRequiredWithoutDoubtsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutDoubtsNestedInput
   replies?: Prisma.DoubtReplyUpdateManyWithoutDoubtNestedInput
@@ -315,6 +396,9 @@ export type DoubtUncheckedUpdateInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   replies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutDoubtNestedInput
 }
 
@@ -327,6 +411,9 @@ export type DoubtCreateManyInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
 }
 
 export type DoubtUpdateManyMutationInput = {
@@ -336,6 +423,9 @@ export type DoubtUpdateManyMutationInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type DoubtUncheckedUpdateManyInput = {
@@ -347,6 +437,9 @@ export type DoubtUncheckedUpdateManyInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type DoubtListRelationFilter = {
@@ -368,6 +461,13 @@ export type DoubtCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrder
+  attachmentMimeType?: Prisma.SortOrder
+  attachmentSize?: Prisma.SortOrder
+}
+
+export type DoubtAvgOrderByAggregateInput = {
+  attachmentSize?: Prisma.SortOrder
 }
 
 export type DoubtMaxOrderByAggregateInput = {
@@ -379,6 +479,9 @@ export type DoubtMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrder
+  attachmentMimeType?: Prisma.SortOrder
+  attachmentSize?: Prisma.SortOrder
 }
 
 export type DoubtMinOrderByAggregateInput = {
@@ -390,6 +493,13 @@ export type DoubtMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  attachmentUrl?: Prisma.SortOrder
+  attachmentMimeType?: Prisma.SortOrder
+  attachmentSize?: Prisma.SortOrder
+}
+
+export type DoubtSumOrderByAggregateInput = {
+  attachmentSize?: Prisma.SortOrder
 }
 
 export type DoubtScalarRelationFilter = {
@@ -506,6 +616,9 @@ export type DoubtCreateWithoutStudentInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
   batch?: Prisma.BatchCreateNestedOneWithoutDoubtsInput
   replies?: Prisma.DoubtReplyCreateNestedManyWithoutDoubtInput
 }
@@ -518,6 +631,9 @@ export type DoubtUncheckedCreateWithoutStudentInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
   replies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutDoubtInput
 }
 
@@ -559,6 +675,9 @@ export type DoubtScalarWhereInput = {
   status?: Prisma.EnumDoubtStatusFilter<"Doubt"> | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFilter<"Doubt"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Doubt"> | Date | string
+  attachmentUrl?: Prisma.StringNullableFilter<"Doubt"> | string | null
+  attachmentMimeType?: Prisma.StringNullableFilter<"Doubt"> | string | null
+  attachmentSize?: Prisma.IntNullableFilter<"Doubt"> | number | null
 }
 
 export type DoubtCreateWithoutBatchInput = {
@@ -568,6 +687,9 @@ export type DoubtCreateWithoutBatchInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
   student: Prisma.StudentCreateNestedOneWithoutDoubtsInput
   replies?: Prisma.DoubtReplyCreateNestedManyWithoutDoubtInput
 }
@@ -580,6 +702,9 @@ export type DoubtUncheckedCreateWithoutBatchInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
   replies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutDoubtInput
 }
 
@@ -616,6 +741,9 @@ export type DoubtCreateWithoutRepliesInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
   student: Prisma.StudentCreateNestedOneWithoutDoubtsInput
   batch?: Prisma.BatchCreateNestedOneWithoutDoubtsInput
 }
@@ -629,6 +757,9 @@ export type DoubtUncheckedCreateWithoutRepliesInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
 }
 
 export type DoubtCreateOrConnectWithoutRepliesInput = {
@@ -654,6 +785,9 @@ export type DoubtUpdateWithoutRepliesInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   student?: Prisma.StudentUpdateOneRequiredWithoutDoubtsNestedInput
   batch?: Prisma.BatchUpdateOneWithoutDoubtsNestedInput
 }
@@ -667,6 +801,9 @@ export type DoubtUncheckedUpdateWithoutRepliesInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type DoubtCreateManyStudentInput = {
@@ -677,6 +814,9 @@ export type DoubtCreateManyStudentInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
 }
 
 export type DoubtUpdateWithoutStudentInput = {
@@ -686,6 +826,9 @@ export type DoubtUpdateWithoutStudentInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   batch?: Prisma.BatchUpdateOneWithoutDoubtsNestedInput
   replies?: Prisma.DoubtReplyUpdateManyWithoutDoubtNestedInput
 }
@@ -698,6 +841,9 @@ export type DoubtUncheckedUpdateWithoutStudentInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   replies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutDoubtNestedInput
 }
 
@@ -709,6 +855,9 @@ export type DoubtUncheckedUpdateManyWithoutStudentInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type DoubtCreateManyBatchInput = {
@@ -719,6 +868,9 @@ export type DoubtCreateManyBatchInput = {
   status?: $Enums.DoubtStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachmentUrl?: string | null
+  attachmentMimeType?: string | null
+  attachmentSize?: number | null
 }
 
 export type DoubtUpdateWithoutBatchInput = {
@@ -728,6 +880,9 @@ export type DoubtUpdateWithoutBatchInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   student?: Prisma.StudentUpdateOneRequiredWithoutDoubtsNestedInput
   replies?: Prisma.DoubtReplyUpdateManyWithoutDoubtNestedInput
 }
@@ -740,6 +895,9 @@ export type DoubtUncheckedUpdateWithoutBatchInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   replies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutDoubtNestedInput
 }
 
@@ -751,6 +909,9 @@ export type DoubtUncheckedUpdateManyWithoutBatchInput = {
   status?: Prisma.EnumDoubtStatusFieldUpdateOperationsInput | $Enums.DoubtStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachmentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachmentSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -793,6 +954,9 @@ export type DoubtSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  attachmentUrl?: boolean
+  attachmentMimeType?: boolean
+  attachmentSize?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   batch?: boolean | Prisma.Doubt$batchArgs<ExtArgs>
   replies?: boolean | Prisma.Doubt$repliesArgs<ExtArgs>
@@ -808,6 +972,9 @@ export type DoubtSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  attachmentUrl?: boolean
+  attachmentMimeType?: boolean
+  attachmentSize?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   batch?: boolean | Prisma.Doubt$batchArgs<ExtArgs>
 }, ExtArgs["result"]["doubt"]>
@@ -821,6 +988,9 @@ export type DoubtSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  attachmentUrl?: boolean
+  attachmentMimeType?: boolean
+  attachmentSize?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   batch?: boolean | Prisma.Doubt$batchArgs<ExtArgs>
 }, ExtArgs["result"]["doubt"]>
@@ -834,9 +1004,12 @@ export type DoubtSelectScalar = {
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  attachmentUrl?: boolean
+  attachmentMimeType?: boolean
+  attachmentSize?: boolean
 }
 
-export type DoubtOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "batchId" | "subject" | "questionText" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["doubt"]>
+export type DoubtOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "batchId" | "subject" | "questionText" | "status" | "createdAt" | "updatedAt" | "attachmentUrl" | "attachmentMimeType" | "attachmentSize", ExtArgs["result"]["doubt"]>
 export type DoubtInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   batch?: boolean | Prisma.Doubt$batchArgs<ExtArgs>
@@ -868,6 +1041,9 @@ export type $DoubtPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     status: $Enums.DoubtStatus
     createdAt: Date
     updatedAt: Date
+    attachmentUrl: string | null
+    attachmentMimeType: string | null
+    attachmentSize: number | null
   }, ExtArgs["result"]["doubt"]>
   composites: {}
 }
@@ -1302,6 +1478,9 @@ export interface DoubtFieldRefs {
   readonly status: Prisma.FieldRef<"Doubt", 'DoubtStatus'>
   readonly createdAt: Prisma.FieldRef<"Doubt", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Doubt", 'DateTime'>
+  readonly attachmentUrl: Prisma.FieldRef<"Doubt", 'String'>
+  readonly attachmentMimeType: Prisma.FieldRef<"Doubt", 'String'>
+  readonly attachmentSize: Prisma.FieldRef<"Doubt", 'Int'>
 }
     
 

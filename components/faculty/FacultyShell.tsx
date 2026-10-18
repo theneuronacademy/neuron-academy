@@ -3,10 +3,11 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, FileText, CalendarCheck, Bell, LogOut, User, BarChart3, Layers, CalendarDays, HelpCircle } from "lucide-react";
+import { LayoutDashboard, Users, FileText, CalendarCheck, Bell, LogOut, User, BarChart3, Layers, CalendarDays, HelpCircle, BookOpen, ClipboardList, Award, MessageSquare } from "lucide-react";
 import { Logo } from "@/components/website/Logo";
 import { LangProvider, LangToggle, useLang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { FacultyQueryProvider } from "@/components/faculty/FacultyQueryProvider";
 
 const FACULTY_ITEMS = [
   { href: "/faculty/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
@@ -17,14 +18,20 @@ const FACULTY_ITEMS = [
   { href: "/faculty/results", labelKey: "results", icon: BarChart3 },
   { href: "/faculty/analytics", labelKey: "analytics", icon: BarChart3 },
   { href: "/faculty/timetable", labelKey: "timetable", icon: CalendarDays },
+  { href: "/faculty/materials", labelKey: "materials", icon: BookOpen },
+  { href: "/faculty/assignments", labelKey: "assignments", icon: ClipboardList },
+  { href: "/faculty/gradebook", labelKey: "gradebook", icon: Award },
   { href: "/faculty/doubts", labelKey: "doubts", icon: HelpCircle },
   { href: "/faculty/notifications", labelKey: "notifications", icon: Bell },
+  { href: "/faculty/parents", labelKey: "parents", icon: MessageSquare },
 ] as const;
 
 export function FacultyShell({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <LangProvider>
-      <FacultyInner title={title} subtitle={subtitle}>{children}</FacultyInner>
+      <FacultyQueryProvider>
+        <FacultyInner title={title} subtitle={subtitle}>{children}</FacultyInner>
+      </FacultyQueryProvider>
     </LangProvider>
   );
 }
