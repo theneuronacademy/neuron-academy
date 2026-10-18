@@ -26,6 +26,16 @@ import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
 import { Reveal, Marquee, Tilt, FloatingEmojis, ConfettiBurst, WaveDivider } from "@/components/website/motion";
 import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
+import {
+  OrganizationJsonLd,
+  CourseListJsonLd,
+  CourseJsonLd,
+  FacultyJsonLd,
+  TestimonialJsonLd,
+  ResultJsonLd,
+  FAQJsonLd,
+  WebSiteJsonLd,
+} from "@/components/website/SchemaMarkup";
 import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
 import type { Testimonial } from "@/data/testimonials";
@@ -304,6 +314,13 @@ export default function HomePage() {
       <AdvertisementPopup />
 
       <main>
+        {/* Schema.org Structured Data */}
+        <WebSiteJsonLd />
+        <OrganizationJsonLd />
+        <CourseListJsonLd courses={courseList} />
+        <TestimonialJsonLd testimonials={testimonialList ?? []} />
+        <ResultJsonLd results={wall} />
+        <FAQJsonLd faqs={FAQS.map((f) => ({ question: f.question, answer: f.answer }))} />
         {/* RUNNING BANNER — at the very start, admin-controlled */}
         <TopRunningBanner />
         <Hero />
@@ -478,6 +495,13 @@ export default function HomePage() {
             <Reveal>
               <SectionHeader eyebrow="🧑‍🏫 FACULTY" title="Learn From Mentors Who've Been There 🌟" desc="IIT, medical & AMU/JMI alumni guiding every batch. 💪" />
             </Reveal>
+            {facultyList.length > 0 && (
+              <>
+                {facultyList.map((f) => (
+                  <FacultyJsonLd key={f.id} faculty={f} />
+                ))}
+              </>
+            )}
             {facultyList.length === 0 ? (
               <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-background p-8 text-center text-sm font-bold text-muted">No faculty profiles published yet.</p>
             ) : (
@@ -745,17 +769,23 @@ export default function HomePage() {
 
       <Footer />
       {selectedCourse ? (
-        <CourseDetails
-          course={selectedCourse}
-          onClose={() => setSelectedCourse(null)}
-          onEnroll={() => {
-            setSelectedCourse(null);
-            document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        />
+        <>
+          <CourseJsonLd course={selectedCourse} />
+          <CourseDetails
+            course={selectedCourse}
+            onClose={() => setSelectedCourse(null)}
+            onEnroll={() => {
+              setSelectedCourse(null);
+              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          />
+        </>
       ) : null}
       {selectedFaculty ? (
-        <FacultyDetails member={selectedFaculty} onClose={() => setSelectedFaculty(null)} />
+        <>
+          <FacultyJsonLd faculty={selectedFaculty} />
+          <FacultyDetails member={selectedFaculty} onClose={() => setSelectedFaculty(null)} />
+        </>
       ) : null}
     </div>
   );

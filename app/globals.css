@@ -7,7 +7,7 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   CSS Variables - Premium Educational Theme
+   CSS Variables - Premium Educational Theme (Light Mode Default)
    ========================================================================== */
 :root {
   --bg-primary: #fafafa;
@@ -24,210 +24,68 @@
 }
 
 /* ==========================================================================
-   Premium Background Gradients - Symmetric Patterns
+   Dark Mode CSS Variables
    ========================================================================== */
-
-/* Metallic Navy Gradient Hero */
-.bg-metallic-navy {
-  background: linear-gradient(135deg, #24466d 0%, #183653 50%, #0d2435 100%);
-  background-size: 400% 400%;
-  animation: gradient-pan 6s ease-in-out infinite;
-}
-
-/* Metallic Gold Accent */
-.bg-metallic-gold {
-  background: linear-gradient(135deg, #d4af37 0%, #f4e3a1 50%, #d4af37 100%);
-  background-size: 400% 400%;
-  animation: gradient-pan 6s ease-in-out infinite;
-}
-
-/* Aurora Educational Background */
-.bg-aurora {
-  background: radial-gradient(circle at 20% 20%, rgba(36, 70, 109, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(0, 140, 158, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 60% 40%, rgba(180, 69, 61, 0.15) 0%, transparent 50%);
-}
-
-/* vascular paper pattern */
-.bg-subtle-lines {
-  background-image: 
-    linear-gradient(rgba(36, 70, 109, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(36, 70, 109, 0.03) 1px, transparent 1px);
-  background-size: 50px 50px;
+.dark {
+  --bg-primary: #0d2435;
+  --bg-secondary: #081825;
+  --bg-tertiary: #183653;
+  --accent-navy: #1aa6b5;
+  --accent-teal: #1aa6b5;
+  --accent-crimson: #d94a3f;
+  --accent-gold: #f4e3a1;
+  --text-primary: #f7f9fa;
+  --text-secondary: #93a1ad;
+  --text-muted: #cbd3da;
+  --border-default: #24466d;
 }
 
 /* ==========================================================================
-   Metallic Card Styles
+   Premium Background Gradients - Symmetric Patterns (via Tailwind)
    ========================================================================== */
-.metallic-dark {
-  background: linear-gradient(135deg, #24466d 0%, #183653 100%);
-  /* Dual-layer metallic sheen */
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    0 1px 2px rgba(36, 70, 109, 0.08),
-    0 4px 12px rgba(0, 0, 0, 0.15);
-}
 
-/* Gold card accent */
-.metallic-gold {
-  background: linear-gradient(135deg, #f4e3a1 0%, #d4af37 100%);
-  box-shadow: 
-    inset 0 1px 0 rgba(0, 0, 0, 0.05),
-    0 1px 2px rgba(0, 0, 0, 0.1),
-    0 4px 12px rgba(212, 175, 55, 0.15);
-}
-
-/* Silver card */
-.metallic-silver {
-  background: #f7f9fa;
-  border: 1px solid #d7dee4;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
+/* These are now available as bg-[image-name] utilities from tailwind.config.ts
+   Example: bg-metallic-navy, bg-aurora, bg-hero-gradient, bg-symmetric-grid, etc. */
 
 /* ==========================================================================
-   Premium Ring Effects
+   Metallic Card Styles (via Tailwind utilities)
    ========================================================================== */
-.premium-ring {
-  box-shadow: 
-    0 0 0 2px rgba(36, 70, 109, 0.2),
-    0 4px 20px rgba(0, 0, 0, 0.1);
-}
 
-.premium-ring-teal {
-  box-shadow: 
-    0 0 0 2px rgba(0, 140, 158, 0.3),
-    0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.premium-ring-gold {
-  box-shadow: 
-    0 0 0 2px rgba(212, 175, 55, 0.3),
-    0 4px 20px rgba(212, 175, 55, 0.2);
-}
+/* Available as: bg-metallic-dark, bg-metallic-gold-card, shadow-metallic, shadow-metallic-gold */
 
 /* ==========================================================================
-   Card Lift Hover Effect
+   Premium Ring Effects (via Tailwind utilities)
    ========================================================================== */
-.card-lift {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.card-lift:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(36, 70, 109, 0.1);
-}
-
-.card-lift-teal:hover {
-  box-shadow: 
-    0 12px 40px rgba(0, 140, 158, 0.2),
-    0 0 0 1px rgba(0, 140, 158, 0.1);
-}
-
-.card-lift-gold:hover {
-  box-shadow: 
-    0 12px 40px rgba(212, 175, 55, 0.2),
-    0 0 0 1px rgba(212, 175, 55, 0.1);
-}
+/* Available as: shadow-premium-ring, shadow-premium-ring-teal, shadow-premium-ring-gold */
 
 /* ==========================================================================
-   Metallic Button Styles
+   Card Lift Hover Effect (via Tailwind utilities)
    ========================================================================== */
-.btn-metallic-sheen {
+
+/* Available as: hover:shadow-card-lift, hover:shadow-card-lift-teal, hover:shadow-card-lift-gold */
+
+/* ==========================================================================
+   Button Styles (via Tailwind utilities)
+   ========================================================================== */
+
+/* Available as: bg-btn-navy hover:bg-btn-navy-hover shadow-btn-navy, etc. */
+
+/* ==========================================================================
+   Shimmer Sweep for CTA Buttons
+   ========================================================================== */
+.shine-sweep {
   position: relative;
   overflow: hidden;
-  transition: all 0.2s ease;
 }
-
-.btn-metallic-sheen::before {
-  content: '';
+.shine-sweep::after {
+  content: "";
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.btn-metallic-sheen:hover::before {
-  left: 100%;
-}
-
-.btn-navy {
-  background: linear-gradient(135deg, #24466d 0%, #183653 100%);
-  color: white;
-  border: none;
-}
-
-.btn-navy:hover {
-  background: linear-gradient(135deg, #183653 0%, #0d2435 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(36, 70, 109, 0.3);
-}
-
-.btn-teal {
-  background: linear-gradient(135deg, #008c9e 0%, #007a8a 100%);
-  color: white;
-  border: none;
-}
-
-.btn-teal:hover {
-  background: linear-gradient(135deg, #007a8a 0%, #006070 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 140, 158, 0.3);
-}
-
-.btn-gold {
-  background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
-  color: #1a2b3a;
-  border: none;
-}
-
-.btn-gold:hover {
-  background: linear-gradient(135deg, #b8941f 0%, #a67c1a 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-}
-
-.btn-crimson {
-  background: linear-gradient(135deg, #b4453d 0%, #963a34 100%);
-  color: white;
-  border: none;
-}
-
-.btn-crimson:hover {
-  background: linear-gradient(135deg, #963a34 0%, #85302a 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(180, 69, 61, 0.3);
-}
-
-/* ==========================================================================
-   Button Metallic Sheen Animation
-   ========================================================================== */
-.btn-metallic-sheen {
-  background: linear-gradient(135deg, #24466d 0%, #183653 100%);
-  color: white;
-  position: relative;
-  z-index: 1;
-}
-
-/* ==========================================================================
-   Hero Background Utilities
-   ========================================================================== */
-.bg-symmetric-grid {
-  background-image: 
-    linear-gradient(rgba(36, 70, 109, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(36, 70, 109, 0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
-
-.bg-hero-gradient {
-  background: 
-    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(36, 70, 109, 0.4) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0, 140, 158, 0.3) 0%, transparent 50%),
-    linear-gradient(135deg, #24466d 0%, #183653 100%);
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.45) 50%, transparent 60%);
+  transform: translateX(-100%);
+  animation: shimmer 3.2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* ==========================================================================
@@ -265,7 +123,6 @@
   font-weight: 600;
 }
 
-/* Color-only status must have text alternative */
 .status-dot {
   width: 8px;
   height: 8px;
@@ -282,58 +139,6 @@ label {
   cursor: text;
 }
 
-/* Input with premium styling */
-.input-premium {
-  background: #fff;
-  border: 1px solid var(--border-default);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.input-premium:focus {
-  outline: none;
-  border-color: var(--accent-teal);
-  box-shadow: 0 0 0 3px rgba(0, 140, 158, 0.1);
-}
-
-/* ==========================================================================
-   Image with Fallback and Gradient
-   ========================================================================== */
-.premium-image {
-  background: linear-gradient(135deg, #24466d 0%, #183653 100%);
-}
-
-/* ==========================================================================
-   Table Row Hover
-   ========================================================================== */
-.table-row-hover {
-  transition: background-color 0.2s ease;
-}
-
-.table-row-hover:hover {
-  background: var(--bg-tertiary);
-}
-
-/* ==========================================================================
-   Alert and Toast Enhancements
-   ========================================================================== */
-.toast-success {
-  background: #e6fdf5;
-  border: 1px solid #a7f3e6;
-  color: #28a745;
-}
-
-.toast-error {
-  background: #fdf2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-}
-
-.toast-info {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #2563eb;
-}
-
 /* ==========================================================================
    Focus Visible for Keyboard Navigation
    ========================================================================== */
@@ -344,7 +149,7 @@ label {
 
 /* ==========================================================================
    Playful Motion Utilities — homepage "alive" layer
-   (All animations already respect prefers-reduced-motion via the rule above
+   (All animations already respect prefers-reduced-motion via the rule below
    plus the component-level guards in motion.tsx.)
    ========================================================================== */
 
@@ -359,29 +164,7 @@ label {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.2; }
-}
-@keyframes shimmer {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
-}
-@keyframes wiggle {
-  0%, 100% { transform: rotate(-5deg); }
-  50% { transform: rotate(5deg); }
-}
-@keyframes spin360 {
-  to { transform: rotate(360deg); }
-}
-@keyframes wave-drift {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-@keyframes confetti-fly {
-  0% { transform: translate(0, 0) scale(0.4) rotate(0deg); opacity: 1; }
-  100% { transform: translate(var(--dx, 0px), var(--dy, -80px)) scale(1.15) rotate(260deg); opacity: 0; }
-}
+
 .marquee-track {
   animation: marquee 28s linear infinite;
 }
@@ -406,21 +189,6 @@ label {
   transform-style: preserve-3d;
   transition: transform 0.18s ease-out, box-shadow 0.3s ease;
   will-change: transform;
-}
-
-/* Shimmer sweep for CTA buttons */
-.shine-sweep {
-  position: relative;
-  overflow: hidden;
-}
-.shine-sweep::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.45) 50%, transparent 60%);
-  transform: translateX(-100%);
-  animation: shimmer 3.2s ease-in-out infinite;
-  pointer-events: none;
 }
 
 /* Floating emoji layer */
@@ -494,14 +262,6 @@ label {
    - cards get a gentle hover lift (pairs with .card-lift)
    Covered automatically by the prefers-reduced-motion rule below.
    ========================================================================== */
-@keyframes page-enter {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes section-rise {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 body main {
   animation: page-enter 0.55s ease-out both;
 }
@@ -522,4 +282,74 @@ body main > section:nth-child(n+5) { animation-delay: 0.24s; }
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* ==========================================================================
+   Dark Mode Specific Adjustments
+   ========================================================================== */
+.dark .bg-white {
+  background-color: var(--bg-secondary);
+}
+.dark .text-ink {
+  color: var(--text-primary);
+}
+.dark .text-muted {
+  color: var(--text-muted);
+}
+.dark .border-silver-200 {
+  border-color: var(--border-default);
+}
+.dark .bg-silver-50 {
+  background-color: var(--bg-tertiary);
+}
+.dark .bg-silver-100 {
+  background-color: var(--bg-tertiary);
+}
+.dark .text-navy-700 {
+  color: var(--text-primary);
+}
+.dark .text-navy-800 {
+  color: var(--text-primary);
+}
+.dark .bg-navy-50 {
+  background-color: rgba(36, 70, 109, 0.1);
+}
+.dark .bg-navy-800 {
+  background-color: var(--bg-primary);
+}
+.dark .bg-navy-700 {
+  background-color: var(--accent-navy);
+}
+.dark .text-white {
+  color: var(--text-primary);
+}
+.dark .text-silver-200 {
+  color: var(--text-secondary);
+}
+.dark .text-silver-300 {
+  color: var(--text-muted);
+}
+.dark .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.dark .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.dark .border-white\/30 {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.dark .border-white\/40 {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.dark .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.dark .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.dark .bg-white\/90 {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+.dark .bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.8);
 }

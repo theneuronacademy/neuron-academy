@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { BackToTop, FloatingEmojis, ScrollProgress } from "@/components/website/motion";
+import { ThemeProvider } from "@/components/website/ThemeProvider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -60,22 +61,24 @@ function OrganizationJsonLd() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="min-h-screen bg-background text-ink antialiased">
-        <ScrollProgress />
-        {/* Sitewide decorative emoji drift — pointer-events-none, aria-hidden, never interactive. */}
-        <div aria-hidden className="pointer-events-none fixed inset-0 z-[70] overflow-hidden">
-          <FloatingEmojis count={6} />
-        </div>
-        <OrganizationJsonLd />
-        {children}
-        <BackToTop />
-        {/* PWA service worker: offline shell only (never stale app data). */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})}`,
-          }}
-        />
+        <ThemeProvider>
+          <ScrollProgress />
+          {/* Sitewide decorative emoji drift — pointer-events-none, aria-hidden, never interactive. */}
+          <div aria-hidden className="pointer-events-none fixed inset-0 z-[70] overflow-hidden">
+            <FloatingEmojis count={6} />
+          </div>
+          <OrganizationJsonLd />
+          {children}
+          <BackToTop />
+          {/* PWA service worker: offline shell only (never stale app data). */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})}`,
+            }}
+          />
+        </ThemeProvider>
       </body>
     </html>
   );
