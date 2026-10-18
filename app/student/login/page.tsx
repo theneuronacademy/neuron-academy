@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { GraduationCap } from "lucide-react";
 import { studentLogin } from "@/lib/studentAuth";
 import { Button } from "@/components/ui/primitives";
-import { Msg91Widget } from "@/components/auth/Msg91Widget";
 
 export default function StudentLoginPage() {
   const router = useRouter();
@@ -14,7 +13,6 @@ export default function StudentLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [widgetOpen, setWidgetOpen] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,50 +57,6 @@ export default function StudentLoginPage() {
     else setError("Invalid mobile number or password.");
   }
 
-  async function handleWidgetSuccess(accessToken: string) {
-    setError(null);
-    setBusy(true);
-    try {
-      const res = await fetch("/api/auth/widget/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken }),
-      });
-      const json = await res.json().catch(() => null);
-      if (res.ok && json?.success === true) {
-        try {
-          window.localStorage.setItem(
-            "neuron_student_session",
-            JSON.stringify({
-              studentId: json.data.student.studentId,
-              name: json.data.student.name,
-              loggedInAt: new Date().toISOString(),
-            })
-          );
-        } catch {
-          /* ignore */
-        }
-        router.push("/student/dashboard");
-        return;
-      }
-      if (res.status === 403) {
-        setError(json?.error ?? "This account is deactivated. Contact the academy office.");
-        return;
-      }
-      setError(json?.error ?? "Verification failed. Please try again.");
-    } catch {
-      setError("Cannot reach the server. Check your connection and try again.");
-    } finally {
-      setBusy(false);
-      setWidgetOpen(false);
-    }
-  }
-
-  function handleWidgetError(error: string) {
-    setError(error);
-    setWidgetOpen(false);
-  }
-
   return (
     <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md overflow-hidden rounded-[22px] bg-white shadow-2xl">
@@ -126,34 +80,9 @@ export default function StudentLoginPage() {
           </div>
           <Button type="submit" size="lg" className="w-full" disabled={busy}>{busy ? "Signing in…" : "Login"}</Button>
 
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-silver-300" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted">Or login with</span>
-            </div>
-          </div>
-
-          {widgetOpen ? (
-            <Msg91Widget
-              onSuccess={handleWidgetSuccess}
-              onError={handleWidgetError}
-              onCancel={() => setWidgetOpen(false)}
-            />
-          ) : (
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              className="w-full"
-              onClick={() => setWidgetOpen(true)}
-              disabled={busy}
-            >
-              Verify with OTP Widget
-            </Button>
-          )}
-
+          <p className="text-center text-[13px] font-semibold text-muted">
+            <Link href="/student/forgot-password" className="font-bold text-teal-600 hover:underline">Forgot Password?</Link>
+          </p>
           <p className="text-center text-[13px] font-semibold text-muted">
             New student? <Link href="/student/register" className="font-bold text-teal-600 hover:underline">Create an account</Link>
           </p>
