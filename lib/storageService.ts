@@ -211,7 +211,13 @@ export class StorageService {
     }
 
     const data = await response.json();
-    return data.map((item: any) => ({
+    interface SupabaseListItem {
+      name: string;
+      metadata?: { size?: number };
+      updated_at?: string;
+      created_at?: string;
+    }
+    return data.map((item: SupabaseListItem) => ({
       ref: `supabase://${supabaseBucket}/${item.name}`,
       size: item.metadata?.size || 0,
       lastModified: new Date(item.updated_at || item.created_at),
@@ -433,7 +439,6 @@ export async function deleteFile(ref: string): Promise<boolean> {
 }
 
 export function generateStoragePath(category: string, filename: string): string {
-  const ext = filename.split(".").pop()?.toLowerCase() || "";
   const safeName = filename.replace(/[^a-zA-Z0-9.-]/g, "_").slice(0, 100);
   const datePrefix = new Date().toISOString().slice(0, 10).replace(/-/g, "/");
   return `${category}/${datePrefix}/${randomUUID()}-${safeName}`;
