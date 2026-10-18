@@ -198,7 +198,7 @@ export default function FacultyAnalyticsPage() {
 
       {/* At-Risk Students */}
       <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card mb-4">
-        <p className="text-[15px] font-extrabold text-navy-700 mb-4">\u26A0\uFE0F Needs Attention (Att &lt; 75% or Avg &lt; 40%)</p>
+        <p className="text-[15px] font-extrabold text-navy-700 mb-4">\u26A0\uFE0F Needs Attention {'Att < 75% or Avg < 40%'}</p>
         {weak.length === 0 ? (
           <p className="text-sm text-muted">No at-risk students by current thresholds.</p>
         ) : (
@@ -247,4 +247,3 @@ export default function FacultyAnalyticsPage() {
     </FacultyShell>
   );
 }
-

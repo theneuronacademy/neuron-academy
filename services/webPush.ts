@@ -28,6 +28,9 @@ export function isWebPushConfigured(): boolean {
   return webPushEnv() !== null;
 }
 
+// Legacy constant for backwards compatibility with tests
+export const WEB_PUSH_PROVIDER_MISSING = "WEB_PUSH_PROVIDER_MISSING";
+
 /** Initialize web-push with VAPID credentials. */
 function initWebPush(): boolean {
   const env = webPushEnv();

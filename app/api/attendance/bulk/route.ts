@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   if (!db) return dbNotConfigured("Bulk marking attendance");
 
-  let body: BulkPayload;
+  let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {

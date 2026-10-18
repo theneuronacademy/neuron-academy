@@ -15,6 +15,14 @@ interface Category {
   color: string;
 }
 
+function toJson(categories: Category[]): unknown {
+  return categories;
+}
+
+function fromJson(json: unknown): Category[] {
+  return json as Category[];
+}
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = requireApiRole(req, ["ADMIN", "FACULTY"]);
   if (!auth.ok) return fail(auth.error, auth.status);
@@ -47,7 +55,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       });
     }
 
-    return ok({ categories: config.categories as Category[] });
+    return ok({ categories: fromJson(config.categories) });
   } catch (err) {
     return serverError("gradebook:config:get", err);
   }
@@ -101,14 +109,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try {
     const config = await db.gradebookConfig.upsert({
       where: { batchId: id },
-      update: { categories: categories as unknown as import("@prisma/client").Json },
+      update: { categories: toJson(categories) },
       create: {
         batchId: id,
-        categories: categories as unknown as import("@prisma/client").Json,
+        categories: toJson(categories),
       },
     });
 
-    return ok({ config: { categories: config.categories as Category[] } });
+    return ok({ config: { categories: fromJson(config.categories) } });
   } catch (err) {
     return serverError("gradebook:config:save", err);
   }
