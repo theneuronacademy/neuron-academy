@@ -36,11 +36,12 @@ export async function POST(req: NextRequest) {
     if (!profile) return fail("Student profile not found.", 403);
 
     const user = await db.user.findUnique({ where: { id: auth.user.id } });
+    const userWith2FA = user as { totpEnabled?: boolean; totpSecret?: string; backupCodes?: string[] };
     if (!user) return fail("User not found.", 404);
-    if (!user.totpEnabled) return fail("2FA is not enabled.", 400);
-    if (!user.totpSecret) return fail("2FA secret not found.", 400);
+    if (!userWith2FA.totpEnabled) return fail("2FA is not enabled.", 400);
+    if (!userWith2FA.totpSecret) return fail("2FA secret not found.", 400);
 
-    if (!verifyTotp(user.totpSecret, token)) {
+    if (!verifyTotp(userWith2FA.totpSecret, token)) {
       return fail("Invalid code. Check your authenticator app.", 400);
     }
 
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
         totpEnabled: false,
         totpSecret: null,
         backupCodes: [],
-      },
+      } as { totpEnabled: boolean; totpSecret: null; backupCodes: string[] },
     });
 
     return ok({ disabled: true, message: "2FA disabled successfully." });

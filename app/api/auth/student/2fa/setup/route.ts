@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
     const user = await db.user.findUnique({ where: { id: auth.user.id } });
     if (!user) return fail("User not found.", 404);
 
-    if (user.totpEnabled) {
+    const userWith2FA = user as { totpEnabled?: boolean; totpSecret?: string; backupCodes?: string[] };
+    if (userWith2FA.totpEnabled) {
       return fail("2FA is already enabled. Disable it first to reconfigure.", 400);
     }
 
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
       data: {
         totpSecret: secret,
         backupCodes: backupCodes,
-      },
+      } as { totpSecret: string; backupCodes: string[] },
     });
 
     return ok({

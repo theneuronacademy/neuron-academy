@@ -9,6 +9,7 @@ import { requireApiRole } from "@/lib/server-auth";
 import { verifyTotp } from "@/lib/totp";
 import { createSessionToken, isAuthConfigured, sessionCookieHeader } from "@/lib/session";
 import { sanitizeUser } from "@/lib/server-auth";
+import { normalizePhone, verifyPassword } from "@/lib/credentials";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 15;
@@ -38,18 +39,19 @@ export async function POST(req: NextRequest) {
       if (!auth.ok) return fail(auth.error, auth.status);
 
       const user = await db.user.findUnique({ where: { id: auth.user.id } });
-      if (!user || !user.totpSecret) {
+      const userWith2FA = user as { totpSecret?: string; totpEnabled?: boolean };
+      if (!user || !userWith2FA.totpSecret) {
         return fail("No pending 2FA setup found.", 400);
       }
 
-      if (!verifyTotp(user.totpSecret, token)) {
+      if (!verifyTotp(userWith2FA.totpSecret, token)) {
         return fail("Invalid code. Check your authenticator app.", 400);
       }
 
       // Enable 2FA
       await db.user.update({
         where: { id: user.id },
-        data: { totpEnabled: true },
+        data: { totpEnabled: true } as { totpEnabled: boolean },
       });
 
       return ok({ enabled: true, message: "2FA enabled successfully." });
@@ -63,7 +65,6 @@ export async function POST(req: NextRequest) {
         return fail("Mobile and password required for login.", 400);
       }
 
-      const { normalizePhone, verifyPassword } = await import("@/lib/credentials");
       const normalizedPhone = normalizePhone(phone);
       if (!normalizedPhone) return fail("Invalid mobile number.", 400);
 
@@ -72,7 +73,9 @@ export async function POST(req: NextRequest) {
       if (!student || !user || user.role !== "STUDENT") return fail("Invalid mobile number or password.", 401);
       if (!(await verifyPassword(password, user.passwordHash))) return fail("Invalid mobile number or password.", 401);
       if (!user.isActive) return fail("This account is deactivated.", 403);
-      if (!user.totpEnabled) return fail("2FA not enabled for this account.", 400);
+
+      const userWith2FA = user as { totpEnabled?: boolean; totpSecret?: string; backupCodes?: string[] };
+      if (!userWith2FA.totpEnabled) return fail("2FA not enabled for this account.", 400);
 
       let verified = false;
       let consumedBackup = false;
@@ -80,15 +83,15 @@ export async function POST(req: NextRequest) {
       if (backupCode) {
         // Verify backup code
         const { verifyAndConsumeBackupCode } = await import("@/lib/totp");
-        const result = verifyAndConsumeBackupCode(user.backupCodes ?? [], backupCode);
+        const result = verifyAndConsumeBackupCode(userWith2FA.backupCodes ?? [], backupCode);
         if (result.valid) {
           verified = true;
           consumedBackup = true;
-          await db.user.update({ where: { id: user.id }, data: { backupCodes: result.remaining } });
+          await db.user.update({ where: { id: user.id }, data: { backupCodes: result.remaining } as { backupCodes: string[] } });
         }
       } else {
         // Verify TOTP
-        if (!user.totpSecret || !verifyTotp(user.totpSecret, token)) {
+        if (!userWith2FA.totpSecret || !verifyTotp(userWith2FA.totpSecret, token)) {
           return fail("Invalid code or backup code.", 401);
         }
         verified = true;
