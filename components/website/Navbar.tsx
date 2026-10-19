@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/websiteData";
 import { Logo } from "@/components/website/Logo";
-import { ThemeToggle, ThemeToggleCompact } from "@/components/website/ThemeToggle";
+
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -82,7 +82,6 @@ export function Navbar() {
           <a href="/admin/login" className="rounded-xl px-3 py-2 text-sm font-bold text-muted hover:text-navy-700">
             Admin
           </a>
-          <ThemeToggle />
           <a href="#contact" className="rounded-xl bg-navy-700 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800">
             Enquire Now
           </a>
@@ -125,9 +124,6 @@ export function Navbar() {
               <a href="/admin/login" onClick={() => setOpen(false)} className="rounded-xl border border-silver-300 px-4 py-2.5 text-center text-sm font-bold text-navy-700">
                 Admin Login
               </a>
-              <div className="flex justify-center">
-                <ThemeToggleCompact />
-              </div>
               <a href="#contact" onClick={() => setOpen(false)} className="rounded-xl bg-crimson px-4 py-2.5 text-center text-sm font-bold text-white">
                 Enquire Now
               </a>
