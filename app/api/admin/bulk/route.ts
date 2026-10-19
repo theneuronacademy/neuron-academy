@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 const BulkOperationSchema = z.object({
   operation: z.enum(["create", "update", "delete", "statusChange"]),
   entity: z.enum(["students", "tests", "questions", "notifications", "books", "batches", "faculty"]),
-  items: z.array(z.record(z.unknown())).min(1).max(500),
+  items: z.array(z.unknown()).min(1).max(500),
   options: z.object({
     skipValidation: z.boolean().optional(),
     continueOnError: z.boolean().optional(),
@@ -201,7 +201,7 @@ async function executeBulkCreate(db: any, entity: string, items: Record<string, 
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       results.push({ success: false, error: errorMessage, index: i });
       failCount++;
-      logger.warn("Bulk create item failed", { correlationId, entity, index: i, error: errorMessage });
+      logger.warn("Bulk create item failed", { correlationId, entity, index: i, error: error instanceof Error ? error : new Error(errorMessage) });
     }
   }
 
@@ -335,7 +335,7 @@ async function executeBulkUpdate(db: any, entity: string, items: Record<string, 
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       results.push({ success: false, error: errorMessage, index: i });
       failCount++;
-      logger.warn("Bulk update item failed", { correlationId, entity, index: i, error: errorMessage });
+      logger.warn("Bulk update item failed", { correlationId, entity, index: i, error: error instanceof Error ? error : new Error(errorMessage) });
     }
   }
 
@@ -392,7 +392,7 @@ async function executeBulkDelete(db: any, entity: string, items: Record<string, 
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       results.push({ success: false, error: errorMessage, index: i });
       failCount++;
-      logger.warn("Bulk delete item failed", { correlationId, entity, index: i, error: errorMessage });
+      logger.warn("Bulk delete item failed", { correlationId, entity, index: i, error: error instanceof Error ? error : new Error(errorMessage) });
     }
   }
 
@@ -460,7 +460,7 @@ async function executeBulkStatusChange(db: any, entity: string, items: Record<st
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       results.push({ success: false, error: errorMessage, index: i });
       failCount++;
-      logger.warn("Bulk statusChange item failed", { correlationId, entity, index: i, error: errorMessage });
+      logger.warn("Bulk statusChange item failed", { correlationId, entity, index: i, error: error instanceof Error ? error : new Error(errorMessage) });
     }
   }
 
@@ -482,7 +482,7 @@ export async function POST(request: NextRequest) {
     const json = await request.json();
     const parsed = BulkOperationSchema.safeParse(json);
     if (!parsed.success) {
-      return fail(`Invalid request: ${parsed.error.errors.map(e => e.message).join(", ")}`, 400);
+      return fail(`Invalid request: ${parsed.error.issues.map(e => e.message).join(", ")}`, 400);
     }
     body = parsed.data;
   } catch {
@@ -503,25 +503,27 @@ export async function POST(request: NextRequest) {
   let result: { results: any[]; successCount: number; failCount: number };
 
   try {
+    const typedItems = items as Record<string, unknown>[];
     switch (operation) {
       case "create":
-        result = await executeBulkCreate(db, entity, items, request, correlationId);
+        result = await executeBulkCreate(db, entity, typedItems, request, correlationId);
         break;
       case "update":
-        result = await executeBulkUpdate(db, entity, items, request, correlationId);
+        result = await executeBulkUpdate(db, entity, typedItems, request, correlationId);
         break;
       case "delete":
-        result = await executeBulkDelete(db, entity, items, request, correlationId);
+        result = await executeBulkDelete(db, entity, typedItems, request, correlationId);
         break;
       case "statusChange":
-        result = await executeBulkStatusChange(db, entity, items, request, correlationId);
+        result = await executeBulkStatusChange(db, entity, typedItems, request, correlationId);
         break;
       default:
         return fail("Unsupported operation", 400);
     }
   } catch (error) {
-    requestLogger.error("Bulk operation failed", { correlationId, error });
-    return serverError("admin:bulk", error);
+    const err = error instanceof Error ? error : new Error(String(error));
+    requestLogger.error("Bulk operation failed", { correlationId, error: err });
+    return serverError("admin:bulk", err);
   }
 
   requestLogger.info("Bulk operation completed", {

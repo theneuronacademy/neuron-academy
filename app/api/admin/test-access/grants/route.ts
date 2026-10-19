@@ -65,8 +65,6 @@ export async function GET(req: NextRequest) {
       status: g.status,
       grantedAt: g.grantedAt.toISOString(),
       expiresAt: g.expiresAt?.toISOString() || null,
-      paymentRef: g.paymentRef || null,
-      amount: g.amount || null,
     }));
 
     return ok({ items, source: "database" });
@@ -140,8 +138,6 @@ export async function POST(req: NextRequest) {
         grantedBy: auth.user.id,
         status: "ACTIVE",
         expiresAt: expiresAtDate,
-        paymentRef: paymentRef?.trim() || null,
-        amount: amount || null,
       },
       include: {
         test: { select: { title: true, accessType: true, price: true } },
@@ -180,8 +176,6 @@ export async function POST(req: NextRequest) {
         status: grant.status,
         grantedAt: grant.grantedAt.toISOString(),
         expiresAt: grant.expiresAt?.toISOString() || null,
-        paymentRef: grant.paymentRef,
-        amount: grant.amount,
       },
     }, 201);
   } catch (err) {

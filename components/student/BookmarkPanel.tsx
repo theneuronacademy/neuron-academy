@@ -6,7 +6,6 @@
 import { useEffect, useState } from "react";
 import { Bookmark, X, BookOpen, ArrowRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
-import { cn } from "@/lib/utils";
 
 interface BookmarkItem {
   id: string;
@@ -111,7 +110,7 @@ export function BookmarkPanel({ onClose }: { onClose?: () => void }) {
                 <div key={b.id} className="flex items-start gap-3 rounded-xl border border-silver-200 p-3 hover:bg-silver-50 transition">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-navy-700 line-clamp-2">{b.questionText}</p>
-                    {b.note && <p className="mt-1 text-[12px] text-muted italic">"{b.note}"</p>}
+                    {b.note && <p className="mt-1 text-[12px] text-muted italic">&ldquo;{b.note}&rdquo;</p>}
                     <p className="mt-1 text-[11px] text-muted">Added {new Date(b.createdAt).toLocaleDateString()}</p>
                   </div>
                   <div className="flex items-center gap-1">

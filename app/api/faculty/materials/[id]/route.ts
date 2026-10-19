@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 const KINDS = ["NOTE", "VIDEO", "LINK", "PDF"] as const;
 
-async function verifyFacultyAccess(db: ReturnType<typeof getDb>, userId: string, batchId: string) {
+async function verifyFacultyAccess(db: NonNullable<ReturnType<typeof getDb>>, userId: string, batchId: string) {
   const allowed = await facultyBatchIds(db, userId);
   return allowed.includes(batchId);
 }
@@ -48,18 +48,19 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return fail(`Invalid kind. Must be one of: ${KINDS.join(", ")}`, 400);
   }
 
-  try {
-    const updated = await db.material.update({
-      where: { id },
-      data: {
-        ...(title && { title: String(title) }),
-        ...(subject && { subject: String(subject) }),
-        ...(kind && { kind: kind as (typeof KINDS)[number] }),
-        ...(url !== undefined && { url: url ? String(url) : null }),
-        ...(description !== undefined && { description: description ? String(description) : null }),
-        ...(isActive !== undefined && { isActive: Boolean(isActive) }),
-        ...(displayOrder !== undefined && { displayOrder: Number(displayOrder) }),
-      },
+  const data: Record<string, unknown> = {};
+    if (title) data.title = String(title);
+    if (subject) data.subject = String(subject);
+    if (kind) data.kind = kind as (typeof KINDS)[number];
+    if (url !== undefined) data.url = url ? String(url) : null;
+    if (description !== undefined) data.description = description ? String(description) : null;
+    if (isActive !== undefined) data.isActive = Boolean(isActive);
+    if (displayOrder !== undefined) data.displayOrder = Number(displayOrder);
+
+    try {
+      const updated = await db.material.update({
+        where: { id },
+        data,
       include: { batch: { select: { id: true, name: true } } },
     });
 

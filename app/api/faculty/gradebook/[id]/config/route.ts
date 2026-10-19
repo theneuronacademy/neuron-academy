@@ -15,7 +15,7 @@ interface Category {
   color: string;
 }
 
-function toJson(categories: Category[]): unknown {
+function toJson(categories: Category[]): object {
   return categories;
 }
 

@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 const STATUSES = ["DRAFT", "PUBLISHED", "CLOSED"] as const;
 
-async function verifyFacultyAccess(db: ReturnType<typeof getDb>, userId: string, batchId: string) {
+async function verifyFacultyAccess(db: NonNullable<ReturnType<typeof getDb>>, userId: string, batchId: string) {
   const allowed = await facultyBatchIds(db, userId);
   return allowed.includes(batchId);
 }
@@ -48,17 +48,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return fail(`Invalid status. Must be one of: ${STATUSES.join(", ")}`, 400);
   }
 
-  try {
-    const updated = await db.assignment.update({
-      where: { id },
-      data: {
-        ...(title && { title: String(title) }),
-        ...(description !== undefined && { description: description ? String(description) : null }),
-        ...(dueDate && { dueDate: new Date(String(dueDate)) }),
-        ...(maxMarks !== undefined && { maxMarks: Number(maxMarks) }),
-        ...(weight !== undefined && { weight: Number(weight) }),
-        ...(status && { status: status as (typeof STATUSES)[number] }),
-      },
+  const data: Record<string, unknown> = {};
+    if (title) data.title = String(title);
+    if (description !== undefined) data.description = description ? String(description) : null;
+    if (dueDate) data.dueDate = new Date(String(dueDate));
+    if (maxMarks !== undefined) data.maxMarks = Number(maxMarks);
+    if (weight !== undefined) data.weight = Number(weight);
+    if (status) data.status = status as (typeof STATUSES)[number];
+
+    try {
+      const updated = await db.assignment.update({
+        where: { id },
+        data,
       include: {
         batch: { select: { id: true, name: true } },
         test: { select: { id: true, title: true } },

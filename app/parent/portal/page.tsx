@@ -4,11 +4,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { GraduationCap, Trophy, Calendar, Flame, Target, ArrowLeft, Eye } from "lucide-react";
+import { GraduationCap, Trophy, Calendar, Flame, Target } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
-import { cn } from "@/lib/utils";
 
 interface StudentData {
   student: {
@@ -75,7 +73,7 @@ export default function ParentPortalPage() {
 
   useEffect(() => {
     if (inputPhone) fetchData();
-  }, [inputPhone]);
+  }, [inputPhone, fetchData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +97,7 @@ export default function ParentPortalPage() {
         <div className="bg-navy-700 px-6 py-6 text-center">
           <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-navy-700"><GraduationCap className="h-6 w-6" /></span>
           <h1 className="mt-3 text-xl font-extrabold text-white">Parent Portal</h1>
-          <p className="mt-1 text-[13px] text-silver-200">View your children's academic progress</p>
+          <p className="mt-1 text-[13px] text-silver-200">View your children&apos;s academic progress</p>
         </div>
 
         <div className="space-y-4 p-6">

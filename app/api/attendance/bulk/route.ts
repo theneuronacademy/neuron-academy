@@ -51,12 +51,13 @@ export async function POST(req: NextRequest) {
   if (!date) return fail("Invalid date.", 400);
 
   const { batchId, records, source = "MANUAL" } = body;
+  const batchIdStr = String(batchId);
 
   try {
     // Verify faculty has access to this batch
     if (auth.user.role === "FACULTY") {
       const allowed = await facultyBatchIds(db, auth.user.id);
-      if (!allowed.includes(batchId)) return fail("Forbidden: batch not assigned to you.", 403);
+      if (!allowed.includes(batchIdStr)) return fail("Forbidden: batch not assigned to you.", 403);
     }
 
     // Verify all students belong to this batch (or faculty's assigned batches)
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
 
     const studentBatchMap = new Map(students.map((s) => [s.id, s.batchId]));
     const invalidStudents = studentIds.filter(
-      (id) => !studentBatchMap.has(id) || studentBatchMap.get(id) !== batchId
+      (id) => !studentBatchMap.has(id) || studentBatchMap.get(id) !== batchIdStr
     );
 
     if (invalidStudents.length > 0) {
@@ -119,7 +120,7 @@ export async function POST(req: NextRequest) {
           },
           create: {
             studentId: record.studentId,
-            batchId,
+            batchId: batchIdStr,
             date,
             status: record.status,
             source: source as "MANUAL" | "BIOMETRIC",

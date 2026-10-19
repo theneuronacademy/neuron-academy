@@ -3,7 +3,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Flame, Target, Trophy, Clock, ArrowUp, CheckCircle2 } from "lucide-react";
+import { Flame, Target, Trophy, Clock, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +37,7 @@ export function StreakCard() {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleSaveGoal = async () => {
     if (!goal || goal < 5 || goal > 480) return;
@@ -142,7 +142,7 @@ export function StreakCard() {
         {data?.testedToday && (
           <div className="mt-3 flex items-center gap-2 rounded-xl bg-teal-50 px-3 py-2">
             <CheckCircle2 className="h-4 w-4 text-teal-600" />
-            <p className="text-sm font-bold text-teal-700">You've tested today — streak maintained! 🎉</p>
+            <p className="text-sm font-bold text-teal-700">You&apos;ve tested today &mdash; streak maintained! 🎉</p>
           </div>
         )}
       </div>

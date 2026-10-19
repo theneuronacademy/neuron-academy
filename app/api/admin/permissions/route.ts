@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     const json = await req.json();
     const parsed = CreatePermissionSchema.safeParse(json);
     if (!parsed.success) {
-      return fail(`Invalid request: ${parsed.error.errors.map((e) => e.message).join(", ")}`, 400);
+      return fail(`Invalid request: ${parsed.error.issues.map((e) => e.message).join(", ")}`, 400);
     }
     body = parsed.data;
   } catch {

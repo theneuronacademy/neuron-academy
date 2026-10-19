@@ -18,11 +18,11 @@ function escapeICS(text: string): string {
 }
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  context: { params: Promise<Record<string, string>> }
 ) {
-  const { id } = await params;
-  const auth = requireApiRole(req, ["STUDENT", "FACULTY", "ADMIN"]);
+  const { id } = await context.params;
+  const auth = requireApiRole(request, ["STUDENT", "FACULTY", "ADMIN"]);
   if (!auth.ok) return fail(auth.error, auth.status);
 
   const db = getDb();

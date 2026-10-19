@@ -46,8 +46,6 @@ export async function PATCH(
     const beforeData = {
       status: existing.status,
       expiresAt: existing.expiresAt?.toISOString() || null,
-      paymentRef: existing.paymentRef,
-      amount: existing.amount,
     };
 
     const updateData: any = {};
@@ -66,8 +64,6 @@ export async function PATCH(
     const afterData = {
       status: updated.status,
       expiresAt: updated.expiresAt?.toISOString() || null,
-      paymentRef: updated.paymentRef,
-      amount: updated.amount,
     };
 
     await writeAuditLog(
@@ -93,8 +89,6 @@ export async function PATCH(
         status: updated.status,
         grantedAt: updated.grantedAt.toISOString(),
         expiresAt: updated.expiresAt?.toISOString() || null,
-        paymentRef: updated.paymentRef,
-        amount: updated.amount,
       },
     });
   } catch (err) {
@@ -127,8 +121,6 @@ export async function DELETE(
     const beforeData = {
       status: existing.status,
       expiresAt: existing.expiresAt?.toISOString() || null,
-      paymentRef: existing.paymentRef,
-      amount: existing.amount,
     };
 
     await db.testAccess.delete({ where: { id } });

@@ -55,11 +55,11 @@ const ACCESS_TYPE_LABELS: Record<string, string> = {
   PRIVATE: "Private",
 };
 
-const GRANT_STATUS_TONES: Record<string, "green" | "red" | "blue" | "gray" | "warning"> = {
+const GRANT_STATUS_TONES: Record<string, "green" | "red" | "blue" | "gray" | "amber"> = {
   ACTIVE: "green",
   REVOKED: "red",
   EXPIRED: "gray",
-  PENDING_PAYMENT: "warning",
+  PENDING_PAYMENT: "amber",
 };
 
 function AccessTypeBadge({ type }: { type: string }) {
