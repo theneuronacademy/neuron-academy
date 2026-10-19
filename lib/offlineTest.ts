@@ -85,10 +85,9 @@ export async function getUnsyncedAnswers(studentId: string): Promise<OfflineAnsw
   return new Promise((resolve, reject) => {
     const tx = db.transaction(ANSWERS_STORE, "readonly");
     const store = tx.objectStore(ANSWERS_STORE);
-    const index = store.index("synced");
-    const request = index.getAll(false);
+    const request = store.getAll();
     request.onsuccess = () => {
-      const results = request.result.filter((a) => a.studentId === studentId);
+      const results = request.result.filter((a) => a.studentId === studentId && !a.synced);
       resolve(results);
     };
     request.onerror = () => reject(request.error);

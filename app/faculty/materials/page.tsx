@@ -29,6 +29,7 @@ export default function FacultyMaterialsPage() {
     url: "",
     description: "",
     displayOrder: 0,
+    isActive: true,
   });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -43,7 +44,7 @@ export default function FacultyMaterialsPage() {
   }, [batches, batchId]);
 
   function openCreate() {
-    setFormData({ title: "", subject: "", kind: "NOTE", url: "", description: "", displayOrder: 0 });
+    setFormData({ title: "", subject: "", kind: "NOTE", url: "", description: "", displayOrder: 0, isActive: true });
     setModal({ mode: "create" });
   }
 
@@ -55,6 +56,7 @@ export default function FacultyMaterialsPage() {
       url: m.url ?? "",
       description: m.description ?? "",
       displayOrder: m.displayOrder,
+      isActive: m.isActive,
     });
     setModal({ mode: "edit", material: m });
   }
@@ -123,7 +125,7 @@ export default function FacultyMaterialsPage() {
                     <KindIcon className="h-5 w-5 text-teal-600" />
                     <div>
                       <p className="font-extrabold text-navy-700 truncate max-w-[200px]">{m.title}</p>
-                      <p className="text-[12px] text-muted">{m.subject ?? "General"} · {m.batch?.name ?? "No batch"}</p>
+                      <p className="text-[12px] text-muted">{m.subject ?? "General"} · {m.batch ?? "No batch"}</p>
                     </div>
                   </div>
                   <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", m.isActive ? "bg-emerald-50 text-emerald-700" : "bg-silver-100 text-muted")}>

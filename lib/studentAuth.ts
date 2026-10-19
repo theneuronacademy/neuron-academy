@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { DEMO_STUDENT } from "@/lib/seed";
 
 export const STUDENT_AUTH_KEY = "neuron_student_session";
@@ -57,4 +58,17 @@ export function studentLogout(): void {
   } catch {
     /* ignore */
   }
+}
+
+export function useSession(): StudentSession | null {
+  const [session, setSession] = React.useState<StudentSession | null>(null);
+
+  React.useEffect(() => {
+    setSession(getStudentSession());
+    const handler = () => setSession(getStudentSession());
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
+
+  return session;
 }

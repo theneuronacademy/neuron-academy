@@ -13,6 +13,7 @@ import type {
   DoubtItem,
   NotificationItem,
   TimetableEntry,
+  Category,
 } from "@/types/faculty";
 
 const API_BASE = "/api/faculty";
@@ -365,8 +366,8 @@ export async function saveGradebookConfig(config: GradebookConfig): Promise<Grad
   }).then((d) => d.config);
 }
 
-export async function getGradebook(batchId: string): Promise<GradebookEntry[]> {
-  return fetchJson<{ entries: GradebookEntry[] }>(`${API_BASE}/gradebook/${batchId}`).then((d) => d.entries);
+export async function getGradebook(batchId: string): Promise<{ entries: GradebookEntry[]; categories: Category[] }> {
+  return fetchJson(`${API_BASE}/gradebook/${batchId}`);
 }
 
 export async function exportGradebook(batchId: string, format: "csv" | "pdf" = "csv"): Promise<Blob> {

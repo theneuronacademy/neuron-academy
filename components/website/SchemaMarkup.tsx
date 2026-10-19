@@ -239,7 +239,7 @@ export function ResultJsonLd({ results }: { results: AcademyResult[] }) {
       position: index + 1,
       item: {
         "@type": "EducationalOccupationalCredential",
-        name: `${r.studentName} - ${r.exam} ${r.year}`,
+        name: `${r.name} - ${r.exam} ${r.year}`,
         description: `${r.tag}: ${r.score}`,
         recognizedBy: {
           "@type": "EducationalOrganization",

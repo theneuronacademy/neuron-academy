@@ -120,7 +120,7 @@ export default function FacultyParentsPage() {
         {sendState && <p className="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">{sendState}</p>}
 
         <form onSubmit={handleBulkSend} className="space-y-3">
-          <p className="text-sm text-muted">Available variables: {studentName}, {parentName}, {attendancePct}, {avgScore}, {batchName}</p>
+          <p className="text-sm text-muted">{`Available variables: {studentName}, {parentName}, {attendancePct}, {avgScore}, {batchName}`}</p>
           <label className="block text-[12px] font-bold text-navy-700">Message Template<textarea value={bulkTemplate} onChange={(e) => setBulkTemplate(e.target.value)} rows={8} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2 text-sm outline-none focus:border-teal-500 font-mono text-[12px]" /></label>
           <div className="flex justify-end gap-2">
             <button type="button" onClick={() => setView("list")} className="rounded-xl border border-silver-300 px-4 py-2 text-sm font-bold text-navy-700 hover:border-teal-500">Cancel</button>

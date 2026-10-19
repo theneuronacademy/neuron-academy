@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/prisma";
 import { logger, logAuditEvent, createRequestLogger } from "@/lib/logger";
 import { requireApiRole } from "@/lib/server-auth";
+import { Prisma } from "@prisma/client";
 
 export interface AuditOptions {
   entity: string;
@@ -15,8 +16,8 @@ export interface AuditOptions {
 function sanitizeData(
   data: Record<string, unknown> | null,
   sensitiveFields: string[] = []
-): Record<string, unknown> | null {
-  if (!data) return null;
+): Prisma.InputJsonValue {
+  if (!data) return {};
   const sanitized = { ...data };
   const defaultSensitive = [
     "password",
@@ -34,7 +35,7 @@ function sanitizeData(
       sanitized[field] = "[REDACTED]";
     }
   }
-  return sanitized;
+  return sanitized as Prisma.InputJsonValue;
 }
 
 export function withAudit(
@@ -86,7 +87,7 @@ export function withAudit(
               entity: options.entity,
               entityId: data.entityId,
               beforeData: sanitizeData(data.beforeData || beforeData, options.sensitiveFields),
-              afterData: sanitizeData(data.afterData, options.sensitiveFields),
+              afterData: sanitizeData(data.afterData ?? null, options.sensitiveFields),
               ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown",
               userAgent: request.headers.get("user-agent") || "unknown",
               correlationId,
@@ -98,7 +99,7 @@ export function withAudit(
       } catch (auditError) {
         logger.error("Failed to write audit log", {
           correlationId,
-          error: auditError,
+          error: auditError instanceof Error ? auditError : undefined,
           entity: options.entity,
           action: options.action,
         });
@@ -111,7 +112,7 @@ export function withAudit(
         options.entity,
         data.entityId,
         sanitizeData(data.beforeData || beforeData, options.sensitiveFields),
-        sanitizeData(data.afterData, options.sensitiveFields),
+        sanitizeData(data.afterData ?? null, options.sensitiveFields),
         correlationId,
         request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown",
         request.headers.get("user-agent") || "unknown",
@@ -129,7 +130,7 @@ export function withAudit(
       return response;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      requestLogger.error("API handler threw error", { correlationId, error: errorMessage });
+      requestLogger.error("API handler threw error", { correlationId, error: new Error(errorMessage) });
       throw error;
     }
   };
@@ -148,6 +149,7 @@ export async function writeAuditLog(
   status: "SUCCESS" | "FAILED" = "SUCCESS",
   errorMessage?: string
 ) {
+  const actionEnum = action as "CREATE" | "READ" | "UPDATE" | "DELETE" | "BULK_CREATE" | "BULK_UPDATE" | "BULK_DELETE" | "LOGIN" | "LOGOUT" | "EXPORT" | "IMPORT" | "STATUS_CHANGE" | "PERMISSION_GRANT" | "PERMISSION_REVOKE";
   try {
     const db = getDb();
     if (db) {
@@ -155,7 +157,7 @@ export async function writeAuditLog(
         data: {
           adminId,
           adminEmail,
-          action,
+          action: actionEnum,
           entity,
           entityId,
           beforeData: sanitizeData(beforeData),
@@ -168,13 +170,13 @@ export async function writeAuditLog(
         },
       });
     }
-  } catch (auditError) {
-    logger.error("Failed to write audit log", {
-      correlationId,
-      error: auditError,
-      entity,
-      action,
-    });
+} catch (auditError) {
+        logger.error("Failed to write audit log", {
+          correlationId,
+          error: auditError instanceof Error ? auditError : undefined,
+          entity,
+          action,
+        });
   }
 
   logAuditEvent(

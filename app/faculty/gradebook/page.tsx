@@ -168,7 +168,7 @@ export default function FacultyGradebookPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} />
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={100} />
-                <Tooltip formatter={(value: number) => [`${value}%`, "Average"]} />
+                <Tooltip formatter={(value: any) => [`${value ?? 0}%`, "Average"]} />
                 <Bar dataKey="average" radius={[0, 4, 4, 0]}>
                   {categoryAverages.map((_, i) => <Cell key={`cell-${i}`} fill={categoryAverages[i].color} />)}
                 </Bar>
@@ -186,7 +186,7 @@ export default function FacultyGradebookPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis type="number" tick={{ fontSize: 11 }} />
                 <YAxis type="category" dataKey="grade" tick={{ fontSize: 11 }} width={50} />
-                <Tooltip formatter={(value: number) => [`${value} students`, "Count"]} />
+                <Tooltip formatter={(value: any) => [`${value ?? 0} students`, "Count"]} />
                 <Bar dataKey="count" fill="#3B82F6" radius={[4, 0, 0, 4]} />
               </BarChart>
             </ResponsiveContainer>

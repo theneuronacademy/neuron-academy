@@ -98,8 +98,12 @@ export async function GET(request: NextRequest) {
               receivedAt: { gte: new Date(now.getTime() - 30000) },
               processed: false,
             },
-            include: {
-              device: { select: { name: true, serialNumber: true } },
+            select: {
+              id: true,
+              deviceId: true,
+              biometricUserId: true,
+              eventType: true,
+              receivedAt: true,
             },
             take: 20,
             orderBy: { receivedAt: "desc" },

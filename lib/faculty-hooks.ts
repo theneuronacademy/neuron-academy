@@ -28,6 +28,7 @@ import type {
   ParentMessage,
   CreateTestPayload,
   BulkAttendanceRequest,
+  Category,
   AnnouncementPayload,
 } from "@/types/faculty";
 
@@ -115,8 +116,8 @@ export function useFacultyStudent(
 export function useAttendance(
   batchId: string,
   date: string,
-  options?: UseQueryOptions<ReturnType<typeof api.getAttendance>>
-): ReturnType<typeof useQuery<ReturnType<typeof api.getAttendance>>> {
+  options?: UseQueryOptions<Awaited<ReturnType<typeof api.getAttendance>>>
+): ReturnType<typeof useQuery<Awaited<ReturnType<typeof api.getAttendance>>>> {
   return useQuery({
     queryKey: facultyKeys.attendance(batchId, date),
     queryFn: () => api.getAttendance(batchId, date),
@@ -236,8 +237,8 @@ export function useFacultyResults(
 
 // ============ Analytics ============
 export function useFacultyAnalytics(
-  options?: UseQueryOptions<ReturnType<typeof api.getFacultyAnalytics>>
-): ReturnType<typeof useQuery<ReturnType<typeof api.getFacultyAnalytics>>> {
+  options?: UseQueryOptions<Awaited<ReturnType<typeof api.getFacultyAnalytics>>>
+): ReturnType<typeof useQuery<Awaited<ReturnType<typeof api.getFacultyAnalytics>>>> {
   return useQuery({
     queryKey: facultyKeys.analytics(),
     queryFn: api.getFacultyAnalytics,
@@ -260,8 +261,8 @@ export function useDashboardStats(
 
 export function useFacultyActivity(
   limit = 20,
-  options?: UseQueryOptions<ReturnType<typeof api.getFacultyActivity>>
-): ReturnType<typeof useQuery<ReturnType<typeof api.getFacultyActivity>>> {
+  options?: UseQueryOptions<Awaited<ReturnType<typeof api.getFacultyActivity>>>
+): ReturnType<typeof useQuery<Awaited<ReturnType<typeof api.getFacultyActivity>>>> {
   return useQuery({
     queryKey: facultyKeys.activity(limit),
     queryFn: () => api.getFacultyActivity(limit),
@@ -325,8 +326,8 @@ export function useReplyToDoubt(
 // ============ Notifications ============
 export function useFacultyNotifications(
   limit = 50,
-  options?: UseQueryOptions<ReturnType<typeof api.getFacultyNotifications>>
-): ReturnType<typeof useQuery<ReturnType<typeof api.getFacultyNotifications>>> {
+  options?: UseQueryOptions<Awaited<ReturnType<typeof api.getFacultyNotifications>>>
+): ReturnType<typeof useQuery<Awaited<ReturnType<typeof api.getFacultyNotifications>>>> {
   return useQuery({
     queryKey: facultyKeys.notifications(limit),
     queryFn: () => api.getFacultyNotifications(limit),
@@ -534,8 +535,8 @@ export function useSaveGradebookConfig(
 
 export function useGradebook(
   batchId: string,
-  options?: UseQueryOptions<GradebookEntry[]>
-): ReturnType<typeof useQuery<GradebookEntry[]>> {
+  options?: UseQueryOptions<{ entries: GradebookEntry[]; categories: Category[] }>
+): ReturnType<typeof useQuery<{ entries: GradebookEntry[]; categories: Category[] }>> {
   return useQuery({
     queryKey: facultyKeys.gradebook(batchId),
     queryFn: () => api.getGradebook(batchId),
@@ -585,7 +586,7 @@ export function useSendBulkParentReport(
 ): ReturnType<typeof useMutation<void, Error, { batchId: string; template: string }>> {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: api.sendBulkParentReport,
+    mutationFn: (variables) => api.sendBulkParentReport(variables.batchId, variables.template),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: facultyKeys.parentMessages() });
     },

@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
   try {
     const params = new URL(req.url).searchParams;
     const testId = params.get("testId");
-    const cursor = params.get("cursor"); // ISO date string for cursor pagination
+    const cursor = params.get("cursor"); // CUID id string for cursor pagination
     const limit = Math.min(parseInt(params.get("limit") ?? "50"), 100);
 
     const whereBase: Record<string, unknown> = {};
@@ -61,13 +61,13 @@ export async function GET(req: NextRequest) {
       const rows = await db.result.findMany({
         where,
         include: { student: true, test: true },
-        orderBy: { createdAt: "desc" },
-        take: limit + 1, // fetch one extra to detect next page
-        ...(cursor ? { cursor: { createdAt: new Date(cursor) }, skip: 1 } : {}),
+        orderBy: { id: "desc" },
+        take: limit + 1,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       });
       const hasMore = rows.length > limit;
       const items = hasMore ? rows.slice(0, limit) : rows;
-      const nextCursor = hasMore ? items[items.length - 1].createdAt.toISOString() : null;
+      const nextCursor = hasMore ? items[items.length - 1].id : null;
       return ok({ items: items.map(shape), nextCursor, source: "database" });
     }
     if (viewer.role === "FACULTY") {
@@ -79,13 +79,13 @@ export async function GET(req: NextRequest) {
       const rows = await db.result.findMany({
         where,
         include: { student: true, test: true },
-        orderBy: { createdAt: "desc" },
+        orderBy: { id: "desc" },
         take: limit + 1,
-        ...(cursor ? { cursor: { createdAt: new Date(cursor) }, skip: 1 } : {}),
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       });
       const hasMore = rows.length > limit;
       const items = hasMore ? rows.slice(0, limit) : rows;
-      const nextCursor = hasMore ? items[items.length - 1].createdAt.toISOString() : null;
+      const nextCursor = hasMore ? items[items.length - 1].id : null;
       return ok({ items: items.map(shape), nextCursor, source: "database" });
     }
     if (viewer.role !== "ADMIN") return fail("Forbidden.", 403);
@@ -94,13 +94,13 @@ export async function GET(req: NextRequest) {
     const rows = await db.result.findMany({
       where,
       include: { student: true, test: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: { id: "desc" },
       take: limit + 1,
-      ...(cursor ? { cursor: { createdAt: new Date(cursor) }, skip: 1 } : {}),
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     });
     const hasMore = rows.length > limit;
     const items = hasMore ? rows.slice(0, limit) : rows;
-    const nextCursor = hasMore ? items[items.length - 1].createdAt.toISOString() : null;
+    const nextCursor = hasMore ? items[items.length - 1].id : null;
     return ok({ items: items.map(shape), nextCursor, source: "database" });
   } catch (err) {
     return serverError("results:list", err);

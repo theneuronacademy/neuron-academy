@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, UserPlus, CheckCircle2, XCircle, Loader2, Filter, ArrowLeft } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -87,6 +89,14 @@ function GrantStatusBadge({ status }: { status: string }) {
 }
 
 export default function GrantAccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted">Loading...</div>}>
+      <GrantAccessPageContent />
+    </Suspense>
+  );
+}
+
+function GrantAccessPageContent() {
   const ready = useAdminGuard();
   const router = useRouter();
   const searchParams = useSearchParams();

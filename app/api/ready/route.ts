@@ -6,7 +6,7 @@ import { getDb, isDbConfigured } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-async function checkMigrations(): Promise<{ status: string; error?: string }> {
+async function checkMigrations(): Promise<{ status: string; error?: string; appliedCount?: number }> {
   if (!isDbConfigured()) return { status: "demo-mode" };
   try {
     const db = getDb();
@@ -84,6 +84,6 @@ export async function GET() {
         sessionSecret,
       },
     },
-    ready ? 200 : 503
+    { status: ready ? 200 : 503 }
   );
 }

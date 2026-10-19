@@ -81,6 +81,21 @@ export interface AnalyticsRow {
   avgScore: number | null;
 }
 
+export interface AssignmentItem {
+  id: string;
+  title: string;
+  description: string;
+  batchId: string;
+  batch?: string;
+  dueDate: string;
+  maxMarks: number;
+  weight: number;
+  status: "DRAFT" | "PUBLISHED" | "CLOSED";
+  createdAt: string;
+  testId?: string;
+  test?: { title: string } | null;
+}
+
 export interface DashboardStats {
   totalBatches: number;
   totalStudents: number;
@@ -129,6 +144,93 @@ export interface NotificationItem {
   testId: string | null;
   isRead: boolean;
   createdAt: string;
+}
+
+export interface MaterialItem {
+  id: string;
+  title: string;
+  subject: string;
+  className?: string | null;
+  kind: "NOTE" | "VIDEO" | "LINK" | "PDF";
+  url?: string;
+  description?: string;
+  displayOrder: number;
+  isActive: boolean;
+  batchId: string;
+  batch?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  weight: number;
+  color: string;
+}
+
+export interface GradebookEntry {
+  studentId: string;
+  studentName: string;
+  categoryScores: Record<string, number>;
+  finalGrade: number;
+  letterGrade: string;
+}
+
+export interface GradebookConfig {
+  batchId: string;
+  categories: Category[];
+}
+
+export interface SubmissionItem {
+  id: string;
+  assignmentId: string;
+  studentId: string;
+  studentName: string;
+  submittedAt: string;
+  content?: string;
+  fileUrl?: string;
+  marks?: number;
+  feedback?: string;
+  status: "SUBMITTED" | "GRADED" | "LATE";
+}
+
+export interface ParentMessage {
+  id: string;
+  studentId: string;
+  studentName?: string;
+  parentName?: string;
+  subject: string;
+  message: string;
+  channel: string;
+  status: string;
+  sentAt: string;
+}
+
+export interface CreateTestPayload {
+  title: string;
+  batchId?: string;
+  type?: "LIVE" | "OFFLINE" | "PRACTICE";
+  duration?: number;
+  totalMarks?: number;
+  startTime?: string;
+  endTime?: string;
+  isHomework?: boolean;
+  accessType?: "FREE" | "PAID" | "PRIVATE";
+  price?: number;
+}
+
+export interface BulkAttendanceRequest {
+  batchId: string;
+  date: string;
+  records: Array<{ studentId: string; status: "PRESENT" | "ABSENT" | "LATE" | "LEAVE" }>;
+  source?: "MANUAL" | "BIOMETRIC";
+}
+
+export interface AnnouncementPayload {
+  batchId: string;
+  title: string;
+  message: string;
 }
 
 export interface TimetableEntry {

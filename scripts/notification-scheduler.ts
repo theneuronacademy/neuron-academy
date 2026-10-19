@@ -492,7 +492,7 @@ async function processNotification(notification: ScheduledNotification) {
 
     runLogger.info("Notification processed successfully", { recipientCount: recipients.length, channels });
   } catch (error) {
-    runLogger.error("Failed to process notification", { error });
+    runLogger.error("Failed to process notification", { error: error instanceof Error ? error : undefined });
 
     await prisma.notificationSchedulerRun.updateMany({
       where: { notificationId: notification.id, runAt: notification.scheduledAt },
@@ -521,7 +521,7 @@ async function main() {
 
     runLogger.info("Notification scheduler completed");
   } catch (error) {
-    runLogger.error("Notification scheduler failed", { error });
+    runLogger.error("Notification scheduler failed", { error: error instanceof Error ? error : undefined });
     process.exit(1);
   } finally {
     await prisma.$disconnect();

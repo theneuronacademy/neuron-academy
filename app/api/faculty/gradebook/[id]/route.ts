@@ -67,7 +67,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       select: { categories: true },
     });
 
-    const categories = (config?.categories as Category[]) ?? [
+    const categories = (config?.categories as unknown as Category[]) ?? [
       { id: "attendance", name: "Attendance", weight: 15, color: "#10B981" },
       { id: "assignments", name: "Assignments", weight: 25, color: "#3B82F6" },
       { id: "tests", name: "Tests", weight: 40, color: "#8B5CF6" },

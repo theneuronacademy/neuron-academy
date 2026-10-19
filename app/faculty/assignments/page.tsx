@@ -127,7 +127,7 @@ export default function FacultyAssignmentsPage() {
                     <ClipboardList className="h-5 w-5 text-teal-600" />
                     <div>
                       <p className="font-extrabold text-navy-700 truncate">{a.title}</p>
-                      <p className="text-[12px] text-muted">{a.batch?.name ?? "No batch"} · Due: {a.dueDate ? new Date(a.dueDate).toLocaleString() : "—"}</p>
+                      <p className="text-[12px] text-muted">{a.batch ?? "No batch"} · Due: {a.dueDate ? new Date(a.dueDate).toLocaleString() : "—"}</p>
                     </div>
                     {a.test && <span className="rounded-full bg-teal-50 text-teal-700 px-2 py-0.5 text-[10px] font-bold">Linked Test</span>}
                   </div>

@@ -103,8 +103,9 @@ export default function FacultyAnalyticsPage() {
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} domain={[0, 100]} />
               <Tooltip
-                formatter={(value: number, name: string) => [
-                  `${value}${name === "attendance" ? "%" : "%"}`,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                formatter={(value: any, name: any) => [
+                  `${value ?? 0}${name === "attendance" ? "%" : "%"}`,
                   name === "attendance" ? "Attendance" : "Avg Score",
                 ]}
               />
@@ -121,7 +122,7 @@ export default function FacultyAnalyticsPage() {
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
           <p className="text-[15px] font-extrabold text-navy-700 mb-4">\uD83D\uDCCA Attendance Distribution</p>
           <div className="h-64 flex items-center justify-center">
-            <ResponsiveContainer width="200" height="200">
+            <ResponsiveContainer width={200} height={200}>
               <PieChart>
                 <Pie
                   data={attendanceDistribution}
@@ -132,13 +133,14 @@ export default function FacultyAnalyticsPage() {
                   fill="#8884d8"
                   dataKey="count"
                   nameKey="range"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 >
                   {attendanceDistribution.map((entry, i) => (
                     <Cell key={`cell-${i}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value: number) => [`${value} students`, "Count"]} />
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                <Tooltip formatter={(value: any) => [`${value ?? 0} students`, "Count"]} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -148,7 +150,7 @@ export default function FacultyAnalyticsPage() {
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
           <p className="text-[15px] font-extrabold text-navy-700 mb-4">\uD83D\uDCCA Score Distribution</p>
           <div className="h-64 flex items-center justify-center">
-            <ResponsiveContainer width="200" height="200">
+            <ResponsiveContainer width={200} height={200}>
               <PieChart>
                 <Pie
                   data={scoreDistribution}
@@ -159,13 +161,14 @@ export default function FacultyAnalyticsPage() {
                   fill="#8884d8"
                   dataKey="count"
                   nameKey="range"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 >
                   {scoreDistribution.map((entry, i) => (
                     <Cell key={`cell-${i}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value: number) => [`${value} students`, "Count"]} />
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                <Tooltip formatter={(value: any) => [`${value ?? 0} students`, "Count"]} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -183,8 +186,9 @@ export default function FacultyAnalyticsPage() {
                 <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} />
                 <YAxis type="category" dataKey="batch" tick={{ fontSize: 11 }} width={120} />
                 <Tooltip
-                  formatter={(value: number, name: string) => [
-                    `${value}%`,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  formatter={(value: any, name: any) => [
+                    `${value ?? 0}%`,
                     name === "attendance" ? "Attendance" : "Avg Score",
                   ]}
                 />

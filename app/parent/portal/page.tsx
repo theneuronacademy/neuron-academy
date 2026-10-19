@@ -3,10 +3,13 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GraduationCap, Trophy, Calendar, Flame, Target } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
+import { cn } from "@/lib/utils";
 
 interface StudentData {
   student: {
@@ -44,6 +47,14 @@ interface StudentData {
 }
 
 export default function ParentPortalPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-muted">Loading...</div>}>
+      <ParentPortalPageContent />
+    </Suspense>
+  );
+}
+
+function ParentPortalPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const phone = searchParams.get("phone");

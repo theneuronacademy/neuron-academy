@@ -9,7 +9,8 @@ import { useSession } from "@/lib/studentAuth";
 export type PushPermissionState = "default" | "granted" | "denied";
 
 export function usePushNotifications() {
-  const { studentId } = useSession();
+  const session = useSession();
+  const studentId = session?.studentId;
   const [permission, setPermission] = useState<PushPermissionState>("default");
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,7 @@ export function usePushNotifications() {
       // Subscribe
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
+        applicationServerKey: urlBase64ToUint8Array(publicKey) as BufferSource,
       });
 
       // Send to server

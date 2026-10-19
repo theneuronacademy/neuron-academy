@@ -39,7 +39,6 @@ export async function GET(req: NextRequest) {
             type: true,
             duration: true,
             totalMarks: true,
-            subject: true,
           },
         },
       },
@@ -123,8 +122,8 @@ export async function GET(req: NextRequest) {
     }));
 
     // Weak topics (accuracy < 50%)
-    const weakTopics = topicPerformance.filter((t) => t.total > 2 && t.accuracy < 50);
-    const strongTopics = topicPerformance.filter((t) => t.total > 2 && t.accuracy >= 80);
+    const weakTopics = topicPerformance.filter((t) => t.questionsAttempted > 2 && t.accuracy < 50);
+    const strongTopics = topicPerformance.filter((t) => t.questionsAttempted > 2 && t.accuracy >= 80);
 
     return ok({
       summary: {

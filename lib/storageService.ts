@@ -135,7 +135,7 @@ export class StorageService {
         "Content-Type": mimeType,
         "x-upsert": "true",
       },
-      body: buffer,
+      body: new Uint8Array(buffer),
     });
 
     if (!response.ok) {
@@ -144,7 +144,7 @@ export class StorageService {
     }
 
     const ref = `supabase://${supabaseBucket}/${fullPath}`;
-    const url = await this.getSupabaseSignedUrl(ref, 3600);
+    const url = await this.getSupabaseSignedUrl(ref, 3600, false);
     return { ref, url, size: buffer.length, mimeType };
   }
 
@@ -220,7 +220,7 @@ export class StorageService {
     return data.map((item: SupabaseListItem) => ({
       ref: `supabase://${supabaseBucket}/${item.name}`,
       size: item.metadata?.size || 0,
-      lastModified: new Date(item.updated_at || item.created_at),
+      lastModified: new Date(item.updated_at || item.created_at || new Date().toISOString()),
     }));
   }
 
@@ -277,7 +277,7 @@ export class StorageService {
 
     if (!localUploadDir) throw new Error("Local storage not configured");
 
-    const fullPrefix = pathModule.join(localUploadDir, prefix);
+    const fullPrefix = pathModule.join(localUploadDir || "", prefix);
     const results: Array<{ ref: string; size: number; lastModified: Date }> = [];
 
     async function walk(dir: string) {
@@ -289,7 +289,7 @@ export class StorageService {
           await walk(fullPath);
         } else {
           const stat = await fs.stat(fullPath);
-          const relativePath = pathModule.relative(localUploadDir, fullPath);
+          const relativePath = pathModule.relative(localUploadDir || "", fullPath);
           results.push({
             ref: `local://${relativePath}`,
             size: stat.size,
@@ -331,7 +331,7 @@ export class StorageService {
     }));
 
     const ref = `s3://${s3Bucket}/${path}`;
-    const url = await this.getS3SignedUrl(ref, 3600);
+    const url = await this.getS3SignedUrl(ref, 3600, false);
     return { ref, url, size: buffer.length, mimeType };
   }
 

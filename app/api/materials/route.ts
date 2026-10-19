@@ -50,8 +50,10 @@ export async function POST(req: NextRequest) {
     return fail("Invalid JSON body.", 400);
   }
   const title = typeof body.title === "string" ? body.title.trim() : "";
+  const batchId = typeof body.batchId === "string" ? body.batchId.trim() : "";
   const kind = typeof body.kind === "string" ? body.kind.trim().toUpperCase() : "NOTE";
   if (!title) return fail("title is required.", 400);
+  if (!batchId) return fail("batchId is required.", 400);
   if (!(KINDS as readonly string[]).includes(kind)) return fail("kind must be NOTE, VIDEO, LINK or PDF.", 400);
   const url = typeof body.url === "string" ? body.url.trim() : "";
   if (url && !/^https?:\/\//i.test(url)) return fail("url must start with http(s)://.", 400);
@@ -59,6 +61,7 @@ export async function POST(req: NextRequest) {
     const created = await db.material.create({
       data: {
         title: title.slice(0, 160),
+        batchId,
         subject: typeof body.subject === "string" && body.subject.trim() ? body.subject.trim().slice(0, 80) : null,
         className: typeof body.className === "string" && body.className.trim() ? body.className.trim().slice(0, 40) : null,
         kind: kind as (typeof KINDS)[number],
