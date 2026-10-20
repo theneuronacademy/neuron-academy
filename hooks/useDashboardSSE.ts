@@ -7,7 +7,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 export type DashboardEvent =
   | { type: "test-status-update"; tests: Array<{ id: string; title: string; status: string; startTime: string | null; endTime: string | null }> }
   | { type: "attendance-update"; records: Array<{ id: string; student: { name: string; studentId: string }; batch: { name: string }; status: string; createdAt: string }> }
-  | { type: "biometric-event"; events: Array<{ id: string; device: { name: string; serialNumber: string }; biometricUserId: string; eventType: string; eventTimestamp: string }> }
   | { type: "notification-update"; notifications: Array<{ id: string; title: string; message: string; status: string; audience: string; priority: string; createdAt: string }> }
   | { type: "heartbeat"; timestamp: string }
   | { type: "connected"; timestamp: string };
@@ -56,12 +55,6 @@ export function useDashboardSSE(onEvent?: (event: DashboardEvent) => void) {
       const data = JSON.parse(event.data);
       setLastEvent({ type: "attendance-update", ...data });
       onEvent?.({ type: "attendance-update", ...data });
-    });
-
-    es.addEventListener("biometric-event", (event) => {
-      const data = JSON.parse(event.data);
-      setLastEvent({ type: "biometric-event", ...data });
-      onEvent?.({ type: "biometric-event", ...data });
     });
 
     es.addEventListener("notification-update", (event) => {

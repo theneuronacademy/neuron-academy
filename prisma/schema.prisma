@@ -97,7 +97,6 @@ enum AttendanceStatus {
 
 enum AttendanceSource {
   MANUAL
-  BIOMETRIC
 }
 
 enum NotificationAudience {
@@ -623,8 +622,6 @@ model PdfImport {
   createdBy User? @relation("PdfImportCreator", fields: [createdById], references: [id], onDelete: SetNull)
 }
 
-// Database model only in Phase 3. eSSL/biometric connection is a later
-// phase — source=BIOMETRIC + deviceId exist so no rework is needed then.
 model Attendance {
   id        String           @id @default(cuid())
   studentId String
@@ -634,7 +631,6 @@ model Attendance {
   checkIn   DateTime?
   checkOut  DateTime?
   source    AttendanceSource @default(MANUAL)
-  deviceId  String?
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
@@ -896,93 +892,6 @@ model Announcement {
   updatedAt      DateTime @updatedAt
 
   createdBy User? @relation("AnnouncementCreator", fields: [createdById], references: [id], onDelete: SetNull)
-}
-
-// ================================================================
-// Biometric Device Management (Phase 12A, additive, no rework)
-// ================================================================
-// Device authentication: BiometricDevice.authSecretHash stores a SHA-256 hex
-// of the per-device shared secret. The plaintext secret is shown ONCE at
-// provisioning/rotation and never stored or logged. Ingestion endpoints
-// compare with crypto.timingSafeEqual. Devices without a secret operate in
-// legacy mode (accepted, flagged) until a secret is provisioned.
-// IP allowlist: when BiometricDevice.ipAddress is set, ADMS pushes from any
-// other source IP are rejected (401). Unset = no IP restriction.
-model BiometricDevice {
-  id           String   @id @default(cuid())
-  name         String
-  serialNumber String   @unique
-  deviceType   String   @default("X2000")
-  ipAddress    String?
-  port         Int?
-  protocol     String   @default("ADMS")
-  location     String?
-  isActive     Boolean  @default(true)
-  lastSeenAt   DateTime?
-  // Last device-initiated heartbeat (ADMS registration / ping / getrequest).
-  lastHeartbeatAt DateTime?
-  // Last ingestion failure, human-readable (no secrets, no PII beyond IDs).
-  lastError    String?
-  // SHA-256 hex of the per-device shared secret. NULL = legacy mode.
-  authSecretHash String?
-  totalEvents  Int      @default(0)
-  failedEvents Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  mappings BiometricUserMap[]
-
-  @@index([isActive])
-  @@index([lastSeenAt])
-}
-
-model BiometricDeviceEvent {
-  id              String   @id @default(cuid())
-  deviceId        String?
-  biometricUserId String
-  eventTimestamp  DateTime @default(now())
-  eventType       String
-  payloadHash     String   @db.VarChar(64)
-  processed       Boolean  @default(false)
-  attendanceId    String?
-  receivedAt      DateTime @default(now())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@index([deviceId])
-  @@index([biometricUserId])
-  @@index([processed])
-  @@index([eventTimestamp])
-
-  @@unique([deviceId, biometricUserId, eventTimestamp, payloadHash])
-}
-
-// Persistent biometric enrollment mapping (post-capture schema phase).
-// One row binds a device-local enrollment ID (the PIN the K90 sends) to a
-// Neuron Academy record. Ingestion resolves mappings FIRST; the legacy
-// fuzzy match (studentId/email) is only a fallback for unmapped IDs and
-// never creates attendance for non-student targets.
-enum BiometricUserType {
-  STUDENT
-  FACULTY
-}
-
-model BiometricUserMap {
-  id              String            @id @default(cuid())
-  deviceId        String
-  biometricUserId String
-  userType        BiometricUserType
-  // Student.id or Faculty.id (canonical record id, never a display code).
-  userId          String
-  isActive        Boolean           @default(true)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-
-  device BiometricDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-
-  @@unique([deviceId, biometricUserId])
-  @@index([deviceId])
-  @@index([userType, userId])
 }
 
 // ================================================================
@@ -1250,32 +1159,6 @@ model AdminRolePermission {
   @@unique([role, permissionId, scopeValue])
   @@index([role])
   @@index([permissionId])
-}
-
-// ================================================================
-// Biometric Bridge Status & Health
-// ================================================================
-
-model BiometricBridgeStatus {
-  id              String   @id @default(cuid())
-  bridgeId        String   @unique
-  version         String
-  configHash      String
-  status          String   @default("STARTING")
-  lastHeartbeatAt DateTime?
-  lastEventAt     DateTime?
-  eventsProcessed Int      @default(0)
-  eventsFailed    Int      @default(0)
-  cpuUsage        Float?
-  memoryUsage     Float?
-  uptimeSeconds   Int?
-  metadata        Json?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@index([bridgeId])
-  @@index([status])
-  @@index([lastHeartbeatAt])
 }
 
 // ================================================================

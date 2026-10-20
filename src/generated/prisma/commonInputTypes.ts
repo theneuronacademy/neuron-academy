@@ -715,23 +715,6 @@ export type EnumEnquiryStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumEnquiryStatusFilter<$PrismaModel>
 }
 
-export type EnumBiometricUserTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.BiometricUserType | Prisma.EnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.BiometricUserType[] | Prisma.ListEnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.BiometricUserType[] | Prisma.ListEnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel> | $Enums.BiometricUserType
-}
-
-export type EnumBiometricUserTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.BiometricUserType | Prisma.EnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.BiometricUserType[] | Prisma.ListEnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.BiometricUserType[] | Prisma.ListEnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumBiometricUserTypeWithAggregatesFilter<$PrismaModel> | $Enums.BiometricUserType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel>
-}
-
 export type EnumDoubtStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.DoubtStatus | Prisma.EnumDoubtStatusFieldRefInput<$PrismaModel>
   in?: $Enums.DoubtStatus[] | Prisma.ListEnumDoubtStatusFieldRefInput<$PrismaModel>
@@ -1497,23 +1480,6 @@ export type NestedEnumEnquiryStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumEnquiryStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumEnquiryStatusFilter<$PrismaModel>
-}
-
-export type NestedEnumBiometricUserTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.BiometricUserType | Prisma.EnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.BiometricUserType[] | Prisma.ListEnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.BiometricUserType[] | Prisma.ListEnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel> | $Enums.BiometricUserType
-}
-
-export type NestedEnumBiometricUserTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.BiometricUserType | Prisma.EnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.BiometricUserType[] | Prisma.ListEnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.BiometricUserType[] | Prisma.ListEnumBiometricUserTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumBiometricUserTypeWithAggregatesFilter<$PrismaModel> | $Enums.BiometricUserType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumBiometricUserTypeFilter<$PrismaModel>
 }
 
 export type NestedEnumDoubtStatusFilter<$PrismaModel = never> = {

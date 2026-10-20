@@ -24,7 +24,7 @@ interface BulkPayload {
   batchId: string;
   date: string; // YYYY-MM-DD
   records: BulkRecord[];
-  source?: "MANUAL" | "BIOMETRIC";
+  source?: "MANUAL";
 }
 
 export async function POST(req: NextRequest) {
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   const date = parseDate(body.date);
   if (!date) return fail("Invalid date.", 400);
 
-  const { batchId, records, source = "MANUAL" } = body;
+  const { batchId, records } = body;
   const batchIdStr = String(batchId);
 
   try {
@@ -76,26 +76,6 @@ export async function POST(req: NextRequest) {
       return fail(`${invalidStudents.length} student(s) not found in this batch.`, 403);
     }
 
-    // Check for existing biometric records that faculty cannot overwrite
-    const existingRecords = await db.attendance.findMany({
-      where: {
-        studentId: { in: studentIds },
-        date,
-        source: "BIOMETRIC",
-      },
-      select: { studentId: true },
-    });
-
-    const biometricStudentIds = new Set(existingRecords.map((r) => r.studentId));
-    const biometricConflicts = records.filter((r) => biometricStudentIds.has(r.studentId));
-
-    if (biometricConflicts.length > 0 && auth.user.role === "FACULTY") {
-      return fail(
-        `${biometricConflicts.length} student(s) have biometric attendance for this date and cannot be overwritten by manual entry. Contact admin.`,
-        409
-      );
-    }
-
     // Perform bulk upsert in a transaction
     const results = await db.$transaction(async (tx) => {
       const createdOrUpdated: Array<{ studentId: string; status: string }> = [];
@@ -103,27 +83,18 @@ export async function POST(req: NextRequest) {
       for (const record of records) {
         if (!STATUSES.includes(record.status)) continue;
 
-        const existing = await tx.attendance.findUnique({
-          where: { studentId_date: { studentId: record.studentId, date } },
-        });
-
-        // Skip biometric records for faculty
-        if (existing?.source === "BIOMETRIC" && auth.user.role === "FACULTY") {
-          continue;
-        }
-
         const row = await tx.attendance.upsert({
           where: { studentId_date: { studentId: record.studentId, date } },
           update: {
             status: record.status,
-            source: source as "MANUAL" | "BIOMETRIC",
+            source: "MANUAL",
           },
           create: {
             studentId: record.studentId,
             batchId: batchIdStr,
             date,
             status: record.status,
-            source: source as "MANUAL" | "BIOMETRIC",
+            source: "MANUAL",
           },
         });
 

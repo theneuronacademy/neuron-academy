@@ -38,31 +38,11 @@ async function checkMsg91(): Promise<{ status: string; configured: boolean }> {
   return { status: configured ? "configured" : "not-configured", configured };
 }
 
-async function checkBiometricBridge(): Promise<{ status: string; lastHeartbeat?: string; error?: string }> {
-  try {
-    const db = getDb();
-    if (!db) return { status: "db-unavailable" };
-    const bridge = await db.biometricBridgeStatus.findFirst({
-      orderBy: { lastHeartbeatAt: "desc" },
-      select: { status: true, lastHeartbeatAt: true },
-    });
-    if (!bridge) return { status: "no-bridge-registered" };
-    const stale = bridge.lastHeartbeatAt && Date.now() - bridge.lastHeartbeatAt.getTime() > 5 * 60 * 1000;
-    return {
-      status: stale ? "stale" : bridge.status.toLowerCase(),
-      lastHeartbeat: bridge.lastHeartbeatAt?.toISOString(),
-    };
-  } catch (error) {
-    return { status: "error", error: error instanceof Error ? error.message : "Unknown error" };
-  }
-}
-
 export async function GET() {
-  const [database, storage, msg91, biometricBridge] = await Promise.all([
+  const [database, storage, msg91] = await Promise.all([
     checkDatabase(),
     checkStorage(),
     checkMsg91(),
-    checkBiometricBridge(),
   ]);
 
   const allHealthy = database.status === "connected" && storage.status === "available";
@@ -78,7 +58,6 @@ export async function GET() {
         database,
         storage,
         msg91,
-        biometricBridge,
       },
       mode: database.status === "connected" ? "database" : "demo",
       website: "online",

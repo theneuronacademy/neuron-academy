@@ -41,7 +41,6 @@ async function checkCriticalTables(): Promise<{ status: string; tables?: string[
       "AdminAuditLog",
       "AdminPermission",
       "AdminRolePermission",
-      "BiometricBridgeStatus",
       "NotificationSchedulerRun",
     ];
     const missing: string[] = [];

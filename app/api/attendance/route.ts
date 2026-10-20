@@ -1,5 +1,4 @@
-// Phase 3 — Attendance API (model only; eSSL NOT connected).
-// Manual marking foundation; biometric sync is a later phase.
+// Phase 3 — Attendance API (model only; manual marking).
 
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
@@ -73,9 +72,6 @@ export async function POST(req: NextRequest) {
       }
     }
     const existing = await db.attendance.findUnique({ where: { studentId_date: { studentId, date } } }).catch(() => null);
-    if (existing && existing.source === "BIOMETRIC" && auth.user.role === "FACULTY") {
-      return fail("Biometric attendance exists for this student/date and cannot be overwritten by manual entry. Contact admin.", 409);
-    }
     const row = await db.attendance.upsert({
       where: { studentId_date: { studentId, date } },
       update: {

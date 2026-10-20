@@ -15,7 +15,6 @@ export async function GET() {
       notifications: "/api/v1/notifications",
       books: "/api/v1/books",
       attendance: "/api/v1/attendance",
-      biometric: "/api/v1/biometric",
     },
     deprecated: [],
     sunset: null,

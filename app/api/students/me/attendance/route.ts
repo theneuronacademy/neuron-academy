@@ -1,6 +1,5 @@
 // Phase 14 — own attendance feed (REGULAR students only, read-only).
-// ?month=YYYY-MM filters; summary always covers all time. Biometric/manual
-// sources both served (existing Attendance model untouched).
+// ?month=YYYY-MM filters; summary always covers all time. Manual source.
 
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";

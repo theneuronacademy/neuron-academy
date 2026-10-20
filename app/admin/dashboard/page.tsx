@@ -75,9 +75,6 @@ export default function AdminDashboardPage() {
     if (event.type === "notification-update") {
       getRecentActivity().then(setActivity);
     }
-    if (event.type === "biometric-event") {
-      // Could show a toast or update biometric device status
-    }
     if (event.type === "heartbeat" || event.type === "connected") {
       setLastUpdated(new Date());
     }

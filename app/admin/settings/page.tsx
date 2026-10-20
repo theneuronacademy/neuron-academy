@@ -71,7 +71,7 @@ export default function SettingsPage() {
             <li>• Demo data isolated in <code>data/admin.ts</code></li>
             <li>• API-ready calls in <code>services/adminApi.ts</code></li>
             <li>• Auth hook point: <code>lib/adminAuth.ts</code> + middleware (later)</li>
-            <li>• No database / payment / biometric in this phase</li>
+            <li>• No database / payment in this phase</li>
           </ul>
           <p className="mt-3 rounded-xl bg-silver-50 p-3 text-[12px] text-muted">Swap each adminApi function body with fetch() — UI stays untouched.</p>
         </div>

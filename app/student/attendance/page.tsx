@@ -55,7 +55,7 @@ export default function StudentAttendancePage() {
     s === "PRESENT" ? "bg-teal-50 text-teal-700" : s === "ABSENT" ? "bg-crimson-50 text-crimson" : s === "LATE" ? "bg-amber-50 text-amber-700" : "bg-silver-100 text-muted";
 
   return (
-    <StudentShell title="My Attendance" subtitle="From academy records — biometric + manual">
+    <StudentShell title="My Attendance" subtitle="From academy records — manual">
       <div className="grid gap-4 lg:grid-cols-[300px_1fr]">
         <div className="h-fit rounded-card border border-silver-200 bg-white p-5 text-center shadow-card">
           {summary === null ? <Skeleton className="mx-auto h-28 w-28 rounded-full" /> : (
@@ -92,7 +92,7 @@ export default function StudentAttendancePage() {
                 <li key={a.id} className="flex items-center justify-between gap-2 rounded-xl bg-silver-50 px-4 py-2.5">
                   <div>
                     <p className="text-sm font-extrabold text-navy-700">{new Date(a.date).toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" })}</p>
-                    <p className="text-[11px] font-bold text-muted">{a.source === "BIOMETRIC" ? "Biometric" : "Manual"}</p>
+                    <p className="text-[11px] font-bold text-muted">Manual</p>
                   </div>
                   <span className={cn("rounded-full px-2.5 py-1 text-[11px] font-extrabold", tone(a.status))}>{a.status}</span>
                 </li>

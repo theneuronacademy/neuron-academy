@@ -167,21 +167,6 @@ export type Enquiry = Prisma.EnquiryModel
  */
 export type Announcement = Prisma.AnnouncementModel
 /**
- * Model BiometricDevice
- * 
- */
-export type BiometricDevice = Prisma.BiometricDeviceModel
-/**
- * Model BiometricDeviceEvent
- * 
- */
-export type BiometricDeviceEvent = Prisma.BiometricDeviceEventModel
-/**
- * Model BiometricUserMap
- * 
- */
-export type BiometricUserMap = Prisma.BiometricUserMapModel
-/**
  * Model Bookmark
  * 
  */
@@ -241,11 +226,6 @@ export type AdminPermission = Prisma.AdminPermissionModel
  * 
  */
 export type AdminRolePermission = Prisma.AdminRolePermissionModel
-/**
- * Model BiometricBridgeStatus
- * 
- */
-export type BiometricBridgeStatus = Prisma.BiometricBridgeStatusModel
 /**
  * Model NotificationSchedulerRun
  * 

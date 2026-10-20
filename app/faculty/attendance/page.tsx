@@ -91,7 +91,7 @@ export default function FacultyAttendancePage() {
   }
 
   return (
-    <FacultyShell title="Attendance" subtitle="Manual attendance — source MANUAL, biometric records are protected">
+    <FacultyShell title="Attendance" subtitle="Manual attendance — source MANUAL">
       {err && <p className="mb-3 rounded-xl bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">{err}</p>}
       {saved && <p className="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">{saved}</p>}
 

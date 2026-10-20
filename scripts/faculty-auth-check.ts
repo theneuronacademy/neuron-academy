@@ -90,10 +90,9 @@ function tokenFor(role: string): string {
   check("attendance scopes faculty batches", att.includes("facultyBatchIds"));
 }
 
-// 6. Faculty cannot overwrite BIOMETRIC attendance
+// 6. Manual source forced for faculty writes
 {
   const att = read("app/api/attendance/route.ts");
-  check("biometric overwrite blocked (409)", att.includes("409") && att.includes("BIOMETRIC"));
   check("manual source forced for faculty writes", att.includes('source: "MANUAL"'));
 }
 

@@ -75,7 +75,7 @@ export default function AttendancePage() {
       <div className="metallic-dark rounded-card p-5 text-white sm:p-6">
         <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">TODAY • {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }).toUpperCase()}</p>
         <p className="mt-1 text-3xl font-extrabold">{rows.length > 0 ? `${avg}% average attendance` : "No attendance data"}</p>
-        <p className="mt-1 text-[13px] text-silver-200">Manual registers{rows.length > 0 ? " • biometric devices report separately" : ""}.</p>
+        <p className="mt-1 text-[13px] text-silver-200">Manual registers.</p>
       </div>
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
@@ -101,7 +101,7 @@ export default function AttendancePage() {
       <button onClick={syncAttendance} disabled={syncing} aria-label="Sync attendance" className="rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">
         {syncing ? "Syncing…" : "Sync Attendance"}
       </button>
-      <p className="text-[12px] text-muted">Refreshes from the attendance register. K90 biometric pairing is not connected — see Biometric Devices.</p>
+      <p className="text-[12px] text-muted">Refreshes from the attendance register.</p>
     </AdminLayout>
   );
 }

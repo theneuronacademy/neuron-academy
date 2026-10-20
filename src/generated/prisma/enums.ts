@@ -117,8 +117,7 @@ export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof Attendance
 
 
 export const AttendanceSource = {
-  MANUAL: 'MANUAL',
-  BIOMETRIC: 'BIOMETRIC'
+  MANUAL: 'MANUAL'
 } as const
 
 export type AttendanceSource = (typeof AttendanceSource)[keyof typeof AttendanceSource]
@@ -229,14 +228,6 @@ export const PopupFrequency = {
 } as const
 
 export type PopupFrequency = (typeof PopupFrequency)[keyof typeof PopupFrequency]
-
-
-export const BiometricUserType = {
-  STUDENT: 'STUDENT',
-  FACULTY: 'FACULTY'
-} as const
-
-export type BiometricUserType = (typeof BiometricUserType)[keyof typeof BiometricUserType]
 
 
 export const DoubtStatus = {

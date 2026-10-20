@@ -76,9 +76,6 @@ export const ModelName = {
   Book: 'Book',
   Enquiry: 'Enquiry',
   Announcement: 'Announcement',
-  BiometricDevice: 'BiometricDevice',
-  BiometricDeviceEvent: 'BiometricDeviceEvent',
-  BiometricUserMap: 'BiometricUserMap',
   Bookmark: 'Bookmark',
   TimetableEntry: 'TimetableEntry',
   Doubt: 'Doubt',
@@ -91,7 +88,6 @@ export const ModelName = {
   AdminAuditLog: 'AdminAuditLog',
   AdminPermission: 'AdminPermission',
   AdminRolePermission: 'AdminRolePermission',
-  BiometricBridgeStatus: 'BiometricBridgeStatus',
   NotificationSchedulerRun: 'NotificationSchedulerRun'
 } as const
 
@@ -442,7 +438,6 @@ export const AttendanceScalarFieldEnum = {
   checkIn: 'checkIn',
   checkOut: 'checkOut',
   source: 'source',
-  deviceId: 'deviceId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -620,60 +615,6 @@ export const AnnouncementScalarFieldEnum = {
 } as const
 
 export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
-
-
-export const BiometricDeviceScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  serialNumber: 'serialNumber',
-  deviceType: 'deviceType',
-  ipAddress: 'ipAddress',
-  port: 'port',
-  protocol: 'protocol',
-  location: 'location',
-  isActive: 'isActive',
-  lastSeenAt: 'lastSeenAt',
-  lastHeartbeatAt: 'lastHeartbeatAt',
-  lastError: 'lastError',
-  authSecretHash: 'authSecretHash',
-  totalEvents: 'totalEvents',
-  failedEvents: 'failedEvents',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type BiometricDeviceScalarFieldEnum = (typeof BiometricDeviceScalarFieldEnum)[keyof typeof BiometricDeviceScalarFieldEnum]
-
-
-export const BiometricDeviceEventScalarFieldEnum = {
-  id: 'id',
-  deviceId: 'deviceId',
-  biometricUserId: 'biometricUserId',
-  eventTimestamp: 'eventTimestamp',
-  eventType: 'eventType',
-  payloadHash: 'payloadHash',
-  processed: 'processed',
-  attendanceId: 'attendanceId',
-  receivedAt: 'receivedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type BiometricDeviceEventScalarFieldEnum = (typeof BiometricDeviceEventScalarFieldEnum)[keyof typeof BiometricDeviceEventScalarFieldEnum]
-
-
-export const BiometricUserMapScalarFieldEnum = {
-  id: 'id',
-  deviceId: 'deviceId',
-  biometricUserId: 'biometricUserId',
-  userType: 'userType',
-  userId: 'userId',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type BiometricUserMapScalarFieldEnum = (typeof BiometricUserMapScalarFieldEnum)[keyof typeof BiometricUserMapScalarFieldEnum]
 
 
 export const BookmarkScalarFieldEnum = {
@@ -858,27 +799,6 @@ export const AdminRolePermissionScalarFieldEnum = {
 } as const
 
 export type AdminRolePermissionScalarFieldEnum = (typeof AdminRolePermissionScalarFieldEnum)[keyof typeof AdminRolePermissionScalarFieldEnum]
-
-
-export const BiometricBridgeStatusScalarFieldEnum = {
-  id: 'id',
-  bridgeId: 'bridgeId',
-  version: 'version',
-  configHash: 'configHash',
-  status: 'status',
-  lastHeartbeatAt: 'lastHeartbeatAt',
-  lastEventAt: 'lastEventAt',
-  eventsProcessed: 'eventsProcessed',
-  eventsFailed: 'eventsFailed',
-  cpuUsage: 'cpuUsage',
-  memoryUsage: 'memoryUsage',
-  uptimeSeconds: 'uptimeSeconds',
-  metadata: 'metadata',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type BiometricBridgeStatusScalarFieldEnum = (typeof BiometricBridgeStatusScalarFieldEnum)[keyof typeof BiometricBridgeStatusScalarFieldEnum]
 
 
 export const NotificationSchedulerRunScalarFieldEnum = {

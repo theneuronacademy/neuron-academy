@@ -58,7 +58,6 @@ const RESOURCE_GROUPS = [
   { key: "enquiries", label: "Enquiries", icon: Inbox },
   { key: "books", label: "Books", icon: FileText },
   { key: "attendance", label: "Attendance", icon: FileText },
-  { key: "biometric", label: "Biometric Devices", icon: Shield },
   { key: "website", label: "Website CMS", icon: Globe },
   { key: "settings", label: "Settings", icon: Settings },
   { key: "audit", label: "Audit Logs", icon: Key },

@@ -92,8 +92,6 @@ function tokenFor(role: string): string {
     "app/api/admin/books/[id]/route.ts",
     "app/api/notifications/route.ts",
     "app/api/notifications/[id]/route.ts",
-    "app/api/biometric/devices/route.ts",
-    "app/api/biometric/devices/[id]/route.ts",
     "app/api/dashboard/stats/route.ts",
     "app/api/enquiries/route.ts",
     "app/api/banners/route.ts",
@@ -146,12 +144,6 @@ function tokenFor(role: string): string {
   }
 }
 
-// 10. biometric DELETE uses select DEVICE_SELECT
-{
-  check("biometric DELETE uses DEVICE_SELECT", read("app/api/biometric/devices/[id]/route.ts").includes("select: DEVICE_SELECT"));
-  check("biometric PATCH validates IP/port/protocol", read("app/api/biometric/devices/[id]/route.ts").includes("return fail"));
-}
-
 // 11. no passwordHash/dobHash in any admin response
 {
   const adminRoutes = [
@@ -178,7 +170,6 @@ function tokenFor(role: string): string {
     "app/admin/notifications/page.tsx",
     "app/admin/test-access/page.tsx",
     "app/admin/enquiries/page.tsx",
-    "app/admin/biometric-devices/page.tsx",
     "app/admin/dashboard/page.tsx",
   ];
   for (const f of adminPages) {
@@ -206,7 +197,6 @@ function tokenFor(role: string): string {
     "app/admin/notifications/page.tsx",
     "app/admin/test-access/page.tsx",
     "app/admin/enquiries/page.tsx",
-    "app/admin/biometric-devices/page.tsx",
   ];
   for (const f of adminPages) {
     const code = read(f);
@@ -249,7 +239,6 @@ function tokenFor(role: string): string {
     "app/api/questions/[id]/route.ts",
     "app/api/results/[id]/route.ts",
     "app/api/test-access/[id]/route.ts",
-    "app/api/biometric/devices/[id]/route.ts",
   ];
   for (const f of apiFiles) {
     const code = read(f);

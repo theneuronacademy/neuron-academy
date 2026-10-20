@@ -1,5 +1,5 @@
 // Phase 19 — Real-time SSE for Admin Dashboard
-// Provides live updates for: test status changes, attendance, notifications, biometric events
+// Provides live updates for: test status changes, attendance, notifications
 
 import { NextRequest } from "next/server";
 import { getDb, isDbConfigured } from "@/lib/prisma";
@@ -90,27 +90,6 @@ export async function GET(request: NextRequest) {
 
           if (recentAttendance.length > 0) {
             send("attendance-update", { records: recentAttendance });
-          }
-
-          // Check for biometric device events
-          const recentEvents = await db.biometricDeviceEvent.findMany({
-            where: {
-              receivedAt: { gte: new Date(now.getTime() - 30000) },
-              processed: false,
-            },
-            select: {
-              id: true,
-              deviceId: true,
-              biometricUserId: true,
-              eventType: true,
-              receivedAt: true,
-            },
-            take: 20,
-            orderBy: { receivedAt: "desc" },
-          });
-
-          if (recentEvents.length > 0) {
-            send("biometric-event", { events: recentEvents });
           }
 
           // Check for new notifications
