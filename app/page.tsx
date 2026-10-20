@@ -26,7 +26,7 @@ import { FacultyDetails } from "@/components/website/FacultyDetails";
 import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
-import { Reveal, Marquee, Tilt, FloatingEmojis, ConfettiBurst, WaveDivider } from "@/components/website/motion";
+import { Reveal, Marquee, Tilt, WaveDivider } from "@/components/website/motion";
 import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
 import {
   OrganizationJsonLd,
@@ -523,7 +523,6 @@ export default function HomePage() {
         <section id="results" className="metallic-dark relative overflow-hidden">
           <div className="animate-float-slow pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
           <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
-          <FloatingEmojis emojis={["🏆", "🥇", "⭐", "🎉", "🧠"]} count={9} />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
               <SectionHeader dark eyebrow="🏆 RESULTS" title="Progress You Can Measure. 📈" desc="Verified selections from our entrance batches will appear here. ✨" />
@@ -579,7 +578,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* TEST PLATFORM */}
+{/* TEST PLATFORM */}
         <section className="relative overflow-hidden bg-white">
           <div className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
@@ -592,9 +591,7 @@ export default function HomePage() {
                   ))}
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <ConfettiBurst>
-                    <a href="/scholarship-tests" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-block rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">🎓 Scholarship Tests <span className="animate-heartbeat inline-block">→</span></a>
-                  </ConfettiBurst>
+                  <a href="/scholarship-tests" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-block rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">🎓 Scholarship Tests <span className="animate-heartbeat inline-block">→</span></a>
                   <a href="/student/login" className="cta-bounce inline-block rounded-xl border border-silver-300 px-6 py-3 text-sm font-bold text-navy-700 hover:border-teal-500">▶️ Take a Live Demo Test</a>
                 </div>
               </div>
@@ -664,7 +661,6 @@ export default function HomePage() {
         {/* CONTACT */}
         <section id="contact" className="relative overflow-hidden bg-background">
           <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
-          <FloatingEmojis emojis={["📞", "💬", "📍", "✨"]} count={6} />
           <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
@@ -707,7 +703,6 @@ export default function HomePage() {
 
         {/* ADMISSION */}
         <section className="relative overflow-hidden bg-white">
-          <FloatingEmojis emojis={["🎯", "🚀", "🎓", "⭐"]} count={7} />
           <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
@@ -747,7 +742,6 @@ export default function HomePage() {
         <section className="metallic-dark relative overflow-hidden">
           <div className="animate-float-slow pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
           <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
-          <FloatingEmojis emojis={["🧠", "⚡", "🏆", "🚀", "✨", "🎯"]} count={12} />
           <div className="relative mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
             <Reveal>
               <p className="text-[11px] font-bold tracking-[0.24em] text-teal-300">🧠 JEE • NEET • AMU • JAMIA • ADMISSIONS OPEN ⚡</p>
@@ -757,13 +751,9 @@ export default function HomePage() {
               <h2 className="mx-auto mt-2 max-w-2xl text-3xl font-extrabold text-white sm:text-5xl">Your Rank Is Waiting. 🏆</h2>
               <p className="mx-auto mt-3 max-w-xl text-[15px] text-silver-200">Visit Shaheen Bagh, attend a free demo, take the diagnostic — and leave with a plan. 🚀</p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <ConfettiBurst>
                   <a href="#courses" className="animate-glow cta-bounce shine-sweep rounded-xl bg-crimson px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright"><span className="animate-heartbeat inline-block">🚀</span> Explore Courses</a>
-                </ConfettiBurst>
-                <ConfettiBurst>
                   <a href="#contact" className="cta-bounce rounded-xl border border-white/30 bg-white/5 px-8 py-3.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300"><span className="animate-heartbeat inline-block">🎯</span> Book Free Demo</a>
-                </ConfettiBurst>
-              </div>
+                </div>
             </Reveal>
           </div>
         </section>

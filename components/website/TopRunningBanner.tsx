@@ -7,53 +7,6 @@ import { getLiveBanners } from "@/services/siteApi";
 import type { Advertisement } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const DEFAULT_BANNERS: Advertisement[] = [
-  {
-    id: "default-top-1",
-    title: "SSC CGL 2027 — Admissions Open",
-    subtitle: "New batches starting soon",
-    description: "Structured maths + reasoning track with weekly mocks and mentor reviews.",
-    mediaType: "image",
-    mediaUrl: "",
-    posterUrl: "",
-    ctaText: "Explore Courses",
-    ctaLink: "#courses",
-    type: "banner",
-    priority: 100,
-    startDate: "2025-01-01",
-    endDate: "2030-12-31",
-    isActive: true,
-    autoplay: true,
-    muted: true,
-    loop: true,
-    audioEnabled: false,
-    createdAt: "",
-    updatedAt: "",
-  },
-  {
-    id: "default-top-2",
-    title: "JEE Main Weekly Test Series",
-    subtitle: "Practice • Perform • Improve",
-    description: "60-question mocks every Saturday with ranks, solutions and time analysis.",
-    mediaType: "image",
-    mediaUrl: "",
-    posterUrl: "",
-    ctaText: "View Test Platform",
-    ctaLink: "#contact",
-    type: "banner",
-    priority: 90,
-    startDate: "2025-01-01",
-    endDate: "2030-12-31",
-    isActive: true,
-    autoplay: true,
-    muted: true,
-    loop: true,
-    audioEnabled: false,
-    createdAt: "",
-    updatedAt: "",
-  },
-];
-
 function SlideMedia({ ad }: { ad: Advertisement }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(ad.muted !== false);
@@ -130,19 +83,23 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
  * /admin/advertisements (type = Banner/Course/Admission/Result).
  */
 export function TopRunningBanner() {
-  const [ads, setAds] = useState<Advertisement[]>(DEFAULT_BANNERS);
+  const [ads, setAds] = useState<Advertisement[]>([]);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchX = useRef<number | null>(null);
 
   const load = useCallback(() => {
-    // Phase 11: database banners win; mockStore then static defaults stay fallback.
+    // Phase 11: database banners win; mockStore stays dev fallback.
     void getLiveBanners().then((live) => {
-      if (live) {
+      if (live && live.length > 0) {
         setAds(live);
       } else {
         const local = getCarouselAds();
-        setAds(local.length > 0 ? local : DEFAULT_BANNERS);
+        if (local.length > 0) {
+          setAds(local);
+        } else {
+          setAds([]);
+        }
       }
       setIndex(0);
     });
@@ -165,6 +122,8 @@ export function TopRunningBanner() {
   }, [paused, ads.length]);
 
   const go = (dir: number) => setIndex((i) => (i + dir + ads.length) % ads.length);
+
+  if (ads.length === 0) return null;
 
   return (
     <section aria-label="Academy announcements" className="metallic-dark relative overflow-hidden border-b border-white/10">

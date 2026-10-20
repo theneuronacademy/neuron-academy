@@ -6,7 +6,7 @@ import type { Advertisement } from "@/lib/types";
 import { getHeroAds } from "@/lib/mockStore";
 import { getLiveBanners } from "@/services/siteApi";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
-import { Marquee, Typewriter, FloatingEmojis, MouseGlow, ConfettiBurst } from "@/components/website/motion";
+import { Marquee, Typewriter, MouseGlow } from "@/components/website/motion";
 import { EXAM_TICKER } from "@/lib/websiteData";
 
 const EXAM_PILLS = [
@@ -116,7 +116,6 @@ export function Hero() {
       <div className="animate-float-slow pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" aria-hidden />
       <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" aria-hidden />
-      <FloatingEmojis emojis={["🧠", "⚡", "✨", "🎯", "📚", "🏆"]} count={10} />
       <MouseGlow />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-12 pt-12 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:pt-16">
@@ -146,11 +145,9 @@ export function Hero() {
             Shaheen Bagh&apos;s focused coaching for engineering, medical and university entrances — small batches, weekly mocks and mentors who track every mark.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <ConfettiBurst>
-              <a href="#courses" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-flex items-center rounded-xl bg-crimson px-7 py-3.5 text-[15px] font-bold text-white hover:bg-crimson-bright">
-                <Sparkles className="mr-1.5 h-4 w-4 animate-wiggle" /> Explore Courses <span className="animate-heartbeat ml-1 inline-block">🚀</span> <ArrowRight className="ml-1 h-4 w-4" />
-              </a>
-            </ConfettiBurst>
+            <a href="#courses" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-flex items-center rounded-xl bg-crimson px-7 py-3.5 text-[15px] font-bold text-white hover:bg-crimson-bright">
+              <Sparkles className="mr-1.5 h-4 w-4 animate-wiggle" /> Explore Courses <span className="animate-heartbeat ml-1 inline-block">🚀</span> <ArrowRight className="ml-1 h-4 w-4" />
+            </a>
             <a href="#contact" className="cta-bounce inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-[15px] font-bold text-white backdrop-blur hover:border-teal-300 hover:text-teal-200">
               <Phone className="mr-1.5 h-4 w-4" /> Book Free Demo <span className="animate-heartbeat ml-1 inline-block">🎯</span>
             </a>

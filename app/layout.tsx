@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { BackToTop, FloatingEmojis, ScrollProgress } from "@/components/website/motion";
+import { BackToTop, ScrollProgress } from "@/components/website/motion";
 import { ThemeProvider } from "@/components/website/ThemeProvider";
 import "./globals.css";
 
@@ -65,10 +65,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-background text-ink antialiased">
         <ThemeProvider>
           <ScrollProgress />
-          {/* Sitewide decorative emoji drift — pointer-events-none, aria-hidden, never interactive. */}
-          <div aria-hidden className="pointer-events-none fixed inset-0 z-[70] overflow-hidden">
-            <FloatingEmojis count={6} />
-          </div>
           <OrganizationJsonLd />
           {children}
           <BackToTop />

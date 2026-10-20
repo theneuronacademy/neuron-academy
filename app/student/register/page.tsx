@@ -26,12 +26,36 @@ export default function StudentRegisterPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [config, setConfig] = useState<{ directOtpConfigured: boolean } | null>(null);
+  // NEXT_PUBLIC_MSG91_WIDGET_ID is client-safe; MSG91_AUTH_KEY stays server-only.
+  const widgetConfigured = !!process.env.NEXT_PUBLIC_MSG91_WIDGET_ID;
 
   useEffect(() => {
     if (cooldown <= 0) return;
     const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
     return () => clearTimeout(t);
   }, [cooldown]);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/otp/config", { cache: "no-store" })
+      .then((res) => res.json().catch(() => null))
+      .then((json) => {
+        if (!active) return;
+        setConfig(
+          json && typeof json.directOtpConfigured === "boolean"
+            ? json
+            : { directOtpConfigured: false },
+        );
+      })
+      .catch(() => {
+        if (!active) return;
+        setConfig({ directOtpConfigured: false });
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function sendOtp() {
     setError(null);
@@ -176,6 +200,37 @@ export default function StudentRegisterPage() {
   const inputCls = "w-full rounded-xl border border-silver-300 px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none";
   const labelCls = "mb-1.5 block text-[12px] font-bold text-navy-700";
 
+  const directOtpConfigured = config?.directOtpConfigured ?? false;
+  const configLoaded = config !== null;
+  const widgetPrimary = widgetConfigured && !directOtpConfigured;
+
+  if (!configLoaded) {
+    return (
+      <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
+        <div className="rounded-[22px] bg-white shadow-2xl p-6 text-center">
+          <Loader2 className="mx-auto h-6 w-6 animate-spin text-teal-600" />
+          <p className="mt-3 text-[13px] font-semibold text-muted">Preparing registration…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!directOtpConfigured && !widgetConfigured) {
+    return (
+      <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
+        <div className="rounded-[22px] bg-white shadow-2xl p-6 text-center">
+          <p className="rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson">
+            Registration is temporarily unavailable. The OTP service is not configured — please contact the academy office.
+          </p>
+          <p className="mt-3 text-center text-[13px] font-semibold text-muted">
+            Already registered? <Link href="/student/login" className="font-bold text-teal-600 hover:underline">Sign in</Link>
+          </p>
+          <Link href="/" className="block text-center text-[13px] font-bold text-teal-600 hover:underline">← Back to Website</Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md overflow-hidden rounded-[22px] bg-white shadow-2xl">
@@ -190,32 +245,55 @@ export default function StudentRegisterPage() {
 
           {step === "mobile" ? (
             <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); void sendOtp(); }}>
-              <p className="text-[13px] font-semibold text-muted">Step 1 of 3 — enter your 10-digit Indian mobile number to receive an OTP.</p>
-              <div>
-                <label htmlFor="otp-mobile" className={labelCls}>Mobile Number</label>
-                <input id="otp-mobile" required inputMode="tel" autoComplete="tel" value={mobile} onChange={(e) => setMobile(e.target.value)} placeholder="e.g. 98765 43210" className={inputCls} />
-              </div>
-              <Button type="submit" size="lg" className="w-full" disabled={busy}>
-                {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Sending OTP…</> : "Send OTP"}
-              </Button>
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-silver-300" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-muted">Or verify with</span>
-                </div>
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                className="w-full"
-                onClick={() => setStep("widget")}
-                disabled={busy}
-              >
-                Verify with OTP Widget
-              </Button>
+              {widgetPrimary ? (
+                <>
+                  <p className="text-[13px] font-semibold text-muted">
+                    SMS OTP is not configured. Verify your mobile through the MSG91 OTP Widget below.
+                  </p>
+                  <Button
+                    type="button"
+                    size="lg"
+                    className="w-full"
+                    onClick={() => setStep("widget")}
+                    disabled={busy}
+                  >
+                    {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Verifying…</> : "Verify with OTP Widget"}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-[13px] font-semibold text-muted">Step 1 of 3 — enter your 10-digit Indian mobile number to receive an OTP.</p>
+                  <div>
+                    <label htmlFor="otp-mobile" className={labelCls}>Mobile Number</label>
+                    <input id="otp-mobile" required inputMode="tel" autoComplete="tel" value={mobile} onChange={(e) => setMobile(e.target.value)} placeholder="e.g. 98765 43210" className={inputCls} />
+                  </div>
+                  <Button type="submit" size="lg" className="w-full" disabled={busy}>
+                    {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Sending OTP…</> : "Send OTP"}
+                  </Button>
+                  {widgetConfigured ? (
+                    <>
+                      <div className="relative my-4">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-silver-300" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-white px-2 text-muted">Or verify with</span>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="lg"
+                        className="w-full"
+                        onClick={() => setStep("widget")}
+                        disabled={busy}
+                      >
+                        Verify with OTP Widget
+                      </Button>
+                    </>
+                  ) : null}
+                </>
+              )}
             </form>
           ) : step === "otp" ? (
             <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); void verifyOtp(); }}>
