@@ -65,20 +65,19 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
       { href: "/admin/batches", label: "Batches", icon: Layers },
     ],
   },
-  {
-    label: "Academic",
-    items: [
-      { href: "/admin/tests", label: "Tests", icon: FileText },
-      { href: "/admin/test-access", label: "Test Access", icon: Lock },
-      { href: "/admin/test-access/grant", label: "Access Grants", icon: Key },
-      { href: "/admin/question-bank", label: "Question Bank", icon: Database },
-      { href: "/admin/books", label: "Books", icon: BookOpen },
-      { href: "/admin/materials", label: "Study Material", icon: Library },
-      { href: "/admin/timetable", label: "Timetable", icon: CalendarDays },
-      { href: "/admin/results", label: "Results", icon: BarChart3 },
-      { href: "/admin/attendance", label: "Attendance", icon: BarChart3 },
-    ],
-  },
+{
+        label: "Academic",
+        items: [
+          { href: "/admin/tests", label: "Tests", icon: FileText },
+          { href: "/admin/test-access", label: "Test Access", icon: Lock },
+          { href: "/admin/test-access/grant", label: "Access Grants", icon: Key },
+          { href: "/admin/question-bank", label: "Question Bank", icon: Database },
+          { href: "/admin/books", label: "Books", icon: BookOpen },
+          { href: "/admin/materials", label: "Study Material", icon: Library },
+          { href: "/admin/timetable", label: "Timetable", icon: CalendarDays },
+          { href: "/admin/results", label: "Results", icon: BarChart3 },
+        ],
+      },
   {
     label: "Communication",
     items: [

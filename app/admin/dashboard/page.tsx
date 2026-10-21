@@ -27,7 +27,6 @@ import { AdminStatusBadge, statusToneFor } from "@/components/admin/AdminStatusB
 import { LoadingState } from "@/components/admin/AdminStates";
 import { ProgressBar } from "@/components/ui/primitives";
 import {
-  getAttendanceOverview,
   getDashboardStats,
   getEnquiries,
   getRecentActivity,
@@ -51,26 +50,18 @@ export default function AdminDashboardPage() {
   const [activity, setActivity] = useState<{ id: string; text: string; time: string }[]>([]);
   const [upcoming, setUpcoming] = useState<AdminTest[]>([]);
   const [enquiries, setEnquiries] = useState<AdminEnquiry[]>([]);
-  const [attendance, setAttendance] = useState<{ batch: string; pct: number }[]>([]);
   const [site, setSite] = useState<{ online: boolean; lastUpdate: string; activeBanners: number; activePopups: number } | null>(null);
-  // Phase 6: live database test-platform stats (hidden in demo mode).
   const [liveStats, setLiveStats] = useState<{ totalTests: number; publishedTests: number; liveTests: number; scheduledTests: number; completedTests: number; totalResults: number; totalAttempts: number; totalStudents: number; activeStudents: number; totalFaculty: number; activeFaculty: number; totalBatches: number; activeBatches: number; totalCourses: number; newEnquiries: number } | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const { connected, lastEvent } = useDashboardSSE((event) => {
     if (event.type === "test-status-update") {
-      // Refresh upcoming tests when test status changes
       getUpcomingTests().then(setUpcoming);
-      // Also refresh live stats
       fetch("/api/dashboard/stats", { cache: "no-store" })
         .then((r) => r.json())
         .then((json) => {
           if (json?.success && json.data?.totalTests) setLiveStats(json.data);
         });
-    }
-    if (event.type === "attendance-update") {
-      getAttendanceOverview().then(setAttendance);
-      getDashboardStats().then((s) => setStats(s));
     }
     if (event.type === "notification-update") {
       getRecentActivity().then(setActivity);
@@ -98,14 +89,12 @@ export default function AdminDashboardPage() {
         setActivity(await getRecentActivity());
         setUpcoming(await getUpcomingTests());
         setEnquiries((await getEnquiries()).slice(0, 5));
-        setAttendance(await getAttendanceOverview());
         setSite(await getWebsiteStatus());
         try {
           const res = await fetch("/api/dashboard/stats", { cache: "no-store" });
           const json = await res.json().catch(() => null);
           if (res.ok && json?.success === true && typeof json.data?.totalTests === "number") setLiveStats(json.data);
         } catch {
-          /* demo mode — demo cards below stay */
         }
         setReady(true);
       } catch {
@@ -126,7 +115,6 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminLayout title="Dashboard" subtitle="Academy control center">
-      {/* Welcome */}
       <div className="bg-metallic-dark flex flex-wrap items-center justify-between gap-4 rounded-card p-5 text-white sm:p-6">
         <div>
           <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">{today.toUpperCase()}</p>
@@ -161,17 +149,14 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Stats — Phase 17: live database values; demo fallbacks labelled. */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard label="Total Students" value={liveStats?.totalStudents ?? stats.totalStudents} sub={liveStats ? `${liveStats.activeStudents} active` : "Demo data"} icon={Users} accent="navy" />
         <StatCard label="Total Faculty" value={liveStats?.totalFaculty ?? stats.totalFaculty} sub={liveStats ? `${liveStats.activeFaculty} active` : "Demo data"} icon={GraduationCap} accent="teal" />
         <StatCard label="Active Batches" value={liveStats?.activeBatches ?? stats.activeBatches} sub={liveStats ? `Across ${liveStats.totalCourses} courses` : "Demo data"} icon={Layers} accent="navy" />
         <StatCard label="Published Tests" value={liveStats?.publishedTests ?? stats.publishedTests} sub={liveStats ? `${liveStats.liveTests} live now` : "Demo data"} icon={FileText} accent="teal" />
         <StatCard label="Pending Enquiries" value={liveStats?.newEnquiries ?? stats.pendingEnquiries} sub={liveStats ? "New enquiries awaiting contact" : "Demo data"} icon={Inbox} accent="crimson" />
-        <StatCard label="Today's Attendance" value={`${stats.todayAttendancePct}%`} sub="Demo preview — see Attendance" icon={CalendarCheck} accent="teal" />
       </div>
 
-      {/* Phase 6: live database test-platform stats (demo cards above stay as fallback) */}
       {liveStats ? (
         <div>
           <h3 className="text-sm font-extrabold tracking-widest text-muted">LIVE TEST PLATFORM • POSTGRESQL</h3>
@@ -184,7 +169,6 @@ export default function AdminDashboardPage() {
         </div>
       ) : null}
 
-      {/* Quick actions */}
       <div>
         <h3 className="text-sm font-extrabold tracking-widest text-muted">QUICK ACTIONS</h3>
         <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -197,7 +181,6 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        {/* Upcoming tests */}
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
             <h3 className="text-[15px] font-extrabold text-navy-700">Upcoming Tests</h3>
@@ -224,7 +207,6 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Recent enquiries */}
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
             <h3 className="text-[15px] font-extrabold text-navy-700">Recent Enquiries</h3>
@@ -253,31 +235,6 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        {/* Attendance */}
-        <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card lg:col-span-1">
-          <h3 className="text-[15px] font-extrabold text-navy-700">Attendance Overview</h3>
-          <p className="mt-0.5 text-[12px] font-semibold text-muted">Today • {stats.todayAttendancePct}% average (demo preview)</p>
-          <div className="mt-4 space-y-3">
-            {attendance.length === 0 ? (
-              <p className="rounded-xl bg-silver-50 px-4 py-6 text-center text-[13px] font-bold text-muted">No attendance data.</p>
-            ) : (
-            attendance.map((a) => (
-              <div key={a.batch}>
-                <div className="flex items-center justify-between text-[12px] font-bold">
-                  <span className="text-navy-700">{a.batch}</span>
-                  <span className="text-muted">{a.pct}%</span>
-                </div>
-                <ProgressBar value={a.pct} className="mt-1.5" tone={a.pct >= 85 ? "teal" : a.pct >= 75 ? "navy" : "red"} />
-              </div>
-            ))
-            )}
-          </div>
-          <Link href="/admin/attendance" className="mt-4 block rounded-xl border border-silver-300 px-4 py-2 text-center text-[13px] font-bold text-navy-700 hover:border-teal-500">
-            Open Attendance
-          </Link>
-        </div>
-
-        {/* Recent activity */}
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card lg:col-span-1">
           <h3 className="text-[15px] font-extrabold text-navy-700">Recent Activity</h3>
           {activity.length === 0 ? (
@@ -297,7 +254,6 @@ export default function AdminDashboardPage() {
           )}
         </div>
 
-        {/* Website status */}
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card lg:col-span-1">
           <h3 className="text-[15px] font-extrabold text-navy-700">Website Status</h3>
           <div className="mt-3 space-y-2.5 text-[13px] font-semibold">
