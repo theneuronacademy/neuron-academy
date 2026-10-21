@@ -40,7 +40,7 @@ export function SocialSidebar() {
     <>
       {/* Desktop: fixed right vertical pill */}
       <div className="fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 md:block">
-        <div className="metallic-dark flex flex-col overflow-hidden rounded-l-2xl border border-r-0 border-silver-300/30 py-1 shadow-card">
+        <div className="bg-metallic-dark flex flex-col overflow-hidden rounded-l-2xl border border-r-0 border-silver-300/30 py-1 shadow-card">
           {SOCIAL_LINKS.map((s) => (
             <a
               key={s.label}

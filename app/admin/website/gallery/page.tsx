@@ -153,7 +153,7 @@ export default function GalleryAdminPage() {
                 {g.image ? (
                   <Image src={g.image} alt={g.title} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw" className="absolute inset-0 h-full w-full object-cover" />
                 ) : (
-                  <div className="metallic-dark flex h-full items-center justify-center p-3 text-center text-[12px] font-extrabold text-white">{g.title}</div>
+                  <div className="bg-metallic-dark flex h-full items-center justify-center p-3 text-center text-[12px] font-extrabold text-white">{g.title}</div>
                 )}
               </div>
               <div className="flex items-center justify-between gap-2 p-3">

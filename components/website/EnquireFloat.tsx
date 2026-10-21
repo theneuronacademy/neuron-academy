@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { CONTACT } from "@/data/contact";
 
@@ -11,7 +12,23 @@ import { CONTACT } from "@/data/contact";
 const MODE: "whatsapp" | "enquiry" = "whatsapp";
 
 export function EnquireFloat() {
+  const [contactVisible, setContactVisible] = useState(false);
   const href = MODE === "whatsapp" ? CONTACT.whatsappHref : "#contact";
+
+  useEffect(() => {
+    const contactSection = document.getElementById("contact");
+    if (!contactSection || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setContactVisible(entry.isIntersecting),
+      { threshold: 0.12 },
+    );
+    observer.observe(contactSection);
+    return () => observer.disconnect();
+  }, []);
+
+  if (contactVisible) return null;
+
   return (
     <>
       <a

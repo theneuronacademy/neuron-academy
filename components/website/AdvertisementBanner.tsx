@@ -30,7 +30,7 @@ export function AdvertisementBanner({ ad, compact = false }: { ad: Advertisement
           // eslint-disable-next-line @next/next/no-img-element
           <img src={ad.mediaUrl} alt={ad.title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div className="metallic-dark absolute inset-0 flex items-center justify-center p-6">
+          <div className="bg-metallic-dark absolute inset-0 flex items-center justify-center p-6">
             <p className="text-center text-lg font-extrabold text-white">{ad.title}</p>
           </div>
         )}

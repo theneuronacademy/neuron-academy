@@ -42,7 +42,7 @@ function PopupPreview({ p }: { p: Partial<AdminPopup> }) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={p.image} alt={p.title ?? "Popup"} className="h-44 w-full object-cover" />
           ) : (
-            <div className="metallic-dark flex h-44 items-center justify-center p-4 text-center text-sm font-extrabold text-white">{p.title || "Popup title"}</div>
+            <div className="bg-metallic-dark flex h-44 items-center justify-center p-4 text-center text-sm font-extrabold text-white">{p.title || "Popup title"}</div>
           )}
         </div>
         <p className="mt-3 text-[15px] font-extrabold text-navy-700">{p.title || "Popup title"}</p>

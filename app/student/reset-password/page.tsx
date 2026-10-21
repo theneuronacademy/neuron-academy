@@ -65,7 +65,7 @@ function ResetPasswordContent() {
 
   if (!phone) {
     return (
-      <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
+      <div className="bg-metallic-dark flex min-h-screen items-center justify-center p-4">
         <div className="w-full max-w-md overflow-hidden rounded-[22px] bg-white shadow-2xl">
           <div className="bg-navy-700 px-6 py-6 text-center">
             <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-navy-700"><GraduationCap className="h-6 w-6" /></span>
@@ -82,7 +82,7 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
+    <div className="bg-metallic-dark flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md overflow-hidden rounded-[22px] bg-white shadow-2xl">
         <div className="bg-navy-700 px-6 py-6 text-center">
           <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-navy-700"><GraduationCap className="h-6 w-6" /></span>
@@ -123,7 +123,7 @@ function ResetPasswordContent() {
 
 export default function StudentResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="metallic-dark flex min-h-screen items-center justify-center p-4"><div className="w-full max-w-md overflow-hidden rounded-[22px] bg-white shadow-2xl"><div className="bg-navy-700 px-6 py-6 text-center"><span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-navy-700"><GraduationCap className="h-6 w-6" /></span><h1 className="mt-3 text-xl font-extrabold text-white">Reset Password</h1><p className="mt-1 text-[13px] text-silver-200">Neuron Academy • Test Platform</p></div><div className="p-6 text-center"><Loader2 className="mx-auto h-8 w-8 animate-spin text-teal-600" /></div></div></div>}>
+    <Suspense fallback={<div className="bg-metallic-dark flex min-h-screen items-center justify-center p-4"><div className="w-full max-w-md overflow-hidden rounded-[22px] bg-white shadow-2xl"><div className="bg-navy-700 px-6 py-6 text-center"><span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-navy-700"><GraduationCap className="h-6 w-6" /></span><h1 className="mt-3 text-xl font-extrabold text-white">Reset Password</h1><p className="mt-1 text-[13px] text-silver-200">Neuron Academy • Test Platform</p></div><div className="p-6 text-center"><Loader2 className="mx-auto h-8 w-8 animate-spin text-teal-600" /></div></div></div>}>
       <ResetPasswordContent />
     </Suspense>
   );

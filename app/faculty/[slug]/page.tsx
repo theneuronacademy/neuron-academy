@@ -35,7 +35,7 @@ export default async function FacultyPage({ params }: { params: Promise<{ slug: 
     <div className="min-h-screen bg-background">
       <Navbar />
       <main>
-        <section className="metallic-dark relative overflow-hidden">
+        <section className="bg-metallic-dark relative overflow-hidden">
           <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[280px_1fr]">
             <div className="premium-ring relative h-72 overflow-hidden rounded-card-lg lg:h-80">
               <SmartImage
@@ -45,7 +45,7 @@ export default async function FacultyPage({ params }: { params: Promise<{ slug: 
                 imgClassName="h-full w-full object-cover"
                 eager
                 fallback={
-                  <div className="metallic-dark absolute inset-0 flex flex-col items-center justify-center">
+                  <div className="bg-metallic-dark absolute inset-0 flex flex-col items-center justify-center">
                     <span className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10 text-4xl font-extrabold text-white ring-1 ring-white/20">{member.name.charAt(0)}</span>
                   </div>
                 }

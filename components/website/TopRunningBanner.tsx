@@ -126,7 +126,7 @@ export function TopRunningBanner() {
   if (ads.length === 0) return null;
 
   return (
-    <section aria-label="Academy announcements" className="metallic-dark relative overflow-hidden border-b border-white/10">
+    <section aria-label="Academy announcements" className="bg-metallic-dark relative overflow-hidden border-b border-white/10">
       <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary" aria-hidden />
       <div
         className="relative"

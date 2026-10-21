@@ -127,7 +127,7 @@ export default function AdminDashboardPage() {
   return (
     <AdminLayout title="Dashboard" subtitle="Academy control center">
       {/* Welcome */}
-      <div className="metallic-dark flex flex-wrap items-center justify-between gap-4 rounded-card p-5 text-white sm:p-6">
+      <div className="bg-metallic-dark flex flex-wrap items-center justify-between gap-4 rounded-card p-5 text-white sm:p-6">
         <div>
           <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">{today.toUpperCase()}</p>
           <h2 className="mt-1 text-xl font-extrabold sm:text-2xl">{greeting()}, Admin</h2>

@@ -78,35 +78,14 @@ function ShellInner({ title, subtitle, children }: { title: string; subtitle?: s
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-silver-200 bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Logo />
-          <nav className="hidden items-center gap-1 sm:flex" aria-label="Student">
-            {ITEMS.map((it) => (
-              <Link
-                key={it.href}
-                href={it.href}
-                className={cn("relative rounded-lg px-3 py-2 text-sm font-bold", pathname.startsWith(it.href) ? "bg-navy-50 text-navy-700" : "text-muted hover:text-navy-700")}
-              >
-                {t(it.labelKey)}
-                {it.href === "/student/notifications" && unread > 0 ? (
-                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-crimson px-1 text-[10px] font-extrabold text-white" aria-label={`${unread} unread notifications`}>
-                    {unread > 99 ? "99+" : unread}
-                  </span>
-                ) : null}
-              </Link>
-            ))}
-            <Link
-              href="/student/profile"
-              aria-label="My profile"
-              className={cn("rounded-lg p-2", pathname.startsWith("/student/profile") ? "bg-navy-50 text-navy-700" : "text-muted hover:text-navy-700")}
-            >
-              <User className="h-5 w-5" />
-            </Link>
-          </nav>
-          <div className="flex items-center gap-2">
+        <div className="mx-auto flex min-h-[72px] max-w-6xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
+          <Logo compact />
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <LangToggle />
             <Link href="/" className="hidden rounded-xl px-3 py-2 text-sm font-bold text-muted hover:text-navy-700 sm:block">Website</Link>
             <button
+              aria-label="Logout"
+              title="Logout"
               onClick={() => {
                 // Phase 16 — clear the server session cookie first so the
                 // HttpOnly neuron_session does not survive a client logout.
@@ -115,18 +94,18 @@ function ShellInner({ title, subtitle, children }: { title: string; subtitle?: s
                   router.push("/student/login");
                 });
               }}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-silver-300 px-3.5 py-2 text-sm font-bold text-navy-700 hover:border-crimson hover:text-crimson"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-silver-300 px-2.5 py-2 text-sm font-bold text-navy-700 hover:border-crimson hover:text-crimson sm:px-3.5"
             >
-              <LogOut className="h-4 w-4" /> Logout
+              <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </div>
-        <nav className="flex gap-1 overflow-x-auto border-t border-silver-100 px-4 py-2 sm:hidden" aria-label="Student mobile">
+        <nav className="portal-nav-scroll mx-auto flex max-w-6xl gap-1 overflow-x-auto border-t border-silver-100 px-4 py-2 sm:px-6" aria-label="Student navigation">
           {ITEMS.map((it) => (
             <Link
               key={it.href}
               href={it.href}
-              className={cn("relative flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold", pathname.startsWith(it.href) ? "bg-navy-700 text-white" : "text-muted")}
+              className={cn("relative flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold", pathname.startsWith(it.href) ? "bg-navy-50 text-navy-700" : "text-muted hover:bg-silver-50 hover:text-navy-700")}
             >
               <it.icon className="h-3.5 w-3.5" />{t(it.labelKey)}
               {it.href === "/student/notifications" && unread > 0 ? (
@@ -139,7 +118,7 @@ function ShellInner({ title, subtitle, children }: { title: string; subtitle?: s
           <Link
             href="/student/profile"
             aria-label="My profile"
-            className={cn("flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold", pathname.startsWith("/student/profile") ? "bg-navy-700 text-white" : "text-muted")}
+            className={cn("flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold", pathname.startsWith("/student/profile") ? "bg-navy-50 text-navy-700" : "text-muted hover:bg-silver-50 hover:text-navy-700")}
           >
             <User className="h-3.5 w-3.5" />Profile
           </Link>

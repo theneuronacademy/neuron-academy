@@ -49,7 +49,7 @@ export function AdvertisementPreview({ ad, mode }: { ad: Partial<Advertisement>;
                 <img src={full.mediaUrl} alt={full.title} className="h-44 w-full object-cover" />
               )
             ) : (
-              <div className="metallic-dark flex h-44 items-center justify-center p-4 text-center text-sm font-extrabold text-white">{full.title}</div>
+              <div className="bg-metallic-dark flex h-44 items-center justify-center p-4 text-center text-sm font-extrabold text-white">{full.title}</div>
             )}
           </div>
           <p className="mt-3 text-[11px] font-bold tracking-widest text-teal-600">{full.subtitle.toUpperCase()}</p>
@@ -68,7 +68,7 @@ export function AdvertisementPreview({ ad, mode }: { ad: Partial<Advertisement>;
                 <img src={full.mediaUrl} alt={full.title} className="absolute inset-0 h-full w-full object-cover" />
               )
             ) : (
-              <div className="metallic-dark absolute inset-0 flex items-center justify-center p-4 text-center text-sm font-extrabold text-white">{full.title}</div>
+              <div className="bg-metallic-dark absolute inset-0 flex items-center justify-center p-4 text-center text-sm font-extrabold text-white">{full.title}</div>
             )}
           </div>
           <div className="p-4">

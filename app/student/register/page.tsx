@@ -206,7 +206,7 @@ export default function StudentRegisterPage() {
 
   if (!configLoaded) {
     return (
-      <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
+      <div className="bg-metallic-dark flex min-h-screen items-center justify-center p-4">
         <div className="rounded-[22px] bg-white shadow-2xl p-6 text-center">
           <Loader2 className="mx-auto h-6 w-6 animate-spin text-teal-600" />
           <p className="mt-3 text-[13px] font-semibold text-muted">Preparing registration…</p>
@@ -217,7 +217,7 @@ export default function StudentRegisterPage() {
 
   if (!directOtpConfigured && !widgetConfigured) {
     return (
-      <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
+      <div className="bg-metallic-dark flex min-h-screen items-center justify-center p-4">
         <div className="rounded-[22px] bg-white shadow-2xl p-6 text-center">
           <p className="rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson">
             Registration is temporarily unavailable. The OTP service is not configured — please contact the academy office.
@@ -232,7 +232,7 @@ export default function StudentRegisterPage() {
   }
 
   return (
-    <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
+    <div className="bg-metallic-dark flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md overflow-hidden rounded-[22px] bg-white shadow-2xl">
         <div className="bg-navy-700 px-6 py-6 text-center">
           <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-navy-700"><GraduationCap className="h-6 w-6" /></span>

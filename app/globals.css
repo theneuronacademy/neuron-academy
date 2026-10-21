@@ -71,6 +71,15 @@ textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
+.portal-nav-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.portal-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* ==========================================================================
    Premium Background Gradients - Symmetric Patterns (via Tailwind)
    ========================================================================== */

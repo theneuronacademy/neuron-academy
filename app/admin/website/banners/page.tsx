@@ -44,7 +44,7 @@ function BannerPreview({ b }: { b: Partial<AdminBanner> }) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={b.image} alt={b.title ?? "Banner"} className="absolute inset-0 h-full w-full object-cover" />
           ) : (
-            <span className="metallic-dark absolute inset-0 flex items-center justify-center p-4 text-sm font-extrabold text-white">{b.title || "Banner title"}</span>
+            <span className="bg-metallic-dark absolute inset-0 flex items-center justify-center p-4 text-sm font-extrabold text-white">{b.title || "Banner title"}</span>
           )}
         </div>
         <div className="p-4">

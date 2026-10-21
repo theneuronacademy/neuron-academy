@@ -103,7 +103,7 @@ function ParentPortalPageContent() {
   };
 
   return (
-    <div className="metallic-dark flex min-h-screen items-center justify-center p-4">
+    <div className="bg-metallic-dark flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-4xl overflow-hidden rounded-[22px] bg-white shadow-2xl">
         <div className="bg-navy-700 px-6 py-6 text-center">
           <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-navy-700"><GraduationCap className="h-6 w-6" /></span>

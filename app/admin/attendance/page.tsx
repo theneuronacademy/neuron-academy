@@ -72,7 +72,7 @@ export default function AttendancePage() {
 
   return (
     <AdminLayout title="Attendance" subtitle="Today's presence across batches">
-      <div className="metallic-dark rounded-card p-5 text-white sm:p-6">
+      <div className="bg-metallic-dark rounded-card p-5 text-white sm:p-6">
         <p className="text-[11px] font-bold tracking-[0.2em] text-teal-200">TODAY • {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }).toUpperCase()}</p>
         <p className="mt-1 text-3xl font-extrabold">{rows.length > 0 ? `${avg}% average attendance` : "No attendance data"}</p>
         <p className="mt-1 text-[13px] text-silver-200">Manual registers.</p>

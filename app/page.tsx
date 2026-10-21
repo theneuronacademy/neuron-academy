@@ -129,7 +129,7 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
                 className="absolute inset-0 h-full w-full"
                 imgClassName="h-full w-full object-cover"
                 fallback={
-                  <div className="metallic-dark flex h-72 items-center justify-center p-8 text-center">
+                  <div className="bg-metallic-dark flex h-72 items-center justify-center p-8 text-center">
                     <p className="text-xl font-extrabold text-white">{activeItem.title}</p>
                   </div>
                 }
@@ -357,7 +357,7 @@ export default function HomePage() {
                   className="absolute inset-0 h-full w-full"
                   imgClassName="h-full w-full object-cover transition duration-700 hover:scale-105"
                   fallback={
-                    <div className="metallic-dark absolute inset-0 overflow-hidden p-8">
+                    <div className="bg-metallic-dark absolute inset-0 overflow-hidden p-8">
                       <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 25% 20%, #1746B8 0, transparent 45%), radial-gradient(circle at 80% 70%, #D4AF37 0, transparent 35%)" }} />
                       <p className="relative text-[11px] font-bold tracking-[0.2em] text-brand-secondary-300">ABOUT NEURON ACADEMY</p>
                       <p className="relative mt-3 text-2xl font-extrabold text-white">A clear path to focused preparation</p>
@@ -453,7 +453,7 @@ export default function HomePage() {
         </section>
 
         {/* EXAM TICKER divider */}
-        <div className="metallic-dark border-y border-white/10 py-3">
+        <div className="bg-metallic-dark border-y border-white/10 py-3">
           <Marquee items={EXAM_TICKER} className="text-white" itemClassName="text-white" />
         </div>
 
@@ -486,7 +486,7 @@ export default function HomePage() {
 
         {/* RESULTS — cinematic toppers wall */}
         <WaveDivider className="bg-white text-navy-800" />
-        <section id="results" className="metallic-dark relative overflow-hidden">
+        <section id="results" className="bg-metallic-dark relative overflow-hidden">
           <div className="animate-float-slow pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
           <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
@@ -569,7 +569,7 @@ export default function HomePage() {
         </section>
 
         {/* TECHNOLOGY */}
-        <section className="metallic-dark relative overflow-hidden">
+        <section className="bg-metallic-dark relative overflow-hidden">
           <div className="pointer-events-none absolute left-1/4 top-0 h-64 w-64 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
@@ -646,12 +646,17 @@ export default function HomePage() {
                   <MessageCircle className="h-4 w-4 animate-wiggle" /> 💬 Chat on WhatsApp
                 </a>
                 {CONTACT.MAP_EMBED_URL ? (
-                  <iframe
-                    title="Neuron Academy location map"
-                    src={CONTACT.MAP_EMBED_URL}
-                    loading="lazy"
-                    className="mt-4 h-44 w-full rounded-card border border-silver-200"
-                  />
+                  <>
+                    <iframe
+                      title="Neuron Academy location map"
+                      src={CONTACT.MAP_EMBED_URL}
+                      loading="lazy"
+                      className="mt-4 h-64 w-full rounded-card border border-silver-200"
+                    />
+                    <a href={CONTACT.MAP_LINK_URL} target="_blank" rel="noreferrer" className="mt-2 inline-flex text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
+                      Open in Google Maps
+                    </a>
+                  </>
                 ) : (
                   <div className="mt-4 flex h-36 flex-col items-center justify-center gap-1 rounded-card border border-dashed border-silver-300 bg-silver-50 px-4 text-center">
                     <MapPin className="h-5 w-5 text-teal-600" />
@@ -703,7 +708,7 @@ export default function HomePage() {
 
         {/* FINAL CTA */}
         <WaveDivider className="bg-white text-navy-800" />
-        <section className="metallic-dark relative overflow-hidden">
+        <section className="bg-metallic-dark relative overflow-hidden">
           <div className="animate-float-slow pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
           <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-brand-secondary/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">

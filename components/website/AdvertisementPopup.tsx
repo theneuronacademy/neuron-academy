@@ -64,7 +64,7 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
             // eslint-disable-next-line @next/next/no-img-element
             <img src={ad.mediaUrl} alt={ad.title} className="absolute inset-0 h-full w-full object-cover" />
           ) : (
-            <div className="metallic-dark absolute inset-0 flex items-center justify-center p-6">
+            <div className="bg-metallic-dark absolute inset-0 flex items-center justify-center p-6">
               <p className="text-center text-xl font-extrabold text-white">{ad.title}</p>
             </div>
           )}

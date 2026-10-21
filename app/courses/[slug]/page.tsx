@@ -41,7 +41,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
       <Navbar />
       <main>
         {/* Course hero */}
-        <section className="metallic-dark relative overflow-hidden">
+        <section className="bg-metallic-dark relative overflow-hidden">
           <div className="pointer-events-none absolute -right-20 top-0 h-72 w-72 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-14 sm:px-6 lg:grid-cols-2">
             <div>

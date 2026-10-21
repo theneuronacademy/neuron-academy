@@ -16,7 +16,7 @@ export function FacultyDetails({ member, onClose }: { member: FacultyMember; onC
             className="absolute inset-0 h-full w-full"
             imgClassName="h-full w-full object-cover"
             fallback={
-              <div className="metallic-dark absolute inset-0 flex flex-col items-center justify-center">
+              <div className="bg-metallic-dark absolute inset-0 flex flex-col items-center justify-center">
                 <span className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10 text-4xl font-extrabold text-white ring-1 ring-white/20">{member.name.charAt(0)}</span>
                 <p className="mt-3 text-[11px] font-bold tracking-widest text-teal-300">PHOTO COMING SOON</p>
               </div>
