@@ -1,16 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { Logo } from "@/components/website/Logo";
 import { Marquee } from "@/components/website/motion";
 import { COURSES, CONTACT_INFO, SOCIAL_LINKS } from "@/lib/websiteData";
+import { PublicBackground } from "@/components/design-system/BackgroundPatterns";
 
 const FOOTER_TICKER = [
-  "🎉 Admissions Open 2026",
-  "🧠 Activate Your Neuron",
-  "📝 Weekly Mocks + PYQs",
-  "🏆 JEE • NEET • AMU • Jamia",
-  "💡 Doubt Lounge Till 8 PM",
-  "🚀 Small Batches, Big Ranks",
+  "Admissions Open 2026",
+  "Activate Your Neuron",
+  "Weekly Mocks + PYQs",
+  "JEE • NEET • AMU • Jamia",
+  "Doubt Lounge Till 8 PM",
+  "Small Batches, Big Ranks",
 ];
 
 const SOCIAL_ICONS = {
@@ -41,24 +44,23 @@ const SOCIAL_ICONS = {
   ),
   whatsapp: (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#25D366" aria-hidden="true">
-      <path d="M19.11 17.205c-.372 0-.744-.216-1.08-.528l-2.688-2.472a21.542 21.542 0 0 1-3.024-2.808c-.3-.372-.492-.744-.492-1.212 0-.48.108-.792.324-1.128.204-.312.336-.648.504-.996.168-.336.048-.6-.156-1.08a11.89 11.89 0 0 0-.732-1.524c-.24-.264-.468-.552-.684-.84-.216-.3-.3-.612-.216-.948.108-.312.324-.672.528-.996.216-.312.552-.816.864-1.224.324-.432.756-.816 1.296-1.068.444-.204.888-.384 1.38-.564a11.3 11.3 0 0 1 1.572-.576c.6.024 1.212.252 1.68.672.468.42.756.972.756 1.608 0 .432-.096.852-.264 1.248-.18.432-.528 1.02-1.116 1.704-.504.576-1.092 1.308-1.632 1.848-.516.54-1.104 1.14-1.56 1.668-.372.516-.624 1.056-.672 1.332-.036.288-.036.576-.036.864 0 .72.42 1.428 1.26 1.752.672.252 1.416.336 2.172.312.72-.024 1.392-.18 1.968-.42.6-.24 1.128-.648 1.5-1.104.456-.54.732-1.176.732-1.704 0-.24-.012-.492-.048-.744zM12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      <path d="M19.11 17.205c-.372 0-.744-.216-1.08-.528l-2.688-2.472a21.542 21.542 0 0 1-3.024-2.808c-.3-.372-.492-.744-.492-1.212 0-.48.108-.792.324-1.128.204-.312.336-.648.504-.996.168-.336.048-.6-.156-1.08a11.89 11.89 0 0 0-.732-1.524c-.24-.264-.468-.552-.684-.84-.216-.3-.3-.612-.216-.948.108-.312.324-.672.528-.996.216-.312.552-.816.864-1.224.324-.432.756-.816 1.296-1.068.444-.204.888-.384 1.38-.564a11.3 11.3 0 0 1 1.572-.576c.6.024 1.212.252 1.68.672.468.42.756.972.756 1.608 0 .432-.096.852-.264 1.248-.18.432-.528 1.02-1.116 1.704-.504.576-1.092 1.308-1.632 1.848-.516.54-1.104 1.14-1.56 1.668-.372.516-.624 1.056-.672 1.332-.036.288-.036.576-.036.864 0 .72.42 1.428 1.26 1.752.672.252 1.416.336 2.172.312.72-.024 1.392-.18 1.968-.42.6-.24 1.128-.648 1.5-1.104.456-.54.732-1.176.732-1.704 0-.24-.012-.492-.048-.744zM12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.205-.012-3.584-.069-4.849-.149-3.225-1.664-4.771-4.919-4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-... (truncated)" />
     </svg>
   ),
 } as const;
 
 export function Footer() {
   return (
-    <footer className="metallic-dark relative overflow-hidden text-silver-200">
-      <div className="pointer-events-none absolute -top-20 left-1/3 h-56 w-56 animate-float rounded-full bg-teal-400/10 blur-3xl" aria-hidden />
-      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-64 w-64 animate-float-slow rounded-full bg-amber-300/10 blur-3xl" aria-hidden />
-      <div className="animate-gradient-pan absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-teal-400 via-amber-300 to-crimson" style={{ backgroundSize: "200% 100%" }} aria-hidden />
+    <footer className="relative overflow-hidden text-slate-300">
+      <PublicBackground className="absolute inset-0 -z-10 opacity-30" />
+      <div className="animate-gradient-pan absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-teal-400 via-amber-300 to-rose-400" style={{ backgroundSize: "200% 100%" }} aria-hidden />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <Logo dark />
-          <p className="mt-4 max-w-sm text-[13.5px] leading-relaxed text-silver-300">
+          <p className="mt-4 max-w-sm text-[13.5px] leading-relaxed text-slate-400">
             Shaheen Bagh&apos;s entrance-focused academy — JEE, NEET, AMU & Jamia preparation with weekly mocks, doubt lounge and a digital test platform.
           </p>
-          <p className="mt-3 flex items-center gap-1.5 text-[12px] font-bold text-silver-300"><MapPin className="h-3.5 w-3.5 text-teal-300" /> {CONTACT_INFO.address}</p>
+          <p className="mt-3 flex items-center gap-1.5 text-[12px] font-bold text-slate-400"><MapPin className="h-3.5 w-3.5 text-teal-300" /> {CONTACT_INFO.address}</p>
           <div className="mt-4 flex gap-2">
             {SOCIAL_LINKS.map((s) => (
               <a
@@ -79,39 +81,39 @@ export function Footer() {
           <p className="text-[12px] font-bold tracking-widest text-teal-300">COURSES</p>
           <ul className="mt-3 space-y-2 text-sm font-semibold">
             {COURSES.map((c) => (
-              <li key={c.id}><a href="#courses" className="hover:text-white">{c.name}</a></li>
+              <li key={c.id}><a href="#courses" className="hover:text-white text-slate-300 transition-colors">{c.name}</a></li>
             ))}
           </ul>
         </div>
         <div>
           <p className="text-[12px] font-bold tracking-widest text-teal-300">STUDENTS</p>
           <ul className="mt-3 space-y-2 text-sm font-semibold">
-            <li><Link href="/student/login" className="hover:text-white">Student Login</Link></li>
-            <li><Link href="/student/tests" className="hover:text-white">Test Platform</Link></li>
-            <li><a href="#gallery" className="hover:text-white">Gallery</a></li>
-            <li><a href="#contact" className="hover:text-white">Contact</a></li>
-            <li><a href="/admin/login" className="hover:text-white">Admin Login</a></li>
+            <li><Link href="/student/login" className="hover:text-white text-slate-300 transition-colors">Student Login</Link></li>
+            <li><Link href="/student/tests" className="hover:text-white text-slate-300 transition-colors">Test Platform</Link></li>
+            <li><a href="#gallery" className="hover:text-white text-slate-300 transition-colors">Gallery</a></li>
+            <li><a href="#contact" className="hover:text-white text-slate-300 transition-colors">Contact</a></li>
+            <li><a href="/admin/login" className="hover:text-white text-slate-300 transition-colors">Admin Login</a></li>
           </ul>
         </div>
         <div>
           <p className="text-[12px] font-bold tracking-widest text-teal-300">ACADEMY</p>
           <ul className="mt-3 space-y-2 text-sm font-semibold">
-            <li><a href="#about" className="hover:text-white">About</a></li>
-            <li><a href="#faculty" className="hover:text-white">Faculty</a></li>
-            <li><a href="#results" className="hover:text-white">Results</a></li>
-            <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+            <li><a href="#about" className="hover:text-white text-slate-300 transition-colors">About</a></li>
+            <li><a href="#faculty" className="hover:text-white text-slate-300 transition-colors">Faculty</a></li>
+            <li><a href="#results" className="hover:text-white text-slate-300 transition-colors">Results</a></li>
+            <li><a href="#" className="hover:text-white text-slate-300 transition-colors">Privacy Policy</a></li>
           </ul>
         </div>
       </div>
       {/* Celebration ticker — decorative marquee, aria-hidden, no links. */}
       <div className="relative border-t border-white/10 bg-white/5">
-        <Marquee items={FOOTER_TICKER} speed={30} className="py-2.5 text-silver-200" itemClassName="text-silver-200" />
+        <Marquee items={FOOTER_TICKER} speed={30} className="py-2.5 text-slate-300" itemClassName="text-slate-300" />
       </div>
       <div className="relative border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-[12px] font-semibold text-silver-300 sm:flex-row sm:px-6">
-          <p className="animate-fade-in">🎓 © {new Date().getFullYear()} Neuron Academy, Shaheen Bagh — All Rights Reserved. ✨</p>
-          <p className="animate-gradient-text bg-gradient-to-r from-teal-300 via-amber-200 to-teal-300 bg-clip-text font-extrabold text-transparent">🧠 ACTIVATE YOUR NEURONs ⚡</p>
-          <p className="animate-fade-in">🎯 JEE • NEET • AMU • Jamia 🚀</p>
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-[12px] font-semibold text-slate-400 sm:flex-row sm:px-6">
+          <p className="animate-fade-in">© {new Date().getFullYear()} Neuron Academy, Shaheen Bagh — All Rights Reserved.</p>
+          <p className="animate-gradient-text bg-gradient-to-r from-teal-300 via-amber-200 to-rose-300 bg-clip-text font-extrabold text-transparent">ACTIVATE YOUR NEURONs ⚡</p>
+          <p className="animate-fade-in">JEE • NEET • AMU • Jamia 🚀</p>
         </div>
       </div>
     </footer>

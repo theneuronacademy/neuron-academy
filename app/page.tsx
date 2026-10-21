@@ -27,7 +27,7 @@ import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
 import { Reveal, Marquee, Tilt, WaveDivider } from "@/components/website/motion";
-import { SectionHeader, MetallicCard, StatusBadge } from "@/components/ui/primitives";
+import { SectionHeader, Card, StatusBadge } from "@/components/ui/primitives";
 import {
   OrganizationJsonLd,
   CourseListJsonLd,
@@ -344,10 +344,10 @@ export default function HomePage() {
               {TRUST.map((f, i) => (
                 <Reveal key={f.title} delay={i * 70}>
                   <Tilt max={7}>
-                    <MetallicCard className="card-lift premium-ring flex h-full gap-3 p-4">
+                    <Card variant="metallic" className="card-lift premium-ring flex h-full gap-3 p-4">
                       <span className="wiggle-on-hover flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-navy-700 to-teal-600 text-white shadow-card"><f.icon className="h-5 w-5" /></span>
                       <span><span className="block text-sm font-extrabold tracking-tight text-navy-700">{f.title}</span><span className="mt-0.5 block text-[13px] leading-snug text-muted">{f.desc}</span></span>
-                    </MetallicCard>
+                    </Card>
                   </Tilt>
                 </Reveal>
               ))}
