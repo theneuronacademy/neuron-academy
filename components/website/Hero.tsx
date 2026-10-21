@@ -1,27 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Volume2, VolumeX, ArrowRight, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { Volume2, VolumeX, ArrowRight, Phone, ShieldCheck, MapPin } from "lucide-react";
 import type { Advertisement } from "@/lib/types";
 import { getHeroAds } from "@/lib/mockStore";
 import { getLiveBanners } from "@/services/siteApi";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
-import { Marquee, Typewriter, MouseGlow } from "@/components/website/motion";
+import { Marquee } from "@/components/website/motion";
 import { EXAM_TICKER } from "@/lib/websiteData";
 import { PublicBackground } from "@/components/design-system/BackgroundPatterns";
-import { Button } from "@/components/ui/primitives";
 
 const EXAM_PILLS = [
-  { label: "JEE", color: "#1AA6B5" },
-  { label: "NEET", color: "#16A34A" },
-  { label: "AMU Entrance", color: "#D97706" },
-  { label: "Jamia Entrance", color: "#B4453D" },
-];
-
-const TAGLINES = [
-  "ACTIVATE YOUR NEURONs ⚡",
-  "Crack JEE • NEET • AMU • Jamia 🚀",
-  "Small batches. Big ranks. 🏆",
+  { label: "JEE", color: "border-brand-primary/20 bg-brand-primary/10 text-brand-primary" },
+  { label: "NEET", color: "border-silver-200 bg-white text-navy-800" },
+  { label: "AMU Entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
+  { label: "Jamia Entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
 ];
 
 function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) {
@@ -59,7 +53,7 @@ function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) 
             }
           }}
           aria-label={muted ? "Unmute video" : "Mute video"}
-          className="absolute bottom-4 right-4 rounded-full bg-slate-900/80 p-2.5 text-white backdrop-blur hover:bg-slate-700"
+          className="absolute bottom-4 right-4 rounded-full bg-neutral-900/80 p-2.5 text-white backdrop-blur hover:bg-neutral-800"
         >
           {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
         </button>
@@ -67,8 +61,8 @@ function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) 
     );
   }
 
-  if (ad.mediaUrl) {
-    return <img src={ad.mediaUrl} alt={ad.title || "Neuron Academy featured announcement"} width={1200} height={800} className="animate-kenburns h-full w-full object-cover" loading={large ? "eager" : "lazy"} />;
+  if (ad.mediaUrl && !failed) {
+    return <Image src={ad.mediaUrl} alt={ad.title || "Neuron Academy featured announcement"} width={1200} height={800} unoptimized className="animate-kenburns h-full w-full object-cover" priority={large} onError={() => setFailed(true)} />;
   }
 
   return (
@@ -79,11 +73,11 @@ function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) 
       imgClassName="animate-kenburns h-full w-full object-cover"
       eager={large}
       fallback={
-        <div className="metallic-dark flex h-full w-full flex-col justify-end overflow-hidden p-6 sm:p-8">
-          <div className="animate-kenburns absolute inset-0 opacity-25" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, #1AA6B5 0, transparent 42%), radial-gradient(circle at 80% 25%, #B4453D 0, transparent 38%), radial-gradient(circle at 50% 90%, #16A34A 0, transparent 35%)" }} />
-          <p className="relative text-[11px] font-bold tracking-[0.2em] text-teal-300">NEURON ACADEMY • SHAHEEN BAGH</p>
+        <div className="bg-neutral-900 flex h-full w-full flex-col justify-end overflow-hidden p-6 sm:p-8">
+          <div className="animate-kenburns absolute inset-0 opacity-25" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, #1746B8 0, transparent 42%), radial-gradient(circle at 80% 25%, #D4AF37 0, transparent 38%), radial-gradient(circle at 50% 90%, #0A1D50 0, transparent 35%)" }} />
+          <p className="relative text-[11px] font-bold tracking-[0.2em] text-brand-secondary">NEURON ACADEMY • SHAHEEN BAGH</p>
           <p className="relative mt-2 max-w-md text-2xl font-extrabold text-white sm:text-3xl">{ad.title}</p>
-          {ad.subtitle ? <p className="relative mt-1 text-sm font-bold text-silver-200">{ad.subtitle}</p> : null}
+          {ad.subtitle ? <p className="relative mt-1 text-sm font-bold text-neutral-300">{ad.subtitle}</p> : null}
         </div>
       }
     />
@@ -109,112 +103,84 @@ export function Hero() {
   const active = heroAds[0];
 
   return (
-    <section id="home" className="relative overflow-hidden">
-      <PublicBackground />
-      <MouseGlow />
+    <section id="home" className="relative overflow-hidden bg-white">
+      <PublicBackground className="opacity-35" />
+      <div className="pointer-events-none absolute -right-24 top-10 h-80 w-80 rounded-full bg-brand-primary/10 blur-3xl" aria-hidden />
+      <div className="pointer-events-none absolute bottom-10 left-1/4 h-48 w-48 rounded-full bg-brand-secondary/10 blur-3xl" aria-hidden />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-12 pt-12 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:pt-16">
-        <div className="animate-slide-up">
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold tracking-[0.16em] text-white backdrop-blur">
-            <span className="animate-blink h-1.5 w-1.5 rounded-full bg-teal-300" />
-            ADMISSIONS OPEN 2026–27 • SHAHEEN BAGH
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14 lg:py-20">
+        <div className="max-w-2xl">
+          <p className="inline-flex items-center gap-2 rounded-full border border-brand-primary/15 bg-brand-primary/5 px-3.5 py-2 text-[11px] font-bold tracking-[0.14em] text-brand-primary">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-secondary" /> NEURON ACADEMY <span className="text-silver-400">/</span> SHAHEEN BAGH
           </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {EXAM_PILLS.map((p, i) => (
-              <span key={p.label} className="animate-bounce-soft cursor-default rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide text-white ring-1 ring-white/25 transition duration-300 hover:scale-110 hover:ring-teal-300" style={{ backgroundColor: `${p.color}55`, animationDelay: `${i * 0.35}s` }}>
-                {p.label}
+          <h1 className="mt-6 text-[40px] font-extrabold leading-[1.07] tracking-tight text-navy-950 sm:text-5xl lg:text-[60px]">
+            Focused coaching for
+            <span className="mt-1 block text-brand-primary">your next big step.</span>
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-neutral-600 sm:text-lg">
+            Prepare for JEE, NEET, AMU and Jamia entrances with a clear study plan, regular practice and support from your mentors.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {EXAM_PILLS.map((pill) => (
+              <span key={pill.label} className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold ${pill.color}`}>
+                {pill.label}
               </span>
             ))}
           </div>
-          <h1 className="mt-5 text-[42px] font-extrabold leading-[1.02] tracking-tight text-white sm:text-5xl lg:text-[62px]">
-            <span className="animate-slide-up block" style={{ animationDelay: "0.05s" }}>Crack JEE. NEET.</span>
-            <span className="animate-gradient-text animate-slide-up mt-2 block bg-gradient-to-r from-teal-300 via-gold-200 to-crimson-100 bg-clip-text text-transparent" style={{ animationDelay: "0.25s" }}>
-              AMU. Jamia.
-            </span>
-          </h1>
-          <p className="animate-gradient-text mt-4 bg-gradient-to-r from-amber-200 via-teal-200 to-amber-200 bg-clip-text text-xl font-extrabold tracking-wide text-transparent sm:text-2xl" aria-label="Activate your neurons at Neuron Academy">
-            <Typewriter phrases={TAGLINES} />
-          </p>
-          <div className="shine-sweep mt-3 h-1.5 w-56 overflow-hidden rounded-full bg-gradient-to-r from-teal-400 via-amber-300 to-crimson" aria-hidden />
-          <p className="mt-5 max-w-xl text-[16.5px] leading-relaxed text-silver-200">
-            Shaheen Bagh&apos;s focused coaching for engineering, medical and university entrances — small batches, weekly mocks and mentors who track every mark.
-          </p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <a href="#courses" className="inline-flex items-center gap-2 animate-glow btn-metallic-sheen cta-bounce shine-sweep rounded-xl bg-crimson px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright">
-              <Sparkles className="mr-1.5 h-4 w-4 animate-wiggle" /> Explore Courses <ArrowRight className="ml-1 h-4 w-4" />
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href="#courses" className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3.5 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">
+              Explore courses <ArrowRight className="h-4 w-4" />
             </a>
-            <a href="#contact" className="inline-flex items-center gap-2 cta-bounce rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300 hover:text-teal-200">
-              <Phone className="mr-1.5 h-4 w-4" /> Book Free Demo
+            <a href="#contact" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 bg-white px-5 py-3.5 text-sm font-bold text-navy-900 transition hover:border-brand-primary/30 hover:bg-brand-primary/5 hover:text-brand-primary">
+              <Phone className="h-4 w-4" /> Talk to admissions
             </a>
           </div>
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] font-bold text-silver-200">
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> Mentor-guided batches</span>
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> Weekly mocks with ranks</span>
-            <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-teal-300" /> Parent reports</span>
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-neutral-600">
+            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Mentor support</span>
+            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Regular mock tests</span>
+            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Digital practice tools</span>
           </div>
-          {active ? (
-            <div className="mt-6 rounded-2xl border border-teal-300/30 bg-white/10 p-4 backdrop-blur">
-              <p className="text-[11px] font-bold tracking-widest text-teal-300">FEATURED: {active.subtitle || active.type.toUpperCase()}</p>
-              <p className="mt-1 text-[15px] font-extrabold text-white">{active.title}</p>
-              <p className="mt-0.5 text-sm text-silver-200">{active.description}</p>
-              {active.ctaText ? (
-                <a href={active.ctaLink || "#courses"} className="mt-2 inline-block text-sm font-bold text-teal-300 hover:underline">
-                  {active.ctaText} →
-                </a>
-              ) : null}
-            </div>
-          ) : null}
         </div>
-        <div className="relative">
-          <div className="absolute -inset-5 rounded-[30px] bg-gradient-to-br from-teal-400/25 via-gold-400/10 to-crimson/25 blur-2xl" aria-hidden />
-          <div className="conic-ring premium-ring-dark relative overflow-hidden rounded-[26px] border border-white/30 bg-slate-900" style={{ minHeight: 440 }}>
+
+        <div className="relative mx-auto w-full max-w-[640px]">
+          <div className="absolute -inset-3 rounded-[30px] bg-gradient-to-br from-brand-primary/15 via-brand-secondary/15 to-brand-primary/10 blur-xl" aria-hidden />
+          <div className="relative isolate h-[350px] overflow-hidden rounded-[24px] border border-silver-200 bg-navy-900 shadow-xl sm:h-[430px] lg:h-[500px]">
             {active ? (
-              <div className="h-[440px] sm:h-[500px]">
-                <AdMedia ad={active} large />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/95 via-slate-900/50 to-transparent p-6 pt-20">
-                  <p className="inline-block rounded-full bg-teal-500 px-2.5 py-1 text-[10px] font-bold tracking-widest text-white">FEATURED</p>
-                  <p className="mt-2 text-[17px] font-extrabold text-white">{active.title}</p>
-                  <p className="text-[13px] text-silver-200">{active.description}</p>
-                </div>
-              </div>
+              <AdMedia ad={active} large />
             ) : (
-              <div className="relative h-[440px] sm:h-[500px]">
-                <SmartImage
-                  src={SITE_PHOTOS.hero}
-                  alt="Neuron Academy — classroom"
-                  className="absolute inset-0 h-full w-full"
-                  imgClassName="animate-kenburns h-full w-full object-cover"
-                  eager
-                  fallback={
-                    <div className="metallic-dark absolute inset-0 flex flex-col justify-end overflow-hidden p-8">
-                      <div className="animate-kenburns absolute inset-0 opacity-25" style={{ backgroundImage: "radial-gradient(circle at 25% 20%, #1AA6B5 0, transparent 42%), radial-gradient(circle at 80% 30%, #B4453D 0, transparent 38%), radial-gradient(circle at 55% 85%, #D97706 0, transparent 32%)" }} />
-                      <p className="relative text-[11px] font-bold tracking-[0.2em] text-teal-300">JEE • NEET • AMU • JAMIA</p>
-                      <p className="relative mt-3 text-3xl font-extrabold leading-tight text-white">One Academy. Every Entrance.</p>
-                      <p className="relative mt-2 max-w-md text-[15px] text-silver-200">Add <code>hero.jpg</code> to <code>public/images/</code> — your campus photo appears here with cinematic zoom.</p>
-                    </div>
-                  }
-                />
-                <div className="animate-float absolute left-4 top-4 rounded-2xl border border-white/40 bg-white/90 px-4 py-2.5 shadow-card backdrop-blur transition hover:scale-105">
-                  <p className="text-[10px] font-bold tracking-widest text-muted">WEEKLY MOCKS</p>
-                  <p className="text-sm font-extrabold text-slate-900">+ Ranks & solutions</p>
-                </div>
-                <div className="animate-float-slow absolute right-4 top-1/3 rounded-2xl border border-white/40 bg-white/90 px-4 py-2.5 shadow-card backdrop-blur transition hover:scale-105">
-                  <p className="text-[10px] font-bold tracking-widest text-muted">DOUBT LOUNGE</p>
-                  <p className="text-sm font-extrabold text-slate-900">Open till 8 PM</p>
-                </div>
-                <div className="absolute inset-x-4 bottom-4 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl border border-white/40 bg-white/90 p-4 shadow-card backdrop-blur transition hover:scale-[1.03]"><p className="text-[10px] font-bold tracking-widest text-muted">ATTENDANCE</p><p className="text-xl font-extrabold text-slate-900">Auto-tracked</p></div>
-                  <div className="rounded-2xl border border-white/40 bg-white/90 p-4 shadow-card backdrop-blur transition hover:scale-[1.03]"><p className="text-[10px] font-bold tracking-widest text-muted">TESTS</p><p className="text-xl font-extrabold text-slate-900">Live ranks</p></div>
-                </div>
-              </div>
+              <SmartImage
+                src={SITE_PHOTOS.hero}
+                alt="Students studying at Neuron Academy"
+                className="absolute inset-0 h-full w-full"
+                imgClassName="h-full w-full object-cover"
+                eager
+                fallback={
+                  <div className="absolute inset-0 flex items-end bg-gradient-to-br from-navy-900 via-navy-800 to-brand-primary p-8">
+                    <p className="max-w-md text-2xl font-bold text-white sm:text-3xl">JEE · NEET · AMU · Jamia</p>
+                  </div>
+                }
+              />
             )}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950/90 via-navy-950/45 to-transparent px-5 pb-5 pt-24 sm:px-7 sm:pb-7">
+              {active ? (
+                <>
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-secondary-300">{active.subtitle || "Featured at Neuron Academy"}</p>
+                  <p className="mt-2 text-xl font-bold text-white sm:text-2xl">{active.title}</p>
+                  {active.description ? <p className="mt-1 max-w-lg text-sm text-white/80">{active.description}</p> : null}
+                  {active.ctaText ? <a href={active.ctaLink || "#courses"} className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-white underline decoration-brand-secondary underline-offset-4">{active.ctaText}<ArrowRight className="h-4 w-4" /></a> : null}
+                </>
+              ) : (
+                <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold text-white backdrop-blur">
+                  <MapPin className="h-4 w-4 text-brand-secondary-300" /> Shaheen Bagh, New Delhi
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* exam ticker */}
-      <div className="relative border-t border-white/10 bg-slate-900/80 py-3 backdrop-blur">
-        <Marquee items={EXAM_TICKER} className="text-white" itemClassName="text-white" />
+      <div className="border-t border-silver-200 bg-silver-50 py-3">
+        <Marquee items={EXAM_TICKER} className="text-navy-700" itemClassName="text-navy-700" />
       </div>
     </section>
   );

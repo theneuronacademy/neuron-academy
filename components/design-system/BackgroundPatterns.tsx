@@ -28,10 +28,10 @@ interface BackgroundPatternProps {
 }
 
 const PORTAL_COLORS: Record<PortalTheme, string[]> = {
-  public: ["#1e293b", "#334155", "#64748b"],
-  student: ["#7c2d12", "#ca8a04", "#eab308"],
-  faculty: ["#102a43", "#334e68", "#486581"],
-  admin: ["#09090b", "#18181b", "#3f3f46"],
+  public: ["#1746B8", "#0A1D50", "#D4AF37"],
+  student: ["#1746B8", "#D4AF37", "#0A1D50"],
+  faculty: ["#0A1D50", "#1746B8", "#D4AF37"],
+  admin: ["#0A1D50", "#1746B8", "#D4AF37"],
 };
 
 function getPortalColors(portal: PortalTheme, customColors?: string[]): string[] {

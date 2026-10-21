@@ -92,7 +92,7 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
           <p className="mt-1.5 text-sm leading-relaxed text-muted">{ad.description}</p>
           <div className="mt-4 flex gap-2">
             {ad.ctaText ? (
-              <a href={ad.ctaLink || "#contact"} onClick={close} className="flex-1 rounded-xl bg-crimson px-4 py-2.5 text-center text-sm font-bold text-white hover:bg-crimson-bright">
+            <a href={ad.ctaLink || "#contact"} onClick={close} className="flex-1 rounded-xl bg-brand-primary px-4 py-2.5 text-center text-sm font-bold text-white transition hover:bg-brand-primary-hover">
                 {ad.ctaText}
               </a>
             ) : null}

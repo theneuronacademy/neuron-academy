@@ -5,7 +5,7 @@
   "start_url": "/student/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#183653",
+  "theme_color": "#1746B8",
   "icons": [
     { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "/images/logo.png", "sizes": "any", "type": "image/png", "purpose": "any" }

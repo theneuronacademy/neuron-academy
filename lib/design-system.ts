@@ -1,190 +1,248 @@
 // ============================================================================
-// NEURON ACADEMY — METALLIC DESIGN SYSTEM
-// Premium educational UI with distinct portal identities
+// NEURON ACADEMY — DESIGN SYSTEM
+// Primary: Royal Blue, Secondary: Gold, Tertiary: White and Silver
 // ============================================================================
 
-// ---------------------------------------------------------------------------
-// COLOR TOKENS — Metallic palette with semantic meaning
-// ---------------------------------------------------------------------------
-
 export const colors = {
-  // --- Base neutrals (metallic greys) ---
-  neutral: {
-    50: '#fafafa',
-    100: '#f4f4f5',
-    200: '#e4e4e7',
-    300: '#d4d4d8',
-    400: '#a1a1aa',
-    500: '#71717a',
-    600: '#52525b',
-    700: '#3f3f46',
-    800: '#27272a',
-    900: '#18181b',
-    950: '#09090b',
-  },
-
-  // --- Metallic accents ---
-  metallic: {
-    // Platinum / Silver family
-    platinum: {
-      50: '#f8fafc',
-      100: '#f1f5f9',
-      200: '#e2e8f0',
-      300: '#cbd5e1',
-      400: '#94a3b8',
-      500: '#64748b',
-      600: '#475569',
-      700: '#334155',
-      800: '#1e293b',
-      900: '#0f172a',
+  // --- Core Brand Colors ---
+  brand: {
+    primary: {
+      50: '#EEF3FF',
+      100: '#DCE6FF',
+      200: '#BBCDFA',
+      300: '#91AEF0',
+      400: '#668CE0',
+      500: '#3567D5',
+      600: '#2454CE',
+      700: '#1B43B0',
+      800: '#17368F',
+      900: '#122B70',
+      950: '#0C1C4D',
     },
-    // Champagne / Gold family
-    champagne: {
-      50: '#fefce8',
-      100: '#fef9c3',
-      200: '#fef08a',
-      300: '#fde047',
-      400: '#facc15',
-      500: '#eab308',
-      600: '#ca8a04',
-      700: '#a16207',
-      800: '#854d0e',
-      900: '#713f12',
+    secondary: {
+      50: '#FBF7E8',
+      100: '#F6EDC8',
+      200: '#ECDD9D',
+      300: '#E2CB70',
+      400: '#D4AF37',
+      500: '#C49C25',
+      600: '#A98418',
+      700: '#886914',
+      800: '#695014',
+      900: '#4F3B12',
+      950: '#302309',
     },
-    // Bronze / Copper family
-    bronze: {
-      50: '#fef7ed',
-      100: '#feedde',
-      200: '#fed7aa',
-      300: '#fdba74',
-      400: '#fb923c',
-      500: '#f97316',
-      600: '#ea580c',
-      700: '#c2410c',
-      800: '#9a3412',
-      900: '#7c2d12',
-    },
-    // Steel / Blue-grey family
-    steel: {
-      50: '#f0f4f8',
-      100: '#d9e2ec',
-      200: '#bcccdc',
-      300: '#9fb3c8',
-      400: '#829ab1',
-      500: '#627d98',
-      600: '#486581',
-      700: '#334e68',
-      800: '#243b53',
-      900: '#102a43',
+    tertiary: {
+      50: '#FFFFFF',
+      100: '#F7F9FC',
+      200: '#EEF2F8',
+      300: '#DCE3EE',
+      400: '#B6C0D0',
+      500: '#8B98AD',
+      600: '#68758A',
+      700: '#4D5D75',
+      800: '#273A5C',
+      900: '#14213D',
+      950: '#0A1D50',
     },
   },
 
-  // --- Portal identities ---
-  portal: {
-    // Public website — sophisticated platinum
-    public: {
-      primary: '#1e293b',        // platinum-800
-      primaryHover: '#334155',   // platinum-700
-      primaryLight: '#f1f5f9',   // platinum-100
-      accent: '#eab308',         // champagne-500
-      accentHover: '#ca8a04',    // champagne-600
-      accentLight: '#fef9c3',    // champagne-100
-      surface: '#ffffff',
-      surfaceAlt: '#f8fafc',     // platinum-50
-      border: '#e2e8f0',         // platinum-200
-      text: '#0f172a',           // platinum-900
-      textMuted: '#64748b',      // platinum-500
-      success: '#16a34a',        // green-600
-      warning: '#eab308',        // amber-500
-      error: '#ef4444',          // red-500
-    },
-
-    // Student portal — warm champagne/gold (energetic, aspirational)
-    student: {
-      primary: '#7c2d12',        // bronze-900
-      primaryHover: '#9a3412',   // bronze-800
-      primaryLight: '#fef7ed',   // bronze-50
-      accent: '#eab308',         // champagne-500
-      accentHover: '#ca8a04',    // champagne-600
-      accentLight: '#fef9c3',    // champagne-100
-      surface: '#fffef7',
-      surfaceAlt: '#fefce8',     // champagne-50
-      border: '#fde047',         // champagne-300
-      text: '#431407',           // bronze-950
-      textMuted: '#a16207',      // champagne-700
-      success: '#166534',        // emerald-800
-      warning: '#854d0e',        // champagne-800
-      error: '#991b1b',          // red-800
-    },
-
-    // Faculty portal — professional steel (authoritative, calm)
-    faculty: {
-      primary: '#102a43',        // steel-900
-      primaryHover: '#243b53',   // steel-800
-      primaryLight: '#f0f4f8',   // steel-50
-      accent: '#486581',         // steel-500
-      accentHover: '#334e68',    // steel-700
-      accentLight: '#d9e2ec',    // steel-100
-      surface: '#f8fafc',
-      surfaceAlt: '#f0f4f8',     // steel-50
-      border: '#bcccdc',         // steel-200
-      text: '#0d1b2a',
-      textMuted: '#627d98',      // steel-500
-      success: '#14532d',        // green-800
-      warning: '#7c2d12',        // bronze-900
-      error: '#7f1d1d',          // red-900
-    },
-
-    // Admin portal — deep platinum (commanding, serious)
-    admin: {
-      primary: '#09090b',        // neutral-950
-      primaryHover: '#18181b',   // neutral-900
-      primaryLight: '#fafafa',   // neutral-50
-      accent: '#eab308',         // champagne-500
-      accentHover: '#ca8a04',    // champagne-600
-      accentLight: '#fef9c3',    // champagne-100
-      surface: '#ffffff',
-      surfaceAlt: '#f4f4f5',     // neutral-100
-      border: '#d4d4d8',         // neutral-300
-      text: '#09090b',           // neutral-950
-      textMuted: '#71717a',      // neutral-500
-      success: '#15803d',        // green-700
-      warning: '#a16207',        // champagne-700
-      error: '#b91c1c',          // red-700
-    },
-  },
-
-  // --- Semantic colors (shared) ---
+  // --- Semantic Colors ---
   semantic: {
     success: {
-      light: '#dcfce7',
-      DEFAULT: '#16a34a',
-      dark: '#15803d',
-      text: '#14532d',
+      light: '#D1FAE5',
+      DEFAULT: '#10B981',
+      dark: '#059669',
+      text: '#065F46',
     },
     warning: {
-      light: '#fef9c3',
-      DEFAULT: '#eab308',
-      dark: '#a16207',
-      text: '#713f12',
+      light: '#FEF3C7',
+      DEFAULT: '#F59E0B',
+      dark: '#D97706',
+      text: '#92400E',
     },
     error: {
-      light: '#fee2e2',
-      DEFAULT: '#ef4444',
-      dark: '#b91c1c',
-      text: '#7f1d1d',
+      light: '#FEE2E2',
+      DEFAULT: '#EF4444',
+      dark: '#DC2626',
+      text: '#991B1B',
     },
     info: {
-      light: '#dbeafe',
-      DEFAULT: '#3b82f6',
-      dark: '#2563eb',
-      text: '#1e3a5f',
+      light: '#DCE6FF',
+      DEFAULT: '#1746B8',
+      dark: '#123A9A',
+      text: '#0A1D50',
     },
+  },
+
+  // --- Neutral / Gray Scale ---
+  neutral: {
+    50: '#F9FAFB',
+    100: '#F3F4F6',
+    200: '#E5E7EB',
+    300: '#D1D5DB',
+    400: '#9CA3AF',
+    500: '#6B7280',
+    600: '#4B5563',
+    700: '#374151',
+    800: '#1F2937',
+    900: '#111827',
+    950: '#030712',
+  },
+
+  // --- Portal Themes ---
+  portal: {
+    // Public Website - Clean, professional
+    public: {
+      primary: '#1746B8',
+      primaryHover: '#123A9A',
+      primaryLight: '#EEF3FF',
+      secondary: '#D4AF37',
+      secondaryHover: '#B8901B',
+      secondaryLight: '#FBF7E8',
+      background: '#FFFFFF',         // Pure White
+      surface: '#F7F9FC',
+      surfaceAlt: '#EEF2F8',
+      card: '#FFFFFF',
+      cardHover: '#F7F9FC',
+      border: '#DCE3EE',
+      borderHover: '#3567D5',
+      text: '#0A1D50',
+      textSecondary: '#4D5D75',
+      textMuted: '#68758A',
+      textInverse: '#FFFFFF',
+      success: '#10B981',
+      warning: '#F59E0B',
+      error: '#EF4444',
+      focus: '#1746B8',
+    },
+
+    // Student Portal - Engaging, energetic
+    student: {
+      primary: '#1746B8',
+      primaryHover: '#123A9A',
+      primaryLight: '#EEF3FF',
+      secondary: '#D4AF37',
+      secondaryHover: '#B8901B',
+      secondaryLight: '#FBF7E8',
+      background: '#F7F9FC',
+      surface: '#FFFFFF',
+      surfaceAlt: '#EEF2F8',
+      card: '#FFFFFF',
+      cardHover: '#F7F9FC',
+      border: '#DCE3EE',
+      borderHover: '#3567D5',
+      text: '#0A1D50',
+      textSecondary: '#4D5D75',
+      textMuted: '#68758A',
+      textInverse: '#FFFFFF',
+      success: '#10B981',
+      warning: '#F59E0B',
+      error: '#EF4444',
+      focus: '#1746B8',
+    },
+
+    // Faculty Portal - Professional, calm
+    faculty: {
+      primary: '#1746B8',
+      primaryHover: '#123A9A',
+      primaryLight: '#EEF3FF',
+      secondary: '#D4AF37',
+      secondaryHover: '#B8901B',
+      secondaryLight: '#FBF7E8',
+      background: '#F7F9FC',
+      surface: '#FFFFFF',
+      surfaceAlt: '#EEF2F8',
+      card: '#FFFFFF',
+      cardHover: '#F8FAFC',
+      border: '#DCE3EE',
+      borderHover: '#3567D5',
+      text: '#0A1D50',
+      textSecondary: '#4D5D75',
+      textMuted: '#68758A',
+      textInverse: '#FFFFFF',
+      success: '#059669',
+      warning: '#D97706',
+      error: '#DC2626',
+      focus: '#1746B8',
+    },
+
+    // Admin Portal - Authoritative, clean
+    admin: {
+      primary: '#1746B8',
+      primaryHover: '#123A9A',
+      primaryLight: '#EEF3FF',
+      secondary: '#D4AF37',
+      secondaryHover: '#B8901B',
+      secondaryLight: '#FBF7E8',
+      background: '#FFFFFF',
+      surface: '#F7F9FC',
+      surfaceAlt: '#EEF2F8',
+      card: '#FFFFFF',
+      cardHover: '#F7F9FC',
+      border: '#DCE3EE',
+      borderHover: '#3567D5',
+      text: '#0A1D50',
+      textSecondary: '#4D5D75',
+      textMuted: '#68758A',
+      textInverse: '#FFFFFF',
+      success: '#059669',
+      warning: '#D97706',
+      error: '#DC2626',
+      focus: '#1746B8',
+    },
+  },
+
+  // --- Gradients ---
+  gradients: {
+    primary: 'linear-gradient(135deg, #1746B8 0%, #123A9A 100%)',
+    secondary: 'linear-gradient(135deg, #E2CB70 0%, #D4AF37 100%)',
+    hero: 'linear-gradient(135deg, #0A1D50 0%, #1746B8 58%, #D4AF37 100%)',
+    heroAlt: 'linear-gradient(135deg, #0A1D50 0%, #102B70 58%, #D4AF37 100%)',
+    card: 'linear-gradient(145deg, #FFFFFF 0%, #F7F9FC 100%)',
+    cardHover: 'linear-gradient(145deg, #F7F9FC 0%, #EEF3FF 100%)',
+    metallic: 'linear-gradient(135deg, #FFFFFF 0%, #EEF2F8 52%, #F6EDC8 100%)',
+    sunset: 'linear-gradient(135deg, #1746B8 0%, #D4AF37 100%)',
+  },
+
+  // --- Shadows ---
+  shadows: {
+    xs: '0 1px 2px 0 rgb(15 23 42 / 0.05)',
+    sm: '0 1px 3px 0 rgb(15 23 42 / 0.1), 0 1px 2px -1px rgb(15 23 42 / 0.1)',
+    DEFAULT: '0 4px 6px -1px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.1)',
+    md: '0 10px 15px -3px rgb(15 23 42 / 0.1), 0 4px 6px -4px rgb(15 23 42 / 0.1)',
+    lg: '0 20px 25px -5px rgb(15 23 42 / 0.1), 0 8px 10px -6px rgb(15 23 42 / 0.1)',
+    xl: '0 25px 50px -12px rgb(15 23 42 / 0.15)',
+    '2xl': '0 35px 60px -15px rgb(15 23 42 / 0.2)',
+    inner: 'inset 0 2px 4px 0 rgb(15 23 42 / 0.05)',
+    // Colored shadows
+    primary: '0 10px 32px -12px rgb(23 70 184 / 0.28)',
+    secondary: '0 10px 32px -12px rgb(212 175 55 / 0.3)',
+    card: '0 4px 20px -2px rgb(15 23 42 / 0.08)',
+    cardHover: '0 20px 40px -10px rgb(15 23 42 / 0.12)',
+  },
+
+  // --- Text Colors for Accessibility ---
+  text: {
+    onPrimary: '#FFFFFF',
+    onSecondary: '#0A1D50',
+    onPrimaryContainer: '#0A1D50',
+    onSecondaryContainer: '#4F3B12',
+    onSurface: '#14213D',
+    onSurfaceVariant: '#4D5D75',
+    onBackground: '#14213D',
+    onError: '#FFFFFF',
+    onSuccess: '#FFFFFF',
+    onWarning: '#111827',
+    // High contrast variants
+    highContrast: '#0A1D50',
+    mediumContrast: '#4D5D75',
+    lowContrast: '#68758A',
   },
 } as const;
 
 // ---------------------------------------------------------------------------
-// TYPOGRAPHY SCALE — Harmonious modular scale
+// TYPOGRAPHY
 // ---------------------------------------------------------------------------
 
 export const typography = {
@@ -203,19 +261,18 @@ export const typography = {
     extrabold: 800,
   },
 
-  // Modular scale: 1.25 (major third)
   fontSize: {
-    xs: ['0.75rem', { lineHeight: '1.5', letterSpacing: '0.02em' }],      // 12px
-    sm: ['0.875rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],     // 14px
-    base: ['1rem', { lineHeight: '1.6', letterSpacing: '0' }],            // 16px
-    lg: ['1.125rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],    // 18px
-    xl: ['1.25rem', { lineHeight: '1.4', letterSpacing: '-0.01em' }],     // 20px
-    '2xl': ['1.5rem', { lineHeight: '1.3', letterSpacing: '-0.02em' }],   // 24px
-    '3xl': ['1.875rem', { lineHeight: '1.25', letterSpacing: '-0.02em' }], // 30px
-    '4xl': ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.03em' }],  // 36px
-    '5xl': ['3rem', { lineHeight: '1.15', letterSpacing: '-0.03em' }],    // 48px
-    '6xl': ['3.75rem', { lineHeight: '1.1', letterSpacing: '-0.04em' }],  // 60px
-    '7xl': ['4.5rem', { lineHeight: '1.05', letterSpacing: '-0.04em' }],  // 72px
+    xs: ['0.75rem', { lineHeight: '1.5', letterSpacing: '0.02em' }],
+    sm: ['0.875rem', { lineHeight: '1.5', letterSpacing: '0.01em' }],
+    base: ['1rem', { lineHeight: '1.6', letterSpacing: '0' }],
+    lg: ['1.125rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
+    xl: ['1.25rem', { lineHeight: '1.4', letterSpacing: '-0.01em' }],
+    '2xl': ['1.5rem', { lineHeight: '1.3', letterSpacing: '-0.02em' }],
+    '3xl': ['1.875rem', { lineHeight: '1.25', letterSpacing: '-0.02em' }],
+    '4xl': ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.03em' }],
+    '5xl': ['3rem', { lineHeight: '1.15', letterSpacing: '-0.03em' }],
+    '6xl': ['3.75rem', { lineHeight: '1.1', letterSpacing: '-0.04em' }],
+    '7xl': ['4.5rem', { lineHeight: '1.05', letterSpacing: '-0.04em' }],
   },
 
   // Semantic text styles
@@ -231,13 +288,13 @@ export const typography = {
     body: { fontSize: '1rem', fontWeight: 400, lineHeight: 1.6, letterSpacing: 0 },
     bodySm: { fontSize: '0.875rem', fontWeight: 400, lineHeight: 1.5, letterSpacing: '0.01em' },
     caption: { fontSize: '0.75rem', fontWeight: 500, lineHeight: 1.5, letterSpacing: '0.02em' },
-    overline: { fontSize: '0.6875rem', fontWeight: 700, lineHeight: 1.5, letterSpacing: '0.1em', textTransform: 'uppercase' },
+    overline: { fontSize: '0.75rem', fontWeight: 700, lineHeight: 1.5, letterSpacing: '0.1em', textTransform: 'uppercase' },
     button: { fontSize: '0.875rem', fontWeight: 600, lineHeight: 1.5, letterSpacing: '0.01em' },
   },
 } as const;
 
 // ---------------------------------------------------------------------------
-// SPACING — 8px base grid
+// SPACING (8px base grid)
 // ---------------------------------------------------------------------------
 
 export const spacing = {
@@ -258,26 +315,6 @@ export const spacing = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// ELEVATION / SHADOWS — Metallic depth
-// ---------------------------------------------------------------------------
-
-export const elevation = {
-  none: 'none',
-  level1: '0 1px 2px 0 rgb(0 0 0 / 0.03), 0 1px 3px 1px rgb(0 0 0 / 0.02)',           // Subtle
-  level2: '0 4px 6px -1px rgb(0 0 0 / 0.04), 0 2px 4px -2px rgb(0 0 0 / 0.03)',       // Card
-  level3: '0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.04)',     // Elevated
-  level4: '0 20px 25px -5px rgb(0 0 0 / 0.06), 0 8px 10px -6px rgb(0 0 0 / 0.04)',    // Modal
-  level5: '0 25px 50px -12px rgb(0 0 0 / 0.1), 0 12px 24px -8px rgb(0 0 0 / 0.06)',   // Popover
-  // Metallic variants (subtle colored shadows)
-  metallic: {
-    platinum: '0 4px 20px -2px rgb(30 41 59 / 0.15), 0 2px 8px -2px rgb(30 41 59 / 0.1)',
-    champagne: '0 4px 20px -2px rgb(234 179 8 / 0.15), 0 2px 8px -2px rgb(234 179 8 / 0.1)',
-    bronze: '0 4px 20px -2px rgb(124 45 18 / 0.15), 0 2px 8px -2px rgb(124 45 18 / 0.1)',
-    steel: '0 4px 20px -2px rgb(16 26 43 / 0.15), 0 2px 8px -2px rgb(16 26 43 / 0.1)',
-  },
-} as const;
-
-// ---------------------------------------------------------------------------
 // BORDER RADIUS
 // ---------------------------------------------------------------------------
 
@@ -294,28 +331,39 @@ export const radius = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// BORDER WIDTH
+// ---------------------------------------------------------------------------
+
+export const borderWidth = {
+  DEFAULT: '1px',
+  2: '2px',
+  3: '3px',
+  4: '4px',
+} as const;
+
+// ---------------------------------------------------------------------------
 // TRANSITIONS
 // ---------------------------------------------------------------------------
 
 export const transition = {
   fast: '150ms cubic-bezier(0.4, 0, 0.2, 1)',
-  normal: '200ms cubic-bezier(0.4, 0, 0.2, 1)',
+  DEFAULT: '200ms cubic-bezier(0.4, 0, 0.2, 1)',
   slow: '300ms cubic-bezier(0.4, 0, 0.2, 1)',
   spring: '400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
 } as const;
 
 // ---------------------------------------------------------------------------
-// Z-INDEX SCALE
+// Z-INDEX
 // ---------------------------------------------------------------------------
 
 export const zIndex = {
   base: 0,
-  dropdown: 1000,
-  sticky: 1100,
-  modal: 1200,
-  popover: 1300,
-  tooltip: 1400,
-  toast: 1500,
+  dropdown: 100,
+  sticky: 200,
+  modal: 1000,
+  popover: 1100,
+  tooltip: 1200,
+  toast: 1300,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -331,10 +379,49 @@ export const breakpoints = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// PORTAL THEME HELPER
+// ANIMATION DURATIONS
+// ---------------------------------------------------------------------------
+
+export const animation = {
+  fast: '150ms',
+  normal: '200ms',
+  slow: '300ms',
+  slower: '500ms',
+} as const;
+
+// ---------------------------------------------------------------------------
+// TYPE EXPORTS
 // ---------------------------------------------------------------------------
 
 export type PortalTheme = 'public' | 'student' | 'faculty' | 'admin';
+
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'metallic'
+  | 'accent'
+  | 'outline'
+  | 'ghost'
+  | 'destructive'
+  | 'link';
+
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
+
+export type CardVariant = 'default' | 'elevated' | 'outlined' | 'filled' | 'glass' | 'metallic';
+
+export type InputVariant = 'default' | 'filled' | 'outlined' | 'ghost';
+
+export type BadgeVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'outline' | 'teal' | 'navy' | 'red' | 'silver';
+
+export type InputSize = 'sm' | 'md' | 'lg';
+
+// ---------------------------------------------------------------------------
+// UTILITIES
+// ---------------------------------------------------------------------------
+
+export function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
 
 export function getPortalTheme(portal: PortalTheme) {
   return colors.portal[portal];
@@ -346,68 +433,49 @@ export function getPortalCSSVariables(portal: PortalTheme): Record<string, strin
     '--color-primary': theme.primary,
     '--color-primary-hover': theme.primaryHover,
     '--color-primary-light': theme.primaryLight,
-    '--color-accent': theme.accent,
-    '--color-accent-hover': theme.accentHover,
-    '--color-accent-light': theme.accentLight,
+    '--color-secondary': theme.secondary,
+    '--color-secondary-hover': theme.secondaryHover,
+    '--color-secondary-light': theme.secondaryLight,
+    '--color-background': theme.background,
     '--color-surface': theme.surface,
     '--color-surface-alt': theme.surfaceAlt,
+    '--color-card': theme.card,
+    '--color-card-hover': theme.cardHover,
     '--color-border': theme.border,
+    '--color-border-hover': theme.borderHover,
     '--color-text': theme.text,
+    '--color-text-secondary': theme.textSecondary,
     '--color-text-muted': theme.textMuted,
-    '--color-success': theme.success ?? colors.semantic.success.dark,
-    '--color-warning': theme.warning ?? colors.semantic.warning.dark,
-    '--color-error': theme.error ?? colors.semantic.error.dark,
-    '--shadow-metallic': elevation.metallic[portal === 'student' ? 'champagne' : portal === 'faculty' ? 'steel' : 'platinum'],
+    '--color-text-inverse': theme.textInverse,
+    '--color-success': theme.success,
+    '--color-warning': theme.warning,
+    '--color-error': theme.error,
+    '--color-focus': theme.focus,
+    '--shadow-primary': colors.shadows.primary,
+    '--shadow-secondary': colors.shadows.secondary,
+    '--shadow-card': colors.shadows.card,
+    '--shadow-card-hover': colors.shadows.cardHover,
   };
 }
 
 // ---------------------------------------------------------------------------
-// UTILITY: Generate Tailwind-compatible class strings
-// ---------------------------------------------------------------------------
-
-export function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(' ');
-}
-
-// ---------------------------------------------------------------------------
-// COMPONENT VARIANT TYPES
-// ---------------------------------------------------------------------------
-
-export type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'outline'
-  | 'ghost'
-  | 'metallic'
-  | 'accent'
-  | 'destructive';
-
-export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
-
-export type CardVariant = 'default' | 'elevated' | 'outlined' | 'metallic' | 'glass';
-
-export type InputVariant = 'default' | 'filled' | 'outlined' | 'ghost';
-
-export type BadgeVariant = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'metallic' | 'teal' | 'navy' | 'red' | 'silver';
-
-export type PortalType = 'public' | 'student' | 'faculty' | 'admin';
-
-// ---------------------------------------------------------------------------
-// EXPORT ALL
+// EXPORTS
 // ---------------------------------------------------------------------------
 
 export const designSystem = {
   colors,
   typography,
   spacing,
-  elevation,
   radius,
+  borderWidth,
+  shadows: colors.shadows,
   transition,
   zIndex,
   breakpoints,
+  animation,
+  cn,
   getPortalTheme,
   getPortalCSSVariables,
-  cn,
 } as const;
 
 export default designSystem;

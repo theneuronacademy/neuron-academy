@@ -2,12 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/websiteData";
 import { Logo } from "@/components/website/Logo";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/primitives";
-import { PublicBackground } from "@/components/design-system/BackgroundPatterns";
+
+const PORTAL_LINKS = [
+  { href: "/scholarship-tests", label: "Scholarship tests" },
+  { href: "/student/login", label: "Student login" },
+  { href: "/faculty/login", label: "Faculty login" },
+  { href: "/admin/login", label: "Admin login" },
+];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -15,7 +20,7 @@ export function Navbar() {
   const [active, setActive] = useState("home");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -29,113 +34,98 @@ export function Navbar() {
   }, [open]);
 
   useEffect(() => {
-    const ids = ["home", "about", "courses", "faculty", "results", "gallery", "contact"];
+    const sections = NAV_LINKS.map((link) => document.getElementById(link.href.replace(/^#/, ""))).filter(
+      (element): element is HTMLElement => element instanceof HTMLElement,
+    );
+    if (sections.length === 0 || !("IntersectionObserver" in window)) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(e.target.id);
-        });
+        const visible = entries.find((entry) => entry.isIntersecting);
+        if (visible) setActive(visible.target.id);
       },
-      { rootMargin: "-40% 0px -55% 0px" }
+      { rootMargin: "-35% 0px -55% 0px" },
     );
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+    sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
+
+  const navLinkClass = (href: string) =>
+    cn(
+      "rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+      active === href.replace(/^#/, "")
+        ? "bg-brand-primary/10 text-brand-primary"
+        : "text-neutral-600 hover:bg-brand-primary/5 hover:text-brand-primary",
+    );
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 transition-all duration-300",
-        scrolled
-          ? "border-b border-silver-200 bg-white/95 shadow-card backdrop-blur-md"
-          : "border-b border-transparent bg-white/80 backdrop-blur-sm"
+        "sticky top-0 z-50 border-b transition-all duration-200",
+        scrolled ? "border-silver-200 bg-white/95 shadow-sm backdrop-blur-xl" : "border-transparent bg-white",
       )}
     >
-      <PublicBackground className="absolute inset-0 -z-10 opacity-30" />
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 relative">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Logo />
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-          {NAV_LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={cn(
-                "rounded-lg px-3 py-2 text-sm font-bold transition",
-                active === l.href.slice(1)
-                  ? "bg-slate-100 text-slate-900 shadow-sm"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-              )}
-            >
-              {l.label}
+
+        <nav className="hidden items-center gap-1 xl:flex" aria-label="Primary">
+          {NAV_LINKS.map((link) => (
+            <Link key={link.href} href={link.href} className={navLinkClass(link.href)}>
+              {link.label}
             </Link>
           ))}
         </nav>
-        <div className="hidden items-center gap-2 lg:flex">
-          <Link href="/scholarship-tests" className="rounded-xl px-3 py-2 text-sm font-bold text-crimson hover:bg-rose-50 border border-rose-200">
-            Scholarship Tests
-          </Link>
-          <Link href="/student/login" className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 border border-slate-200">
-            Student Login
-          </Link>
-          <Link href="/faculty/login" className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 border border-slate-200">
-            Faculty Login
-          </Link>
-          <Link href="/admin/login" className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 border border-slate-200">
-            Admin
-          </Link>
-          <Link href="#contact" className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-bold text-white hover:bg-slate-800">
-            Enquire Now
+
+        <div className="hidden items-center gap-3 xl:flex">
+          <details className="group relative">
+            <summary className="flex cursor-pointer list-none items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold text-neutral-600 transition hover:bg-silver-50 hover:text-navy-900 [&::-webkit-details-marker]:hidden">
+              Portals <ChevronDown className="h-4 w-4 transition group-open:rotate-180" />
+            </summary>
+            <div className="absolute right-0 top-full z-50 mt-2 w-52 rounded-xl border border-silver-200 bg-white p-1.5 shadow-xl">
+              {PORTAL_LINKS.map((link) => (
+                <Link key={link.href} href={link.href} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-brand-primary/5 hover:text-brand-primary">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </details>
+          <Link href="#contact" className="inline-flex items-center justify-center rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">
+            Enquire now
           </Link>
         </div>
+
         <button
-          className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
-          onClick={() => setOpen(!open)}
+          className="rounded-xl border border-silver-200 p-2.5 text-navy-900 transition hover:border-brand-primary/30 hover:bg-brand-primary/5 xl:hidden"
+          onClick={() => setOpen((value) => !value)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
+          aria-controls={open ? "mobile-navigation" : undefined}
         >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
-      {open && (
-        <nav className="border-t border-silver-200 bg-white px-4 py-4 lg:hidden" aria-label="Mobile">
-          <PublicBackground className="absolute inset-0 -z-10 opacity-20" />
-          <div className="grid gap-1">
-            {NAV_LINKS.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "rounded-lg px-3 py-2.5 text-[15px] font-bold",
-                  active === l.href.slice(1) ? "bg-slate-100 text-slate-900" : "text-slate-700 hover:bg-slate-100"
-                )}
-              >
-                {l.label}
+
+      {open ? (
+        <nav id="mobile-navigation" className="border-t border-silver-200 bg-white px-4 py-4 shadow-lg xl:hidden" aria-label="Mobile">
+          <div className="mx-auto grid max-w-7xl gap-1 sm:px-2">
+            {NAV_LINKS.map((link) => (
+              <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className={cn("rounded-lg px-3 py-3 text-[15px] font-semibold", navLinkClass(link.href))}>
+                {link.label}
               </Link>
             ))}
-            <div className="mt-2 grid gap-2 border-t border-silver-200 pt-3">
-              <Link href="/scholarship-tests" onClick={() => setOpen(false)} className="rounded-xl bg-rose-600 px-4 py-2.5 text-center text-sm font-bold text-white">
-                Scholarship Tests
-              </Link>
-              <Link href="/student/login" onClick={() => setOpen(false)} className="rounded-xl bg-slate-900 px-4 py-2.5 text-center text-sm font-bold text-white">
-                Student Login
-              </Link>
-              <Link href="/faculty/login" onClick={() => setOpen(false)} className="rounded-xl bg-slate-900 px-4 py-2.5 text-center text-sm font-bold text-white">
-                Faculty Login
-              </Link>
-              <Link href="/admin/login" onClick={() => setOpen(false)} className="rounded-xl border border-slate-300 px-4 py-2.5 text-center text-sm font-bold text-slate-700">
-                Admin Login
-              </Link>
-              <Link href="#contact" onClick={() => setOpen(false)} className="rounded-xl bg-rose-600 px-4 py-2.5 text-center text-sm font-bold text-white">
-                Enquire Now
-              </Link>
+            <div className="mt-2 grid grid-cols-2 gap-2 border-t border-silver-200 pt-3">
+              {PORTAL_LINKS.map((link) => (
+                <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="rounded-lg border border-silver-200 px-3 py-2.5 text-center text-sm font-semibold text-neutral-700 transition hover:border-brand-primary/30 hover:bg-brand-primary/5 hover:text-brand-primary">
+                  {link.label}
+                </Link>
+              ))}
             </div>
+            <Link href="#contact" onClick={() => setOpen(false)} className="mt-2 rounded-xl bg-brand-primary px-4 py-3 text-center text-sm font-bold text-white shadow-primary">
+              Enquire now
+            </Link>
           </div>
         </nav>
-      )}
+      ) : null}
     </header>
   );
 }

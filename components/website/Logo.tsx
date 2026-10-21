@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -39,18 +40,18 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
 
 export function Logo({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) {
   return (
-    <a href="#home" className="group flex items-center gap-2.5" aria-label="Neuron Academy home">
+    <Link href="/#home" className="group flex min-w-0 items-center gap-2.5" aria-label="Neuron Academy home">
       <span className="transition duration-300 group-hover:rotate-6 group-hover:scale-105">
-        <LogoMark size={compact ? 34 : 42} />
+        <LogoMark size={compact ? 38 : 48} />
       </span>
-      <span className="leading-none">
-        <span className={cn("block font-extrabold tracking-tight", compact ? "text-sm" : "text-[15px]", dark ? "text-white" : "text-navy-700")}>
+      <span className="min-w-0 leading-none">
+        <span className={cn("block whitespace-nowrap font-extrabold tracking-tight", compact ? "text-sm" : "text-[15px] sm:text-base", dark ? "text-white" : "text-navy-950")}>
           NEURON ACADEMY
         </span>
-        <span className="block text-[9px] font-bold tracking-[0.24em] text-teal-500">
+        <span className="mt-1 block whitespace-nowrap text-[8px] font-bold tracking-[0.2em] text-brand-secondary-700 sm:text-[9px]">
           SHAHEEN BAGH • NEW DELHI
         </span>
       </span>
-    </a>
+    </Link>
   );
 }

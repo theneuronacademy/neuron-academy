@@ -11,17 +11,20 @@
    ========================================================================== */
 
 :root {
-  --bg-primary: #fafafa;
-  --bg-secondary: #f7f9fa;
-  --bg-tertiary: #eef3f6;
-  --accent-navy: #24466d;
-  --accent-teal: #008c9e;
-  --accent-crimson: #b4453d;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f9fc;
+  --bg-tertiary: #eef2f8;
+  --accent-navy: #0a1d50;
+  --accent-teal: #1746b8;
+  --accent-crimson: #b91c1c;
   --accent-gold: #d4af37;
-  --text-primary: #1a2b3a;
-  --text-secondary: #667786;
-  --text-muted: #8892a2;
-  --border-default: #d7dee4;
+  --text-primary: #14213d;
+  --text-secondary: #4d5d75;
+  --text-muted: #68758a;
+  --border-default: #dce3ee;
+  --brand-primary: #1746b8;
+  --brand-primary-hover: #123a9a;
+  --brand-secondary: #d4af37;
 }
 
 /* ==========================================================================
@@ -29,17 +32,43 @@
    ========================================================================== */
 
 .dark {
-  --bg-primary: #0d2435;
-  --bg-secondary: #081825;
-  --bg-tertiary: #183653;
-  --accent-navy: #1aa6b5;
-  --accent-teal: #1aa6b5;
-  --accent-crimson: #d94a3f;
-  --accent-gold: #f4e3a1;
-  --text-primary: #f7f9fa;
-  --text-secondary: #93a1ad;
-  --text-muted: #cbd3da;
-  --border-default: #24466d;
+  --bg-primary: #0a1d50;
+  --bg-secondary: #07163d;
+  --bg-tertiary: #102b70;
+  --accent-navy: #668ce0;
+  --accent-teal: #668ce0;
+  --accent-crimson: #f87171;
+  --accent-gold: #e2cb70;
+  --text-primary: #f7f9fc;
+  --text-secondary: #c2ccdc;
+  --text-muted: #a6b3c8;
+  --border-default: #29427c;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: #dce6ff;
+  color: #0a1d50;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ==========================================================================
@@ -261,25 +290,6 @@ label {
 .wave-divider .wave-a {
   animation: wave-drift 9s linear infinite;
 }
-
-/* ==========================================================================
-   Sitewide Page Motion — every route (pure CSS, no logic changes)
-   - main fades/slides in on navigation mount
-   - top-level sections stagger in once on first paint
-   - cards get a gentle hover lift (pairs with .card-lift)
-   Covered automatically by the prefers-reduced-motion rule below.
-   ========================================================================== */
-
-body main {
-  animation: page-enter 0.55s ease-out both;
-}
-body main > section {
-  animation: section-rise 0.65s ease-out both;
-}
-body main > section:nth-child(2) { animation-delay: 0.06s; }
-body main > section:nth-child(3) { animation-delay: 0.12s; }
-body main > section:nth-child(4) { animation-delay: 0.18s; }
-body main > section:nth-child(n+5) { animation-delay: 0.24s; }
 
 /* ==========================================================================
    BACKGROUND PATTERN ANIMATIONS

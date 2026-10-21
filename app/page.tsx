@@ -48,30 +48,20 @@ import type { Course } from "@/data/courses";
 import type { FacultyMember } from "@/data/faculty";
 
 const TRUST = [
-  { icon: Users, title: "⭐ Expert Faculty", desc: "IIT, medical & AMU/JMI alumni mentors." },
-  { icon: BookOpen, title: "🎯 Entrance-First Courses", desc: "JEE • NEET • AMU • Jamia mapped syllabus." },
-  { icon: FileText, title: "📝 Weekly Mocks", desc: "Exam-pattern tests with ranks & solutions." },
-  { icon: Target, title: "📊 Performance Tracking", desc: "Marks, attendance & growth in one place." },
-  { icon: MonitorPlay, title: "💻 Digital Test Platform", desc: "Live tests, instant results, analysis." },
+  { icon: BookOpen, title: "Focused Courses", desc: "Preparation for JEE, NEET, AMU and Jamia entrances." },
+  { icon: FileText, title: "Regular Practice", desc: "Mock tests and question practice for exam preparation." },
+  { icon: Users, title: "Mentor Support", desc: "Guidance from the academy’s faculty team." },
+  { icon: Target, title: "Progress Tools", desc: "Academic activity and performance in one place." },
+  { icon: MonitorPlay, title: "Digital Assessments", desc: "Online tests with results and question review." },
 ];
 
-/** Each WHY card gets its own colour story + motion personality. */
-const WHY_THEMES = [
-  { bg: "from-navy-800 via-navy-700 to-teal-700", chip: "animate-heartbeat", mark: "🎯", reveal: "pop" },
-  { bg: "from-rose-700 via-crimson to-orange-600", chip: "animate-bounce-soft", mark: "👥", reveal: "zoom" },
-  { bg: "from-amber-500 via-orange-500 to-red-500", chip: "animate-wiggle", mark: "📝", reveal: "left" },
-  { bg: "from-violet-700 via-purple-600 to-fuchsia-500", chip: "animate-float", mark: "💡", reveal: "right" },
-  { bg: "from-emerald-600 via-teal-600 to-cyan-600", chip: "animate-blink", mark: "📊", reveal: "up" },
-  { bg: "from-indigo-700 via-blue-600 to-sky-500", chip: "animate-spin-slower", mark: "💻", reveal: "fade" },
-] as const;
-
 const WHY = [
-  { t: "🎯 Entrance Specialists", d: "Not a generic tuition — every batch is engineered around JEE, NEET, AMU or Jamia patterns." },
-  { t: "👥 Small Focused Batches", d: "Mentors know every student by name, strength and weak chapter." },
-  { t: "📝 Weekly Mocks + PYQs", d: "Saturday full-syllabus mocks, daily PYQ drills and live sprint tests." },
-  { t: "💡 Doubt Lounge Till 8 PM", d: "Walk in with any doubt — walk out with the concept crystal clear." },
-  { t: "📊 Parent Reports", d: "Monthly score cards on WhatsApp + mentor calls after every major test." },
-  { t: "💻 Digital Test App", d: "Attempt from home, get instant ranks, accuracy graphs and solutions." },
+  { t: "Entrance-focused courses", d: "Study pathways for JEE, NEET, AMU and Jamia entrance preparation." },
+  { t: "Small batches", d: "A focused classroom environment with room to ask questions and get guidance." },
+  { t: "Regular mock tests", d: "Practice with exam-style questions and review performance after each test." },
+  { t: "Doubt support", d: "Bring questions to your mentors and work through concepts together." },
+  { t: "Progress tracking", d: "Students and families can follow academic activity and progress." },
+  { t: "Digital practice tools", d: "Use online tests and review results from the student platform." },
 ];
 
 function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
@@ -181,8 +171,8 @@ function LivePhone() {
     <div className="conic-ring mx-auto w-full max-w-[300px] rounded-[28px] bg-white shadow-card">
       <div className="conic-inner animate-float-slow rounded-[28px] border-8 border-navy-800 bg-white">
       <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
-        <div><p className="text-xs font-extrabold text-navy-700">📱 NEET Practice — 07</p><p className="text-[11px] text-muted">🔴 Live • auto ranks</p></div>
-        <span className="animate-blink rounded-full bg-crimson px-2 py-0.5 text-[10px] font-extrabold text-white">● LIVE</span>
+        <div><p className="text-xs font-extrabold text-navy-700">Sample assessment preview</p><p className="text-[11px] text-muted">Example question view</p></div>
+        <span className="rounded-full bg-brand-secondary/20 px-2 py-0.5 text-[10px] font-bold text-brand-secondary-800">PREVIEW</span>
       </div>
       <div className="space-y-2.5 p-4">
         <div key={s} className="animate-fade-in rounded-xl bg-silver-50 p-3 ring-1 ring-silver-200">
@@ -198,9 +188,9 @@ function LivePhone() {
         </div>
         <div className="flex items-center justify-between rounded-xl bg-navy-800 p-3 text-white">
           <span className="text-[12px] font-bold tabular-nums">⏱ {mm}:{ss}</span>
-          <span className="animate-bounce-soft rounded-lg bg-teal-500 px-2.5 py-1 text-[11px] font-bold">Submit 🚀</span>
+          <span className="rounded-lg bg-brand-secondary px-2.5 py-1 text-[11px] font-bold text-navy-950">Select answer</span>
         </div>
-        <p className="text-center text-[11px] text-muted">👇 Interactive preview — try a live test below ✨</p>
+        <p className="text-center text-[11px] text-muted">Sample question interface</p>
         </div>
       </div>
     </div>
@@ -276,7 +266,7 @@ export default function HomePage() {
         // Results showcase: consented + active rows only (server-filtered).
         // Card accent cycles a fixed palette — no admin styling needed.
         if (w && w.every((r) => typeof r.id === "string" && typeof r.studentName === "string")) {
-          const palette = ["#1AA6B5", "#F59E0B", "#8B5CF6", "#10B981"];
+          const palette = ["#1746B8", "#D4AF37", "#102B70", "#7C8BA3"];
           setLiveWall({
             rows: w.map((r, i) => ({
               id: String(r.id),
@@ -327,15 +317,15 @@ export default function HomePage() {
         <TopRunningBanner />
         <Hero />
 
-        {/* TRUST — animated counters */}
+        {/* Academy features */}
         <section className="relative overflow-hidden border-y border-silver-200 bg-gradient-to-b from-white to-silver-50">
-          <div className="pointer-events-none absolute -right-20 top-0 h-56 w-56 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
+          <div className="pointer-events-none absolute -right-20 top-0 h-56 w-56 rounded-full bg-brand-primary/5 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6">
             <Reveal>
               <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
-                {["👥 Small Batches", "📝 Weekly Mocks", "🧑‍🏫 Expert Mentors", "🎯 4 Entrance Tracks"].map((l) => (
-                  <div key={l} className="transition duration-300 hover:-translate-y-1 hover:scale-105">
-                    <p className="mt-0.5 text-[11px] font-bold tracking-[0.18em] text-muted">{l.toUpperCase()}</p>
+                {["Small batches", "Weekly mocks", "Mentor support", "Entrance pathways"].map((l) => (
+                  <div key={l}>
+                    <p className="mt-0.5 text-[11px] font-semibold tracking-[0.12em] text-neutral-500">{l.toUpperCase()}</p>
                   </div>
                 ))}
               </div>
@@ -344,9 +334,9 @@ export default function HomePage() {
               {TRUST.map((f, i) => (
                 <Reveal key={f.title} delay={i * 70}>
                   <Tilt max={7}>
-                    <Card variant="metallic" className="card-lift premium-ring flex h-full gap-3 p-4">
-                      <span className="wiggle-on-hover flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-navy-700 to-teal-600 text-white shadow-card"><f.icon className="h-5 w-5" /></span>
-                      <span><span className="block text-sm font-extrabold tracking-tight text-navy-700">{f.title}</span><span className="mt-0.5 block text-[13px] leading-snug text-muted">{f.desc}</span></span>
+                    <Card variant="metallic" className="flex h-full gap-3 p-4">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-primary/5 text-brand-primary"><f.icon className="h-5 w-5" /></span>
+                      <span><span className="block text-sm font-bold tracking-tight text-navy-900">{f.title}</span><span className="mt-1 block text-[13px] leading-snug text-neutral-600">{f.desc}</span></span>
                     </Card>
                   </Tilt>
                 </Reveal>
@@ -360,7 +350,7 @@ export default function HomePage() {
           <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
-              <div className="conic-ring premium-ring relative min-h-[380px] overflow-hidden rounded-card-lg">
+              <div className="relative min-h-[360px] overflow-hidden rounded-2xl border border-silver-200 bg-white shadow-card">
                 <SmartImage
                   src={SITE_PHOTOS.about}
                   alt="Neuron Academy campus, Shaheen Bagh"
@@ -368,36 +358,33 @@ export default function HomePage() {
                   imgClassName="h-full w-full object-cover transition duration-700 hover:scale-105"
                   fallback={
                     <div className="metallic-dark absolute inset-0 overflow-hidden p-8">
-                      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 25% 20%, #1AA6B5 0, transparent 45%), radial-gradient(circle at 80% 70%, #D97706 0, transparent 35%)" }} />
-                      <p className="relative text-[11px] font-bold tracking-[0.2em] text-teal-300">ABOUT NEURON ACADEMY • SHAHEEN BAGH</p>
-                      <p className="relative mt-3 text-2xl font-extrabold text-white">A Serious Place For Serious Aspirants</p>
-                      <p className="relative mt-2 text-sm text-silver-200">Add <code>about-campus.jpg</code> to <code>public/images/</code> — it appears here automatically.</p>
+                      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 25% 20%, #1746B8 0, transparent 45%), radial-gradient(circle at 80% 70%, #D4AF37 0, transparent 35%)" }} />
+                      <p className="relative text-[11px] font-bold tracking-[0.2em] text-brand-secondary-300">ABOUT NEURON ACADEMY</p>
+                      <p className="relative mt-3 text-2xl font-extrabold text-white">A clear path to focused preparation</p>
                     </div>
                   }
                 />
-                <span className="animate-float absolute bottom-4 left-4 rounded-2xl border border-white/25 bg-navy-800/80 px-4 py-2.5 backdrop-blur">
-                  <span className="block text-lg font-extrabold text-white">📍 Shaheen Bagh</span>
-                  <span className="block text-[10px] font-bold tracking-widest text-teal-300">NEW DELHI • ENTRANCE FOCUS</span>
+                <span className="absolute bottom-4 left-4 rounded-xl border border-white/25 bg-navy-950/85 px-4 py-2.5 backdrop-blur">
+                  <span className="block text-sm font-bold text-white">Shaheen Bagh</span>
+                  <span className="block text-[10px] font-semibold tracking-widest text-brand-secondary-300">NEW DELHI</span>
                 </span>
-                <span className="animate-wiggle absolute right-4 top-4 rotate-6 rounded-2xl border border-amber-300/60 bg-gradient-to-br from-amber-400 to-orange-500 px-4 py-2.5 text-center shadow-card">
-                  <span className="block text-xl">🎓</span>
-                  <span className="block text-[10px] font-extrabold tracking-widest text-white">ADMISSIONS OPEN</span>
+                <span className="absolute right-4 top-4 rounded-full border border-brand-secondary/50 bg-white/95 px-3 py-2 text-xs font-bold text-navy-900 shadow-card">
+                  Entrance preparation
                 </span>
               </div>
             </Reveal>
             <Reveal variant="right">
               <div>
-                <SectionHeader eyebrow="✨ ABOUT" title="More Than Classes 🎓 — A Structured Learning Experience." />
+                <SectionHeader eyebrow="ABOUT" title="A structured approach to exam preparation" />
                 <p className="mt-4 text-[15px] leading-relaxed text-muted">
-                  In the heart of Shaheen Bagh, Neuron Academy prepares students for JEE, NEET, AMU and Jamia entrances with
-                  small batches, weekly mocks and mentors who track every mark — so students always know what to study next. 🧠⚡
+                  Neuron Academy supports students preparing for JEE, NEET, AMU and Jamia entrance exams through focused classes, regular practice and mentor support.
                 </p>
                 <ul className="mt-5 space-y-3 text-[14px] text-ink">
-                  {["🎯 Mission: a top rank from every lane of Shaheen Bagh.", "📚 Teaching: concept-first, PYQ-heavy, doubt-supported.", "🤝 Environment: disciplined batches with mentor check-ins.", "💻 Technology: digital tests, attendance and instant ranks.", "📊 Assessment: weekly mocks with solutions and parent reports."].map((t) => (
-                    <li key={t} className="flex gap-2 rounded-lg px-2 py-1 transition hover:-translate-y-0.5 hover:bg-silver-50"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" /> {t}</li>
+                  {["Focused courses for entrance preparation.", "Small batches and support from mentors.", "Regular mock tests and question practice.", "Digital tools for assessment and progress tracking."].map((t) => (
+                    <li key={t} className="flex gap-2 rounded-lg py-1"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" /> {t}</li>
                   ))}
                 </ul>
-                <a href="#courses" className="btn-metallic-sheen cta-bounce shine-sweep mt-6 inline-block rounded-xl bg-navy-700 px-6 py-3 text-sm font-bold text-white">See Our Tracks 🚀 →</a>
+                <a href="#courses" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">Explore courses <ChevronRight className="h-4 w-4" /></a>
               </div>
             </Reveal>
           </div>
@@ -408,29 +395,19 @@ export default function HomePage() {
           <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="💖 WHY NEURON" title="Why Shaheen Bagh Chooses Neuron Academy ✨" desc="Entrance specialists — not a generic tuition centre. 🧠" />
+              <SectionHeader eyebrow="WHY NEURON ACADEMY" title="A focused learning experience" desc="Structured support for students preparing for entrance examinations." />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {WHY.map((w, i) => {
-                const theme = WHY_THEMES[i % WHY_THEMES.length];
-                return (
-                  <Reveal key={w.t} delay={(i % 3) * 90} variant={theme.reveal}>
-                    <Tilt max={10}>
-                      <div className={`shine-sweep card-lift group relative h-full overflow-hidden rounded-card bg-gradient-to-br p-6 text-white shadow-card ${theme.bg}`}>
-                        <span className={`absolute right-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-2xl ring-1 ring-white/30 backdrop-blur transition group-hover:scale-125 ${theme.chip}`} aria-hidden>
-                          {theme.mark}
-                        </span>
-                        <span className="pointer-events-none absolute -bottom-6 -right-2 select-none text-[92px] leading-none opacity-15 transition duration-500 group-hover:scale-110 group-hover:opacity-30" aria-hidden>
-                          {theme.mark}
-                        </span>
-                        <span className="bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text text-[12px] font-extrabold tracking-[0.18em] text-transparent">0{i + 1}</span>
-                        <p className="mt-1 text-[16px] font-extrabold tracking-tight text-white">{w.t}</p>
-                        <p className="mt-1.5 text-[13.5px] leading-relaxed text-white/85">{w.d}</p>
-                      </div>
-                    </Tilt>
-                  </Reveal>
-                );
-              })}
+              {WHY.map((w, i) => (
+                <Reveal key={w.t} delay={(i % 3) * 60}>
+                  <article className="relative h-full rounded-2xl border border-silver-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-brand-primary/25 hover:shadow-card-hover">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary/5 text-sm font-bold text-brand-primary">0{i + 1}</div>
+                    <h3 className="mt-5 text-base font-bold text-navy-950">{w.t}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-neutral-600">{w.d}</p>
+                    <span className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-brand-secondary/70 to-transparent" aria-hidden />
+                  </article>
+                </Reveal>
+              ))}
             </div>
           </div>
         </section>
@@ -442,10 +419,10 @@ export default function HomePage() {
 
         {/* COURSES */}
         <section id="courses" className="relative overflow-hidden bg-background">
-          <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-crimson/10 blur-3xl" aria-hidden />
+          <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-brand-secondary/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="📚 COURSES" title="One Academy. Every Entrance. 🚀" desc="JEE • NEET • AMU • Jamia • Foundation — pick your battlefield. ⚔️" />
+              <SectionHeader eyebrow="COURSES" title="Find the right course for your goals" desc="Explore entrance preparation and foundation courses offered by Neuron Academy." />
             </Reveal>
             <Reveal delay={100}>
               <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter courses by category">
@@ -454,7 +431,7 @@ export default function HomePage() {
                     key={c}
                     onClick={() => setCourseCat(c)}
                     aria-pressed={courseCat === c}
-                    className={`rounded-full px-4 py-1.5 text-[12px] font-bold transition ${courseCat === c ? "bg-navy-700 text-white" : "border border-silver-300 bg-white text-navy-700 hover:border-teal-500"}`}
+                    className={`rounded-full px-4 py-2 text-[13px] font-semibold transition ${courseCat === c ? "bg-brand-primary text-white" : "border border-silver-300 bg-white text-navy-800 hover:border-brand-primary/40 hover:bg-brand-primary/5"}`}
                   >
                     {c}
                   </button>
@@ -480,22 +457,11 @@ export default function HomePage() {
           <Marquee items={EXAM_TICKER} className="text-white" itemClassName="text-white" />
         </div>
 
-        {/* LOUD TAGLINE TAPE */}
-        <div className="overflow-hidden border-y-4 border-double border-amber-300 bg-gradient-to-r from-navy-800 via-teal-600 to-navy-800 py-2.5">
-          <Marquee
-            reverse
-            speed={20}
-            items={["🧠 ACTIVATE YOUR NEURONs ⚡", "🚀 JEE • NEET • AMU • JAMIA 🎯", "📝 WEEKLY MOCKS + RANKS 🏆", "💡 DOUBT LOUNGE TILL 8 PM ✨"]}
-            className="text-white"
-            itemClassName="text-white"
-          />
-        </div>
-
         {/* FACULTY */}
         <section id="faculty" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="🧑‍🏫 FACULTY" title="Learn From Mentors Who've Been There 🌟" desc="IIT, medical & AMU/JMI alumni guiding every batch. 💪" />
+              <SectionHeader eyebrow="FACULTY" title="Meet the academy’s faculty" desc="Learn more about the educators featured by Neuron Academy." />
             </Reveal>
             {facultyList.length > 0 && (
               <>
@@ -525,14 +491,14 @@ export default function HomePage() {
           <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader dark eyebrow="🏆 RESULTS" title="Progress You Can Measure. 📈" desc="Verified selections from our entrance batches will appear here. ✨" />
+              <SectionHeader dark eyebrow="STUDENT ACHIEVEMENTS" title="Published results" desc="Student achievements shared by the academy appear here." />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {wall.length === 0 ? (
                 <p className="col-span-full rounded-card border border-dashed border-white/20 p-8 text-center text-sm font-bold text-silver-300">No results published yet.</p>
               ) : null}
               {wall.map((t, i) => (
-                <Reveal key={t.name} delay={i * 90} variant="pop">
+                <Reveal key={t.id} delay={i * 70} variant="pop">
                   <div className="card-lift group relative overflow-hidden rounded-card border border-white/15 bg-white/5 p-6 backdrop-blur transition hover:bg-white/10">
                     <span className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${t.color}, transparent)` }} aria-hidden />
                     <span className="animate-heartbeat flex h-14 w-14 items-center justify-center rounded-2xl text-white transition group-hover:scale-110" style={{ backgroundColor: `${t.color}33`, border: `1px solid ${t.color}66`, animationDelay: `${i * 0.3}s` }}>
@@ -570,7 +536,7 @@ export default function HomePage() {
           <div className="pointer-events-none absolute -left-20 top-10 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="💬 TESTIMONIALS" title="What Students & Parents Say. ❤️" desc="Verified reviews from our learners and their families will appear here. 🌟" />
+              <SectionHeader eyebrow="TESTIMONIALS" title="Student and parent experiences" desc="Reviews published by the academy are shown here." />
             </Reveal>
             <Reveal delay={120}>
               <div className="mt-8"><Testimonials items={testimonialList} /></div>
@@ -584,15 +550,15 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader eyebrow="⚡ TEST PLATFORM" title="Practice. Perform. Improve. 🚀" desc="Our digital test app — live mocks, instant ranks and question-wise analysis. It's already working: try it below. 👇" />
+                <SectionHeader eyebrow="TEST PLATFORM" title="Practice and review your progress" desc="Use the student platform for online tests, results and question-wise review." />
                 <ul className="mt-5 grid gap-2.5 text-sm font-semibold text-ink sm:grid-cols-2">
-                  {["🔴 Live Tests", "📝 Mock Tests", "⚡ Instant Results", "📊 Performance Analysis", "🗓️ Regular Assessment", "🏆 Solutions + Ranks"].map((t) => (
-                    <li key={t} className="card-lift flex items-center gap-2 rounded-xl border border-silver-200 bg-background px-3 py-2.5 transition hover:-translate-y-1 hover:border-teal-400 hover:shadow-card"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> {t}</li>
+                  {["Online tests", "Mock tests", "Results and rankings", "Performance review", "Regular assessment", "Question solutions"].map((t) => (
+                    <li key={t} className="flex items-center gap-2 rounded-xl border border-silver-200 bg-background px-3 py-3 text-neutral-700 transition hover:border-brand-primary/30 hover:shadow-card"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" /> {t}</li>
                   ))}
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a href="/scholarship-tests" className="animate-glow btn-metallic-sheen cta-bounce shine-sweep inline-block rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">🎓 Scholarship Tests <span className="animate-heartbeat inline-block">→</span></a>
-                  <a href="/student/login" className="cta-bounce inline-block rounded-xl border border-silver-300 px-6 py-3 text-sm font-bold text-navy-700 hover:border-teal-500">▶️ Take a Live Demo Test</a>
+                  <a href="/scholarship-tests" className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">Scholarship tests <ChevronRight className="h-4 w-4" /></a>
+                  <a href="/student/login" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-5 py-3 text-sm font-bold text-navy-800 transition hover:border-brand-primary/30 hover:bg-brand-primary/5">Student login</a>
                 </div>
               </div>
             </Reveal>
@@ -608,15 +574,15 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader dark eyebrow="💻 TECHNOLOGY" title="Traditional Teaching. Modern Assessment. ⚡" desc="PDF question papers become digital tests with ranks — built right into this website. 🚀" />
+                <SectionHeader dark eyebrow="DIGITAL LEARNING" title="Learning supported by useful tools" desc="Online assessments, attendance and study resources are available through the student and faculty platforms." />
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {[
-                    { icon: MonitorPlay, t: "📄 PDF → Digital Tests" },
-                    { icon: CalendarCheck, t: "✅ Attendance" },
-                    { icon: BarChart3, t: "📊 Performance Tracking" },
-                    { icon: Trophy, t: "🏆 Instant Ranks" },
-                    { icon: Bell, t: "🔔 Notifications" },
-                    { icon: BookOpen, t: "📚 Question Bank" },
+                    { icon: MonitorPlay, t: "Digital assessments" },
+                    { icon: CalendarCheck, t: "Attendance" },
+                    { icon: BarChart3, t: "Progress tracking" },
+                    { icon: Trophy, t: "Results and rankings" },
+                    { icon: Bell, t: "Notifications" },
+                    { icon: BookOpen, t: "Question bank" },
                   ].map((x, i) => (
                     <Reveal key={x.t} delay={i * 60}>
                       <div className="card-lift wiggle-on-hover flex items-center gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 transition hover:bg-white/10">
@@ -652,7 +618,7 @@ export default function HomePage() {
         <section id="gallery" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="📸 GALLERY" title="Life At Neuron Academy 🎉" desc="Campus, classrooms and events — add real photos to public/images/ and they appear here. ✨" />
+              <SectionHeader eyebrow="GALLERY" title="Inside Neuron Academy" desc="Explore photos shared by the academy." />
             </Reveal>
             <GallerySection items={galleryList} />
           </div>
@@ -664,7 +630,7 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader eyebrow="📞 CONTACT" title="Let's Plan Your Next Step. 🗺️" desc="Visit us in Shaheen Bagh, call, or drop an enquiry — counsellors reply within a day. 😊" />
+                <SectionHeader eyebrow="CONTACT" title="Talk with the academy" desc="Visit Neuron Academy in Shaheen Bagh, call, or send an enquiry." />
                 <div className="mt-6 space-y-3">
                   {[
                     { icon: Phone, t: CONTACT_INFO.phone },
@@ -673,7 +639,7 @@ export default function HomePage() {
                     { icon: MapPin, t: CONTACT_INFO.address },
                     { icon: Clock, t: CONTACT_INFO.hours },
                   ].map((c, i) => (
-                    <p key={i} className="card-lift flex items-center gap-3 rounded-xl border border-silver-200 bg-white px-4 py-3 text-sm font-bold text-navy-700"><c.icon className="h-4 w-4 shrink-0 text-teal-600" /> {c.t}</p>
+                    <p key={i} className="flex items-center gap-3 rounded-xl border border-silver-200 bg-white px-4 py-3 text-sm font-semibold text-navy-800"><c.icon className="h-4 w-4 shrink-0 text-brand-primary" /> {c.t}</p>
                   ))}
                 </div>
                 <a href={`https://wa.me/91${CONTACT_INFO.whatsapp.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer" className="animate-glow cta-bounce mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-bold text-white">
@@ -706,16 +672,14 @@ export default function HomePage() {
           <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader eyebrow="🎯 ADMISSION" title="Your Rank Journey Starts With One Demo. 🚀" desc="Free demo class + diagnostic test + personalised study plan — no fee, no pressure. 😌" />
+                <SectionHeader eyebrow="ADMISSIONS" title="Tell us what you’re preparing for" desc="Share your class or exam, and contact the academy to discuss course options and next steps." />
                 <ul className="mt-4 space-y-2 text-sm font-semibold text-ink">
-                  <li className="flex gap-2 rounded-lg px-2 py-1 transition hover:-translate-y-0.5 hover:bg-silver-50"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> 🎓 Free demo class in your target exam</li>
-                  <li className="flex gap-2 rounded-lg px-2 py-1 transition hover:-translate-y-0.5 hover:bg-silver-50"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> 📋 Diagnostic test + study plan</li>
-                  <li className="flex gap-2 rounded-lg px-2 py-1 transition hover:-translate-y-0.5 hover:bg-silver-50"><CheckCircle2 className="h-4 w-4 shrink-0 text-teal-600" /> 🤝 Transparent fees, honest counselling</li>
+                  <li className="flex gap-2 rounded-lg py-1"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" /> Explore courses for your class or entrance exam</li>
+                  <li className="flex gap-2 rounded-lg py-1"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" /> Ask the team about schedule and course details</li>
+                  <li className="flex gap-2 rounded-lg py-1"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" /> Send an enquiry using the form</li>
                 </ul>
-                <div className="mt-5 flex gap-6">
-                  <div className="transition duration-300 hover:-translate-y-1 hover:scale-105"><p className="text-2xl font-extrabold text-navy-700">👥 Small</p><p className="text-[11px] font-bold text-muted">BATCHES</p></div>
-                  <div className="transition duration-300 hover:-translate-y-1 hover:scale-105"><p className="text-2xl font-extrabold text-navy-700">📝 Weekly</p><p className="text-[11px] font-bold text-muted">MOCKS</p></div>
-                  <div className="transition duration-300 hover:-translate-y-1 hover:scale-105"><p className="text-2xl font-extrabold text-navy-700">🌟 Expert</p><p className="text-[11px] font-bold text-muted">MENTORS</p></div>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {["JEE", "NEET", "AMU", "Jamia"].map((exam) => <span key={exam} className="rounded-full bg-brand-primary/5 px-3 py-1.5 text-xs font-semibold text-brand-primary">{exam}</span>)}
                 </div>
               </div>
             </Reveal>
@@ -729,7 +693,7 @@ export default function HomePage() {
         <section className="bg-white">
           <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="❓ FAQ" title="Questions, Answered. 💡" desc="Everything parents and students ask before joining. 👨‍👩‍👧‍👦" />
+              <SectionHeader eyebrow="FAQ" title="Frequently asked questions" desc="Information about courses, classes and getting in touch." />
             </Reveal>
             <Reveal delay={120}>
               <div className="mt-8"><Faq items={FAQS} /></div>
@@ -741,18 +705,18 @@ export default function HomePage() {
         <WaveDivider className="bg-white text-navy-800" />
         <section className="metallic-dark relative overflow-hidden">
           <div className="animate-float-slow pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
-          <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-crimson/25 blur-3xl" aria-hidden />
+          <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-brand-secondary/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
             <Reveal>
-              <p className="text-[11px] font-bold tracking-[0.24em] text-teal-300">🧠 JEE • NEET • AMU • JAMIA • ADMISSIONS OPEN ⚡</p>
-              <p className="animate-gradient-text mx-auto mt-4 bg-gradient-to-r from-amber-200 via-teal-200 to-amber-200 bg-clip-text text-2xl font-extrabold tracking-wide text-transparent sm:text-3xl">
-                ACTIVATE YOUR NEURONs 🧠⚡
+              <p className="text-[11px] font-bold tracking-[0.2em] text-brand-secondary-300">JEE · NEET · AMU · JAMIA</p>
+              <p className="mx-auto mt-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                Neuron Academy · Shaheen Bagh
               </p>
-              <h2 className="mx-auto mt-2 max-w-2xl text-3xl font-extrabold text-white sm:text-5xl">Your Rank Is Waiting. 🏆</h2>
-              <p className="mx-auto mt-3 max-w-xl text-[15px] text-silver-200">Visit Shaheen Bagh, attend a free demo, take the diagnostic — and leave with a plan. 🚀</p>
+              <h2 className="mx-auto mt-2 max-w-2xl text-3xl font-extrabold text-white sm:text-5xl">Take the next step in your preparation.</h2>
+              <p className="mx-auto mt-3 max-w-xl text-[15px] text-silver-200">Explore courses or contact the academy to discuss your goals.</p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                  <a href="#courses" className="animate-glow cta-bounce shine-sweep rounded-xl bg-crimson px-8 py-3.5 text-sm font-bold text-white hover:bg-crimson-bright"><span className="animate-heartbeat inline-block">🚀</span> Explore Courses</a>
-                  <a href="#contact" className="cta-bounce rounded-xl border border-white/30 bg-white/5 px-8 py-3.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300"><span className="animate-heartbeat inline-block">🎯</span> Book Free Demo</a>
+                  <a href="#courses" className="rounded-xl bg-brand-secondary px-6 py-3.5 text-sm font-bold text-navy-950 transition hover:bg-brand-secondary-300">Explore courses</a>
+                  <a href="#contact" className="rounded-xl border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-bold text-white backdrop-blur transition hover:border-brand-secondary hover:bg-white/10">Contact the academy</a>
                 </div>
             </Reveal>
           </div>

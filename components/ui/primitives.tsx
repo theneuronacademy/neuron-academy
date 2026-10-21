@@ -2,18 +2,15 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { designSystem, type ButtonVariant, type ButtonSize, type CardVariant, type InputVariant, type BadgeVariant, type PortalTheme } from "@/lib/design-system";
-
-const { colors, typography, elevation, radius, transition } = designSystem;
+import { type ButtonVariant, type ButtonSize, type CardVariant, type BadgeVariant, type InputSize } from "@/lib/design-system";
 
 // ---------------------------------------------------------------------------
-// BUTTON — Metallic variants with portal awareness
+// BUTTON — Clean, accessible, with proper contrast
 // ---------------------------------------------------------------------------
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  portal?: PortalTheme;
   loading?: boolean;
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
@@ -22,7 +19,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({
   variant = "primary",
   size = "md",
-  portal = "public",
   loading = false,
   icon,
   iconPosition = "left",
@@ -31,28 +27,26 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const theme = designSystem.colors.portal[portal];
-
   const base = cn(
-    "inline-flex items-center justify-center gap-2 font-bold transition-all duration-200",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary/30",
     "disabled:opacity-50 disabled:pointer-events-none",
-    "cta-bounce",
     "rounded-xl"
   );
 
   const variants: Record<ButtonVariant, string> = {
-    primary: `bg-[${theme.primary}] text-white hover:bg-[${theme.primaryHover}] shadow-[${elevation.metallic[portal === "student" ? "champagne" : portal === "faculty" ? "steel" : "platinum"]}]`,
-    secondary: `bg-[${theme.accent}] text-white hover:bg-[${theme.accentHover}] shadow-[${elevation.metallic[portal === "student" ? "champagne" : portal === "faculty" ? "steel" : "platinum"]}]`,
-    outline: `border-2 border-[${theme.border}] bg-transparent text-[${theme.text}] hover:bg-[${theme.primaryLight}] hover:border-[${theme.primary}]`,
-    ghost: `text-[${theme.text}] hover:bg-[${theme.surfaceAlt}]`,
-    metallic: `bg-gradient-to-r from-[${theme.primary}] to-[${theme.primaryHover}] text-white shadow-[${elevation.metallic[portal === "student" ? "champagne" : portal === "faculty" ? "steel" : "platinum"]}]`,
-    accent: `bg-[${theme.accent}] text-white hover:bg-[${theme.accentHover}] shadow-[${elevation.metallic[portal === "student" ? "champagne" : portal === "faculty" ? "steel" : "platinum"]}]`,
-    destructive: `bg-red-600 text-white hover:bg-red-700 shadow-[0_4px_20px_-2px_rgb(220_38_38/0.3)]`,
+    primary: "bg-brand-primary text-white hover:bg-brand-primary-hover shadow-primary active:bg-brand-primary/90",
+    secondary: "bg-brand-secondary text-navy-950 hover:bg-brand-secondary-hover shadow-secondary active:bg-brand-secondary/90",
+    metallic: "bg-gradient-to-r from-brand-secondary-300 to-brand-secondary text-navy-950 shadow-secondary hover:brightness-95",
+    accent: "bg-brand-secondary text-navy-950 hover:bg-brand-secondary-hover shadow-secondary",
+    outline: "border-2 border-brand-primary text-brand-primary hover:bg-brand-primary/5 active:bg-brand-primary/10",
+    ghost: "text-brand-primary hover:bg-brand-primary/10 active:bg-brand-primary/20",
+    destructive: "bg-semantic-error text-white hover:bg-semantic-error-dark active:bg-semantic-error/90 shadow-[0_4px_14px_-2px_rgb(239_68_68/0.4)]",
+    link: "text-brand-primary hover:underline px-0 py-0",
   };
 
   const sizes: Record<ButtonSize, string> = {
-    sm: "px-3 py-1.5 text-xs gap-1",
+    sm: "px-3 py-1.5 text-sm gap-1.5",
     md: "px-4 py-2 text-sm gap-2",
     lg: "px-6 py-3 text-base gap-2",
     xl: "px-8 py-4 text-lg gap-3",
@@ -64,13 +58,7 @@ export function Button({
 
   return (
     <button
-      className={cn(
-        base,
-        variants[variant],
-        sizes[size],
-        loading && "cursor-wait",
-        className
-      )}
+      className={cn(base, variants[variant], sizes[size], loading && "cursor-wait", className)}
       disabled={disabled || loading}
       {...props}
     >
@@ -87,36 +75,44 @@ export function Button({
 }
 
 // ---------------------------------------------------------------------------
-// STATUS BADGE — Metallic tones
+// STATUS BADGE — High contrast, accessible
 // ---------------------------------------------------------------------------
 
 interface StatusBadgeProps {
-  tone?: BadgeVariant;
+  variant?: BadgeVariant;
+  tone?: "teal" | "navy" | "red" | "silver";
   children: React.ReactNode;
   className?: string;
   dot?: boolean;
 }
 
-export function StatusBadge({ tone = "default", children, className, dot = false }: StatusBadgeProps) {
-  const tones: Record<BadgeVariant, string> = {
-    default: "bg-silver-50 text-muted border-silver-200",
-    primary: "bg-navy-50 text-navy-700 border-navy-100",
-    secondary: "bg-teal-50 text-teal-700 border-teal-100",
-    success: "bg-emerald-50 text-emerald-700 border-emerald-100",
-    warning: "bg-amber-50 text-amber-700 border-amber-100",
-    error: "bg-rose-50 text-rose-700 border-rose-100",
-    metallic: "bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 border-slate-200",
-    teal: "bg-teal-50 text-teal-700 border-teal-100",
-    navy: "bg-navy-50 text-navy-700 border-navy-100",
-    red: "bg-rose-50 text-rose-700 border-rose-100",
-    silver: "bg-silver-50 text-silver-700 border-silver-200",
+export function StatusBadge({ variant, tone, children, className, dot = false }: StatusBadgeProps) {
+  const toneVariants: Record<NonNullable<StatusBadgeProps["tone"]>, BadgeVariant> = {
+    teal: "primary",
+    navy: "default",
+    red: "error",
+    silver: "outline",
+  };
+  const resolvedVariant = variant ?? (tone ? toneVariants[tone] : "default");
+  const variants: Record<BadgeVariant, string> = {
+    default: "bg-neutral-100 text-neutral-700 border-neutral-200",
+    primary: "bg-brand-primary/10 text-brand-primary-700 border-brand-primary/20",
+    secondary: "bg-brand-secondary/15 text-brand-secondary-800 border-brand-secondary/30",
+    success: "bg-semantic-success/10 text-semantic-success-dark border-semantic-success/20",
+    warning: "bg-semantic-warning/10 text-semantic-warning-dark border-semantic-warning/20",
+    error: "bg-semantic-error/10 text-semantic-error-dark border-semantic-error/20",
+    outline: "bg-transparent text-neutral-700 border-neutral-300",
+    teal: "bg-brand-primary/10 text-brand-primary-700 border-brand-primary/20",
+    navy: "bg-navy-50 text-navy-900 border-navy-100",
+    red: "bg-semantic-error/10 text-semantic-error-dark border-semantic-error/20",
+    silver: "bg-silver-100 text-silver-700 border-silver-300",
   };
 
   return (
     <span className={cn(
-      "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold tracking-widest",
+      "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-wider",
       "animate-fade-in",
-      tones[tone],
+      variants[resolvedVariant],
       className
     )}>
       {dot && <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" aria-hidden="true" />}
@@ -126,50 +122,55 @@ export function StatusBadge({ tone = "default", children, className, dot = false
 }
 
 // ---------------------------------------------------------------------------
-// CARDS — Metallic surface variants
+// CARDS — Clean, elevated, with proper contrast
 // ---------------------------------------------------------------------------
 
 interface CardProps {
   variant?: CardVariant;
   className?: string;
   children: React.ReactNode;
-  portal?: PortalTheme;
   hover?: boolean;
+  onClick?: () => void;
 }
 
-export function Card({ variant = "default", className, children, portal = "public", hover = true }: CardProps) {
-  const theme = designSystem.colors.portal[portal];
-
-  const variants: Record<CardVariant, string> = {
-    default: `bg-white border border-silver-200 shadow-[${elevation.level2}]`,
-    elevated: `bg-white border border-silver-100 shadow-[${elevation.level3}]`,
-    outlined: `bg-transparent border-2 border-silver-300`,
-    metallic: `bg-gradient-to-br from-white to-slate-50 border border-slate-200 shadow-[${elevation.metallic.platinum}]`,
-    glass: `bg-white/80 backdrop-blur-md border border-white/20 shadow-[${elevation.level3}]`,
+export function Card({ variant = "default", className, children, hover = false, onClick }: CardProps) {
+  const variants = {
+    default: "bg-white border border-neutral-200 shadow-sm",
+    elevated: "bg-white border border-neutral-100 shadow-lg",
+    outlined: "bg-transparent border-2 border-neutral-300",
+    filled: "bg-neutral-50 border border-neutral-200",
+    glass: "bg-white/80 backdrop-blur-md border border-white/20 shadow-lg",
+    metallic: "bg-white border border-silver-200 shadow-card",
   };
 
   const hoverStyles = hover
-    ? "hover:shadow-[0_20px_25px_-5px_rgb(0_0_0/0.06),_0_8px_10px_-6px_rgb(0_0_0/0.04)] hover:-translate-y-0.5 transition-all duration-300"
+    ? "hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
     : "";
 
   return (
-    <div className={cn(
-      "rounded-2xl overflow-hidden transition-all duration-300",
-      variants[variant],
-      hoverStyles,
-      className
-    )}>
+    <div
+      className={cn(
+        "rounded-2xl overflow-hidden transition-all duration-300",
+        variants[variant],
+        hoverStyles,
+        className
+      )}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); }} : undefined}
+    >
       {children}
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// CARD HEADER / CONTENT / FOOTER
+// CARD SECTIONS
 // ---------------------------------------------------------------------------
 
 export function CardHeader({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("px-6 py-4 border-b border-silver-100", className)}>{children}</div>;
+  return <div className={cn("px-6 py-4 border-b border-neutral-200", className)}>{children}</div>;
 }
 
 export function CardContent({ className, children }: { className?: string; children: React.ReactNode }) {
@@ -177,80 +178,55 @@ export function CardContent({ className, children }: { className?: string; child
 }
 
 export function CardFooter({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("px-6 py-4 border-t border-silver-100 bg-silver-50", className)}>{children}</div>;
+  return <div className={cn("px-6 py-4 border-t border-neutral-200 bg-neutral-50", className)}>{children}</div>;
 }
 
 // ---------------------------------------------------------------------------
-// SECTION HEADER — Premium typography with metallic accent line
+// SECTION HEADER — Clean typography with brand accent
 // ---------------------------------------------------------------------------
 
 interface SectionHeaderProps {
   eyebrow: string;
   title: string;
   desc?: string;
-  dark?: boolean;
   className?: string;
-  portal?: PortalTheme;
+  dark?: boolean;
 }
 
-export function SectionHeader({ eyebrow, title, desc, dark = false, className, portal = "public" }: SectionHeaderProps) {
-  const theme = designSystem.colors.portal[portal];
-  const accentColor = portal === "student" ? theme.accent : portal === "faculty" ? theme.accent : "#1aa6b5";
-
+export function SectionHeader({ eyebrow, title, desc, className, dark = false }: SectionHeaderProps) {
   return (
     <div className={cn("animate-slide-up max-w-3xl", className)}>
-      <p className={cn(
-        "eyebrow-line text-[11px] font-bold tracking-[0.22em]",
-        dark ? "text-teal-300" : `text-[${accentColor}]`
-      )}>
-        {eyebrow}
-      </p>
-      <h2 className={cn(
-        "mt-3 text-3xl font-extrabold leading-[1.08] tracking-tight sm:text-4xl lg:text-[40px]",
-        dark ? "text-white" : `text-[${theme.text}]`
-      )}>
-        {title}
-      </h2>
-      <div className={`mt-4 w-20 h-1 bg-gradient-to-r from-[${accentColor}] to-transparent opacity-80`} aria-hidden />
-      {desc && (
-        <p className={cn(
-          "mt-3 text-[15px] leading-relaxed",
-          dark ? "text-silver-200" : "text-muted"
-        )}>
-          {desc}
-        </p>
-      )}
+      <p className={cn("text-xs font-bold tracking-[0.16em] uppercase", dark ? "text-brand-secondary-300" : "text-brand-primary")}>{eyebrow}</p>
+      <h2 className={cn("mt-3 text-3xl font-extrabold leading-tight sm:text-4xl lg:text-[40px]", dark ? "text-white" : "text-navy-950")}>{title}</h2>
+      <div className="mt-4 h-1 w-14 rounded-full bg-brand-secondary" aria-hidden />
+      {desc && <p className={cn("mt-3 text-base leading-relaxed sm:text-lg", dark ? "text-silver-200" : "text-neutral-600")}>{desc}</p>}
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// PROGRESS BAR — Metallic tones
+// PROGRESS BAR — Clean with brand colors
 // ---------------------------------------------------------------------------
 
 interface ProgressBarProps {
   value: number;
-  tone?: "teal" | "navy" | "red" | "gold" | "accent";
   className?: string;
   showLabel?: boolean;
   label?: string;
+  tone?: "teal" | "navy" | "red";
 }
 
-export function ProgressBar({ value, tone = "teal", className, showLabel = false, label }: ProgressBarProps) {
-  const colors = {
-    teal: "bg-gradient-to-r from-teal-500 to-teal-400",
-    navy: "bg-gradient-to-r from-slate-700 to-slate-600",
-    red: "bg-gradient-to-r from-rose-500 to-rose-400",
-    gold: "bg-gradient-to-r from-amber-500 to-yellow-400",
-    accent: "bg-gradient-to-r from-amber-500 to-yellow-400",
-  };
-
+export function ProgressBar({ value, className, showLabel = false, label, tone = "teal" }: ProgressBarProps) {
   const clampedValue = Math.min(100, Math.max(0, value));
-
+  const tones: Record<NonNullable<ProgressBarProps["tone"]>, string> = {
+    teal: "bg-brand-primary",
+    navy: "bg-navy-800",
+    red: "bg-semantic-error",
+  };
   return (
-    <div className={cn("relative h-2 w-full overflow-hidden rounded-full bg-silver-200 dark:bg-slate-700", className)}>
+    <div className={cn("relative h-2 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700", className)}>
       <div
-        className={cn("h-full rounded-full transition-all duration-500 ease-out", colors[tone])}
+        className={cn("h-full rounded-full transition-all duration-500 ease-out", tones[tone])}
         style={{ width: `${clampedValue}%` }}
         role="progressbar"
         aria-valuenow={clampedValue}
@@ -259,7 +235,7 @@ export function ProgressBar({ value, tone = "teal", className, showLabel = false
         aria-label={label}
       />
       {showLabel && (
-        <span className="absolute right-0 top-[-20px] text-xs font-bold text-muted">
+        <span className="absolute right-0 top-[-20px] text-xs font-semibold text-neutral-500">
           {label ?? `${clampedValue}%`}
         </span>
       )}
@@ -268,29 +244,36 @@ export function ProgressBar({ value, tone = "teal", className, showLabel = false
 }
 
 // ---------------------------------------------------------------------------
-// INPUT / TEXTAREA / SELECT — Metallic variants
+// INPUT / TEXTAREA / SELECT — Clean, accessible, high contrast
 // ---------------------------------------------------------------------------
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  variant?: InputVariant;
+interface BaseInputProps {
+  variant?: "default" | "filled" | "outlined" | "ghost";
   label?: string;
   error?: string;
   hint?: string;
   icon?: React.ReactNode;
-  portal?: PortalTheme;
+  size?: InputSize;
 }
 
-export function Input({ variant = "default", label, error, hint, icon, portal = "public", className, id, ...props }: InputProps) {
-  const theme = designSystem.colors.portal[portal];
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">, BaseInputProps {}
+
+export function Input({ variant = "default", label, error, hint, icon, size = "md", className, id, ...props }: InputProps) {
   const inputId = id || `input-${Math.random().toString(36).slice(2, 9)}`;
   const errorId = `${inputId}-error`;
   const hintId = `${inputId}-hint`;
 
-  const variants: Record<InputVariant, string> = {
-    default: `bg-white border-2 border-[${theme.border}] focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    filled: `bg-[${theme.surfaceAlt}] border-2 border-transparent focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    outlined: `bg-transparent border-2 border-[${theme.border}] focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    ghost: `bg-transparent border-2 border-transparent focus:border-[${theme.primary}] focus:bg-[${theme.primaryLight}]`,
+  const variants = {
+    default: "bg-white border-2 border-neutral-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    filled: "bg-neutral-100 border-2 border-transparent focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    outlined: "bg-transparent border-2 border-neutral-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    ghost: "bg-transparent border-2 border-transparent focus:border-brand-primary focus:bg-brand-primary/5",
+  };
+
+  const sizes: Record<InputSize, string> = {
+    sm: "px-3 py-2 text-sm",
+    md: "px-4 py-3 text-sm",
+    lg: "px-5 py-4 text-base",
   };
 
   const describedBy = [error && errorId, hint && hintId].filter(Boolean).join(" ") || undefined;
@@ -298,28 +281,25 @@ export function Input({ variant = "default", label, error, hint, icon, portal = 
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={inputId} className={cn("mb-1.5 block text-sm font-bold", theme.text)}>
-          {label}
-        </label>
+        <label htmlFor={inputId} className="mb-1.5 block text-sm font-semibold text-neutral-900">{label}</label>
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-neutral-400">
             {icon}
           </div>
         )}
         <input
           id={inputId}
           className={cn(
-            "w-full px-4 py-3 text-sm font-medium placeholder:text-muted",
-            theme.text,
+            "w-full text-sm font-medium text-neutral-900 placeholder:text-neutral-400",
             "rounded-xl transition-all duration-200",
-            "focus:outline-none focus-visible:ring-2",
-            `focus-visible:ring-[${theme.primary}]/20`,
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/20",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             icon && "pl-10",
-            error && "border-rose-400 focus:border-rose-500 focus:ring-rose-500/20",
+            error && "border-semantic-error focus:border-semantic-error focus:ring-semantic-error/20",
             variants[variant],
+            sizes[size],
             className
           )}
           aria-invalid={error ? "true" : "false"}
@@ -328,12 +308,12 @@ export function Input({ variant = "default", label, error, hint, icon, portal = 
         />
       </div>
       {error && (
-        <p id={errorId} className="mt-1.5 text-sm font-medium text-rose-600" role="alert">
+        <p id={errorId} className="mt-1.5 text-sm font-medium text-semantic-error" role="alert">
           {error}
         </p>
       )}
       {hint && !error && (
-        <p id={hintId} className="mt-1.5 text-sm font-medium text-muted">
+        <p id={hintId} className="mt-1.5 text-sm font-medium text-neutral-500">
           {hint}
         </p>
       )}
@@ -341,25 +321,24 @@ export function Input({ variant = "default", label, error, hint, icon, portal = 
   );
 }
 
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  variant?: InputVariant;
-  label?: string;
-  error?: string;
-  hint?: string;
-  portal?: PortalTheme;
-}
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>, BaseInputProps {}
 
-export function Textarea({ variant = "default", label, error, hint, portal = "public", className, id, ...props }: TextareaProps) {
-  const theme = designSystem.colors.portal[portal];
+export function Textarea({ variant = "default", label, error, hint, size = "md", className, id, ...props }: TextareaProps) {
   const inputId = id || `textarea-${Math.random().toString(36).slice(2, 9)}`;
   const errorId = `${inputId}-error`;
   const hintId = `${inputId}-hint`;
 
-  const variants: Record<InputVariant, string> = {
-    default: `bg-white border-2 border-[${theme.border}] focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    filled: `bg-[${theme.surfaceAlt}] border-2 border-transparent focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    outlined: `bg-transparent border-2 border-[${theme.border}] focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    ghost: `bg-transparent border-2 border-transparent focus:border-[${theme.primary}] focus:bg-[${theme.primaryLight}]`,
+  const variants = {
+    default: "bg-white border-2 border-neutral-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    filled: "bg-neutral-100 border-2 border-transparent focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    outlined: "bg-transparent border-2 border-neutral-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    ghost: "bg-transparent border-2 border-transparent focus:border-brand-primary focus:bg-brand-primary/5",
+  };
+
+  const sizes: Record<InputSize, string> = {
+    sm: "px-3 py-2 text-sm",
+    md: "px-4 py-3 text-sm",
+    lg: "px-5 py-4 text-base",
   };
 
   const describedBy = [error && errorId, hint && hintId].filter(Boolean).join(" ") || undefined;
@@ -367,21 +346,18 @@ export function Textarea({ variant = "default", label, error, hint, portal = "pu
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={inputId} className={cn("mb-1.5 block text-sm font-bold", theme.text)}>
-          {label}
-        </label>
+        <label htmlFor={inputId} className="mb-1.5 block text-sm font-semibold text-neutral-900">{label}</label>
       )}
       <textarea
         id={inputId}
         className={cn(
-          "w-full px-4 py-3 text-sm font-medium placeholder:text-muted",
-          theme.text,
+          "w-full text-sm font-medium text-neutral-900 placeholder:text-neutral-400",
           "rounded-xl resize-y min-h-[100px] transition-all duration-200",
-          "focus:outline-none focus-visible:ring-2",
-          `focus-visible:ring-[${theme.primary}]/20`,
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/20",
           "disabled:opacity-50 disabled:cursor-not-allowed",
-          error && "border-rose-400 focus:border-rose-500 focus:ring-rose-500/20",
+          error && "border-semantic-error focus:border-semantic-error focus:ring-semantic-error/20",
           variants[variant],
+          sizes[size],
           className
         )}
         aria-invalid={error ? "true" : "false"}
@@ -389,12 +365,12 @@ export function Textarea({ variant = "default", label, error, hint, portal = "pu
         {...props}
       />
       {error && (
-        <p id={errorId} className="mt-1.5 text-sm font-medium text-rose-600" role="alert">
+        <p id={errorId} className="mt-1.5 text-sm font-medium text-semantic-error" role="alert">
           {error}
         </p>
       )}
       {hint && !error && (
-        <p id={hintId} className="mt-1.5 text-sm font-medium text-muted">
+        <p id={hintId} className="mt-1.5 text-sm font-medium text-neutral-500">
           {hint}
         </p>
       )}
@@ -402,27 +378,27 @@ export function Textarea({ variant = "default", label, error, hint, portal = "pu
   );
 }
 
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  variant?: InputVariant;
-  label?: string;
-  error?: string;
-  hint?: string;
+interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size">, BaseInputProps {
   options: { value: string; label: string }[];
   placeholder?: string;
-  portal?: PortalTheme;
 }
 
-export function Select({ variant = "default", label, error, hint, options, placeholder, portal = "public", className, id, ...props }: SelectProps) {
-  const theme = designSystem.colors.portal[portal];
+export function Select({ variant = "default", label, error, hint, options, placeholder, size = "md", className, id, ...props }: SelectProps) {
   const selectId = id || `select-${Math.random().toString(36).slice(2, 9)}`;
   const errorId = `${selectId}-error`;
   const hintId = `${selectId}-hint`;
 
-  const variants: Record<InputVariant, string> = {
-    default: `bg-white border-2 border-[${theme.border}] focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    filled: `bg-[${theme.surfaceAlt}] border-2 border-transparent focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    outlined: `bg-transparent border-2 border-[${theme.border}] focus:border-[${theme.primary}] focus:ring-2 focus:ring-[${theme.primary}]/20`,
-    ghost: `bg-transparent border-2 border-transparent focus:border-[${theme.primary}] focus:bg-[${theme.primaryLight}]`,
+  const variants = {
+    default: "bg-white border-2 border-neutral-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    filled: "bg-neutral-100 border-2 border-transparent focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    outlined: "bg-transparent border-2 border-neutral-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20",
+    ghost: "bg-transparent border-2 border-transparent focus:border-brand-primary focus:bg-brand-primary/5",
+  };
+
+  const sizes: Record<InputSize, string> = {
+    sm: "px-3 py-2 text-sm",
+    md: "px-4 py-3 text-sm",
+    lg: "px-5 py-4 text-base",
   };
 
   const describedBy = [error && errorId, hint && hintId].filter(Boolean).join(" ") || undefined;
@@ -430,22 +406,19 @@ export function Select({ variant = "default", label, error, hint, options, place
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={selectId} className={cn("mb-1.5 block text-sm font-bold", theme.text)}>
-          {label}
-        </label>
+        <label htmlFor={selectId} className="mb-1.5 block text-sm font-semibold text-neutral-900">{label}</label>
       )}
       <div className="relative">
         <select
           id={selectId}
           className={cn(
-            "w-full px-4 py-3 pr-10 text-sm font-medium",
-            theme.text,
+            "w-full px-4 py-3 pr-10 text-sm font-medium text-neutral-900",
             "rounded-xl appearance-none transition-all duration-200",
-            "focus:outline-none focus-visible:ring-2",
-            `focus-visible:ring-[${theme.primary}]/20`,
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/20",
             "disabled:opacity-50 disabled:cursor-not-allowed",
-            error && "border-rose-400 focus:border-rose-500 focus:ring-rose-500/20",
+            error && "border-semantic-error focus:border-semantic-error focus:ring-semantic-error/20",
             variants[variant],
+            sizes[size],
             className
           )}
           aria-invalid={error ? "true" : "false"}
@@ -463,19 +436,19 @@ export function Select({ variant = "default", label, error, hint, options, place
             </option>
           ))}
         </select>
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-muted">
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral-400">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
       </div>
       {error && (
-        <p id={errorId} className="mt-1.5 text-sm font-medium text-rose-600" role="alert">
+        <p id={errorId} className="mt-1.5 text-sm font-medium text-semantic-error" role="alert">
           {error}
         </p>
       )}
       {hint && !error && (
-        <p id={hintId} className="mt-1.5 text-sm font-medium text-muted">
+        <p id={hintId} className="mt-1.5 text-sm font-medium text-neutral-500">
           {hint}
         </p>
       )}
@@ -489,7 +462,7 @@ export function Select({ variant = "default", label, error, hint, options, place
 
 export function Label({ children, className, htmlFor }: { children: React.ReactNode; className?: string; htmlFor?: string }) {
   return (
-    <label htmlFor={htmlFor} className={cn("block text-sm font-bold text-muted", className)}>
+    <label htmlFor={htmlFor} className={cn("block text-sm font-semibold text-neutral-700", className)}>
       {children}
     </label>
   );
@@ -501,16 +474,12 @@ export function Label({ children, className, htmlFor }: { children: React.ReactN
 
 export function Divider({ className, orientation = "horizontal" }: { className?: string; orientation?: "horizontal" | "vertical" }) {
   return (
-    <hr className={cn(
-      "border-silver-200 dark:border-slate-700",
-      orientation === "horizontal" ? "w-full" : "h-full",
-      className
-    )} aria-hidden="true" />
+    <hr className={cn("border-neutral-200 dark:border-neutral-700", orientation === "horizontal" ? "w-full" : "h-full", className)} aria-hidden="true" />
   );
 }
 
 // ---------------------------------------------------------------------------
-// TOOLTIP
+// TOOLTIP — Fixed implementation
 // ---------------------------------------------------------------------------
 
 interface TooltipProps {
@@ -555,13 +524,8 @@ export function Tooltip({ content, children, position = "top", delay = 200 }: To
         <div
           className={cn(
             "fixed z-[1500] animate-fade-in px-3 py-2 text-xs font-medium text-white rounded-lg shadow-lg",
-            "bg-slate-900",
-            {
-              top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
-              bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
-              left: "right-full top-1/2 -translate-y-1/2 mr-2",
-              right: "left-full top-1/2 -translate-y-1/2 ml-2",
-            }[position]
+            "bg-neutral-900",
+            positions[position]
           )}
           role="tooltip"
         >

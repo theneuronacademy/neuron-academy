@@ -71,8 +71,8 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
           backgroundSize: "auto, auto, auto, 36px 36px, 36px 36px",
         }}
       />
-      <div className="animate-float absolute -right-16 -top-16 h-64 w-64 rounded-full bg-teal-400/25 blur-3xl" />
-      <div className="animate-float-slow absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-crimson/25 blur-3xl" />
+      <div className="animate-float absolute -right-16 -top-16 h-64 w-64 rounded-full bg-brand-secondary/20 blur-3xl" />
+      <div className="animate-float-slow absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-brand-primary/20 blur-3xl" />
     </div>
   );
 }
@@ -127,7 +127,7 @@ export function TopRunningBanner() {
 
   return (
     <section aria-label="Academy announcements" className="metallic-dark relative overflow-hidden border-b border-white/10">
-      <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-teal-400 via-white/60 to-crimson" aria-hidden />
+      <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary" aria-hidden />
       <div
         className="relative"
         onMouseEnter={() => setPaused(true)}
@@ -147,11 +147,11 @@ export function TopRunningBanner() {
                 <SlideMedia ad={ad} />
                 <div className="absolute inset-0 bg-gradient-to-r from-navy-800/95 via-navy-800/70 to-navy-800/10" aria-hidden />
                 <div className="relative mx-auto flex min-h-[300px] max-w-7xl flex-col justify-center px-4 py-10 sm:min-h-[340px] sm:px-6">
-                  <p className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-[0.18em] text-teal-300 backdrop-blur">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-teal-300" />
+                  <p className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-[0.18em] text-brand-secondary-300 backdrop-blur">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-secondary" />
                     {(ad.subtitle || ad.type).toUpperCase()}
                   </p>
-                  <h2 className="animate-gradient-text mt-3 max-w-2xl bg-gradient-to-r from-white via-teal-200 to-amber-200 bg-clip-text text-3xl font-extrabold leading-[1.05] tracking-tight text-transparent sm:text-4xl lg:text-[46px]">
+                  <h2 className="mt-3 max-w-2xl bg-gradient-to-r from-white via-brand-secondary-200 to-white bg-clip-text text-3xl font-extrabold leading-[1.05] tracking-tight text-transparent sm:text-4xl lg:text-[46px]">
                     {ad.title}
                   </h2>
                   <p className="mt-3 max-w-xl text-[14.5px] leading-relaxed text-silver-200">{ad.description}</p>
@@ -159,12 +159,12 @@ export function TopRunningBanner() {
                     {ad.ctaText ? (
                       <a
                         href={ad.ctaLink || "#courses"}
-                        className="btn-metallic-sheen inline-flex items-center gap-1.5 rounded-xl bg-crimson px-5 py-2.5 text-sm font-bold text-white shadow-card hover:bg-crimson-bright"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-brand-secondary px-5 py-2.5 text-sm font-bold text-navy-950 shadow-card transition hover:bg-brand-secondary-300"
                       >
                         {ad.ctaText} <ArrowRight className="h-4 w-4" />
                       </a>
                     ) : null}
-                    <a href="#courses" className="rounded-xl border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-bold text-white backdrop-blur hover:border-teal-300">
+                    <a href="#courses" className="rounded-xl border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-bold text-white backdrop-blur hover:border-brand-secondary">
                       View All Courses
                     </a>
                   </div>
@@ -179,7 +179,7 @@ export function TopRunningBanner() {
           <div className="absolute inset-x-0 bottom-0 h-[3px] bg-white/10" aria-hidden>
             <div
               key={index}
-              className="h-full bg-gradient-to-r from-teal-300 via-amber-300 to-crimson-100"
+              className="h-full bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary"
               style={{ animation: "ticker-progress 6s linear forwards" }}
             />
           </div>
@@ -193,7 +193,7 @@ export function TopRunningBanner() {
                     key={a.id}
                     onClick={() => setIndex(i)}
                     aria-label={`Show banner ${i + 1}`}
-                    className={cn("h-1.5 rounded-full transition-all", i === index ? "w-10 bg-teal-300" : "w-4 bg-white/30 hover:bg-white/60")}
+                    className={cn("h-1.5 rounded-full transition-all", i === index ? "w-10 bg-brand-secondary" : "w-4 bg-white/30 hover:bg-white/60")}
                   />
                 ))}
               </div>
