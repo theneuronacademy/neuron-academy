@@ -1,6 +1,5 @@
-// Phase 10 — student registration (genuine, server-validated).
-// Creates User(STUDENT, active) + Student profile, then signs in.
-// Mobile + email unique (checked in code). Password bcrypt-hashed.
+// Student registration. A fresh, single-use MSG91/direct-OTP verification
+// is required in every environment before an account can be created.
 
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
@@ -10,26 +9,27 @@ import { createSessionToken, isAuthConfigured, sessionCookieHeader } from "@/lib
 import { hashPassword, isValidPassword, normalizePhone } from "@/lib/credentials";
 import { isEmail, isNonEmpty, missingFields } from "@/lib/validation";
 import { OTP_VERIFIED_TTL_MIN } from "@/lib/otp";
-import { isMsg91Configured } from "@/services/msg91";
 import { notifyMessages } from "@/lib/notify";
 import { dispatchNotification } from "@/services/notificationEngine";
 import { studentAuthRateLimits, getClientIp, rateLimitResponse } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
-// Vercel: bcrypt hash (cost 12) + OTP check + DB writes + cold start (Pro plan).
 export const maxDuration = 15;
 
 function studentId(): string {
   return `NA-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 }
 
+function isUniqueConflict(err: unknown): boolean {
+  return Boolean(err && typeof err === "object" && "code" in err && err.code === "P2002");
+}
+
 export async function POST(req: NextRequest) {
-  // Rate limiting
   const ip = getClientIp(req);
   const rateLimit = studentAuthRateLimits.register(ip);
   if (!rateLimit.allowed) {
     const res = fail(`Too many registration attempts. Try again in ${Math.ceil((rateLimit.retryAfterMs ?? 0) / 1000)} seconds.`, 429);
-    rateLimitResponse(rateLimit).forEach((v, k) => res.headers.set(k, v));
+    rateLimitResponse(rateLimit).forEach((value, key) => res.headers.set(key, value));
     return res;
   }
 
@@ -51,93 +51,114 @@ export async function POST(req: NextRequest) {
   const email = String(body.email).trim().toLowerCase();
   if (!isEmail(email)) return fail("Invalid email.", 400);
   if (!isValidPassword(body.password)) return fail("Password must be 8–128 characters.", 400);
-  // Phase 13 — production OTP gate. When MSG91 is configured, registration
-  // requires a freshly verified mobile OTP (single-use, consumed below).
-  // Without MSG91 credentials the legacy flow stays (dev/demo parity).
-  let verifiedOtpId: string | null = null;
-  if (isMsg91Configured()) {
-    const since = new Date(Date.now() - OTP_VERIFIED_TTL_MIN * 60 * 1000);
-    const verified = await db.otpRequest.findFirst({
-      where: { phone, consumed: false, verifiedAt: { gte: since }, expiresAt: { gt: new Date() } },
-      orderBy: { verifiedAt: "desc" },
-    }).catch(() => null);
-    if (!verified) {
-      return fail("Verify your mobile number with the OTP sent to it before registering.", 428);
-    }
-    verifiedOtpId = verified.id;
-  }
+
+  const now = new Date();
+  const verifiedSince = new Date(now.getTime() - OTP_VERIFIED_TTL_MIN * 60 * 1000);
   try {
-    if (await db.student.findFirst({ where: { phone }, select: { id: true } })) {
-      return fail("This mobile number is already registered.", 409);
-    }
-    if (await db.student.findUnique({ where: { email }, select: { id: true } })) {
-      return fail("This email is already registered.", 409);
-    }
-    if (await db.user.findUnique({ where: { email }, select: { id: true } })) {
-      return fail("This email is already registered.", 409);
-    }
-    let sid = studentId();
-    for (let i = 0; i < 5; i++) {
-      if (!(await db.student.findUnique({ where: { studentId: sid }, select: { id: true } }))) break;
-      sid = studentId();
-    }
-    const user = await db.user.create({
-      data: {
-        name,
-        email,
-        phone,
-        passwordHash: await hashPassword(String(body.password)),
-        role: "STUDENT",
-        isActive: true,
-      },
-    });
-    const student = await db.student.create({
-      data: {
-        userId: user.id,
-        studentId: sid,
-        name,
-        email,
-        phone,
-        courseId: isNonEmpty(body.courseId) ? String(body.courseId) : undefined,
-        batchId: isNonEmpty(body.batchId) ? String(body.batchId) : undefined,
-        status: "ACTIVE",
-      },
-    });
-    if (verifiedOtpId) {
-      await db.otpRequest.update({ where: { id: verifiedOtpId }, data: { consumed: true } }).catch(() => null);
-    }
-    // Phase 19 — registration welcome (IN_APP only: the auth-critical path
-    // must never wait on SMS/push providers). Self-addressed (the new
-    // student notifies their own record — no privilege escalation), keyed
-    // per student so it fires exactly once. Never fails registration:
-    // dispatchNotification never throws.
-    {
-      const msg = notifyMessages.registrationWelcome(name);
-      await dispatchNotification(db, {
-        event: "REGISTRATION_UPDATE",
-        actor: { id: user.id, role: "STUDENT" },
-        audience: { kind: "INDIVIDUAL", studentId: student.id },
-        title: msg.title,
-        message: msg.message,
-        templateKey: "REGISTRATION_UPDATE",
-        vars: { message: msg.message },
-        channels: ["IN_APP"],
-        createdById: user.id,
-        internal: true,
-        idempotencyKey: `REGISTRATION_UPDATE:${student.id}`,
+    const registration = await db.$transaction(async (tx) => {
+      const verified = await tx.otpRequest.findFirst({
+        where: {
+          phone,
+          purpose: "REGISTER",
+          consumed: false,
+          verifiedAt: { gte: verifiedSince },
+          expiresAt: { gt: now },
+        },
+        orderBy: { verifiedAt: "desc" },
       });
+      if (!verified) return { error: "OTP" as const };
+
+      if (await tx.student.findFirst({ where: { phone }, select: { id: true } })) {
+        return { error: "PHONE" as const };
+      }
+      if (await tx.user.findFirst({ where: { phone }, select: { id: true } })) {
+        return { error: "PHONE" as const };
+      }
+      if (await tx.student.findUnique({ where: { email }, select: { id: true } }) ||
+          await tx.user.findUnique({ where: { email }, select: { id: true } })) {
+        return { error: "EMAIL" as const };
+      }
+
+      // Claim the proof atomically. If two requests race, only one can
+      // consume it; any later write failure rolls the claim back.
+      const claimed = await tx.otpRequest.updateMany({
+        where: {
+          id: verified.id,
+          consumed: false,
+          verifiedAt: { gte: verifiedSince },
+          expiresAt: { gt: now },
+        },
+        data: { consumed: true },
+      });
+      if (claimed.count !== 1) return { error: "OTP" as const };
+
+      let sid = studentId();
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        if (!(await tx.student.findUnique({ where: { studentId: sid }, select: { id: true } }))) break;
+        sid = studentId();
+      }
+
+      const user = await tx.user.create({
+        data: {
+          name,
+          email,
+          phone,
+          passwordHash: await hashPassword(String(body.password)),
+          role: "STUDENT",
+          isActive: true,
+        },
+      });
+      const student = await tx.student.create({
+        data: {
+          userId: user.id,
+          studentId: sid,
+          name,
+          email,
+          phone,
+          courseId: isNonEmpty(body.courseId) ? String(body.courseId) : undefined,
+          batchId: isNonEmpty(body.batchId) ? String(body.batchId) : undefined,
+          status: "ACTIVE",
+        },
+      });
+      return { user, student };
+    });
+
+    if ("error" in registration) {
+      if (registration.error === "OTP") return fail("Mobile verification expired. Please verify your number again.", 428, "OTP_VERIFICATION_REQUIRED");
+      if (registration.error === "PHONE") return fail("This mobile number is already registered.", 409, "STUDENT_ALREADY_REGISTERED");
+      return fail("This email is already registered.", 409, "EMAIL_ALREADY_REGISTERED");
     }
+
+    const { user, student } = registration;
     const token = createSessionToken({ id: user.id, email: user.email, name: user.name, role: "STUDENT" });
     if (!token) return fail("Registration needs SESSION_SECRET.", 503);
+
+    // Welcome notification is intentionally outside the auth-critical DB
+    // transaction. Notification dispatch is best-effort and never blocks login.
+    const msg = notifyMessages.registrationWelcome(name);
+    await dispatchNotification(db, {
+      event: "REGISTRATION_UPDATE",
+      actor: { id: user.id, role: "STUDENT" },
+      audience: { kind: "INDIVIDUAL", studentId: student.id },
+      title: msg.title,
+      message: msg.message,
+      templateKey: "REGISTRATION_UPDATE",
+      vars: { message: msg.message },
+      channels: ["IN_APP"],
+      createdById: user.id,
+      internal: true,
+      idempotencyKey: `REGISTRATION_UPDATE:${student.id}`,
+    });
+
     const res = ok({
       user: sanitizeUser({ id: user.id, name: user.name, email: user.email, role: user.role }),
       student: { id: student.id, studentId: student.studentId, name: student.name },
     }, 201);
-    // Add rate limit headers
-    rateLimitResponse(rateLimit).forEach((v, k) => res.headers.set(k, v));
+    rateLimitResponse(rateLimit).forEach((value, key) => res.headers.set(key, value));
     res.headers.set("Set-Cookie", sessionCookieHeader(token));
     return res;
   } catch (err) {
+    if (isUniqueConflict(err)) return fail("An account with these details already exists.", 409, "ACCOUNT_ALREADY_EXISTS");
     return serverError("auth:student-register", err);
   }
 }

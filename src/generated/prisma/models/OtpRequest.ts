@@ -229,7 +229,7 @@ export type OtpRequestGroupByOutputType = {
   id: string
   phone: string
   purpose: string
-  otpHash: string
+  otpHash: string | null
   attempts: number
   resendCount: number
   expiresAt: Date
@@ -267,7 +267,7 @@ export type OtpRequestWhereInput = {
   id?: Prisma.StringFilter<"OtpRequest"> | string
   phone?: Prisma.StringFilter<"OtpRequest"> | string
   purpose?: Prisma.StringFilter<"OtpRequest"> | string
-  otpHash?: Prisma.StringFilter<"OtpRequest"> | string
+  otpHash?: Prisma.StringNullableFilter<"OtpRequest"> | string | null
   attempts?: Prisma.IntFilter<"OtpRequest"> | number
   resendCount?: Prisma.IntFilter<"OtpRequest"> | number
   expiresAt?: Prisma.DateTimeFilter<"OtpRequest"> | Date | string
@@ -282,7 +282,7 @@ export type OtpRequestOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   purpose?: Prisma.SortOrder
-  otpHash?: Prisma.SortOrder
+  otpHash?: Prisma.SortOrderInput | Prisma.SortOrder
   attempts?: Prisma.SortOrder
   resendCount?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
@@ -300,7 +300,7 @@ export type OtpRequestWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.OtpRequestWhereInput | Prisma.OtpRequestWhereInput[]
   phone?: Prisma.StringFilter<"OtpRequest"> | string
   purpose?: Prisma.StringFilter<"OtpRequest"> | string
-  otpHash?: Prisma.StringFilter<"OtpRequest"> | string
+  otpHash?: Prisma.StringNullableFilter<"OtpRequest"> | string | null
   attempts?: Prisma.IntFilter<"OtpRequest"> | number
   resendCount?: Prisma.IntFilter<"OtpRequest"> | number
   expiresAt?: Prisma.DateTimeFilter<"OtpRequest"> | Date | string
@@ -315,7 +315,7 @@ export type OtpRequestOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   purpose?: Prisma.SortOrder
-  otpHash?: Prisma.SortOrder
+  otpHash?: Prisma.SortOrderInput | Prisma.SortOrder
   attempts?: Prisma.SortOrder
   resendCount?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
@@ -338,7 +338,7 @@ export type OtpRequestScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"OtpRequest"> | string
   phone?: Prisma.StringWithAggregatesFilter<"OtpRequest"> | string
   purpose?: Prisma.StringWithAggregatesFilter<"OtpRequest"> | string
-  otpHash?: Prisma.StringWithAggregatesFilter<"OtpRequest"> | string
+  otpHash?: Prisma.StringNullableWithAggregatesFilter<"OtpRequest"> | string | null
   attempts?: Prisma.IntWithAggregatesFilter<"OtpRequest"> | number
   resendCount?: Prisma.IntWithAggregatesFilter<"OtpRequest"> | number
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"OtpRequest"> | Date | string
@@ -353,7 +353,7 @@ export type OtpRequestCreateInput = {
   id?: string
   phone: string
   purpose?: string
-  otpHash: string
+  otpHash?: string | null
   attempts?: number
   resendCount?: number
   expiresAt: Date | string
@@ -368,7 +368,7 @@ export type OtpRequestUncheckedCreateInput = {
   id?: string
   phone: string
   purpose?: string
-  otpHash: string
+  otpHash?: string | null
   attempts?: number
   resendCount?: number
   expiresAt: Date | string
@@ -383,7 +383,7 @@ export type OtpRequestUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  otpHash?: Prisma.StringFieldUpdateOperationsInput | string
+  otpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   resendCount?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -398,7 +398,7 @@ export type OtpRequestUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  otpHash?: Prisma.StringFieldUpdateOperationsInput | string
+  otpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   resendCount?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -413,7 +413,7 @@ export type OtpRequestCreateManyInput = {
   id?: string
   phone: string
   purpose?: string
-  otpHash: string
+  otpHash?: string | null
   attempts?: number
   resendCount?: number
   expiresAt: Date | string
@@ -428,7 +428,7 @@ export type OtpRequestUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  otpHash?: Prisma.StringFieldUpdateOperationsInput | string
+  otpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   resendCount?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -443,7 +443,7 @@ export type OtpRequestUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  otpHash?: Prisma.StringFieldUpdateOperationsInput | string
+  otpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   resendCount?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -580,7 +580,7 @@ export type $OtpRequestPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: string
     phone: string
     purpose: string
-    otpHash: string
+    otpHash: string | null
     attempts: number
     resendCount: number
     expiresAt: Date

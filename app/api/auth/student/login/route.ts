@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     if (!(await verifyPassword(body.password, user.passwordHash))) {
       return fail("Invalid mobile number or password.", 401);
     }
-    if (!user.isActive) return fail("This account is deactivated. Contact the academy office.", 403);
+    if (!user.isActive || student.status !== "ACTIVE") return fail("This account is deactivated. Contact the academy office.", 403);
     const token = createSessionToken({ id: user.id, email: user.email, name: user.name, role: "STUDENT" });
     if (!token) return fail("Login needs SESSION_SECRET.", 503);
     const res = ok({

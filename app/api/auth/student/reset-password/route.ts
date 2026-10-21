@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     if (row.attempts >= 5) {
       return fail("Too many wrong attempts. Request a new OTP.", 429, "OTP_RATE_LIMITED");
     }
-    if (!verifyOtpHash(otp, phone, row.otpHash)) {
+    if (!row.otpHash || !verifyOtpHash(otp, phone, row.otpHash)) {
       await db.otpRequest.update({ where: { id: row.id }, data: { attempts: { increment: 1 } } }).catch(() => null);
       return fail(GENERIC, 400, "OTP_INVALID");
     }

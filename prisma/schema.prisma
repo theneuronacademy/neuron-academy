@@ -779,7 +779,7 @@ model OtpRequest {
   id          String    @id @default(cuid())
   phone       String
   purpose     String    @default("REGISTER")
-  otpHash     String
+  otpHash     String?
   attempts    Int       @default(0)
   resendCount Int       @default(0)
   expiresAt   DateTime

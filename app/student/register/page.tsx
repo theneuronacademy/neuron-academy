@@ -27,8 +27,11 @@ export default function StudentRegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [config, setConfig] = useState<{ directOtpConfigured: boolean } | null>(null);
-  // NEXT_PUBLIC_MSG91_WIDGET_ID is client-safe; MSG91_AUTH_KEY stays server-only.
-  const widgetConfigured = !!process.env.NEXT_PUBLIC_MSG91_WIDGET_ID;
+  // The widget token is purpose-scoped and safe for the browser; the account
+  // auth key remains server-only for access-token verification.
+  const widgetConfigured = Boolean(
+    process.env.NEXT_PUBLIC_MSG91_WIDGET_ID && process.env.NEXT_PUBLIC_MSG91_WIDGET_TOKEN,
+  );
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -117,23 +120,18 @@ export default function StudentRegisterPage() {
       const res = await fetch("/api/auth/widget/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessToken }),
+        body: JSON.stringify({ accessToken, purpose: "REGISTER" }),
       });
       const json = await res.json().catch(() => null);
-      if (res.ok && json?.success === true) {
-        try {
-          window.localStorage.setItem(
-            "neuron_student_session",
-            JSON.stringify({
-              studentId: json.data.student.studentId,
-              name: json.data.student.name,
-              loggedInAt: new Date().toISOString(),
-            })
-          );
-        } catch {
-          /* ignore */
-        }
-        router.push("/student/dashboard");
+      if (res.ok && json?.success === true && json.data?.verified === true && json.data?.phone) {
+        setMobile(json.data.phone);
+        setStep("details");
+        setInfo("Mobile verified. Complete your details to create your account.");
+        return;
+      }
+      if (res.status === 409) {
+        setStep("mobile");
+        setError("This mobile number is already registered. Please sign in instead.");
         return;
       }
       if (res.status === 403) {
@@ -145,8 +143,19 @@ export default function StudentRegisterPage() {
       setError("Cannot reach the server. Check your connection and try again.");
     } finally {
       setBusy(false);
-      setStep("mobile");
     }
+  }
+
+  function startWidgetVerification() {
+    setError(null);
+    setInfo(null);
+    const digits = mobile.replace(/\D/g, "").replace(/^91(?=\d{10}$)/, "").replace(/^0(?=\d{10}$)/, "");
+    if (!/^[6-9]\d{9}$/.test(digits)) {
+      setError("Enter a valid 10-digit Indian mobile number.");
+      return;
+    }
+    setMobile(digits);
+    setStep("widget");
   }
 
   function handleWidgetError(error: string) {
@@ -244,29 +253,28 @@ export default function StudentRegisterPage() {
           {info ? <p className="rounded-xl bg-teal-50 px-4 py-2.5 text-sm font-bold text-teal-700" role="status">{info}</p> : null}
 
           {step === "mobile" ? (
-            <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); void sendOtp(); }}>
+            <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); if (widgetPrimary) startWidgetVerification(); else void sendOtp(); }}>
+              <p className="text-[13px] font-semibold text-muted">Step 1 of 3 — enter your 10-digit Indian mobile number.</p>
+              <div>
+                <label htmlFor="otp-mobile" className={labelCls}>Mobile Number</label>
+                <input id="otp-mobile" required inputMode="tel" autoComplete="tel" value={mobile} onChange={(e) => setMobile(e.target.value)} placeholder="e.g. 98765 43210" className={inputCls} />
+              </div>
               {widgetPrimary ? (
                 <>
                   <p className="text-[13px] font-semibold text-muted">
-                    SMS OTP is not configured. Verify your mobile through the MSG91 OTP Widget below.
+                    Verify your number securely with MSG91 before completing your profile.
                   </p>
                   <Button
-                    type="button"
+                    type="submit"
                     size="lg"
                     className="w-full"
-                    onClick={() => setStep("widget")}
                     disabled={busy}
                   >
-                    {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Verifying…</> : "Verify with OTP Widget"}
+                    Verify with MSG91 OTP
                   </Button>
                 </>
               ) : (
                 <>
-                  <p className="text-[13px] font-semibold text-muted">Step 1 of 3 — enter your 10-digit Indian mobile number to receive an OTP.</p>
-                  <div>
-                    <label htmlFor="otp-mobile" className={labelCls}>Mobile Number</label>
-                    <input id="otp-mobile" required inputMode="tel" autoComplete="tel" value={mobile} onChange={(e) => setMobile(e.target.value)} placeholder="e.g. 98765 43210" className={inputCls} />
-                  </div>
                   <Button type="submit" size="lg" className="w-full" disabled={busy}>
                     {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Sending OTP…</> : "Send OTP"}
                   </Button>
@@ -285,7 +293,7 @@ export default function StudentRegisterPage() {
                         variant="outline"
                         size="lg"
                         className="w-full"
-                        onClick={() => setStep("widget")}
+                        onClick={startWidgetVerification}
                         disabled={busy}
                       >
                         Verify with OTP Widget
@@ -314,6 +322,7 @@ export default function StudentRegisterPage() {
             </form>
           ) : step === "widget" ? (
             <Msg91Widget
+              identifier={mobile}
               onSuccess={handleWidgetSuccess}
               onError={handleWidgetError}
               onCancel={handleWidgetCancel}

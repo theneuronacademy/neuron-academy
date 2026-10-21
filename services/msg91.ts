@@ -208,12 +208,15 @@ export async function verifyWidgetToken(
     const json = (await res.json().catch(() => null)) as { type?: string; message?: string; mobile?: string } | null;
     if (!res.ok || !json || json.type !== "success") {
       // Safe diagnostic only: HTTP status + provider type. NEVER log the authkey, token, or raw provider body.
-      const masked = json?.mobile ? maskPhone("+91" + json.mobile.replace(/\D/g, "")) : "unknown";
+      const providerIdentifier = json?.mobile ?? json?.message;
+      const masked = providerIdentifier ? maskPhone("+91" + providerIdentifier.replace(/\D/g, "")) : "unknown";
       console.error(`[widget:verify] failed for ${masked} status=${res.status} type=${json?.type ?? "unknown"}`);
       return { ok: false, code: WIDGET_VERIFY_ERROR, error: "Could not verify the token. Please try again.", retryable: res.status >= 500 };
     }
     // MSG91 returns mobile as 10-digit or 91-prefixed; normalize to canonical +91...
-    const rawMobile = String(json.mobile ?? "").replace(/\D/g, "");
+    // MSG91's current verifyAccessToken response returns the verified mobile
+    // identifier in `message`; retain `mobile` support for older responses.
+    const rawMobile = String(json.mobile ?? json.message ?? "").replace(/\D/g, "");
     let canonical = "";
     if (rawMobile.length === 10 && /^[6-9]\d{9}$/.test(rawMobile)) {
       canonical = "+91" + rawMobile;
