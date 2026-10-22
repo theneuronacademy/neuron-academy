@@ -182,7 +182,7 @@ export async function generateSignedUploadUrl(
     const uploadUrl = `https://upload.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/upload`;
     
     const params: Record<string, string> = {
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+      api_key: process.env.CLOUDINARY_API_KEY!,
       timestamp: timestamp.toString(),
       signature,
       resource_type: resourceType,
