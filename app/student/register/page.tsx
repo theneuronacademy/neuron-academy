@@ -26,12 +26,7 @@ export default function StudentRegisterPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [config, setConfig] = useState<{ directOtpConfigured: boolean } | null>(null);
-  // The widget token is purpose-scoped and safe for the browser; the account
-  // auth key remains server-only for access-token verification.
-  const widgetConfigured = Boolean(
-    process.env.NEXT_PUBLIC_MSG91_WIDGET_ID && process.env.NEXT_PUBLIC_MSG91_WIDGET_TOKEN,
-  );
+  const [config, setConfig] = useState<{ directOtpConfigured: boolean; widgetConfigured: boolean } | null>(null);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -46,14 +41,14 @@ export default function StudentRegisterPage() {
       .then((json) => {
         if (!active) return;
         setConfig(
-          json && typeof json.directOtpConfigured === "boolean"
+          json && typeof json.directOtpConfigured === "boolean" && typeof json.widgetConfigured === "boolean"
             ? json
-            : { directOtpConfigured: false },
+            : { directOtpConfigured: false, widgetConfigured: false },
         );
       })
       .catch(() => {
         if (!active) return;
-        setConfig({ directOtpConfigured: false });
+        setConfig({ directOtpConfigured: false, widgetConfigured: false });
       });
     return () => {
       active = false;
@@ -210,8 +205,10 @@ export default function StudentRegisterPage() {
   const labelCls = "mb-1.5 block text-[12px] font-bold text-navy-700";
 
   const directOtpConfigured = config?.directOtpConfigured ?? false;
+  const widgetConfigured = config?.widgetConfigured ?? false;
   const configLoaded = config !== null;
-  const widgetPrimary = widgetConfigured && !directOtpConfigured;
+  // Prefer widget flow when available (user has widget configured in MSG91 dashboard)
+  const widgetPrimary = widgetConfigured;
 
   if (!configLoaded) {
     return (

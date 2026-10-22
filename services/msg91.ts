@@ -49,7 +49,7 @@ export const SMS_TEMPLATE_NOT_CONFIGURED = "SMS_TEMPLATE_NOT_CONFIGURED";
 export const SMS_PROVIDER_ERROR = "SMS_PROVIDER_ERROR";
 export const SMS_INVALID_RECIPIENT = "SMS_INVALID_RECIPIENT";
 
-function credentials(): { key: string; templateId: string; sender: string } | null {
+function directOtpCredentials(): { key: string; templateId: string; sender: string } | null {
   const key = process.env.MSG91_AUTH_KEY ?? "";
   const templateId = process.env.MSG91_TEMPLATE_ID ?? "";
   const sender = process.env.MSG91_SENDER_ID ?? "";
@@ -57,9 +57,20 @@ function credentials(): { key: string; templateId: string; sender: string } | nu
   return { key, templateId, sender };
 }
 
-/** True when all MSG91 credentials are present. */
+/** True when direct SMS OTP credentials are present (requires template ID and sender ID). */
+export function isDirectOtpConfigured(): boolean {
+  return directOtpCredentials() !== null;
+}
+
+/** True when widget verification is configured (requires only MSG91_AUTH_KEY on server). */
+export function isWidgetConfigured(): boolean {
+  const key = process.env.MSG91_AUTH_KEY ?? "";
+  return key.length > 0;
+}
+
+/** True when any MSG91 OTP path is configured (direct or widget). */
 export function isMsg91Configured(): boolean {
-  return credentials() !== null;
+  return isDirectOtpConfigured() || isWidgetConfigured();
 }
 
 /**
@@ -71,7 +82,7 @@ export function isMsg91Configured(): boolean {
 export async function sendOtp(
   canonicalPhone: string
 ): Promise<(Msg91Result & { otp?: string; otpHash?: string }) | { ok: false; code: string; error: string }> {
-  const creds = credentials();
+  const creds = directOtpCredentials();
   if (!creds) {
     return { ok: false, code: OTP_CONFIGURATION_ERROR, error: "OTP service is not configured. Set MSG91 credentials to enable mobile verification." };
   }
