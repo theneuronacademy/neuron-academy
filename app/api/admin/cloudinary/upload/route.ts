@@ -6,7 +6,7 @@
 // is needed in the Cloudinary dashboard.
 
 import { NextRequest } from "next/server";
-import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
+import { dbNotConfigured, fail, ok } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { uploadToCloudinary, CLOUDINARY_MAX_IMAGE_BYTES, CLOUDINARY_MAX_VIDEO_BYTES } from "@/lib/cloudinary";

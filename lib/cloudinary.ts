@@ -2,7 +2,8 @@
 // - Uses CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 // - Never exposes the API secret in client code or NEXT_PUBLIC variables.
 // - Provides signed upload URLs for admin-approved uploads.
-// - Generates direct Cloudinary upload URLs for large videos (bypasses serverless limits).
+// - All uploads go through server-side proxy (no CORS issues with direct
+//   browser-to-Cloudinary uploads).
 // - Validates file types, sizes, resource types, and upload folders.
 // - Stores: url (public CDN URL), public_id, resource_type through existing models.
 // - Consistent folders under neuron-academy/<category> per requirement 9.
@@ -10,10 +11,12 @@
 // - Idempotent retry logic; never deletes an asset if another content item references it.
 
 import { createHash } from "node:crypto";
-import type { UploadApiResponse } from "cloudinary";
+
+// Cloudinary SDK initialized server-side only (for URL transformations only)
+// We do NOT use cloudinary.uploader for uploads - we do manual signed REST uploads
+// to have full control over the signing algorithm (hex digest, correct params).
 import { v2 as cloudinary } from "cloudinary";
 
-// Cloudinary SDK initialized server-side only
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -114,129 +117,26 @@ export function validateCloudinaryFile(
   return null;
 }
 
-/** Convert a Node.js Buffer to a Blob (for FormData compatibility) */
-function bufferToBlob(buffer: Buffer): Blob {
-  // @ts-expect-error - Blob constructor handling in this runtime
-  return new Blob([buffer]);
-}
-
-// ----- Upload utilities -----
-
 /**
- * Generate a Cloudinary signed upload URL (server-only).
- * This creates an upload signature that the server can use to upload a file
- * directly to Cloudinary via the fetch API, bypassing serverless request size limits.
- * 
- * The returned URL is a Cloudinary upload endpoint that accepts POST with form data.
- * It includes: cloud_name, timestamp, signature, resource_type, folder, etc.
- * 
- * Important: The api_secret never reaches the client. The signed URL is generated
- * server-side and used for server-to-server Cloudinary uploads, or the form fields
- * are passed to the client to submit directly to Cloudinary (the client never sees the secret).
- * 
- * @param buffer The file buffer to upload (placeholder when generating URL for client direct upload)
- * @param filename Original filename (for extension detection)
- * @param category The neuron-academy folder category (e.g., "courses", "banners")
- * @param options Additional upload options (resource_type, etc.)
- * @returns Object with upload URL and form fields to use, or error
+ * Validate a file using metadata (extension + declared size) rather than buffer
+ * content. Used when the file bytes are not available (e.g. signature-only routes)
+ * or as a pre-check before reading the buffer.
  */
-export async function generateSignedUploadUrl(
-  buffer: Buffer,
-  filename: string,
-  category: string,
-  options: {
-    resourceType?: "image" | "video";
-    // Override the default folder; if omitted, uses neuron-academy/<category>
-    folderOverride?: string;
-    // File size in bytes (used when buffer is a placeholder for client-direct upload)
-    fileSize?: number;
-  } = {}
-): Promise<{
-  ok: true;
-  uploadUrl: string;
-  formFields: Record<string, string>;
-} | { ok: false; error: string}> {
-  // Resolve the folder
-  const folder = options.folderOverride ?? getCloudinaryFolder(category);
-  if (!folder) return { ok: false, error: `Unknown category: ${category}. Valid: ${Object.keys(FOLDER_MAP).join(", ")}` };
-
-  const folderValidation = validateCloudinaryFolder(folder);
-  if (folderValidation) return { ok: false, error: folderValidation };
-
-  const resourceType: "image" | "video" = options.resourceType ?? "image";
-
-  // Validate using extension and size from metadata (buffer may be empty placeholder
-  // when generating a signed URL for client-direct upload).
-  const validationError = validateCloudinaryFileFromMetadata(buffer, filename, resourceType, options.fileSize);
-  if (validationError) return { ok: false, error: validationError };
-
-  try {
-    const timestamp = Math.round(Date.now() / 1000);
-    
-    // Create signature: SHA1 of (api_secret + timestamp) in base64
-    const secret = process.env.CLOUDINARY_API_SECRET!;
-    const signature = createHash("sha1")
-      .update(secret + timestamp)
-      .digest("base64");
-    
-    const uploadUrl = `https://upload.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/upload`;
-    
-    const params: Record<string, string> = {
-      api_key: process.env.CLOUDINARY_API_KEY!,
-      timestamp: timestamp.toString(),
-      signature,
-      resource_type: resourceType,
-      folder: folder,
-    };
-    
-    return {
-      ok: true,
-      uploadUrl,
-      formFields: {
-        ...params,
-        // The file itself will be attached as form data by the caller
-      },
-    };
-  } catch (err) {
-    console.error("[Cloudinary] Error generating signed upload URL:", err);
-    return { ok: false, error: "Failed to generate upload signature." };
-  }
-}
-
-/**
- * Validate file using metadata (extension + size) rather than buffer content.
- * Used when the buffer is a placeholder (empty) for client-direct uploads.
- * Falls back to full buffer validation when buffer has content.
- */
-function validateCloudinaryFileFromMetadata(
-  buffer: Buffer,
+export function validateCloudinaryFileFromMetadata(
   filename: string,
   resourceType: "image" | "video",
   fileSize?: number
 ): string | null {
   const ext = filename.split(".").pop()?.toLowerCase() ?? "";
-  
-  // Validate extension
+
   if (resourceType === "image") {
     if (!ALLOWED_IMAGE_EXTS.has(ext)) {
       return `Only image files (JPG, PNG, WebP, AVIF, GIF) are allowed.`;
     }
-    // Magic-byte check only when we have actual buffer content
-    if (buffer.length > 0) {
-      const isJpeg = buffer.length > 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
-      const isPng = buffer.length > 4 && buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x47;
-      const isWebp =
-        buffer.length > 12 && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP";
-      const isAvif =
-        buffer.length > 4 && buffer[0] === 0x00 && buffer[1] === 0x00 && buffer[2] === 0x00 && buffer[3] === 0x0c;
-      if (!isJpeg && !isPng && !isWebp && !isAvif) {
-        return "File content is not a valid image.";
-      }
-    }
     if (fileSize !== undefined && fileSize > CLOUDINARY_MAX_IMAGE_BYTES) {
       return `Image must be under 5 MB (received ${Math.round(fileSize / 1024 / 1024)} MB).`;
     }
-  } else if (resourceType === "video") {
+  } else {
     if (!ALLOWED_VIDEO_EXTS.has(ext)) {
       return `Only video files (MP4, MOV, AVI, WebM, MKV, WMV, FLV) are allowed.`;
     }
@@ -249,10 +149,65 @@ function validateCloudinaryFileFromMetadata(
 }
 
 /**
- * Upload a buffer directly to Cloudinary via the signed URL.
+ * Generate a Cloudinary upload signature (server-only).
+ * 
+ * The signature is computed over ONLY these parameters (sorted alphabetically):
+ *   folder, public_id, timestamp
+ * Then appended with the API secret and SHA-1 hashed (HEX digest).
+ * 
+ * The api_key, cloud_name, resource_type, and file are sent in the form body
+ * but are NOT part of the signature string.
+ * 
+ * @param folder The Cloudinary folder (e.g., "neuron-academy/banners")
+ * @param publicId The Cloudinary public_id (optional; Cloudinary generates one if omitted)
+ * @returns Object with timestamp, signature, public_id
+ */
+export function generateUploadSignature(
+  folder: string,
+  publicId?: string
+): { timestamp: string; signature: string; publicId: string } {
+  const timestamp = Math.round(Date.now() / 1000).toString();
+  
+  // Build signature string with ONLY these params, sorted alphabetically:
+  // folder, public_id, timestamp
+  const signatureParams: Record<string, string> = {
+    folder,
+  };
+  if (publicId) {
+    signatureParams.public_id = publicId;
+  }
+  signatureParams.timestamp = timestamp;
+
+  // Sort keys alphabetically and build string: key=value&key=value
+  const sortedKeys = Object.keys(signatureParams).sort();
+  const signatureString = sortedKeys
+    .map((key) => `${key}=${signatureParams[key]}`)
+    .join("&");
+
+  // Append API secret and SHA-1 hash (HEX digest, not base64)
+  const secret = process.env.CLOUDINARY_API_SECRET!;
+  const signature = createHash("sha1")
+    .update(signatureString + secret)
+    .digest("hex");
+
+  const resolvedPublicId = publicId ?? `neuron-${Date.now()}`;
+
+  return { timestamp, signature, publicId: resolvedPublicId };
+}
+
+/**
+ * Upload a buffer directly to Cloudinary via server-side signed upload.
  * This is the server-side function that actually performs the upload.
  * Called from API routes after admin authentication.
- * The client sends the file as form-data to the signed uploadUrl.
+ * 
+ * The upload goes server-to-server (no CORS issues), avoiding the need
+ * to configure allowed origins in the Cloudinary dashboard.
+ * 
+ * @param buffer The file buffer to upload
+ * @param filename Original filename
+ * @param category The neuron-academy folder category (e.g., "courses", "banners")
+ * @param options Additional upload options
+ * @returns Object with url, publicId, resourceType, width, height, duration
  */
 export async function uploadToCloudinary(
   buffer: Buffer,
@@ -290,10 +245,10 @@ export async function uploadToCloudinary(
     return { ok: false, url: "", publicId: "", resourceType: "image" as const, error: folderValidation };
   }
 
-  // Determine resource type from extension or option
+  // Determine resource type: explicit option wins, else fall back to extension
   const ext = filename.split(".").pop()?.toLowerCase() ?? "";
-  const resourceType: "image" | "video" = 
-    /^video/.test(ext) || options.resourceType === "video" ? "video" : "image" as const;
+  const resourceType: "image" | "video" =
+    options.resourceType ?? (ALLOWED_VIDEO_EXTS.has(ext) ? "video" : "image");
 
   // Validate
   const validationError = validateCloudinaryFile(buffer, filename, resourceType);
@@ -302,31 +257,31 @@ export async function uploadToCloudinary(
   }
 
   try {
-    const timestamp = Math.round(Date.now() / 1000);
-    const secret = process.env.CLOUDINARY_API_SECRET!;
-    const signature = createHash("sha1")
-      .update(secret + timestamp)
-      .digest("base64");
+    const publicId = options.publicIdOverride ?? `neuron-${category}-${Date.now()}`;
 
-    const uploadUrl = `https://upload.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/upload`;
-    
-    // Convert Buffer to Blob for FormData
-    const blob = bufferToBlob(buffer);
-    
+    // Correct Cloudinary signature: SHA-1 HEX of sorted "key=value&..." + secret.
+    // Signed params are ONLY folder, public_id, timestamp.
+    // api_key / cloud_name / resource_type / file go in the body, never signed.
+    const { timestamp, signature } = generateUploadSignature(folder, publicId);
+
+    const configured = process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY;
+    if (!configured) {
+      return { ok: false, url: "", publicId: "", resourceType: "image" as const, error: "Cloudinary is not configured (missing credentials)." };
+    }
+
+    const uploadUrl = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+
+    // Build multipart form data
     const formData = new FormData();
-    formData.append("file", blob, filename);
-    formData.append("cloud_name", process.env.CLOUDINARY_CLOUD_NAME!);
-    formData.append("timestamp", timestamp.toString());
+    formData.append("file", new Blob([new Uint8Array(buffer)]), filename);
+    formData.append("api_key", process.env.CLOUDINARY_API_KEY!);
+    formData.append("timestamp", timestamp);
     formData.append("signature", signature);
     formData.append("resource_type", resourceType);
     formData.append("folder", folder);
-    
-    // If there's a public_id override (for replace/retry), add it
-    if (options.publicIdOverride) {
-      formData.append("public_id", options.publicIdOverride);
-    }
+    formData.append("public_id", publicId);
 
-    // Perform the upload
+    // Perform the upload (server-to-server, no CORS issues)
     const uploadResponse = await fetch(uploadUrl, {
       method: "POST",
       body: formData,
@@ -345,8 +300,8 @@ export async function uploadToCloudinary(
     return {
       ok: true,
       url: result.secure_url || "",
-      publicId: result.public_id || "",
-      resourceType: result.resource_type || "image",
+      publicId: result.public_id || publicId,
+      resourceType: result.resource_type || resourceType,
       width: result.width,
       height: result.height,
       duration: result.duration, // seconds for video
@@ -485,6 +440,7 @@ export async function replaceCloudinaryAsset(
   newUrl: string;
   newPublicId: string;
   overwrittenPublicId?: string;
+  error?: string;
 } | {
   ok: false;
   newUrl: string;
@@ -585,7 +541,4 @@ export async function withCloudinaryRetry<T>(
 
 // ----- Export the cloudinary instance for transformations -----
 // This is safe to import in server components only (next/legacy).
-export { cloudinaryInstance, bufferToBlob };
-
-// ----- Type exports -----
-export type { UploadApiResponse };
+export { cloudinaryInstance };

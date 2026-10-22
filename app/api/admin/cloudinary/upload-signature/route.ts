@@ -10,7 +10,14 @@
 import { NextRequest } from "next/server";
 import { ok, fail } from "@/lib/api-response";
 import { requireApiRole } from "@/lib/server-auth";
-import { generateSignedUploadUrl, CLOUDINARY_MAX_IMAGE_BYTES, CLOUDINARY_MAX_VIDEO_BYTES } from "@/lib/cloudinary";
+import {
+  generateUploadSignature,
+  validateCloudinaryFileFromMetadata,
+  getCloudinaryFolder,
+  validateCloudinaryFolder,
+  CLOUDINARY_MAX_IMAGE_BYTES,
+  CLOUDINARY_MAX_VIDEO_BYTES,
+} from "@/lib/cloudinary";
 
 // Allowed categories map to neuron-academy/ folders (requirement 9)
 const VALID_CATEGORIES = [
@@ -32,12 +39,16 @@ export async function POST(req: NextRequest) {
   const auth = requireApiRole(req, ["ADMIN"]);
   if (!auth.ok) return fail(auth.error, auth.status);
 
-  let body: {
-    filename: string;
-    category: (typeof VALID_CATEGORIES)[number];
-    resourceType?: "image" | "video";
-    fileSize?: number;
-  } | null = null;
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  if (!cloudName || !apiKey || !process.env.CLOUDINARY_API_SECRET) {
+    return fail("Media storage is not configured. Set the Cloudinary environment variables.", 503);
+  }
+
+  let filename: string | null = null;
+  let category: string | null = null;
+  let resourceType: "image" | "video" = "image";
+  let fileSize: number | undefined = undefined;
 
   try {
     const form = await req.formData();
@@ -47,61 +58,59 @@ export async function POST(req: NextRequest) {
     const fs = form.get("fileSize");
 
     if (typeof fn !== "string") return fail("Invalid filename.", 400);
-    const fnVal = fn;
     if (typeof cat !== "string") return fail("Invalid category.", 400);
-    const catVal = cat;
-    if (catVal !== catVal) return fail("Invalid category value.", 400);
+    if (rt === "video") resourceType = "video";
+    if (typeof fs === "string" && fs.length > 0) {
+      const n = Number(fs);
+      if (!Number.isFinite(n) || n <= 0) return fail("Invalid file size.", 400);
+      fileSize = n;
+    }
 
-    const fileSizeVal = fs ? Number(fs instanceof String ? fs.valueOf() : String(fs)) : undefined;
-
-    body = {
-      filename: fnVal,
-      category: catVal as (typeof VALID_CATEGORIES)[number],
-      resourceType: rt?.toString() as "image" | "video" | undefined,
-      fileSize: fileSizeVal,
-    };
+    filename = fn;
+    category = cat;
   } catch {
     return fail("Invalid form data.", 400);
   }
 
-  if (!body) return fail("No body provided.", 400);
-
   // Validate category
-  if (!VALID_CATEGORIES.includes(body.category)) {
+  if (!VALID_CATEGORIES.includes(category as (typeof VALID_CATEGORIES)[number])) {
     return fail(`Invalid category. Must be one of: ${VALID_CATEGORIES.join(", ")}.`, 400);
   }
 
-  // We cannot read the file buffer here because this route only generates a signature.
-  // The actual upload happens client‑directly to Cloudinary using the signed URL.
-  // However, we do a quick size sanity check on the reported size.
-  if (body.fileSize !== undefined) {
-    const maxBytes = body.resourceType === "video"
-      ? CLOUDINARY_MAX_VIDEO_BYTES
-      : CLOUDINARY_MAX_IMAGE_BYTES;
-    if (body.fileSize > maxBytes) {
-      return fail(
-        `File exceeds maximum size of ${Math.round(maxBytes / 1024 / 1024)} MB.`,
-        400
-      );
-    }
-  }
+  // Validate extension / size using metadata only (bytes go straight to Cloudinary)
+  const metadataError = validateCloudinaryFileFromMetadata(filename, resourceType, fileSize);
+  if (metadataError) return fail(metadataError, 400);
 
-  // Generate the signed upload URL that the client will POST to
-  const sigResult = await generateSignedUploadUrl(
-    Buffer.from(""), // placeholder — actual buffer sent by client to Cloudinary
-    body.filename,
-    body.category,
-    { resourceType: body.resourceType, fileSize: body.fileSize }
-  );
+  // Resolve folder
+  const folder = getCloudinaryFolder(category);
+  if (!folder) return fail(`Unknown category: ${category}`, 400);
+  const folderError = validateCloudinaryFolder(folder);
+  if (folderError) return fail(folderError, 400);
 
-  if (!sigResult.ok) return fail(sigResult.error, 400);
+  // Deterministic public_id inside the category folder
+  const ext = filename.split(".").pop()?.toLowerCase() ?? "";
+  const base = filename.slice(0, filename.length - ext.length - 1);
+  const safeBase = base.replace(/[^a-zA-Z0-9\-_]/g, "-").slice(0, 48) || "media";
+  const publicId = `${safeBase}-${Date.now()}`;
 
-  // Return the signed URL and form fields for the client to use
+  // Correct Cloudinary signature: SHA-1 HEX of sorted "key=value&..." + secret.
+  // Signed params are ONLY folder, public_id, timestamp.
+  // api_key / cloud_name / resource_type / file go in the body, never in the signature.
+  const { timestamp, signature } = generateUploadSignature(folder, publicId);
+
+  const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+
   return ok({
-    uploadUrl: sigResult.uploadUrl,
-    formFields: sigResult.formFields,
-    category: body.category,
-    resourceType: body.resourceType,
+    uploadUrl,
+    formFields: {
+      api_key: apiKey,
+      timestamp,
+      signature,
+      folder,
+      public_id: publicId,
+    },
+    category,
+    resourceType,
     maxImageBytes: CLOUDINARY_MAX_IMAGE_BYTES,
     maxVideoBytes: CLOUDINARY_MAX_VIDEO_BYTES,
   });
