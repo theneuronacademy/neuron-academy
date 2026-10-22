@@ -39,10 +39,16 @@ export function CloudinaryUpload({
         fd.append("resourceType", resourceType);
         fd.append("fileSize", String(file.size));
 
-        const sigRes = await fetch("/api/admin/cloudinary/upload-signature", {
-          method: "POST",
-          body: fd,
-        });
+        let sigRes: Response;
+        try {
+          sigRes = await fetch("/api/admin/cloudinary/upload-signature", {
+            method: "POST",
+            body: fd,
+          });
+        } catch {
+          setError("Cannot reach the server. Check your connection and try again.");
+          return;
+        }
 
         const sigJson = await sigRes.json().catch(() => null);
         if (!sigRes.ok || sigJson?.success !== true) {
@@ -59,10 +65,16 @@ export function CloudinaryUpload({
           uploadFd.append(k, String(v));
         });
 
-        const upRes = await fetch(uploadUrl, {
-          method: "POST",
-          body: uploadFd,
-        });
+        let upRes: Response;
+        try {
+          upRes = await fetch(uploadUrl, {
+            method: "POST",
+            body: uploadFd,
+          });
+        } catch {
+          setError("Cannot reach Cloudinary upload server. Check your connection.");
+          return;
+        }
 
         if (!upRes.ok) {
           const errText = await upRes.text().catch(() => "");
@@ -77,7 +89,7 @@ export function CloudinaryUpload({
           setError("Unexpected Cloudinary response.");
         }
       } catch {
-        setError("Cannot reach the server.");
+        setError("An unexpected error occurred during upload.");
       } finally {
         setBusy(false);
       }

@@ -89,6 +89,9 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Link href="#books" className="rounded-lg px-3 py-2 text-sm font-semibold transition text-neutral-600 hover:bg-brand-primary/5 hover:text-brand-primary">
+            Books
+          </Link>
         </nav>
 
         <div className="hidden items-center gap-3 xl:flex">
@@ -130,6 +133,9 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <Link href="#books" onClick={() => setOpen(false)} className={cn("rounded-lg px-3 py-3 text-[15px] font-semibold", navLinkClass("books"))}>
+              Books
+            </Link>
             <div className="mt-2 grid grid-cols-2 gap-2 border-t border-silver-200 pt-3">
               {PORTAL_LINKS.map((link) => (
                 <PortalLink
