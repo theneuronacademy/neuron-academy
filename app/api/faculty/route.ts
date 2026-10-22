@@ -83,6 +83,9 @@ export async function POST(req: NextRequest) {
         qualification: typeof body.qualification === "string" ? body.qualification : undefined,
         experience: typeof body.experience === "string" ? body.experience : undefined,
         bio: typeof body.bio === "string" ? body.bio : undefined,
+        subject: typeof body.subject === "string" && body.subject ? body.subject : undefined,
+        designation: typeof body.designation === "string" && body.designation ? body.designation : undefined,
+        photo: typeof body.photo === "string" && body.photo ? body.photo : undefined,
       },
       include: { batches: true },
     });

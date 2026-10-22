@@ -74,6 +74,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(typeof body.qualification === "string" ? { qualification: body.qualification } : {}),
         ...(typeof body.experience === "string" ? { experience: body.experience } : {}),
         ...(typeof body.bio === "string" ? { bio: body.bio } : {}),
+        ...(typeof body.subject === "string" ? { subject: body.subject || null } : {}),
+        ...(typeof body.designation === "string" ? { designation: body.designation || null } : {}),
+        // Photo may be set to a new URL; empty string clears it.
+        ...(typeof body.photo === "string" ? { photo: body.photo || null } : {}),
         ...(body.status === "ACTIVE" || body.status === "INACTIVE" ? { status: body.status } : {}),
       },
       include: { batches: true, user: { select: { id: true } } },
