@@ -10,6 +10,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getBanners } from "@/services/adminApi";
 import type { AdminBanner } from "@/data/admin";
@@ -365,6 +366,22 @@ export default function BannersPage() {
             <input type="checkbox" checked={form.active} onChange={(e) => set("active", e.target.checked)} className="h-4 w-4 accent-teal-600" /> Active
           </label>
         </div>
+        <CloudinaryUpload
+          category="banners"
+          accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+          resourceType="image"
+          label="Banner image"
+          buttonLabel={form.image ? "Replace banner image" : "Upload banner image"}
+          onUploadComplete={(url) => setForm((f) => ({ ...f, image: url }))}
+        />
+        <CloudinaryUpload
+          category="banners"
+          accept="video/mp4,video/mov,video/webm,video/avi,video/mkv"
+          resourceType="video"
+          label="Banner video"
+          buttonLabel={form.videoUrl ? "Replace banner video" : "Upload banner video"}
+          onUploadComplete={(url) => setForm((f) => ({ ...f, videoUrl: url }))}
+        />
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Description
           <textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={3} placeholder="Small batches, weekly mocks…" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm font-medium outline-none focus:border-teal-500" />

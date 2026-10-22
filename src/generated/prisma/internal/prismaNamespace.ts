@@ -434,7 +434,8 @@ export const ModelName = {
   AdminAuditLog: 'AdminAuditLog',
   AdminPermission: 'AdminPermission',
   AdminRolePermission: 'AdminRolePermission',
-  NotificationSchedulerRun: 'NotificationSchedulerRun'
+  NotificationSchedulerRun: 'NotificationSchedulerRun',
+  HomepageContent: 'HomepageContent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -450,7 +451,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "enquiry" | "announcement" | "bookmark" | "timetableEntry" | "doubt" | "doubtReply" | "material" | "assignment" | "submission" | "gradebookConfig" | "parentMessage" | "adminAuditLog" | "adminPermission" | "adminRolePermission" | "notificationSchedulerRun"
+    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "enquiry" | "announcement" | "bookmark" | "timetableEntry" | "doubt" | "doubtReply" | "material" | "assignment" | "submission" | "gradebookConfig" | "parentMessage" | "adminAuditLog" | "adminPermission" | "adminRolePermission" | "notificationSchedulerRun" | "homepageContent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3266,6 +3267,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    HomepageContent: {
+      payload: Prisma.$HomepageContentPayload<ExtArgs>
+      fields: Prisma.HomepageContentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HomepageContentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HomepageContentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>
+        }
+        findFirst: {
+          args: Prisma.HomepageContentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HomepageContentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>
+        }
+        findMany: {
+          args: Prisma.HomepageContentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>[]
+        }
+        create: {
+          args: Prisma.HomepageContentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>
+        }
+        createMany: {
+          args: Prisma.HomepageContentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HomepageContentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>[]
+        }
+        delete: {
+          args: Prisma.HomepageContentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>
+        }
+        update: {
+          args: Prisma.HomepageContentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>
+        }
+        deleteMany: {
+          args: Prisma.HomepageContentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HomepageContentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HomepageContentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>[]
+        }
+        upsert: {
+          args: Prisma.HomepageContentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomepageContentPayload>
+        }
+        aggregate: {
+          args: Prisma.HomepageContentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHomepageContent>
+        }
+        groupBy: {
+          args: Prisma.HomepageContentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HomepageContentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HomepageContentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HomepageContentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3880,6 +3955,7 @@ export const MaterialScalarFieldEnum = {
   title: 'title',
   subject: 'subject',
   className: 'className',
+  category: 'category',
   kind: 'kind',
   url: 'url',
   description: 'description',
@@ -4012,6 +4088,18 @@ export const NotificationSchedulerRunScalarFieldEnum = {
 } as const
 
 export type NotificationSchedulerRunScalarFieldEnum = (typeof NotificationSchedulerRunScalarFieldEnum)[keyof typeof NotificationSchedulerRunScalarFieldEnum]
+
+
+export const HomepageContentScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  type: 'type',
+  isActive: 'isActive',
+  updatedAt: 'updatedAt'
+} as const
+
+export type HomepageContentScalarFieldEnum = (typeof HomepageContentScalarFieldEnum)[keyof typeof HomepageContentScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -4711,6 +4799,7 @@ export type GlobalOmitConfig = {
   adminPermission?: Prisma.AdminPermissionOmit
   adminRolePermission?: Prisma.AdminRolePermissionOmit
   notificationSchedulerRun?: Prisma.NotificationSchedulerRunOmit
+  homepageContent?: Prisma.HomepageContentOmit
 }
 
 /* Types for Logging */

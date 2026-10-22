@@ -8,6 +8,7 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +34,6 @@ export default function AdminBooksPage() {
   const [editing, setEditing] = useState<Book | null>(null);
   const [form, setForm] = useState<Partial<Book>>(EMPTY);
   const [busy, setBusy] = useState(false);
-  const [coverBusy, setCoverBusy] = useState(false);
   const [pdfBusy, setPdfBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
@@ -69,26 +69,6 @@ export default function AdminBooksPage() {
     setForm({ ...b, coverImageUrl: b.coverRef ?? b.coverImageUrl, pdfUrl: b.pdfRef ?? b.pdfUrl });
     setErr(null);
     setModal(true);
-  }
-
-  async function uploadCover(file: File) {
-    setCoverBusy(true);
-    setErr(null);
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/books/upload", { method: "POST", body: fd });
-      const json = await res.json().catch(() => null);
-      if (!res.ok || json?.success !== true) {
-        setErr(json?.error ?? "Cover upload failed.");
-        return;
-      }
-      setForm((f) => ({ ...f, coverImageUrl: json.data.coverImageUrl as string }));
-    } catch {
-      setErr("Cannot reach the server.");
-    } finally {
-      setCoverBusy(false);
-    }
   }
 
   async function uploadPdf(file: File) {
@@ -252,14 +232,18 @@ export default function AdminBooksPage() {
             </label>
           </div>
           <div>
-            <span className="block text-[12px] font-bold text-navy-700">Cover image</span>
-            <div className="mt-1.5 flex items-center gap-2">
-              <label className="cursor-pointer rounded-xl border border-silver-300 px-4 py-2.5 text-[13px] font-bold text-navy-700 hover:border-teal-500">
-                {coverBusy ? "Uploading…" : form.coverImageUrl ? "Replace cover" : "Upload cover"}
-                <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" disabled={coverBusy} onChange={(e) => { const f = e.target.files?.[0]; if (f) void uploadCover(f); e.target.value = ""; }} />
-              </label>
-              {form.coverImageUrl ? <span className="truncate text-[12px] font-bold text-teal-700">Cover set ✓</span> : null}
-            </div>
+            <span className="block text-[12px] font-bold text-navy-700">Cover image (Cloudinary CDN)</span>
+            <CloudinaryUpload
+              category="courses"
+              accept="image/jpeg,image/png,image/webp"
+              resourceType="image"
+              label="Cover image"
+              buttonLabel={form.coverImageUrl ? "Replace cover" : "Upload cover"}
+              onUploadComplete={(url) => setForm((f) => ({ ...f, coverImageUrl: url }))}
+            />
+            {form.coverImageUrl ? (
+              <span className="truncate text-[12px] font-bold text-teal-700">Cover set ✓</span>
+            ) : null}
           </div>
           <label className="block text-[12px] font-bold text-navy-700">PDF file (optional)
             <div className="mt-1.5 flex items-center gap-2">
@@ -281,7 +265,7 @@ export default function AdminBooksPage() {
         </div>
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="outline" size="sm" onClick={() => setModal(false)}>Cancel</Button>
-          <Button variant="primary" size="sm" disabled={busy || coverBusy || pdfBusy} onClick={() => void save()}>
+          <Button variant="primary" size="sm" disabled={busy || pdfBusy} onClick={() => void save()}>
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null} {editing ? "Save" : "Add Book"}
           </Button>
         </div>

@@ -11,6 +11,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface Row {
@@ -35,6 +36,7 @@ export default function WebsiteCoursesPage() {
   const [category, setCategory] = useState("Engineering");
   const [duration, setDuration] = useState("1 year");
   const [mode, setMode] = useState("Offline + Online");
+  const [imageUrl, setImageUrl] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
   // Phase 17 — persistence errors surface honestly (no local writes).
   const [formError, setFormError] = useState<string | null>(null);
@@ -83,6 +85,7 @@ export default function WebsiteCoursesPage() {
     setCategory("Engineering");
     setDuration("1 year");
     setMode("Offline + Online");
+    setImageUrl("");
     setModal(true);
   };
   const openEdit = (r: Row) => {
@@ -91,13 +94,14 @@ export default function WebsiteCoursesPage() {
     setCategory(r.category);
     setDuration(r.duration);
     setMode(r.mode);
+    setImageUrl("");
     setModal(true);
   };
   const save = async () => {
     if (!name.trim()) return;
     // Phase 17 — courses persist via the API only (no local writes).
     setFormError(null);
-    const payload = { name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), isActive: true };
+    const payload = { name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), imageUrl: imageUrl.trim() || undefined, isActive: true };
     try {
       if (editing) {
         const res = await fetch(`/api/courses/${editing.id}`, {
@@ -139,6 +143,7 @@ export default function WebsiteCoursesPage() {
       return;
     }
     setModal(false);
+    setImageUrl("");
     window.setTimeout(() => setSaved(null), 2500);
   };
   const remove = async (r: Row) => {
@@ -270,6 +275,14 @@ export default function WebsiteCoursesPage() {
             </select>
           </label>
         </div>
+        <CloudinaryUpload
+          category="courses"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          resourceType="image"
+          label="Course image"
+          buttonLabel={imageUrl ? "Replace course image" : "Upload course image"}
+          onUploadComplete={(url) => setImageUrl(url)}
+        />
         <p className="mt-2 text-[12px] text-muted">Only these fields are editable here. Admission status toggles from the table.</p>
         {formError ? (
           <p className="rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>

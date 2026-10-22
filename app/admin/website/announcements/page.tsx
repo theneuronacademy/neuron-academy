@@ -10,6 +10,7 @@ import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getAnnouncements } from "@/services/adminApi";
 
@@ -27,6 +28,7 @@ export default function AnnouncementsPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [modal, setModal] = useState(false);
   const [text, setText] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
   // Phase 17 — persistence errors surface honestly (no local writes).
   const [formError, setFormError] = useState<string | null>(null);
@@ -60,7 +62,7 @@ export default function AnnouncementsPage() {
   const save = async () => {
     if (!text.trim()) return;
     setFormError(null);
-    const payload = { title: text.trim(), content: text.trim(), isActive: true };
+    const payload = { title: text.trim(), content: text.trim(), imageUrl: imageUrl.trim() || undefined, isActive: true };
     try {
       const res = await fetch("/api/announcements", {
         method: "POST",
@@ -75,6 +77,7 @@ export default function AnnouncementsPage() {
         setSaved("Announcement published.");
         setModal(false);
         setText("");
+        setImageUrl("");
       } else {
         setFormError(json?.error ?? "Could not publish announcement. Nothing was saved.");
       }
@@ -184,6 +187,14 @@ export default function AnnouncementsPage() {
           Ticker message
           <input value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. Scholarship Test on Oct 12 — Register Free" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
         </label>
+        <CloudinaryUpload
+          category="banners"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          resourceType="image"
+          label="Announcement image"
+          buttonLabel={imageUrl ? "Replace image" : "Upload image"}
+          onUploadComplete={(url) => setImageUrl(url)}
+        />
         {formError ? (
           <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
         ) : null}

@@ -28,6 +28,7 @@ import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
 import { Reveal, Marquee, Tilt, WaveDivider } from "@/components/website/motion";
 import { SectionHeader, Card, StatusBadge } from "@/components/ui/primitives";
+import { useHomepageContent } from "@/lib/useHomepageContent";
 import {
   OrganizationJsonLd,
   CourseListJsonLd,
@@ -209,6 +210,7 @@ export default function HomePage() {
   const [liveGallery, setLiveGallery] = useState<GalleryItem[] | null>(null);
   const [liveTestimonials, setLiveTestimonials] = useState<Testimonial[] | null>(null);
   const [liveWall, setLiveWall] = useState<{ rows: AcademyResult[] } | null>(null);
+  const { content: hc, ready: hcReady } = useHomepageContent();
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -375,9 +377,9 @@ export default function HomePage() {
             </Reveal>
             <Reveal variant="right">
               <div>
-                <SectionHeader eyebrow="ABOUT" title="A structured approach to exam preparation" />
+                <SectionHeader eyebrow="ABOUT" title={hc["about.heading"] || "A structured approach to exam preparation"} />
                 <p className="mt-4 text-[15px] leading-relaxed text-muted">
-                  Neuron Academy supports students preparing for JEE, NEET, AMU and Jamia entrance exams through focused classes, regular practice and mentor support.
+                  {hc["about.text"] || "Neuron Academy supports students preparing for JEE, NEET, AMU and Jamia entrance exams through focused classes, regular practice and mentor support."}
                 </p>
                 <ul className="mt-5 space-y-3 text-[14px] text-ink">
                   {["Focused courses for entrance preparation.", "Small batches and support from mentors.", "Regular mock tests and question practice.", "Digital tools for assessment and progress tracking."].map((t) => (
@@ -395,7 +397,7 @@ export default function HomePage() {
           <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="WHY NEURON ACADEMY" title="A focused learning experience" desc="Structured support for students preparing for entrance examinations." />
+              <SectionHeader eyebrow={hc["why.eyebrow"] || "WHY NEURON ACADEMY"} title={hc["why.title"] || "A focused learning experience"} desc={hc["why.desc"] || "Structured support for students preparing for entrance examinations."} />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {WHY.map((w, i) => (

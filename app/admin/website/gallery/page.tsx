@@ -10,6 +10,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface Row {
@@ -177,7 +178,15 @@ export default function GalleryAdminPage() {
           Image URL
           <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://…" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
         </label>
-        <p className="mt-2 text-[12px] text-muted">Upload wires to Supabase Storage in production.</p>
+        <CloudinaryUpload
+          category="gallery"
+          accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+          resourceType="image"
+          label="Gallery image"
+          buttonLabel={imageUrl ? "Replace image" : "Upload image"}
+          onUploadComplete={(url) => setImageUrl(url)}
+        />
+        <p className="mt-2 text-[12px] text-muted">Upload wires to Cloudinary CDN.</p>
         {formError ? (
           <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
         ) : null}

@@ -10,6 +10,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface Row {
@@ -266,6 +267,14 @@ export default function WebResultsPage() {
             Photo URL (optional)
             <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="https://…" />
           </label>
+          <CloudinaryUpload
+            category="gallery"
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            resourceType="image"
+            label="Result photo"
+            buttonLabel={imageUrl ? "Replace photo" : "Upload photo"}
+            onUploadComplete={(url) => setImageUrl(url)}
+          />
           <label className="flex items-start gap-2 rounded-xl border border-silver-200 bg-silver-50 px-3.5 py-2.5 text-[12px] font-bold text-navy-700 sm:col-span-2">
             <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5" />
             Consent confirmed — the student/guardian agreed to publish this name{imageUrl.trim() ? " and photo" : ""} on the public website.

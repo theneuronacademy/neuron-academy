@@ -1181,3 +1181,17 @@ model NotificationSchedulerRun {
   @@index([status, runAt])
   @@index([notificationId])
 }
+
+// Homepage editable content — taglines, headings, CTA labels.
+// Admin-editable values override hardcoded fallbacks on the public site.
+model HomepageContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  type      String   @default("text") // text | url | html
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([isActive])
+}

@@ -88,7 +88,8 @@ export const ModelName = {
   AdminAuditLog: 'AdminAuditLog',
   AdminPermission: 'AdminPermission',
   AdminRolePermission: 'AdminRolePermission',
-  NotificationSchedulerRun: 'NotificationSchedulerRun'
+  NotificationSchedulerRun: 'NotificationSchedulerRun',
+  HomepageContent: 'HomepageContent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -682,6 +683,7 @@ export const MaterialScalarFieldEnum = {
   title: 'title',
   subject: 'subject',
   className: 'className',
+  category: 'category',
   kind: 'kind',
   url: 'url',
   description: 'description',
@@ -814,6 +816,18 @@ export const NotificationSchedulerRunScalarFieldEnum = {
 } as const
 
 export type NotificationSchedulerRunScalarFieldEnum = (typeof NotificationSchedulerRunScalarFieldEnum)[keyof typeof NotificationSchedulerRunScalarFieldEnum]
+
+
+export const HomepageContentScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  type: 'type',
+  isActive: 'isActive',
+  updatedAt: 'updatedAt'
+} as const
+
+export type HomepageContentScalarFieldEnum = (typeof HomepageContentScalarFieldEnum)[keyof typeof HomepageContentScalarFieldEnum]
 
 
 export const SortOrder = {

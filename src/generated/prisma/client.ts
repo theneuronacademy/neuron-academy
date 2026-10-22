@@ -231,3 +231,8 @@ export type AdminRolePermission = Prisma.AdminRolePermissionModel
  * 
  */
 export type NotificationSchedulerRun = Prisma.NotificationSchedulerRunModel
+/**
+ * Model HomepageContent
+ * 
+ */
+export type HomepageContent = Prisma.HomepageContentModel

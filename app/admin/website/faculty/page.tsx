@@ -11,6 +11,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface Row {
@@ -43,6 +44,7 @@ export default function WebsiteFacultyPage() {
   // Phase 17 — faculty records require real contact data (never fabricated).
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [pageError, setPageError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
@@ -97,7 +99,7 @@ export default function WebsiteFacultyPage() {
         return;
       }
     }
-    const payload = { name: name.trim(), designation: designation.trim(), subject: subject.trim(), qualification: qualification.trim(), experience: experience.trim(), bio: about.trim(), isActive: true };
+    const payload = { name: name.trim(), designation: designation.trim(), subject: subject.trim(), qualification: qualification.trim(), experience: experience.trim(), bio: about.trim(), isActive: true, photo: photoUrl || undefined };
     try {
       if (editing) {
         const res = await fetch(`/api/faculty/${editing.id}`, {
@@ -147,6 +149,7 @@ export default function WebsiteFacultyPage() {
     setAbout("");
     setEmail("");
     setPhone("");
+    setPhotoUrl("");
     window.setTimeout(() => setSaved(null), 2500);
   };
 
@@ -307,6 +310,14 @@ export default function WebsiteFacultyPage() {
           Phone
           <input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="10-digit mobile" inputMode="tel" />
         </label>
+        <CloudinaryUpload
+          category="faculty"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          resourceType="image"
+          label="Faculty photo"
+          buttonLabel={photoUrl ? "Replace photo" : "Upload photo"}
+          onUploadComplete={(url) => setPhotoUrl(url)}
+        />
         {formError ? (
           <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
         ) : null}

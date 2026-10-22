@@ -6,9 +6,6 @@ import {
   LayoutDashboard,
   Globe,
   LogOut,
-  FileText,
-  Database,
-  BarChart3,
   Users,
   Layers,
   Megaphone,
@@ -23,11 +20,8 @@ import {
   Star,
   Trophy,
   User,
-  Lock,
-  CalendarDays,
   Library,
   Shield,
-  Key,
 } from "lucide-react";
 import { adminLogout } from "@/lib/adminAuth";
 import { Logo } from "@/components/website/Logo";
@@ -41,21 +35,22 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
     label: "Main",
     items: [{ href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard }],
   },
-  {
-    label: "Website",
-    items: [
-      { href: "/admin/website", label: "Website Overview", icon: Globe },
-      { href: "/admin/website/courses", label: "Courses", icon: BookOpen },
-      { href: "/admin/website/faculty", label: "Faculty Page", icon: Presentation },
-      { href: "/admin/website/banners", label: "Banners", icon: Home },
-      { href: "/admin/website/popups", label: "Popups", icon: Megaphone },
-      { href: "/admin/website/gallery", label: "Gallery", icon: GalleryHorizontal },
-      { href: "/admin/website/testimonials", label: "Testimonials", icon: Star },
-      { href: "/admin/website/results", label: "Web Results", icon: Trophy },
-      { href: "/admin/website/announcements", label: "Announcements", icon: Bell },
-      { href: "/admin/advertisements", label: "Advertisements", icon: ImageIcon },
-    ],
-  },
+      {
+        label: "Website",
+        items: [
+          { href: "/admin/website", label: "Website Overview", icon: Globe },
+          { href: "/admin/website/homepage", label: "Homepage Content", icon: Home },
+          { href: "/admin/website/courses", label: "Courses", icon: BookOpen },
+          { href: "/admin/website/faculty", label: "Faculty Page", icon: Presentation },
+          { href: "/admin/website/banners", label: "Banners", icon: Home },
+          { href: "/admin/website/popups", label: "Popups", icon: Megaphone },
+          { href: "/admin/website/gallery", label: "Gallery", icon: GalleryHorizontal },
+          { href: "/admin/website/testimonials", label: "Testimonials", icon: Star },
+          { href: "/admin/website/results", label: "Web Results", icon: Trophy },
+          { href: "/admin/website/announcements", label: "Announcements", icon: Bell },
+          { href: "/admin/advertisements", label: "Advertisements", icon: ImageIcon },
+        ],
+      },
   {
     label: "People",
     items: [
@@ -64,18 +59,12 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
     ],
   },
 {
-        label: "Academic",
-        items: [
-          { href: "/admin/tests", label: "Tests", icon: FileText },
-          { href: "/admin/test-access", label: "Test Access", icon: Lock },
-          { href: "/admin/test-access/grant", label: "Access Grants", icon: Key },
-          { href: "/admin/question-bank", label: "Question Bank", icon: Database },
-          { href: "/admin/books", label: "Books", icon: BookOpen },
-          { href: "/admin/materials", label: "Study Material", icon: Library },
-          { href: "/admin/timetable", label: "Timetable", icon: CalendarDays },
-          { href: "/admin/results", label: "Results", icon: BarChart3 },
-        ],
-      },
+  label: "Academic",
+  items: [
+    { href: "/admin/books", label: "Books", icon: BookOpen },
+    { href: "/admin/materials", label: "Study Material", icon: Library },
+  ],
+},
   {
     label: "Communication",
     items: [

@@ -10,6 +10,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getPopups } from "@/services/adminApi";
 import type { AdminPopup } from "@/data/admin";
@@ -335,6 +336,22 @@ export default function PopupsPage() {
             <input type="date" value={form.endDate} onChange={(e) => set("endDate", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
           </label>
         </div>
+        <CloudinaryUpload
+          category="banners"
+          accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+          resourceType="image"
+          label="Popup image"
+          buttonLabel={form.image ? "Replace popup image" : "Upload popup image"}
+          onUploadComplete={(url) => setForm((f) => ({ ...f, image: url }))}
+        />
+        <CloudinaryUpload
+          category="banners"
+          accept="video/mp4,video/mov,video/webm,video/avi,video/mkv"
+          resourceType="video"
+          label="Popup video"
+          buttonLabel={form.videoUrl ? "Replace popup video" : "Upload popup video"}
+          onUploadComplete={(url) => setForm((f) => ({ ...f, videoUrl: url }))}
+        />
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Message
           <textarea value={form.message} onChange={(e) => set("message", e.target.value)} rows={3} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="Attend 2 demo classes + 1 mock test free…" />

@@ -65,7 +65,7 @@ export function Footer() {
           <p className="text-sm font-bold text-navy-950">Student resources</p>
           <ul className="mt-4 space-y-3 text-sm">
             <li><a href="https://estudde.com/" target="_blank" rel="noopener noreferrer" className="text-neutral-600 transition-colors hover:text-brand-primary">Student Portal</a></li>
-            <li><a href="https://estudde.com/" target="_blank" rel="noopener noreferrer" className="text-neutral-600 transition-colors hover:text-brand-primary">Test Platform</a></li>
+            <li><a href="https://web.proctur.com/" target="_blank" rel="noopener noreferrer" className="text-neutral-600 transition-colors hover:text-brand-primary">Faculty Portal</a></li>
             <li><a href="https://play.google.com/store/apps/details?id=com.proctur.app223551" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-neutral-600 transition-colors hover:text-brand-primary"><Download className="h-4 w-4 shrink-0" /> Download Student App</a></li>
             <li><Link href="/scholarship-tests" className="text-neutral-600 transition-colors hover:text-brand-primary">Scholarship tests</Link></li>
             <li><Link href="/admin/login" className="text-neutral-600 transition-colors hover:text-brand-primary">Admin login</Link></li>

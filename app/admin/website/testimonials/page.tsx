@@ -10,6 +10,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface Row {
@@ -31,6 +32,7 @@ export default function TestimonialsAdminPage() {
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [achievement, setAchievement] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
   // Phase 17 — persistence errors surface honestly (no local writes).
   const [formError, setFormError] = useState<string | null>(null);
@@ -67,7 +69,7 @@ export default function TestimonialsAdminPage() {
   const save = async () => {
     if (!name.trim()) return;
     setFormError(null);
-    const payload = { studentName: name.trim(), course: course.trim(), achievement: achievement.trim(), isActive: true };
+    const payload = { studentName: name.trim(), course: course.trim(), achievement: achievement.trim(), photo: photoUrl || undefined, isActive: true };
     try {
       if (editing) {
         const res = await fetch(`/api/testimonials/${editing.id}`, {
@@ -112,6 +114,7 @@ export default function TestimonialsAdminPage() {
     setName("");
     setCourse("");
     setAchievement("");
+    setPhotoUrl("");
     window.setTimeout(() => setSaved(null), 2500);
   };
 
@@ -241,6 +244,14 @@ export default function TestimonialsAdminPage() {
           Achievement
           <input value={achievement} onChange={(e) => setAchievement(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="AIR 42 — JEE Advanced 2026" />
         </label>
+        <CloudinaryUpload
+          category="gallery"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          resourceType="image"
+          label="Student photo"
+          buttonLabel={photoUrl ? "Replace photo" : "Upload photo"}
+          onUploadComplete={(url) => setPhotoUrl(url)}
+        />
         {formError ? (
           <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
         ) : null}

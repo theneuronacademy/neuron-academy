@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useAdminGuard } from "@/components/admin/useAdminGuard";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
+import { Button } from "@/components/ui/primitives";
 
 interface Material {
   id: string; title: string; subject: string | null; kind: string;
@@ -100,6 +102,14 @@ export default function AdminMaterialsPage() {
           <input value={form.url} onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))} placeholder="https://… (optional)" className={inputCls} />
           <input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="Short description" className={inputCls} />
         </div>
+        <CloudinaryUpload
+          category="study-material"
+          accept="image/*,video/*,application/pdf"
+          resourceType={form.kind === "VIDEO" ? "video" : "image"}
+          label={form.kind === "LINK" || form.kind === "NOTE" ? "Media URL (enter above)" : "Upload media file"}
+          buttonLabel={form.url ? "Replace media" : "Upload media"}
+          onUploadComplete={(url) => setForm((f) => ({ ...f, url }))}
+        />
         <button onClick={create} disabled={busy} className="mt-2 rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">Add Material</button>
       </div>
 
