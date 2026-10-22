@@ -32,64 +32,33 @@ export function CloudinaryUpload({
       setBusy(true);
 
       try {
-        // Step 1: Get signed upload URL from server
+        // Upload through our server proxy (avoids CORS issues with direct
+        // Cloudinary browser uploads)
         const fd = new FormData();
         fd.append("filename", file.name);
         fd.append("category", category);
         fd.append("resourceType", resourceType);
-        fd.append("fileSize", String(file.size));
+        fd.append("file", file);
 
-        let sigRes: Response;
-        try {
-          sigRes = await fetch("/api/admin/cloudinary/upload-signature", {
-            method: "POST",
-            body: fd,
-          });
-        } catch {
-          setError("Cannot reach the server. Check your connection and try again.");
-          return;
-        }
-
-        const sigJson = await sigRes.json().catch(() => null);
-        if (!sigRes.ok || sigJson?.success !== true) {
-          setError(sigJson?.error ?? "Could not get upload signature.");
-          return;
-        }
-
-        const { uploadUrl, formFields } = sigJson.data;
-
-        // Step 2: Upload file directly to Cloudinary
-        const uploadFd = new FormData();
-        uploadFd.append("file", file);
-        Object.entries(formFields).forEach(([k, v]) => {
-          uploadFd.append(k, String(v));
+        const res = await fetch("/api/admin/cloudinary/upload", {
+          method: "POST",
+          body: fd,
         });
 
-        let upRes: Response;
-        try {
-          upRes = await fetch(uploadUrl, {
-            method: "POST",
-            body: uploadFd,
-          });
-        } catch {
-          setError("Cannot reach Cloudinary upload server. Check your connection.");
+        const json = await res.json().catch(() => null);
+        if (!res.ok || json?.success !== true) {
+          setError(json?.error ?? "Cloudinary upload failed.");
           return;
         }
 
-        if (!upRes.ok) {
-          const errText = await upRes.text().catch(() => "");
-          setError(`Cloudinary upload failed: ${errText}`);
-          return;
-        }
-
-        const result = await upRes.json();
-        if (result.secure_url) {
-          onUploadComplete(result.secure_url, result.public_id);
+        const { url, publicId } = json.data;
+        if (url) {
+          onUploadComplete(url, publicId);
         } else {
-          setError("Unexpected Cloudinary response.");
+          setError("Unexpected upload response.");
         }
       } catch {
-        setError("An unexpected error occurred during upload.");
+        setError("Cannot reach the server. Check your connection.");
       } finally {
         setBusy(false);
       }
