@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { SmartImage } from "@/lib/siteImages";
+import { CONTACT } from "@/data/contact";
 import type { FacultyMember } from "@/data/faculty";
 
 /** Full faculty profile dialog (FacultyDetails). */
@@ -34,7 +35,7 @@ export function FacultyDetails({ member, onClose }: { member: FacultyMember; onC
           <p className="mt-3 text-sm leading-relaxed text-ink">{member.intro}</p>
           <div className="mt-5 grid grid-cols-2 gap-2">
             <button onClick={onClose} className="rounded-xl border border-silver-300 px-4 py-2.5 text-sm font-bold text-navy-700">Close</button>
-            <a href="#contact" onClick={onClose} className="rounded-xl bg-navy-700 px-4 py-2.5 text-center text-sm font-bold text-white">Ask a Doubt</a>
+            <a href={CONTACT.whatsappHref} target="_blank" rel="noreferrer" onClick={onClose} className="rounded-xl bg-navy-700 px-4 py-2.5 text-center text-sm font-bold text-white">Ask a Doubt</a>
           </div>
         </div>
       </div>

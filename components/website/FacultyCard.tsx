@@ -43,7 +43,7 @@ export function FacultyCard({ f, onView }: { f: FacultyMember; onView?: (m: Facu
         <p className="text-[12px] font-bold text-brand-primary">{f.designation} • {f.experience}</p>
         <p className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed text-neutral-600">{f.intro}</p>
         <Button variant="outline" size="sm" className="mt-4 w-full" onClick={() => onView?.(f)}>
-          View Profile
+          View more
         </Button>
       </div>
     </article>

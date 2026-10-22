@@ -2,6 +2,7 @@
 
 import { Clock, MonitorPlay, ArrowRight, CheckCircle2 } from "lucide-react";
 import { SmartImage } from "@/lib/siteImages";
+import { CONTACT } from "@/data/contact";
 import type { Course } from "@/data/courses";
 
 export function CourseCard({ course, index = 0, onDetails }: { course: Course; index?: number; onDetails?: (c: Course) => void }) {
@@ -68,7 +69,7 @@ export function CourseCard({ course, index = 0, onDetails }: { course: Course; i
           <button onClick={() => onDetails?.(course)} className="flex-1 rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-center text-[13px] font-semibold text-neutral-700 transition hover:border-brand-primary/40 hover:bg-brand-primary/5 hover:text-brand-primary">
             Course details
           </button>
-          <a href="#contact" className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-primary px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-brand-primary-hover">
+          <a href={CONTACT.whatsappHref} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-primary px-3 py-2.5 text-[13px] font-bold text-white transition hover:bg-brand-primary-hover">
             Enquire <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>

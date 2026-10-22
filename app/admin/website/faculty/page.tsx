@@ -16,8 +16,11 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 interface Row {
   id: string;
   name: string;
+  designation: string;
   subject: string;
   qualification: string;
+  experience: string;
+  bio: string;
   active: boolean;
   email?: string;
   phone?: string;
@@ -32,8 +35,11 @@ export default function WebsiteFacultyPage() {
   const [modal, setModal] = useState(false);
   const [editing, setEditing] = useState<Row | null>(null);
   const [name, setName] = useState("");
+  const [designation, setDesignation] = useState("");
   const [subject, setSubject] = useState("Physics");
   const [qualification, setQualification] = useState("");
+  const [experience, setExperience] = useState("");
+  const [about, setAbout] = useState("");
   // Phase 17 — faculty records require real contact data (never fabricated).
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -48,20 +54,25 @@ export default function WebsiteFacultyPage() {
         const res = await fetch("/api/faculty", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows((json.data.items as Array<{ id: string; name?: string; subject?: string; qualification?: string; isActive?: boolean }>).map((f) => ({
+          setRows((json.data.items as Array<{ id: string; name?: string; designation?: string; subject?: string; qualification?: string; experience?: string; bio?: string; isActive?: boolean; email?: string; phone?: string }>).map((f) => ({
             id: f.id,
             name: f.name ?? "",
+            designation: f.designation ?? "",
             subject: f.subject ?? "",
             qualification: f.qualification ?? "",
+            experience: f.experience ?? "",
+            bio: f.bio ?? "",
             active: f.isActive ?? true,
+            email: f.email,
+            phone: f.phone,
           })));
         } else {
           const { FACULTY } = await import("@/data/faculty");
-          setRows(FACULTY.map((f) => ({ id: f.id, name: f.name, subject: f.subject, qualification: f.qualification, active: true })));
+          setRows(FACULTY.map((f) => ({ id: f.id, name: f.name, designation: f.designation, subject: f.subject, qualification: f.qualification, experience: f.experience, bio: f.intro, active: true })));
         }
       } catch {
         const { FACULTY } = await import("@/data/faculty");
-        setRows(FACULTY.map((f) => ({ id: f.id, name: f.name, subject: f.subject, qualification: f.qualification, active: true })));
+        setRows(FACULTY.map((f) => ({ id: f.id, name: f.name, designation: f.designation, subject: f.subject, qualification: f.qualification, experience: f.experience, bio: f.intro, active: true })));
       }
       setReady(true);
     })();
@@ -86,7 +97,7 @@ export default function WebsiteFacultyPage() {
         return;
       }
     }
-    const payload = { name: name.trim(), subject: subject.trim(), qualification: qualification.trim(), isActive: true };
+    const payload = { name: name.trim(), designation: designation.trim(), subject: subject.trim(), qualification: qualification.trim(), experience: experience.trim(), bio: about.trim(), isActive: true };
     try {
       if (editing) {
         const res = await fetch(`/api/faculty/${editing.id}`, {
@@ -97,7 +108,7 @@ export default function WebsiteFacultyPage() {
         });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success !== false) {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), subject: subject.trim(), qualification: qualification.trim() } : r)));
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), designation: designation.trim(), subject: subject.trim(), qualification: qualification.trim(), experience: experience.trim(), bio: about.trim() } : r)));
           setSaved("Faculty profile updated.");
           setModal(false);
           setEditing(null);
@@ -115,7 +126,7 @@ export default function WebsiteFacultyPage() {
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && json.data?.item) {
           const item = json.data.item;
-          setRows((p) => [...p, { id: item.id, name: item.name, subject: item.subject ?? "", qualification: item.qualification ?? "", active: true }]);
+          setRows((p) => [...p, { id: item.id, name: item.name, designation: item.designation ?? "", subject: item.subject ?? "", qualification: item.qualification ?? "", experience: item.experience ?? "", bio: item.bio ?? "", active: true }]);
           setSaved("Faculty profile added.");
           setModal(false);
         } else {
@@ -129,10 +140,13 @@ export default function WebsiteFacultyPage() {
     }
     setEditing(null);
     setName("");
-    setEmail("");
-    setPhone("");
+    setDesignation("");
     setSubject("Physics");
     setQualification("");
+    setExperience("");
+    setAbout("");
+    setEmail("");
+    setPhone("");
     window.setTimeout(() => setSaved(null), 2500);
   };
 
@@ -192,7 +206,7 @@ export default function WebsiteFacultyPage() {
         description={`${filtered.length} profiles • photo, qualification and assigned subjects.`}
         actionLabel="Add Faculty"
         actionIcon={Plus}
-        onAction={() => { setEditing(null); setName(""); setEmail(""); setPhone(""); setSubject("Physics"); setQualification(""); setFormError(null); setModal(true); }}
+        onAction={() => { setEditing(null); setName(""); setDesignation(""); setSubject("Physics"); setQualification(""); setExperience(""); setAbout(""); setEmail(""); setPhone(""); setFormError(null); setModal(true); }}
       />
       {pageError ? (
         <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
@@ -213,6 +227,7 @@ export default function WebsiteFacultyPage() {
         <AdminTable<Row>
           columns={[
             { key: "name", header: "Name", render: (r) => <span className="font-extrabold text-navy-700">{r.name}</span> },
+            { key: "desig", header: "Designation", render: (r) => <span className="text-muted text-[12px]">{r.designation}</span> },
             { key: "sub", header: "Subject", render: (r) => r.subject },
             { key: "q", header: "Qualification", render: (r) => <span className="text-muted">{r.qualification}</span> },
             {
@@ -234,10 +249,13 @@ export default function WebsiteFacultyPage() {
                     onClick={() => {
                       setEditing(r);
                       setName(r.name);
+                      setDesignation(r.designation);
                       setEmail(r.email ?? "");
                       setPhone(r.phone ?? "");
                       setSubject(r.subject);
                       setQualification(r.qualification);
+                      setExperience(r.experience);
+                      setAbout(r.bio);
                       setFormError(null);
                       setModal(true);
                     }}
@@ -262,20 +280,32 @@ export default function WebsiteFacultyPage() {
           <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="e.g. Dr. S. Rao — Physics" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Designation
+          <input value={designation} onChange={(e) => setDesignation(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="e.g. Senior Physics Faculty" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Subject / Expertise
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="Physics" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Experience
+          <input value={experience} onChange={(e) => setExperience(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="e.g. 10 years" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Qualification
+          <input value={qualification} onChange={(e) => setQualification(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="M.Sc, Ph.D — 15 yrs exp" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          About
+          <textarea value={about} onChange={(e) => setAbout(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" rows={3} placeholder="Brief profile / about the faculty" />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Email
           <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="faculty@example.com" inputMode="email" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Phone
           <input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="10-digit mobile" inputMode="tel" />
-        </label>
-        <label className="mt-3 block text-[12px] font-bold text-navy-700">
-          Subject
-          <input value={subject} onChange={(e) => setSubject(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="Physics" />
-        </label>
-        <label className="mt-3 block text-[12px] font-bold text-navy-700">
-          Qualification
-          <input value={qualification} onChange={(e) => setQualification(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="M.Sc, Ph.D — 15 yrs exp" />
         </label>
         {formError ? (
           <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>

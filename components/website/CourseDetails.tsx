@@ -2,6 +2,7 @@
 
 import { X, CheckCircle2, Clock, MonitorPlay } from "lucide-react";
 import { SmartImage } from "@/lib/siteImages";
+import { CONTACT } from "@/data/contact";
 import type { Course } from "@/data/courses";
 
 /** Full course details dialog (CourseDetails). */
@@ -47,7 +48,7 @@ export function CourseDetails({ course, onClose, onEnroll }: { course: Course; o
           </ul>
           <div className="mt-5 grid grid-cols-2 gap-2">
             <button onClick={onClose} className="rounded-xl border border-silver-300 px-4 py-2.5 text-sm font-bold text-navy-700">Close</button>
-            <button onClick={onEnroll} className="btn-metallic-sheen rounded-xl px-4 py-2.5 text-sm font-bold text-white" style={{ backgroundColor: accent }}>Enroll Now</button>
+            <a href={CONTACT.whatsappHref} target="_blank" rel="noreferrer" className="btn-metallic-sheen rounded-xl px-4 py-2.5 text-sm font-bold text-white text-center" style={{ backgroundColor: accent }}>Enroll Now</a>
           </div>
         </div>
       </div>

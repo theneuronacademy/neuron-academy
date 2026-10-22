@@ -38,7 +38,7 @@ import {
   FAQJsonLd,
   WebSiteJsonLd,
 } from "@/components/website/SchemaMarkup";
-import { COURSES, COURSE_CATEGORIES, FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
+import { FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
 import type { Testimonial } from "@/data/testimonials";
 import { getLiveCourses, getLiveFaculty, getLiveGallery, getLiveShowcase, getLiveTestimonials } from "@/services/siteApi";
@@ -287,7 +287,7 @@ export default function HomePage() {
       mounted = false;
     };
   }, []);
-  const courseList = liveCourses ?? COURSES;
+  const courseList = liveCourses ?? [];
   const facultyList = liveFaculty ?? FACULTY;
   const galleryList = liveGallery ?? GALLERY;
   const testimonialList = liveTestimonials ?? undefined;
@@ -295,7 +295,7 @@ export default function HomePage() {
   // below renders only for static fallback rows, never for published data.
   const wall = liveWall?.rows ?? RESULTS;
   const wallLive = liveWall !== null;
-  const courseCats = ["All", ...Array.from(new Set(courseList.map((c) => c.category).filter(Boolean))), ...COURSE_CATEGORIES.filter((c) => !courseList.some((x) => x.category === c))];
+  const courseCats = ["All", ...Array.from(new Set(courseList.map((c) => c.category).filter(Boolean)))];
   const courses = courseCat === "All" ? courseList : courseList.filter((c) => c.category === courseCat);
   return (
     <div className="min-h-screen overflow-x-clip bg-background">
@@ -672,28 +672,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ADMISSION */}
-        <section className="relative overflow-hidden bg-white">
-          <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
-            <Reveal variant="left">
-              <div>
-                <SectionHeader eyebrow="ADMISSIONS" title="Tell us what you’re preparing for" desc="Share your class or exam, and contact the academy to discuss course options and next steps." />
-                <ul className="mt-4 space-y-2 text-sm font-semibold text-ink">
-                  <li className="flex gap-2 rounded-lg py-1"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" /> Explore courses for your class or entrance exam</li>
-                  <li className="flex gap-2 rounded-lg py-1"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" /> Ask the team about schedule and course details</li>
-                  <li className="flex gap-2 rounded-lg py-1"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" /> Send an enquiry using the form</li>
-                </ul>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {["JEE", "NEET", "AMU", "Jamia"].map((exam) => <span key={exam} className="rounded-full bg-brand-primary/5 px-3 py-1.5 text-xs font-semibold text-brand-primary">{exam}</span>)}
-                </div>
-              </div>
-            </Reveal>
-            <Reveal variant="right">
-              <ContactForm admission />
-            </Reveal>
-          </div>
-        </section>
-
         {/* FAQ */}
         <section className="bg-white">
           <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
@@ -706,26 +684,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* FINAL CTA */}
-        <WaveDivider className="bg-white text-navy-800" />
-        <section className="bg-metallic-dark relative overflow-hidden">
-          <div className="animate-float-slow pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
-          <div className="animate-float pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-brand-secondary/15 blur-3xl" aria-hidden />
-          <div className="relative mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
-            <Reveal>
-              <p className="text-[11px] font-bold tracking-[0.2em] text-brand-secondary-300">JEE · NEET · AMU · JAMIA</p>
-              <p className="mx-auto mt-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                Neuron Academy · Shaheen Bagh
-              </p>
-              <h2 className="mx-auto mt-2 max-w-2xl text-3xl font-extrabold text-white sm:text-5xl">Take the next step in your preparation.</h2>
-              <p className="mx-auto mt-3 max-w-xl text-[15px] text-silver-200">Explore courses or contact the academy to discuss your goals.</p>
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
-                  <a href="#courses" className="rounded-xl bg-brand-secondary px-6 py-3.5 text-sm font-bold text-navy-950 transition hover:bg-brand-secondary-300">Explore courses</a>
-                  <a href="#contact" className="rounded-xl border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-bold text-white backdrop-blur transition hover:border-brand-secondary hover:bg-white/10">Contact the academy</a>
-                </div>
-            </Reveal>
-          </div>
-        </section>
       </main>
 
       <Footer />
