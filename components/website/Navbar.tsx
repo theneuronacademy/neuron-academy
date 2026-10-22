@@ -9,14 +9,15 @@ import { cn } from "@/lib/utils";
 
 const PORTAL_LINKS = [
   { href: "/scholarship-tests", label: "Scholarship tests" },
-  { href: "https://estudde.com/", label: "Student Portal", external: true },
+  { href: "https://cmp.proctur.com/", label: "Student Portal", external: true },
+  { href: "https://play.google.com/store/apps/details?id=com.proctur.app223551", label: "Download Student App", external: true },
   { href: "/admin/login", label: "Admin login" },
 ];
 
 function PortalLink({ link, className, onClick }: { link: { href: string; label: string; external?: boolean }; className?: string; onClick?: () => void }) {
   if (link.external) {
     return (
-      <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className={className} onClick={onClick}>
+      <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={className} onClick={onClick}>
         {link.label}
       </a>
     );

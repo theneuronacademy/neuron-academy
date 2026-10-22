@@ -558,7 +558,7 @@ export default function HomePage() {
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a href="/scholarship-tests" className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">Scholarship tests <ChevronRight className="h-4 w-4" /></a>
-                  <a href="https://estudde.com/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-5 py-3 text-sm font-bold text-navy-800 transition hover:border-brand-primary/30 hover:bg-brand-primary/5">Student Portal <span className="text-[10px]">↗</span></a>
+                  <a href="https://cmp.proctur.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-5 py-3 text-sm font-bold text-navy-800 transition hover:border-brand-primary/30 hover:bg-brand-primary/5">Student Portal <span className="text-[10px]">↗</span></a>
                 </div>
               </div>
             </Reveal>
