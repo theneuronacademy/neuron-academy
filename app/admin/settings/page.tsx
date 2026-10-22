@@ -14,7 +14,7 @@ export default function SettingsPage() {
   const [ready, setReady] = useState(false);
   const [academy, setAcademy] = useState("Neuron Academy");
   const [phone, setPhone] = useState("+91 97119 17317");
-  const [email, setEmail] = useState("hello@neuronacademy.in");
+  const [email, setEmail] = useState("neuronacademy23@gmail.com");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {

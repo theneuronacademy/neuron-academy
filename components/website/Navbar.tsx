@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 const PORTAL_LINKS = [
   { href: "/scholarship-tests", label: "Scholarship tests" },
-  { href: "https://cmp.proctur.com/", label: "Student Portal", external: true },
+  { href: "https://estudde.com/", label: "Student Portal", external: true },
   { href: "https://play.google.com/store/apps/details?id=com.proctur.app223551", label: "Download Student App", external: true },
   { href: "/admin/login", label: "Admin login" },
 ];

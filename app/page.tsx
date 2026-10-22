@@ -558,7 +558,7 @@ export default function HomePage() {
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a href="/scholarship-tests" className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">Scholarship tests <ChevronRight className="h-4 w-4" /></a>
-                  <a href="https://cmp.proctur.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-5 py-3 text-sm font-bold text-navy-800 transition hover:border-brand-primary/30 hover:bg-brand-primary/5">Student Portal <span className="text-[10px]">↗</span></a>
+                  <a href="https://estudde.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-5 py-3 text-sm font-bold text-navy-800 transition hover:border-brand-primary/30 hover:bg-brand-primary/5">Student Portal <span className="text-[10px]">↗</span></a>
                 </div>
               </div>
             </Reveal>
@@ -632,15 +632,27 @@ export default function HomePage() {
               <div>
                 <SectionHeader eyebrow="CONTACT" title="Talk with the academy" desc="Visit Neuron Academy in Shaheen Bagh, call, or send an enquiry." />
                 <div className="mt-6 space-y-3">
-                  {[
-                    { icon: Phone, t: CONTACT_INFO.phone },
-                    { icon: MessageCircle, t: `WhatsApp: ${CONTACT_INFO.whatsapp}` },
-                    { icon: Mail, t: CONTACT_INFO.email },
-                    { icon: MapPin, t: CONTACT_INFO.address },
-                    { icon: Clock, t: CONTACT_INFO.hours },
-                  ].map((c, i) => (
-                    <p key={i} className="flex items-center gap-3 rounded-xl border border-silver-200 bg-white px-4 py-3 text-sm font-semibold text-navy-800"><c.icon className="h-4 w-4 shrink-0 text-brand-primary" /> {c.t}</p>
-                  ))}
+                {[
+                  { icon: Phone, t: CONTACT_INFO.phone, href: CONTACT.phoneHref },
+                  { icon: MessageCircle, t: `WhatsApp: ${CONTACT_INFO.whatsapp}`, href: CONTACT.whatsappHref },
+                  { icon: Mail, t: CONTACT_INFO.email, href: `mailto:${CONTACT_INFO.email}` },
+                  { icon: MapPin, t: CONTACT_INFO.address, href: CONTACT.MAP_LINK_URL, external: true },
+                  { icon: Clock, t: CONTACT_INFO.hours },
+                ].map((c, i) => {
+                  const linkProps = c.href
+                    ? {
+                        href: c.href,
+                        ...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {}),
+                        className: "flex items-center gap-3 rounded-xl border border-silver-200 bg-white px-4 py-3 text-sm font-semibold text-navy-800 transition hover:border-brand-primary/30 hover:text-brand-primary",
+                      }
+                    : { className: "flex items-center gap-3 rounded-xl border border-silver-200 bg-white px-4 py-3 text-sm font-semibold text-navy-800" };
+                  const El = c.href ? "a" : "p";
+                  return (
+                    <El key={i} {...linkProps}>
+                      <c.icon className="h-4 w-4 shrink-0 text-brand-primary" /> {c.t}
+                    </El>
+                  );
+                })}
                 </div>
                 <a href={`https://wa.me/91${CONTACT_INFO.whatsapp.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer" className="animate-glow cta-bounce mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-bold text-white">
                   <MessageCircle className="h-4 w-4 animate-wiggle" /> 💬 Chat on WhatsApp
