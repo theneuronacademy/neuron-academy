@@ -106,7 +106,7 @@ export default function BannersPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(
     () =>

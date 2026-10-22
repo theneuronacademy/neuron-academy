@@ -65,7 +65,7 @@ export default function WebsiteFacultyPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(() => rows.filter((r) => !search.trim() || `${r.name} ${r.subject}`.toLowerCase().includes(search.toLowerCase())), [rows, search]);
 

@@ -55,7 +55,7 @@ export default function AnnouncementsPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const save = async () => {
     if (!text.trim()) return;

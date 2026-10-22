@@ -65,7 +65,7 @@ export default function WebsiteCoursesPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(
     () =>

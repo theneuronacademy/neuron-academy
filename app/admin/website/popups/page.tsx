@@ -100,7 +100,7 @@ export default function PopupsPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(
     () =>

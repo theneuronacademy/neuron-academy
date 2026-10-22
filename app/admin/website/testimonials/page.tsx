@@ -60,7 +60,7 @@ export default function TestimonialsAdminPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(() => rows.filter((r) => !search.trim() || `${r.studentName} ${r.course}`.toLowerCase().includes(search.toLowerCase())), [rows, search]);
 

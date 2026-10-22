@@ -105,6 +105,53 @@ export default function NotificationsPage() {
   // deliveryAudit "unavailable", counts are zero/partial and must not be read
   // as audited. The banner below makes that unmissable.
   const [auditWarning, setAuditWarning] = useState<string | null>(null);
+  // Phase 18c-step3 — delivery history (persisted audit). Every number comes
+  // from the server (Notification + NotificationDelivery rows); filters are
+  // server-side and bounded. Detail lives at /admin/notifications/[id].
+  // Phase 18c-step5 (P0/P1): the server reports deliveryAudit ok|unavailable
+  // and rejects unappliable filters with DELIVERY_AUDIT_UNAVAILABLE (409).
+  // Both surface here as a warning — never as silent zeroes or silent
+  // unfiltered rows.
+  const refreshHistory = async (over?: { channel?: string; status?: string; priority?: string; event?: string; failedOnly?: boolean }) => {
+    try {
+      const c = over?.channel ?? fChannel;
+      const s = over?.status ?? fStatus;
+      const p = over?.priority ?? fPriority;
+      const e = over?.event ?? fEvent;
+      const f = over?.failedOnly ?? fFailedOnly;
+      const qs = new URLSearchParams({ limit: "100" });
+      if (c) qs.set("channel", c);
+      if (s) qs.set("status", s);
+      if (p) qs.set("priority", p);
+      if (e) qs.set("event", e);
+      if (f) qs.set("failedOnly", "1");
+      const res = await fetch(`/api/notifications?${qs.toString()}`, { cache: "no-store" });
+      const json = (await res.json()) as {
+        success?: boolean;
+        data?: { items?: AdminNotification[]; deliveryAudit?: string; deliveryAuditReason?: string };
+        error?: string;
+        code?: string;
+      };
+      if (!res.ok || !json?.success) {
+        if (json?.code === "DELIVERY_AUDIT_UNAVAILABLE") {
+          setAuditWarning(json?.error ?? "Delivery audit is unavailable for the requested filters.");
+        }
+        return;
+      }
+      if (Array.isArray(json?.data?.items)) setRows(json.data.items as AdminNotification[]);
+      if (json?.data?.deliveryAudit === "unavailable") {
+        setAuditWarning(
+          json?.data?.deliveryAuditReason === "migration-missing"
+            ? "Delivery audit unavailable: the notification delivery migration is not applied. Counts below are incomplete."
+            : "Delivery audit unavailable: delivery queries failed. Counts below are incomplete."
+        );
+      } else {
+        setAuditWarning(null);
+      }
+    } catch {
+      /* keep current rows */
+    }
+  };
 
   useEffect(() => {
     if (!authReady || !isAdmin) return;
@@ -129,8 +176,7 @@ export default function NotificationsPage() {
       await refreshHistory();
       setReady(true);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
+  }, [router, authReady, isAdmin, refreshHistory]);
 
   // Phase 18c — the dispatch event follows the picked template (same-name
   // event when one exists). Mandatory events lock their channels: the server
@@ -235,54 +281,6 @@ export default function NotificationsPage() {
       if (json?.success && json?.data?.estimate) setEstimate(json.data.estimate);
     } catch {
       // Estimate is advisory only; sending still validates server-side.
-    }
-  };
-
-  // Phase 18c-step3 — delivery history (persisted audit). Every number comes
-  // from the server (Notification + NotificationDelivery rows); filters are
-  // server-side and bounded. Detail lives at /admin/notifications/[id].
-  // Phase 18c-step5 (P0/P1): the server reports deliveryAudit ok|unavailable
-  // and rejects unappliable filters with DELIVERY_AUDIT_UNAVAILABLE (409).
-  // Both surface here as a warning — never as silent zeroes or silent
-  // unfiltered rows.
-  const refreshHistory = async (over?: { channel?: string; status?: string; priority?: string; event?: string; failedOnly?: boolean }) => {
-    try {
-      const c = over?.channel ?? fChannel;
-      const s = over?.status ?? fStatus;
-      const p = over?.priority ?? fPriority;
-      const e = over?.event ?? fEvent;
-      const f = over?.failedOnly ?? fFailedOnly;
-      const qs = new URLSearchParams({ limit: "100" });
-      if (c) qs.set("channel", c);
-      if (s) qs.set("status", s);
-      if (p) qs.set("priority", p);
-      if (e) qs.set("event", e);
-      if (f) qs.set("failedOnly", "1");
-      const res = await fetch(`/api/notifications?${qs.toString()}`, { cache: "no-store" });
-      const json = (await res.json()) as {
-        success?: boolean;
-        data?: { items?: AdminNotification[]; deliveryAudit?: string; deliveryAuditReason?: string };
-        error?: string;
-        code?: string;
-      };
-      if (!res.ok || !json?.success) {
-        if (json?.code === "DELIVERY_AUDIT_UNAVAILABLE") {
-          setAuditWarning(json?.error ?? "Delivery audit is unavailable for the requested filters.");
-        }
-        return;
-      }
-      if (Array.isArray(json?.data?.items)) setRows(json.data.items as AdminNotification[]);
-      if (json?.data?.deliveryAudit === "unavailable") {
-        setAuditWarning(
-          json?.data?.deliveryAuditReason === "migration-missing"
-            ? "Delivery audit unavailable: the notification delivery migration is not applied. Counts below are incomplete."
-            : "Delivery audit unavailable: delivery queries failed. Counts below are incomplete."
-        );
-      } else {
-        setAuditWarning(null);
-      }
-    } catch {
-      /* keep current rows */
     }
   };
 

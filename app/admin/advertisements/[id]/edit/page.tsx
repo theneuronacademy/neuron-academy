@@ -42,7 +42,7 @@ export default function EditAdPage() {
       loop: ad.loop,
       audioEnabled: ad.audioEnabled,
     });
-  }, [id, router]);
+  }, [id, router, authReady, isAdmin]);
 
   if (missing) {
     return (

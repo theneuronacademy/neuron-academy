@@ -67,8 +67,7 @@ export default function BatchesPage() {
         setReady(true);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router]);
+  }, [router, authReady, isAdmin, courseId]);
 
   const filtered = useMemo(
     () => rows.filter((r) => (status === "all" || r.status === status) && (!search.trim() || `${r.name} ${r.course} ${r.faculty}`.toLowerCase().includes(search.toLowerCase()))),

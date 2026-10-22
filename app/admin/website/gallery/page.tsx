@@ -65,7 +65,7 @@ export default function GalleryAdminPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(
     () => rows.filter((r) => (cat === "all" || r.category === cat) && (!search.trim() || r.title.toLowerCase().includes(search.toLowerCase()))),
