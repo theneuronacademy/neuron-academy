@@ -9,10 +9,24 @@ import { cn } from "@/lib/utils";
 
 const PORTAL_LINKS = [
   { href: "/scholarship-tests", label: "Scholarship tests" },
-  { href: "/student/login", label: "Student login" },
-  { href: "/faculty/login", label: "Faculty login" },
+  { href: "https://cmp.proctur.com/", label: "Student Portal", external: true },
   { href: "/admin/login", label: "Admin login" },
 ];
+
+function PortalLink({ link, className, onClick }: { link: { href: string; label: string; external?: boolean }; className?: string; onClick?: () => void }) {
+  if (link.external) {
+    return (
+      <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className={className} onClick={onClick}>
+        {link.label}
+      </a>
+    );
+  }
+  return (
+    <Link key={link.href} href={link.href} className={className} onClick={onClick}>
+      {link.label}
+    </Link>
+  );
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -83,9 +97,11 @@ export function Navbar() {
             </summary>
             <div className="absolute right-0 top-full z-50 mt-2 w-52 rounded-xl border border-silver-200 bg-white p-1.5 shadow-xl">
               {PORTAL_LINKS.map((link) => (
-                <Link key={link.href} href={link.href} className="block rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-brand-primary/5 hover:text-brand-primary">
-                  {link.label}
-                </Link>
+                <PortalLink
+                  key={link.href}
+                  link={link}
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-brand-primary/5 hover:text-brand-primary"
+                />
               ))}
             </div>
           </details>
@@ -115,9 +131,12 @@ export function Navbar() {
             ))}
             <div className="mt-2 grid grid-cols-2 gap-2 border-t border-silver-200 pt-3">
               {PORTAL_LINKS.map((link) => (
-                <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="rounded-lg border border-silver-200 px-3 py-2.5 text-center text-sm font-semibold text-neutral-700 transition hover:border-brand-primary/30 hover:bg-brand-primary/5 hover:text-brand-primary">
-                  {link.label}
-                </Link>
+                <PortalLink
+                  key={link.href}
+                  link={link}
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg border border-silver-200 px-3 py-2.5 text-center text-sm font-semibold text-neutral-700 transition hover:border-brand-primary/30 hover:bg-brand-primary/5 hover:text-brand-primary"
+                />
               ))}
             </div>
             <Link href="#contact" onClick={() => setOpen(false)} className="mt-2 rounded-xl bg-brand-primary px-4 py-3 text-center text-sm font-bold text-white shadow-primary">

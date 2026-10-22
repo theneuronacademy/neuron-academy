@@ -167,9 +167,6 @@ function read(rel: string): string {
   check("student nav has doubts", shell.includes("/student/doubts"));
   check("student nav has revision", shell.includes("/student/revision"));
   check("student shell has lang toggle", shell.includes("LangToggle"));
-  const fshell = read("components/faculty/FacultyShell.tsx");
-  check("faculty nav has timetable", fshell.includes("/faculty/timetable"));
-  check("faculty nav has doubts", fshell.includes("/faculty/doubts"));
   check("i18n falls back to english", read("lib/i18n.tsx").includes("?? STRINGS.en[k]"));
   check("manifest exists", existsSync(join(ROOT, "public/manifest.webmanifest")));
   check("icon exists", existsSync(join(ROOT, "public/icon.svg")));

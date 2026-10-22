@@ -11,7 +11,6 @@ import {
   Inbox,
   CalendarCheck,
   UserPlus,
-  UserRoundPlus,
   PlusCircle,
   Megaphone,
   ImagePlus,
@@ -173,7 +172,6 @@ export default function AdminDashboardPage() {
         <h3 className="text-sm font-extrabold tracking-widest text-muted">QUICK ACTIONS</h3>
         <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <QuickAction icon={UserPlus} label="Add Student" desc="Enroll a learner" onClick={() => router.push("/admin/students")} />
-          <QuickAction icon={UserRoundPlus} label="Add Faculty" desc="Onboard a mentor" onClick={() => router.push("/admin/faculty")} />
           <QuickAction icon={PlusCircle} label="Create Test" desc="Live / offline / practice" onClick={() => router.push("/admin/tests")} />
           <QuickAction icon={Megaphone} label="Publish Announcement" desc="Top running banner" onClick={() => router.push("/admin/website/announcements")} />
           <QuickAction icon={ImagePlus} label="Add Banner" desc="Promo without code" onClick={() => router.push("/admin/website/banners")} />

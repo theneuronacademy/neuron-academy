@@ -63,10 +63,9 @@ export function Footer() {
         <div>
           <p className="text-sm font-bold text-navy-950">Student resources</p>
           <ul className="mt-4 space-y-3 text-sm">
-            <li><Link href="/student/login" className="text-neutral-600 transition-colors hover:text-brand-primary">Student login</Link></li>
-            <li><Link href="/student/tests" className="text-neutral-600 transition-colors hover:text-brand-primary">Test platform</Link></li>
+            <li><a href="https://cmp.proctur.com/" target="_blank" rel="noreferrer" className="text-neutral-600 transition-colors hover:text-brand-primary">Student Portal</a></li>
+            <li><a href="https://cmp.proctur.com/" target="_blank" rel="noreferrer" className="text-neutral-600 transition-colors hover:text-brand-primary">Test Platform</a></li>
             <li><Link href="/scholarship-tests" className="text-neutral-600 transition-colors hover:text-brand-primary">Scholarship tests</Link></li>
-            <li><Link href="/faculty/login" className="text-neutral-600 transition-colors hover:text-brand-primary">Faculty login</Link></li>
             <li><Link href="/admin/login" className="text-neutral-600 transition-colors hover:text-brand-primary">Admin login</Link></li>
           </ul>
         </div>

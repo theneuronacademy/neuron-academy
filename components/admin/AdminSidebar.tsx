@@ -10,7 +10,6 @@ import {
   Database,
   BarChart3,
   Users,
-  GraduationCap,
   Layers,
   Megaphone,
   Image as ImageIcon,
@@ -61,7 +60,6 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
     label: "People",
     items: [
       { href: "/admin/students", label: "Students", icon: Users },
-      { href: "/admin/faculty", label: "Faculty", icon: GraduationCap },
       { href: "/admin/batches", label: "Batches", icon: Layers },
     ],
   },

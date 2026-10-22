@@ -11,20 +11,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const COOKIE = "neuron_session";
-const FACULTY_RESERVED = new Set([
-  "login",
-  "register",
-  "dashboard",
-  "batches",
-  "students",
-  "attendance",
-  "tests",
-  "results",
-  "analytics",
-  "notifications",
-  "profile",
-  "activity",
-]);
 
 function b64urlToBytes(s: string): Uint8Array<ArrayBuffer> {
   const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
@@ -79,18 +65,10 @@ export async function middleware(req: NextRequest) {
   // Public login/register pages always pass.
   if (
     pathname === "/admin/login" ||
-    pathname === "/faculty/login" ||
-    pathname === "/faculty/register" ||
     pathname === "/student/login" ||
     pathname === "/student/register"
   ) {
     return NextResponse.next();
-  }
-
-  // Public faculty profiles: /faculty/<slug> (single segment, not reserved) stay public.
-  if (pathname.startsWith("/faculty/")) {
-    const rest = pathname.slice("/faculty/".length);
-    if (rest && !rest.includes("/") && !FACULTY_RESERVED.has(rest)) return NextResponse.next();
   }
 
   // Without a usable secret no token can verify — treat every caller as
@@ -109,15 +87,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === "/faculty" || pathname.startsWith("/faculty/")) {
-    if (!role) return loginRedirect(req, "/faculty/login");
-    if (role !== "FACULTY" && role !== "ADMIN") return NextResponse.redirect(new URL("/", req.url));
-    return NextResponse.next();
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/faculty/:path*", "/student/:path*"],
+  matcher: ["/admin/:path*", "/student/:path*"],
 };

@@ -30,8 +30,13 @@ export default function WebsiteOverviewPage() {
   useEffect(() => {
     if (!authReady || !isAdmin) return;
     (async () => {
-      setSite(await getWebsiteStatus());
-      setReady(true);
+      try {
+        setSite(await getWebsiteStatus());
+      } catch {
+        setSite(null);
+      } finally {
+        setReady(true);
+      }
     })();
   }, [router, authReady, isAdmin]);
 
