@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
     Buffer.from(""), // placeholder — actual buffer sent by client to Cloudinary
     body.filename,
     body.category,
-    { resourceType: body.resourceType }
+    { resourceType: body.resourceType, fileSize: body.fileSize }
   );
 
   if (!sigResult.ok) return fail(sigResult.error, 400);

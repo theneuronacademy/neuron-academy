@@ -42,7 +42,7 @@ import {
 import { FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
 import type { Testimonial } from "@/data/testimonials";
-import { getLiveCourses, getLiveFaculty, getLiveGallery, getLiveShowcase, getLiveTestimonials } from "@/services/siteApi";
+import { getLiveCourses, getLiveFaculty, getLiveGallery, getLiveShowcase, getLiveTestimonials, getBooks, type LiveBookRow } from "@/services/siteApi";
 import { CONTACT } from "@/data/contact";
 import { RESULTS, type AcademyResult } from "@/data/results";
 import type { Course } from "@/data/courses";
@@ -210,12 +210,13 @@ export default function HomePage() {
   const [liveGallery, setLiveGallery] = useState<GalleryItem[] | null>(null);
   const [liveTestimonials, setLiveTestimonials] = useState<Testimonial[] | null>(null);
   const [liveWall, setLiveWall] = useState<{ rows: AcademyResult[] } | null>(null);
+  const [liveBooks, setLiveBooks] = useState<LiveBookRow[] | null>(null);
   const { content: hc, ready: hcReady } = useHomepageContent();
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const [c, f, g, t, w] = await Promise.all([getLiveCourses(), getLiveFaculty(), getLiveGallery(), getLiveTestimonials(), getLiveShowcase()]);
+        const [c, f, g, t, w, b] = await Promise.all([getLiveCourses(), getLiveFaculty(), getLiveGallery(), getLiveTestimonials(), getLiveShowcase(), getBooks()]);
         if (!mounted) return;
         // getLive* return null unless the database holds published rows, so a
         // swap always means fresher admin-published content. Shape-validate
@@ -280,6 +281,23 @@ export default function HomePage() {
               color: palette[i % palette.length],
             })),
           });
+        }
+        if (b && b.every((r) => typeof r.id === "string" && typeof r.title === "string")) {
+          setLiveBooks(b.map((r) => ({
+            id: String(r.id),
+            title: String(r.title),
+            description: String(r.description ?? ""),
+            author: String(r.author ?? ""),
+            subject: String(r.subject ?? ""),
+            className: String(r.className ?? ""),
+            category: String(r.category ?? ""),
+            coverImageUrl: String(r.coverImageUrl ?? ""),
+            pdfUrl: String(r.pdfUrl ?? ""),
+            externalUrl: String(r.externalUrl ?? ""),
+            visibleTo: String(r.visibleTo ?? "ALL"),
+            isActive: Boolean(r.isActive),
+            order: Number(r.order ?? 0),
+          })));
         }
       } catch {
         /* static fallbacks stay */
@@ -417,6 +435,71 @@ export default function HomePage() {
         {/* LEARNING PROCESS */}
         <section className="bg-background">
           <LearningProcess />
+        </section>
+
+        {/* BOOKS */}
+        <section id="books" className="relative overflow-hidden bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+            <Reveal>
+              <SectionHeader eyebrow="OUR BOOKS" title="Study books & resources" desc="Recommended books and study materials for entrance preparation." />
+            </Reveal>
+            {(liveBooks ?? []).length === 0 ? (
+              <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No books published yet.</p>
+            ) : (
+              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {(liveBooks ?? []).map((b, i) => (
+                  <Reveal key={b.id} delay={(i % 3) * 90} variant="pop">
+                    <article className="relative overflow-hidden rounded-2xl border border-silver-200 bg-white shadow-card">
+                      <div className="relative h-48 overflow-hidden">
+                        {b.coverImageUrl ? (
+                          <img src={b.coverImageUrl} alt={b.title} className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105" />
+                        ) : (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy-800 p-6 text-center">
+                            <BookOpen className="h-8 w-8 mb-3 text-white" />
+                            <p className="text-sm font-extrabold text-white">{b.title}</p>
+                          </div>
+                        )}
+                        <span className="absolute top-3 right-3 rounded-full bg-teal-500 px-2.5 py-1 text-[10px] font-extrabold text-white tracking-widest">
+                          {b.visibleTo === "ALL" ? "ALL STUDENTS" : "REGULAR ONLY"}
+                        </span>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-[15px] font-extrabold text-navy-700">{b.title}</h3>
+                        {b.author && (
+                          <p className="mt-0.5 text-[12px] text-muted">{b.author}</p>
+                        )}
+                        <p className="mt-2 text-[13px] leading-relaxed text-muted line-clamp-2">
+                          {b.description || "No description available."}
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {b.subject && <span className="text-[11px] font-bold text-brand-primary bg-brand-primary/10 px-2 py-1 rounded">{b.subject}</span>}
+                          {b.className && <span className="text-[11px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded">{b.className}</span>}
+                          {b.category && <span className="text-[11px] font-bold text-navy-700 bg-silver-100 px-2 py-1 rounded">{b.category}</span>}
+                        </div>
+                        <div className="mt-4 flex items-center justify-between">
+                          {b.pdfUrl || b.externalUrl ? (
+                            <a
+                              href={b.pdfUrl || b.externalUrl}
+                              target={b.externalUrl ? "_blank" : "_self"}
+                              rel={b.externalUrl ? "noopener noreferrer" : undefined}
+                              className="inline-flex items-center gap-2 rounded-xl bg-navy-700 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800"
+                            >
+                              {b.pdfUrl ? "View PDF" : "Visit Link"}
+                              <span className="text-[10px]">↗</span>
+                            </a>
+                          ) : (
+                            <span className="inline-flex items-center gap-2 rounded-xl bg-silver-100 px-4 py-2 text-sm font-bold text-navy-700">
+                              No link available
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+          </div>
         </section>
 
         {/* COURSES */}

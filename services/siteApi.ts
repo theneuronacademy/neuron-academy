@@ -217,6 +217,27 @@ export async function getFAQ(): Promise<Faq[]> {
   return FAQS;
 }
 
+export interface LiveBookRow {
+  id: string;
+  title: string;
+  description?: string;
+  author?: string;
+  subject?: string;
+  className?: string;
+  category?: string;
+  coverImageUrl?: string;
+  pdfUrl?: string;
+  externalUrl?: string;
+  visibleTo?: string;
+  isActive?: boolean;
+  order?: number;
+}
+
+/** Published books for the public book section. */
+export async function getBooks(): Promise<LiveBookRow[] | null> {
+  return pickDb<LiveBookRow>(await apiItems("/api/books"));
+}
+
 /** Active popup inventory for the admin-ready popup model. */
 export async function getPopups(): Promise<PopupContent[]> {
   return getVisibleAds()

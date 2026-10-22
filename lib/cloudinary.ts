@@ -148,6 +148,8 @@ export async function generateSignedUploadUrl(
     resourceType?: "image" | "video";
     // Override the default folder; if omitted, uses neuron-academy/<category>
     folderOverride?: string;
+    // File size in bytes (used when buffer is a placeholder for client-direct upload)
+    fileSize?: number;
   } = {}
 ): Promise<{
   ok: true;
@@ -163,9 +165,9 @@ export async function generateSignedUploadUrl(
 
   const resourceType: "image" | "video" = options.resourceType ?? "image";
 
-  // Validate the file first (using the buffer passed; in client-direct flow,
-  // the real validation happens on Cloudinary's side too)
-  const validationError = validateCloudinaryFile(buffer, filename, resourceType);
+  // Validate using extension and size from metadata (buffer may be empty placeholder
+  // when generating a signed URL for client-direct upload).
+  const validationError = validateCloudinaryFileFromMetadata(buffer, filename, resourceType, options.fileSize);
   if (validationError) return { ok: false, error: validationError };
 
   try {
@@ -199,6 +201,51 @@ export async function generateSignedUploadUrl(
     console.error("[Cloudinary] Error generating signed upload URL:", err);
     return { ok: false, error: "Failed to generate upload signature." };
   }
+}
+
+/**
+ * Validate file using metadata (extension + size) rather than buffer content.
+ * Used when the buffer is a placeholder (empty) for client-direct uploads.
+ * Falls back to full buffer validation when buffer has content.
+ */
+function validateCloudinaryFileFromMetadata(
+  buffer: Buffer,
+  filename: string,
+  resourceType: "image" | "video",
+  fileSize?: number
+): string | null {
+  const ext = filename.split(".").pop()?.toLowerCase() ?? "";
+  
+  // Validate extension
+  if (resourceType === "image") {
+    if (!ALLOWED_IMAGE_EXTS.has(ext)) {
+      return `Only image files (JPG, PNG, WebP, AVIF, GIF) are allowed.`;
+    }
+    // Magic-byte check only when we have actual buffer content
+    if (buffer.length > 0) {
+      const isJpeg = buffer.length > 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+      const isPng = buffer.length > 4 && buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x47;
+      const isWebp =
+        buffer.length > 12 && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP";
+      const isAvif =
+        buffer.length > 4 && buffer[0] === 0x00 && buffer[1] === 0x00 && buffer[2] === 0x00 && buffer[3] === 0x0c;
+      if (!isJpeg && !isPng && !isWebp && !isAvif) {
+        return "File content is not a valid image.";
+      }
+    }
+    if (fileSize !== undefined && fileSize > CLOUDINARY_MAX_IMAGE_BYTES) {
+      return `Image must be under 5 MB (received ${Math.round(fileSize / 1024 / 1024)} MB).`;
+    }
+  } else if (resourceType === "video") {
+    if (!ALLOWED_VIDEO_EXTS.has(ext)) {
+      return `Only video files (MP4, MOV, AVI, WebM, MKV, WMV, FLV) are allowed.`;
+    }
+    if (fileSize !== undefined && fileSize > CLOUDINARY_MAX_VIDEO_BYTES) {
+      return `Video must be under 100 MB (received ${Math.round(fileSize / 1024 / 1024)} MB).`;
+    }
+  }
+
+  return null;
 }
 
 /**

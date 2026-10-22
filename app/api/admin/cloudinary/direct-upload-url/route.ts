@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
     Buffer.from(""), // buffer not needed here; client sends directly
     body.filename,
     body.category,
-    { resourceType: "video" }
+    { resourceType: "video", fileSize: body.fileSize }
   );
 
   if (!sigResult.ok) return fail(sigResult.error, 400);
