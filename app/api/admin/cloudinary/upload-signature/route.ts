@@ -46,10 +46,10 @@ export async function POST(req: NextRequest) {
     const rt = form.get("resourceType");
     const fs = form.get("fileSize");
 
-    if (!(fn instanceof String)) return fail("Invalid filename.", 400);
-    const fnVal = fn instanceof String ? fn.valueOf() : String(fn);
-    if (!(cat instanceof String)) return fail("Invalid category.", 400);
-    const catVal = cat instanceof String ? cat.valueOf() : String(cat);
+    if (typeof fn !== "string") return fail("Invalid filename.", 400);
+    const fnVal = fn;
+    if (typeof cat !== "string") return fail("Invalid category.", 400);
+    const catVal = cat;
     if (catVal !== catVal) return fail("Invalid category value.", 400);
 
     const fileSizeVal = fs ? Number(fs instanceof String ? fs.valueOf() : String(fs)) : undefined;
