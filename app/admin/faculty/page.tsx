@@ -11,12 +11,13 @@ import { AdminModal, AdminDrawer } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getFaculty } from "@/services/adminApi";
 import type { AdminFaculty } from "@/data/admin";
 
 export default function FacultyAdminPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<AdminFaculty[]>([]);
   const [search, setSearch] = useState("");
@@ -35,16 +36,13 @@ export default function FacultyAdminPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     (async () => {
       // Real fetch: GET /api/faculty (service falls back to demo data when DB is unavailable)
       setRows(await getFaculty());
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(
     () =>

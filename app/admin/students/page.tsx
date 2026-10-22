@@ -11,7 +11,7 @@ import { AdminModal, AdminDrawer } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { cn } from "@/lib/utils";
 
 interface Row {
@@ -89,11 +89,10 @@ export default function StudentsPage() {
     }
   }
 
+  const { ready: authReady, isAdmin } = useAdminAuth();
+
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     (async () => {
       await load();
       // Deep link: /admin/students?batch=<name> preselects the batch filter.
@@ -105,7 +104,7 @@ export default function StudentsPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(
     () =>

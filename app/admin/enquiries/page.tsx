@@ -8,7 +8,7 @@ import { AdminTable } from "@/components/admin/AdminTable";
 import { AdminStatusBadge, statusToneFor } from "@/components/admin/AdminStatusBadge";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, FilterBar, AdminToolbar } from "@/components/admin/SearchBar";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getEnquiries } from "@/services/adminApi";
 import type { AdminEnquiry, EnquiryStatus } from "@/data/admin";
 
@@ -16,6 +16,7 @@ const STATUSES: EnquiryStatus[] = ["New", "Contacted", "Converted", "Closed"];
 
 export default function EnquiriesPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<AdminEnquiry[]>([]);
   const [search, setSearch] = useState("");
@@ -23,10 +24,7 @@ export default function EnquiriesPage() {
   const [saved, setSaved] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     (async () => {
       // Real fetch: GET /api/enquiries, falling back to demo service data when DB is unavailable.
       try {
@@ -43,7 +41,7 @@ export default function EnquiriesPage() {
         setReady(true);
       }
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(
     () =>

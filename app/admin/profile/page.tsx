@@ -4,16 +4,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { LoadingState } from "@/components/admin/AdminStates";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 /** Phase 17 — admin identity comes from the server session, never demo constants. */
 export default function AdminProfilePage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [me, setMe] = useState<{ name: string; email: string; role: string } | null>(null);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) router.replace("/admin/login");
+    if (!authReady || !isAdmin) return;
     (async () => {
       try {
         const res = await fetch("/api/auth/session", { cache: "no-store" });
@@ -27,7 +28,7 @@ export default function AdminProfilePage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   if (!ready) {
     return (

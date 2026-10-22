@@ -4,16 +4,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdvertisementForm, defaultFormValue, type AdFormValue } from "@/components/admin/AdvertisementForm";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { createAd } from "@/lib/mockStore";
 
 export default function NewAdPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ok, setOk] = useState(false);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) router.replace("/admin/login");
-  }, [router]);
+    if (!authReady || !isAdmin) return;
+  }, [router, authReady, isAdmin]);
 
   const submit = (v: AdFormValue) => {
     createAd({ ...v });

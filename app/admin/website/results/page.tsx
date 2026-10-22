@@ -1,10 +1,5 @@
 "use client";
 
-// Homepage results showcase CMS (toppers wall). Admin curates display-only
-// rows: a student display name + achievement + optional score/photo. No phone,
-// email, login identity or marks history is stored here. A row goes public
-// only with confirmed consent AND active visibility (server-enforced).
-
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, CheckCircle2 } from "lucide-react";
@@ -15,7 +10,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { SearchBar, AdminToolbar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface Row {
   id: string;
@@ -32,6 +27,7 @@ const EXAMS = ["JEE Main", "JEE Advanced", "NEET", "AMU", "JMI"];
 
 export default function WebResultsPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<Row[]>([]);
   const [search, setSearch] = useState("");
@@ -49,10 +45,7 @@ export default function WebResultsPage() {
   const [pageError, setPageError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     (async () => {
       try {
         const res = await fetch("/api/showcase", { cache: "no-store" });
@@ -78,7 +71,7 @@ export default function WebResultsPage() {
       }
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const filtered = useMemo(() => rows.filter((r) => !search.trim() || `${r.name} ${r.exam}`.toLowerCase().includes(search.toLowerCase())), [rows, search]);
 

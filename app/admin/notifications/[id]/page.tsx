@@ -6,7 +6,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminStatusBadge, statusToneFor } from "@/components/admin/AdminStatusBadge";
 import { AdminTable } from "@/components/admin/AdminTable";
 import { LoadingState } from "@/components/admin/AdminStates";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface DetailItem {
   id: string;
@@ -52,6 +52,7 @@ interface Summary {
 export default function NotificationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [item, setItem] = useState<DetailItem | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
@@ -103,13 +104,10 @@ export default function NotificationDetailPage({ params }: { params: Promise<{ i
   };
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     void load().then(() => setReady(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router, id]);
+  }, [router, id, authReady, isAdmin]);
 
   if (!ready) {
     return (

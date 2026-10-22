@@ -7,7 +7,7 @@ import { BookOpen, Presentation, Home, Megaphone, GalleryHorizontal, Star, Troph
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { LoadingState } from "@/components/admin/AdminStates";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getWebsiteStatus } from "@/services/adminApi";
 
 const SECTIONS = [
@@ -23,19 +23,17 @@ const SECTIONS = [
 
 export default function WebsiteOverviewPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [site, setSite] = useState<{ online: boolean; lastUpdate: string; activeBanners: number; activePopups: number } | null>(null);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     (async () => {
       setSite(await getWebsiteStatus());
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   if (!ready) {
     return (

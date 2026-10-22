@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdvertisementTable } from "@/components/admin/AdvertisementTable";
 import { AdvertisementPopup } from "@/components/website/AdvertisementPopup";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getAllAds, deleteAd, toggleAdActive, filterAds } from "@/lib/mockStore";
 import type { AdFilter, Advertisement } from "@/lib/types";
 
@@ -15,6 +15,7 @@ const FILTERS: AdFilter[] = ["all", "active", "inactive", "scheduled", "expired"
 
 export default function AdminAdsPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ads, setAds] = useState<Advertisement[]>([]);
   const [filter, setFilter] = useState<AdFilter>("all");
   const [confirmId, setConfirmId] = useState<string | null>(null);
@@ -24,14 +25,11 @@ export default function AdminAdsPage() {
   const load = () => setAds(getAllAds());
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     load();
     window.addEventListener("neuron-ads-updated", load);
     return () => window.removeEventListener("neuron-ads-updated", load);
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   const visible = filterAds(ads, filter);
 

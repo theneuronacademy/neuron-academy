@@ -8,7 +8,7 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { cn } from "@/lib/utils";
 
 interface Book {
@@ -26,6 +26,7 @@ const EMPTY: Partial<Book> = { title: "", description: "", author: "", subject: 
 /** Phase 14 — admin book library management (CRUD + activate + reorder). */
 export default function AdminBooksPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<Book[]>([]);
   const [modal, setModal] = useState(false);
@@ -48,15 +49,12 @@ export default function AdminBooksPage() {
   }
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     (async () => {
       await load();
       setReady(true);
     })();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   function openNew() {
     setEditing(null);

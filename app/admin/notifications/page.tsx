@@ -10,7 +10,7 @@ import { AdminStatusBadge, statusToneFor } from "@/components/admin/AdminStatusB
 import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getNotifications } from "@/services/adminApi";
 import type { AdminNotification } from "@/data/admin";
 
@@ -73,6 +73,7 @@ function newIdempotencyKey(): string {
 
 export default function NotificationsPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<AdminNotification[]>([]);
   const [audiences, setAudiences] = useState<string[]>(DEFAULT_AUDIENCES);
@@ -97,6 +98,7 @@ export default function NotificationsPage() {
   const [fChannel, setFChannel] = useState("");
   const [fStatus, setFStatus] = useState("");
   const [fPriority, setFPriority] = useState("");
+
   const [fEvent, setFEvent] = useState("");
   const [fFailedOnly, setFFailedOnly] = useState(false);
   // Phase 18c-step5 (P0) — delivery-audit availability. When the server flags
@@ -105,10 +107,7 @@ export default function NotificationsPage() {
   const [auditWarning, setAuditWarning] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     (async () => {
       // Real fetch: GET /api/batches for the audience list (fallback to defaults when DB is unavailable).
       try {

@@ -1,17 +1,14 @@
 "use client";
 
-// C5 canonicalization — the admin test list is API-authoritative ONLY.
-// Reads come from GET /api/tests (ADMIN sees full rows); duplicate runs
-// GET detail → POST create (DRAFT) → POST questions; delete runs
-// DELETE /api/tests/[id]. No localStorage test state remains here.
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Upload, Database, BarChart3, Search, Eye, Pencil, Copy, Trash2, Megaphone } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { TestStatusBadge } from "@/components/admin/TestStatusBadge";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { LoadingState } from "@/components/admin/AdminStates";
+import { Button } from "@/components/ui/primitives";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import type { TestStatus } from "@/lib/testTypes";
 
 interface ApiListTest {
@@ -38,6 +35,7 @@ function badgeStatus(s: string): TestStatus {
 
 export default function AdminTestsPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [search, setSearch] = useState("");
   const [tests, setTests] = useState<ApiListTest[]>([]);
@@ -61,197 +59,253 @@ export default function AdminTestsPage() {
   }
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     setReady(true);
     void load();
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   // Duplicate safely through the existing API: read the source test with
   // its questions, create a DRAFT copy, then copy questions one by one.
   async function duplicate(id: string) {
     setBusy(id);
-    setError(null);
     try {
-      const dRes = await fetch(`/api/tests/${id}`, { cache: "no-store" });
-      const dJson = await dRes.json().catch(() => null);
-      const src = dJson?.success === true ? dJson.data?.item : null;
-      if (!src) throw new Error("source");
-      const cRes = await fetch("/api/tests", {
+      const [srcRes, qRes] = await Promise.all([
+        fetch(`/api/tests/${id}`, { cache: "no-store" }),
+        fetch(`/api/tests/${id}/questions`, { cache: "no-store" }),
+      ]);
+      const srcJson = await srcRes.json().catch(() => null);
+      const qJson = await qRes.json().catch(() => null);
+      if (!srcRes.ok || !srcJson?.success || !srcJson.data) throw new Error("Could not read source test.");
+      const src = srcJson.data as ApiListTest & { questions?: any[] };
+      const createRes = await fetch("/api/tests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: `${String(src.title ?? "Test")} (Copy)`,
-          description: src.description ?? undefined,
-          batchId: src.batchId ?? undefined,
+          title: src.title,
+          description: src.description,
           type: src.type,
           duration: src.duration,
-          totalMarks: src.totalMarks,
           status: "DRAFT",
-          questionOrder: src.questionOrder,
-          optionOrder: src.optionOrder,
+          batchId: src.batchId,
         }),
+        cache: "no-store",
       });
-      const cJson = await cRes.json().catch(() => null);
-      const created = cJson?.success === true ? cJson.data?.item : null;
-      if (!created) throw new Error("create");
-      const qs = Array.isArray(src.questions) ? src.questions : [];
-      for (const q of qs) {
-        await fetch("/api/questions", {
+      const createJson = await createRes.json().catch(() => null);
+      if (!createRes.ok || !createJson?.success || !createJson.data) throw new Error(createJson?.error ?? "Duplicate failed.");
+      const newId = String(createJson.data.id);
+      const questions = (qJson?.success && Array.isArray(qJson.data?.items)) ? qJson.data.items : [];
+      for (const q of questions) {
+        await fetch(`/api/tests/${newId}/questions`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            testId: created.id,
-            questionText: q.questionText,
-            optionA: q.optionA ?? undefined,
-            optionB: q.optionB ?? undefined,
-            optionC: q.optionC ?? undefined,
-            optionD: q.optionD ?? undefined,
-            optionE: q.optionE ?? undefined,
-            correctAnswer: q.correctAnswer ?? undefined,
+            stem: q.stem,
+            options: q.options,
+            answerKey: q.answerKey,
+            explanation: q.explanation,
             marks: q.marks,
             negativeMarks: q.negativeMarks,
-            explanation: q.explanation ?? undefined,
-            order: q.order,
-            subject: q.subject ?? undefined,
+            subject: q.subject,
+            topic: q.topic,
+            difficulty: q.difficulty,
+            tags: q.tags,
           }),
+          cache: "no-store",
         });
       }
-      await load();
-    } catch {
-      setError("Duplicate failed.");
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Duplicate failed.");
     } finally {
       setBusy(null);
     }
   }
 
-  async function remove(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}"? Questions are deleted with it.`)) return;
+  async function setStatus(id: string, status: string) {
     setBusy(id);
-    setError(null);
     try {
-      const res = await fetch(`/api/tests/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("delete");
-      await load();
-    } catch {
-      setError("Delete failed.");
+      const res = await fetch(`/api/tests/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: status.toUpperCase() }),
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || json?.success !== true) throw new Error(json?.error ?? "Status change failed.");
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Status change failed.");
     } finally {
       setBusy(null);
     }
   }
 
-  if (!ready) return <div className="flex min-h-screen items-center justify-center text-sm font-bold text-muted">Loading tests…</div>;
+  async function remove(id: string) {
+    if (!window.confirm("Delete this test permanently?")) return;
+    setBusy(id);
+    try {
+      const res = await fetch(`/api/tests/${id}`, { method: "DELETE", cache: "no-store" });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || json?.success === false) throw new Error(json?.error ?? "Delete failed.");
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Delete failed.");
+    } finally {
+      setBusy(null);
+    }
+  }
 
-  const lower = (s: string) => s.toLowerCase();
-  const count = (s: string) => tests.filter((t) => (s === "all" ? true : lower(t.status) === s)).length;
-  const filtered = tests.filter((t) => !search.trim() || `${t.title} ${t.type}`.toLowerCase().includes(search.toLowerCase()));
+  async function publishResults(id: string) {
+    setBusy(id);
+    try {
+      const res = await fetch(`/api/tests/${id}/publish-results`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok || json?.success !== true) throw new Error(json?.error ?? "Publish failed.");
+      setSaved("Results published for this test.");
+      setTimeout(() => setSaved(null), 3000);
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Publish failed.");
+    } finally {
+      setBusy(null);
+    }
+  }
 
-  const stats = [
-    { label: "Total Tests", value: tests.length },
-    { label: "Draft Tests", value: count("draft") },
-    { label: "Scheduled", value: count("scheduled") },
-    { label: "Live / Published", value: count("live") + count("published") },
-    { label: "Completed", value: count("completed") },
-    { label: "Total Questions", value: tests.reduce((n, t) => n + (t._count?.questions ?? 0), 0) },
-  ];
+  const filtered = tests.filter((t) => !search.trim() || t.title.toLowerCase().includes(search.toLowerCase()));
+
+  const [saved, setSaved] = useState<string | null>(null);
+
+  if (!ready) {
+    return (
+      <AdminLayout title="Tests" subtitle="Academic → Tests">
+        <LoadingState message="Loading tests…" />
+      </AdminLayout>
+    );
+  }
 
   return (
-    <AdminLayout title="Tests" subtitle="PDF → questions → test → student result">
-      {error ? <p className="mb-4 rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">{error}</p> : null}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
-            <p className="text-[11px] font-bold tracking-widest text-muted">{s.label.toUpperCase()}</p>
-            <p className="mt-1 text-3xl font-extrabold text-navy-700">{s.value}</p>
+    <AdminLayout title="Tests" subtitle={`${filtered.length} of ${tests.length} tests`}>
+      <div className="flex flex-col gap-4">
+        <div className="rounded-card border border-silver-200 bg-white p-4 shadow-card">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search tests…"
+                  className="w-72 pl-10 pr-4 py-2 rounded-xl border border-silver-300 text-sm focus:border-teal-500 focus:outline-none"
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link href="/admin/tests/new">
+                <Button variant="primary" size="sm"><Plus className="h-4 w-4 mr-2" /> Create Test</Button>
+              </Link>
+            </div>
           </div>
-        ))}
-      </div>
-
-      <div className="mt-4 grid gap-3 rounded-card bg-navy-800 p-5 text-white sm:grid-cols-2 lg:grid-cols-4">
-        <Link href="/admin/tests/new" className="rounded-xl bg-crimson px-4 py-2.5 text-center text-sm font-bold hover:bg-crimson-bright">
-          <Plus className="mr-1 inline h-4 w-4" />Create Test
-        </Link>
-        <Link href="/admin/tests/from-pdf" className="rounded-xl bg-teal-500 px-4 py-2.5 text-center text-sm font-bold hover:bg-teal-400">
-          <Upload className="mr-1 inline h-4 w-4" />Upload PDF
-        </Link>
-        <Link href="/admin/question-bank" className="rounded-xl bg-white/10 px-4 py-2.5 text-center text-sm font-bold ring-1 ring-white/20 hover:bg-white/20">
-          <Database className="mr-1 inline h-4 w-4" />Question Bank
-        </Link>
-        <Link href="/admin/results" className="rounded-xl bg-white/10 px-4 py-2.5 text-center text-sm font-bold ring-1 ring-white/20 hover:bg-white/20">
-          <BarChart3 className="mr-1 inline h-4 w-4" />View Results ({resultCount})
-        </Link>
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-extrabold text-navy-700">Recent Tests</h2>
-        <label className="flex items-center gap-2 rounded-xl border border-silver-300 bg-white px-3 py-2 text-sm">
-          <Search className="h-4 w-4 text-muted" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search tests…" aria-label="Search tests" className="bg-transparent outline-none" />
-        </label>
-      </div>
-
-      {filtered.length === 0 ? (
-        <div className="mt-4 rounded-card border border-dashed border-silver-300 bg-white p-10 text-center">
-          <p className="text-lg font-extrabold text-navy-700">No tests created yet.</p>
-          <p className="mt-1 text-sm text-muted">Upload a PDF to create your first test.</p>
-          <Link href="/admin/tests/from-pdf" className="mt-4 inline-block rounded-xl bg-crimson px-5 py-2.5 text-sm font-bold text-white">Create Test From PDF</Link>
         </div>
-      ) : (
-        <div className="mt-4 overflow-x-auto rounded-card border border-silver-200 bg-white shadow-card">
-          <table className="w-full min-w-[860px] text-left text-sm">
-            <thead>
-              <tr className="border-b border-silver-200 bg-silver-50 text-[11px] tracking-widest text-muted">
-                <th className="px-4 py-3 font-bold">TEST NAME</th>
-                <th className="px-4 py-3 font-bold">QUESTIONS</th>
-                <th className="px-4 py-3 font-bold">DURATION</th>
-                <th className="px-4 py-3 font-bold">STATUS</th>
-                <th className="px-4 py-3 font-bold">DATE</th>
-                <th className="px-4 py-3 text-right font-bold">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((t) => (
-                <tr key={t.id} className="border-b border-silver-100 last:border-0 hover:bg-silver-50/60">
-                  <td className="px-4 py-3">
-                    <p className="font-extrabold text-navy-700">{t.title}</p>
-                    <p className="text-[12px] text-muted">{t.type} • {t.batch?.name ?? "Open"}</p>
-                  </td>
-                  <td className="px-4 py-3 font-bold">{t._count?.questions ?? 0}</td>
-                  <td className="px-4 py-3">{t.duration} min</td>
-                  <td className="px-4 py-3"><TestStatusBadge status={badgeStatus(t.status)} /></td>
-                  <td className="px-4 py-3 text-[12px] text-muted">{new Date(t.createdAt).toLocaleDateString()}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-1.5">
-                      <Link href={`/admin/tests/${t.id}/preview`} aria-label={`Preview ${t.title}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Eye className="h-4 w-4" /></Link>
-                      <Link href={`/admin/tests/${t.id}/configure`} aria-label={`Edit ${t.title}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Pencil className="h-4 w-4" /></Link>
-                      <button
-                        onClick={() => void duplicate(t.id)}
-                        disabled={busy === t.id}
-                        aria-label={`Duplicate ${t.title}`}
-                        className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500 disabled:opacity-50"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </button>
-                      <Link href="/admin/results" aria-label={`Results for ${t.title}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Megaphone className="h-4 w-4" /></Link>
-                      <button
-                        onClick={() => void remove(t.id, t.title)}
-                        disabled={busy === t.id}
-                        aria-label={`Delete ${t.title}`}
-                        className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50 disabled:opacity-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+
+        {error && (
+          <p className="rounded-xl bg-crimson-50 px-4 py-3 text-sm font-bold text-crimson" role="alert">{error}</p>
+        )}
+        {saved && (
+          <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700">{saved}</p>
+        )}
+
+        {filtered.length === 0 ? (
+          <div className="rounded-card border border-silver-200 bg-white p-8 text-center shadow-card">
+            <Database className="mx-auto h-12 w-12 text-muted" />
+            <p className="mt-3 text-lg font-extrabold text-navy-700">No tests found</p>
+            <p className="mt-1 text-muted">Create your first test or adjust the search.</p>
+          </div>
+        ) : (
+          <div className="rounded-card border border-silver-200 bg-white shadow-card overflow-hidden">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-silver-50 border-b border-silver-200">
+                <tr>
+                  <th className="px-4 py-3 font-extrabold text-navy-700">Test</th>
+                  <th className="px-4 py-3 font-extrabold text-navy-700">Type</th>
+                  <th className="px-4 py-3 font-extrabold text-navy-700">Duration</th>
+                  <th className="px-4 py-3 font-extrabold text-navy-700">Batch</th>
+                  <th className="px-4 py-3 font-extrabold text-navy-700">Questions</th>
+                  <th className="px-4 py-3 font-extrabold text-navy-700">Status</th>
+                  <th className="px-4 py-3 font-extrabold text-navy-700">Created</th>
+                  <th className="px-4 py-3 font-extrabold text-navy-700 text-right pr-4">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <p className="mt-3 text-[12px] text-muted">Showing {filtered.length} of {tests.length} tests.</p>
+              </thead>
+              <tbody>
+                {filtered.map((t) => (
+                  <tr key={t.id} className="border-b border-silver-100 hover:bg-silver-50">
+                    <td className="px-4 py-3 font-bold text-navy-700">{t.title}</td>
+                    <td className="px-4 py-3">
+                      <span className="rounded-full px-2.5 py-1 text-[10px] font-extrabold tracking-widest bg-teal-50 text-teal-700">{t.type}</span>
+                    </td>
+                    <td className="px-4 py-3 text-muted">{t.duration} min</td>
+                    <td className="px-4 py-3 text-muted">{t.batch?.name ?? "—"}</td>
+                    <td className="px-4 py-3 font-bold text-navy-700">{t._count?.questions ?? 0}</td>
+                    <td className="px-4 py-3"><TestStatusBadge status={badgeStatus(t.status)} /></td>
+                    <td className="px-4 py-3 text-muted">{new Date(t.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</td>
+                    <td className="px-4 py-3 text-right pr-4">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link href={`/admin/tests/${t.id}/configure`}>
+                          <button className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500" aria-label={`Configure ${t.title}`}>
+                            <Eye className="h-4 w-4" />
+                          </button>
+                        </Link>
+                        <Link href={`/admin/tests/${t.id}/edit`}>
+                          <button className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500" aria-label={`Edit ${t.title}`}>
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                        </Link>
+                        <button onClick={() => duplicate(t.id)} disabled={busy === t.id} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500 disabled:opacity-50" aria-label={`Duplicate ${t.title}`}>
+                          <Copy className="h-4 w-4" />
+                        </button>
+                        {t.status !== "PUBLISHED" && t.status !== "LIVE" && t.status !== "COMPLETED" ? (
+                          <>
+                            <button
+                              onClick={() => setStatus(t.id, "PUBLISHED")}
+                              disabled={busy === t.id}
+                              className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-[12px] font-bold text-teal-700 disabled:opacity-50"
+                            >
+                              Publish
+                            </button>
+                            <button
+                              onClick={() => setStatus(t.id, "SCHEDULED")}
+                              disabled={busy === t.id}
+                              className="rounded-lg border border-silver-300 px-3 py-2 text-[12px] font-bold text-navy-700 disabled:opacity-50"
+                            >
+                              Schedule
+                            </button>
+                          </>
+                        ) : null}
+                        {t.status === "COMPLETED" && resultCount > 0 ? (
+                          <button
+                            onClick={() => publishResults(t.id)}
+                            disabled={busy === t.id}
+                            className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[12px] font-bold text-emerald-700 disabled:opacity-50"
+                          >
+                            <Megaphone className="h-4 w-4 inline mr-1" /> Publish Results
+                          </button>
+                        ) : null}
+                        <button onClick={() => remove(t.id)} disabled={busy === t.id} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50 disabled:opacity-50" aria-label={`Delete ${t.title}`}>
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </AdminLayout>
   );
 }

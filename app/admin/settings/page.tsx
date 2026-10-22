@@ -6,10 +6,11 @@ import { CheckCircle2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { LoadingState } from "@/components/admin/AdminStates";
 import { Button } from "@/components/ui/primitives";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [academy, setAcademy] = useState("Neuron Academy");
   const [phone, setPhone] = useState("+91 97119 17317");
@@ -17,12 +18,9 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     setReady(true);
-  }, [router]);
+  }, [router, authReady, isAdmin]);
 
   if (!ready) {
     return (

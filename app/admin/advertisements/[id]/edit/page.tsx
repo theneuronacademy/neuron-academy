@@ -4,22 +4,20 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdvertisementForm, type AdFormValue } from "@/components/admin/AdvertisementForm";
-import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getAdById, updateAd } from "@/lib/mockStore";
 
 export default function EditAdPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const { ready: authReady, isAdmin } = useAdminAuth();
   const id = params.id;
   const [initial, setInitial] = useState<AdFormValue | null>(null);
   const [ok, setOk] = useState(false);
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
-    if (!isAdminAuthenticated()) {
-      router.replace("/admin/login");
-      return;
-    }
+    if (!authReady || !isAdmin) return;
     const ad = getAdById(id);
     if (!ad) {
       setMissing(true);
