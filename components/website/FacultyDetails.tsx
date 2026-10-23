@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { X } from "lucide-react";
 import { SmartImage } from "@/lib/siteImages";
 import { CONTACT } from "@/data/contact";
@@ -7,6 +8,13 @@ import type { FacultyMember } from "@/data/faculty";
 
 /** Full faculty profile dialog (FacultyDetails). */
 export function FacultyDetails({ member, onClose }: { member: FacultyMember; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
   return (
     <div className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-800/70 p-4 backdrop-blur-sm sm:items-center" role="dialog" aria-modal="true" aria-label={`${member.name} profile`} onClick={onClose}>
       <div className="w-full max-w-md overflow-hidden rounded-card bg-white shadow-2xl animate-slide-up" onClick={(e) => e.stopPropagation()}>

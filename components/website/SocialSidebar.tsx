@@ -79,8 +79,8 @@ export function SocialSidebar() {
           </a>
         </div>
       </div>
-      {/* Mobile: compact horizontal bottom-right */}
-      <div className="fixed bottom-4 right-4 z-40 flex gap-2 md:hidden">
+      {/* Mobile: compact horizontal row, bottom-left (mobile action bar sits bottom-right) */}
+      <div className="fixed bottom-20 left-4 z-40 flex gap-2 md:hidden">
         {SOCIAL_LINKS.slice(0, 3).map((s) => (
           <a key={s.label} href={s.href} target="_blank" rel="noreferrer" aria-label={s.label} className="rounded-full bg-navy-700 p-3 text-white shadow-card">
             {ICONS[s.icon]}

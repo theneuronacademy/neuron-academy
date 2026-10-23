@@ -35,6 +35,7 @@ function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) 
           ref={videoRef}
           src={ad.mediaUrl}
           poster={ad.posterUrl || undefined}
+          preload="metadata"
           autoPlay={ad.autoplay !== false}
           muted={muted}
           loop={ad.loop !== false}
@@ -132,7 +133,7 @@ export function Hero() {
               Explore courses <ArrowRight className="h-4 w-4" />
             </a>
             <a href="#contact" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 bg-white px-5 py-3.5 text-sm font-bold text-navy-900 transition hover:border-brand-primary/30 hover:bg-brand-primary/5 hover:text-brand-primary">
-              <Phone className="h-4 w-4" /> Talk to admissions
+              <Phone className="h-4 w-4" /> Book a free demo class
             </a>
           </div>
           <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-neutral-600">

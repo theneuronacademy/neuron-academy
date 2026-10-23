@@ -392,6 +392,28 @@ label {
 }
 
 /* ==========================================================================
+   Skip to Content Link (keyboard accessibility)
+   ========================================================================== */
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: -64px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background-color: #0a1d50;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 12px;
+}
+
+/* ==========================================================================
    Dark Mode Specific Adjustments
    ========================================================================== */
 .dark .bg-white {

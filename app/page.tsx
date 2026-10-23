@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BookOpen, Users, FileText, Target, MonitorPlay, Bell, CheckCircle2,
   Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight,
@@ -14,6 +14,7 @@ import { Navbar } from "@/components/website/Navbar";
 import { TopRunningBanner } from "@/components/website/TopRunningBanner";
 import { Hero } from "@/components/website/Hero";
 import { AdvertisementPopup } from "@/components/website/AdvertisementPopup";
+import { MobileActionBar } from "@/components/website/MobileActionBar";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
 import { SocialSidebar } from "@/components/website/SocialSidebar";
 import { EnquireFloat } from "@/components/website/EnquireFloat";
@@ -65,6 +66,8 @@ const WHY = [
   { t: "Digital practice tools", d: "Use online tests and review results from the student platform." },
 ];
 
+const STUDENT_PORTAL_URL = "https://estudde.com/";
+
 function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
   const [active, setActive] = useState<number | null>(null);
   const [cat, setCat] = useState<string>("All");
@@ -72,6 +75,17 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
   const cats = ["All", ...Array.from(new Set(items.map((g) => g.category).filter(Boolean)))];
   const shown = cat === "All" ? items : items.filter((g) => g.category === cat);
   const activeItem = active != null ? shown[active] : undefined;
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const galleryOpen = active != null;
+  useEffect(() => {
+    if (!galleryOpen) return;
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActive(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [galleryOpen]);
   return (
     <div>
       <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter gallery by category">
@@ -121,7 +135,7 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
           <div className="w-full max-w-2xl overflow-hidden rounded-card bg-white">
             <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
               <p className="text-sm font-extrabold text-navy-700">{activeItem.title}</p>
-              <button onClick={() => setActive(null)} aria-label="Close gallery" className="rounded-lg p-1.5 hover:bg-silver-100"><X className="h-5 w-5" /></button>
+              <button ref={closeRef} onClick={() => setActive(null)} aria-label="Close gallery" className="rounded-lg p-1.5 hover:bg-silver-100"><X className="h-5 w-5" /></button>
             </div>
             <div className="relative h-72 bg-navy-800">
               <SmartImage
@@ -157,19 +171,29 @@ function LivePhone() {
   ];
   const [s, setS] = useState(0);
   const [secs, setSecs] = useState(29 * 60 + 42);
+  const viewRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(true);
   useEffect(() => {
+    const el = viewRef.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.15 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!inView) return;
     const t = setInterval(() => {
       setSecs((x) => (x > 0 ? x - 1 : 29 * 60 + 59));
       setS((x) => (x + 1) % slides.length);
     }, 2600);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [inView]);
   const mm = String(Math.floor(secs / 60)).padStart(2, "0");
   const ss = String(secs % 60).padStart(2, "0");
   const cur = slides[s % slides.length];
   return (
-    <div className="conic-ring mx-auto w-full max-w-[300px] rounded-[28px] bg-white shadow-card">
+    <div ref={viewRef} className="conic-ring mx-auto w-full max-w-[300px] rounded-[28px] bg-white shadow-card">
       <div className="conic-inner animate-float-slow rounded-[28px] border-8 border-navy-800 bg-white">
       <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
         <div><p className="text-xs font-extrabold text-navy-700">Sample assessment preview</p><p className="text-[11px] text-muted">Example question view</p></div>
@@ -318,14 +342,16 @@ export default function HomePage() {
   const courseCats = ["All", ...Array.from(new Set(courseList.map((c) => c.category).filter(Boolean)))];
   const courses = courseCat === "All" ? courseList : courseList.filter((c) => c.category === courseCat);
   return (
-    <div className="min-h-screen overflow-x-clip bg-background">
+    <div className="min-h-screen overflow-x-clip bg-background pb-[calc(52px+env(safe-area-inset-bottom))] md:pb-0">
+      <a href="#main" className="skip-link">Skip to content</a>
       <AnnouncementBar />
       <Navbar />
       <SocialSidebar />
       <EnquireFloat />
+      <MobileActionBar />
       <AdvertisementPopup />
 
-      <main>
+      <main id="main">
         {/* Schema.org Structured Data */}
         <WebSiteJsonLd />
         <OrganizationJsonLd />
@@ -432,76 +458,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* LEARNING PROCESS */}
-        <section className="bg-background">
-          <LearningProcess />
-        </section>
-
-        {/* BOOKS */}
-        <section id="books" className="relative overflow-hidden bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
-            <Reveal>
-              <SectionHeader eyebrow="OUR BOOKS" title="Study books & resources" desc="Recommended books and study materials for entrance preparation." />
-            </Reveal>
-            {(liveBooks ?? []).length === 0 ? (
-              <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No books published yet.</p>
-            ) : (
-              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {(liveBooks ?? []).map((b, i) => (
-                  <Reveal key={b.id} delay={(i % 3) * 90} variant="pop">
-                    <article className="relative overflow-hidden rounded-2xl border border-silver-200 bg-white shadow-card">
-                      <div className="relative h-48 overflow-hidden">
-                        {b.coverImageUrl ? (
-                          <img src={b.coverImageUrl} alt={b.title} className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105" />
-                        ) : (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy-800 p-6 text-center">
-                            <BookOpen className="h-8 w-8 mb-3 text-white" />
-                            <p className="text-sm font-extrabold text-white">{b.title}</p>
-                          </div>
-                        )}
-                        <span className="absolute top-3 right-3 rounded-full bg-teal-500 px-2.5 py-1 text-[10px] font-extrabold text-white tracking-widest">
-                          {b.visibleTo === "ALL" ? "ALL STUDENTS" : "REGULAR ONLY"}
-                        </span>
-                      </div>
-                      <div className="p-4">
-                        <h3 className="text-[15px] font-extrabold text-navy-700">{b.title}</h3>
-                        {b.author && (
-                          <p className="mt-0.5 text-[12px] text-muted">{b.author}</p>
-                        )}
-                        <p className="mt-2 text-[13px] leading-relaxed text-muted line-clamp-2">
-                          {b.description || "No description available."}
-                        </p>
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {b.subject && <span className="text-[11px] font-bold text-brand-primary bg-brand-primary/10 px-2 py-1 rounded">{b.subject}</span>}
-                          {b.className && <span className="text-[11px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded">{b.className}</span>}
-                          {b.category && <span className="text-[11px] font-bold text-navy-700 bg-silver-100 px-2 py-1 rounded">{b.category}</span>}
-                        </div>
-                        <div className="mt-4 flex items-center justify-between">
-                          {b.pdfUrl || b.externalUrl ? (
-                            <a
-                              href={b.pdfUrl || b.externalUrl}
-                              target={b.externalUrl ? "_blank" : "_self"}
-                              rel={b.externalUrl ? "noopener noreferrer" : undefined}
-                              className="inline-flex items-center gap-2 rounded-xl bg-navy-700 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800"
-                            >
-                              {b.pdfUrl ? "View PDF" : "Visit Link"}
-                              <span className="text-[10px]">↗</span>
-                            </a>
-                          ) : (
-                            <span className="inline-flex items-center gap-2 rounded-xl bg-silver-100 px-4 py-2 text-sm font-bold text-navy-700">
-                              No link available
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </article>
-                  </Reveal>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
         {/* COURSES */}
         <section id="courses" className="relative overflow-hidden bg-background">
           <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-brand-secondary/10 blur-3xl" aria-hidden />
@@ -535,6 +491,11 @@ export default function HomePage() {
               </div>
             )}
           </div>
+        </section>
+
+        {/* LEARNING PROCESS */}
+        <section className="bg-background">
+          <LearningProcess />
         </section>
 
         {/* EXAM TICKER divider */}
@@ -576,7 +537,7 @@ export default function HomePage() {
           <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader dark eyebrow="STUDENT ACHIEVEMENTS" title="Published results" desc="Student achievements shared by the academy appear here." />
+              <SectionHeader dark eyebrow="STUDENT ACHIEVEMENTS" title="Toppers’ wall" desc="Selections and scores our students have earned — verified by the academy." />
             </Reveal>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {wall.length === 0 ? (
@@ -643,7 +604,7 @@ export default function HomePage() {
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a href="/scholarship-tests" className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">Scholarship tests <ChevronRight className="h-4 w-4" /></a>
-                  <a href="https://estudde.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-5 py-3 text-sm font-bold text-navy-800 transition hover:border-brand-primary/30 hover:bg-brand-primary/5">Student Portal <span className="text-[10px]">↗</span></a>
+                  <a href={STUDENT_PORTAL_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-5 py-3 text-sm font-bold text-navy-800 transition hover:border-brand-primary/30 hover:bg-brand-primary/5">Student Portal <span className="text-[10px]">↗</span></a>
                 </div>
               </div>
             </Reveal>
@@ -699,6 +660,80 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* BOOKS */}
+        <section id="books" className="relative overflow-hidden bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+            <Reveal>
+              <SectionHeader eyebrow="OUR BOOKS" title="Study books & resources" desc="Recommended books and study materials for entrance preparation." />
+            </Reveal>
+            {(liveBooks ?? []).length === 0 ? (
+              <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No books published yet.</p>
+            ) : (
+              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {(liveBooks ?? []).map((b, i) => (
+                  <Reveal key={b.id} delay={(i % 3) * 90} variant="pop">
+                    <article className="relative overflow-hidden rounded-2xl border border-silver-200 bg-white shadow-card">
+                      <div className="relative h-48 overflow-hidden">
+                        {b.coverImageUrl ? (
+                          <img src={b.coverImageUrl} alt={b.title} className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105" />
+                        ) : (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy-800 p-6 text-center">
+                            <BookOpen className="h-8 w-8 mb-3 text-white" />
+                            <p className="text-sm font-extrabold text-white">{b.title}</p>
+                          </div>
+                        )}
+                        <span className="absolute top-3 right-3 rounded-full bg-teal-500 px-2.5 py-1 text-[10px] font-extrabold text-white tracking-widest">
+                          {b.visibleTo === "ALL" ? "ALL STUDENTS" : "REGULAR ONLY"}
+                        </span>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-[15px] font-extrabold text-navy-700">{b.title}</h3>
+                        {b.author && (
+                          <p className="mt-0.5 text-[12px] text-muted">{b.author}</p>
+                        )}
+                        <p className="mt-2 text-[13px] leading-relaxed text-muted line-clamp-2">
+                          {b.description || "No description available."}
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {b.subject && <span className="text-[11px] font-bold text-brand-primary bg-brand-primary/10 px-2 py-1 rounded">{b.subject}</span>}
+                          {b.className && <span className="text-[11px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded">{b.className}</span>}
+                          {b.category && <span className="text-[11px] font-bold text-navy-700 bg-silver-100 px-2 py-1 rounded">{b.category}</span>}
+                        </div>
+                        <div className="mt-4 flex items-center justify-between">
+                          {b.visibleTo !== "ALL" ? (
+                            <a
+                              href={STUDENT_PORTAL_URL}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-4 py-2 text-sm font-bold text-navy-700 transition hover:border-brand-primary/30 hover:bg-brand-primary/5"
+                            >
+                              Student portal only <span className="text-[10px]">↗</span>
+                            </a>
+                          ) : b.pdfUrl || b.externalUrl ? (
+                            <a
+                              href={b.pdfUrl || b.externalUrl}
+                              target={b.externalUrl ? "_blank" : "_self"}
+                              rel={b.externalUrl ? "noopener noreferrer" : undefined}
+                              className="inline-flex items-center gap-2 rounded-xl bg-navy-700 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800"
+                            >
+                              {b.pdfUrl ? "View PDF" : "Visit Link"}
+                              <span className="text-[10px]">↗</span>
+                            </a>
+                          ) : (
+                            <span className="inline-flex items-center gap-2 rounded-xl bg-silver-100 px-4 py-2 text-sm font-bold text-navy-700">
+                              No link available
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* GALLERY */}
         <section id="gallery" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
@@ -739,8 +774,8 @@ export default function HomePage() {
                   );
                 })}
                 </div>
-                <a href={`https://wa.me/91${CONTACT_INFO.whatsapp.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer" className="animate-glow cta-bounce mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-bold text-white">
-                  <MessageCircle className="h-4 w-4 animate-wiggle" /> 💬 Chat on WhatsApp
+                <a href={`https://wa.me/91${CONTACT_INFO.whatsapp.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer" className="animate-glow mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-bold text-white">
+                  <MessageCircle className="h-4 w-4" /> Chat on WhatsApp
                 </a>
                 {CONTACT.MAP_EMBED_URL ? (
                   <>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { X, CheckCircle2, Clock, MonitorPlay } from "lucide-react";
 import { SmartImage } from "@/lib/siteImages";
 import { CONTACT } from "@/data/contact";
@@ -8,6 +9,13 @@ import type { Course } from "@/data/courses";
 /** Full course details dialog (CourseDetails). */
 export function CourseDetails({ course, onClose, onEnroll }: { course: Course; onClose: () => void; onEnroll: () => void }) {
   const accent = course.accent || "#008C9E";
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
   return (
     <div className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-800/70 p-4 backdrop-blur-sm sm:items-center" role="dialog" aria-modal="true" aria-label={`${course.name} details`} onClick={onClose}>
       <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-card bg-white shadow-2xl animate-slide-up" onClick={(e) => e.stopPropagation()}>
