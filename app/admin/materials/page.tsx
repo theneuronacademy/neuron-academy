@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { LoadingState } from "@/components/admin/AdminStates";
 import { useAdminGuard } from "@/components/admin/useAdminGuard";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Button } from "@/components/ui/primitives";
@@ -84,33 +86,60 @@ export default function AdminMaterialsPage() {
     }
   }
 
-  const inputCls = "rounded-xl border border-silver-300 px-3 py-2 text-sm outline-none focus:border-teal-500";
+  const inputCls = "w-full rounded-xl border border-silver-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-500";
+  const labelCls = "mb-1 block text-[11px] font-bold text-navy-700";
+
+  if (!ready) {
+    return (
+      <AdminLayout title="Study Material" subtitle="Notes, videos and links for students">
+        <LoadingState message="Loading study material…" />
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="Study Material" subtitle="Notes, videos and links for students">
+      <AdminPageHeader
+        title="Study Material"
+        description={`${items.length} materials • notes, videos and links students see in their portal.`}
+      />
       {err ? <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson-600" role="alert">{err}</p> : null}
       {msg ? <p className="mt-3 rounded-xl border border-teal-200 bg-teal-50 px-4 py-2.5 text-[13px] font-bold text-teal-700" role="status">{msg}</p> : null}
 
-      <div className="mt-3 rounded-card border border-silver-200 bg-white p-4 shadow-card">
+      <div className="rounded-card border border-silver-200 bg-white p-4 shadow-card">
         <p className="text-[14px] font-extrabold text-navy-700">Add material</p>
-        <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-          <input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Title" className={inputCls} />
-          <input value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} placeholder="Subject" className={inputCls} />
-          <select value={form.kind} onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value }))} className={inputCls}>
-            {KINDS.map((k) => <option key={k} value={k}>{k}</option>)}
-          </select>
-          <input value={form.url} onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))} placeholder="https://… (optional)" className={inputCls} />
-          <input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="Short description" className={inputCls} />
+        <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <label className={labelCls}>Title *
+            <input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Titration notes" className={inputCls} />
+          </label>
+          <label className={labelCls}>Subject
+            <input value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} placeholder="Chemistry" className={inputCls} />
+          </label>
+          <label className={labelCls}>Type
+            <select value={form.kind} onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value }))} className={inputCls}>
+              {KINDS.map((k) => <option key={k} value={k}>{k}</option>)}
+            </select>
+          </label>
+          <label className={labelCls}>Media URL
+            <input value={form.url} onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))} placeholder="https://…  (or upload below)" className={inputCls} />
+          </label>
+          <label className={labelCls}>Short description
+            <input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="One line about this material" className={inputCls} />
+          </label>
         </div>
-        <CloudinaryUpload
-          category="study-material"
-          accept="image/*,video/*,application/pdf"
-          resourceType={form.kind === "VIDEO" ? "video" : "image"}
-          label={form.kind === "LINK" || form.kind === "NOTE" ? "Media URL (enter above)" : "Upload media file"}
-          buttonLabel={form.url ? "Replace media" : "Upload media"}
-          onUploadComplete={(url) => setForm((f) => ({ ...f, url }))}
-        />
-        <button onClick={create} disabled={busy} className="mt-2 rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">Add Material</button>
+        <div className="mt-3">
+          <CloudinaryUpload
+            category="study-material"
+            accept="image/*,video/*,application/pdf"
+            resourceType={form.kind === "VIDEO" ? "video" : "image"}
+            label={form.kind === "LINK" || form.kind === "NOTE" ? "Media URL (enter above)" : "Upload media file"}
+            buttonLabel={form.url ? "Replace media" : "Upload media"}
+            onUploadComplete={(url) => setForm((f) => ({ ...f, url }))}
+          />
+        </div>
+        <div className="mt-2 flex gap-2">
+          <Button onClick={() => void create()} disabled={busy}>{busy ? "Saving…" : "Add Material"}</Button>
+        </div>
       </div>
 
       <div className="mt-3 space-y-2">

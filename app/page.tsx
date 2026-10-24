@@ -3,11 +3,12 @@
 export const dynamic = "force-dynamic";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   BookOpen, Users, FileText, Target, MonitorPlay, Bell, CheckCircle2,
   Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight,
   CalendarCheck, Trophy, MessageCircle, Smartphone, BarChart3, Wallet,
-  Sparkles, Medal, Star, GraduationCap,
+  Sparkles, Medal, Star, GraduationCap, ArrowRight, Play,
 } from "lucide-react";
 import { AnnouncementBar } from "@/components/website/AnnouncementBar";
 import { Navbar } from "@/components/website/Navbar";
@@ -22,8 +23,7 @@ import { LearningProcess } from "@/components/website/LearningProcess";
 import { Faq } from "@/components/website/Faq";
 import { CourseCard } from "@/components/website/CourseCard";
 import { CourseDetails } from "@/components/website/CourseDetails";
-import { FacultyCard } from "@/components/website/FacultyCard";
-import { FacultyDetails } from "@/components/website/FacultyDetails";
+import { FacultyCarousel } from "@/components/website/FacultyCarousel";
 import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
@@ -43,7 +43,9 @@ import {
 import { FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
 import type { Testimonial } from "@/data/testimonials";
-import { getLiveCourses, getLiveFaculty, getLiveGallery, getLiveShowcase, getLiveTestimonials, getBooks, type LiveBookRow } from "@/services/siteApi";
+import { getLiveCourses, getLiveFaculty, getLiveGallery, getLiveShowcase, getLiveTestimonials, getBooks, getLiveAboutMedia, getAboutMediaSettings, type LiveBookRow, type LiveAboutRow } from "@/services/siteApi";
+import { AboutMediaDisplay } from "@/components/website/AboutMedia";
+import { bannerAnimationClass } from "@/components/website/bannerMotion";
 import { CONTACT } from "@/data/contact";
 import { RESULTS, type AcademyResult } from "@/data/results";
 import type { Course } from "@/data/courses";
@@ -58,12 +60,12 @@ const TRUST = [
 ];
 
 const WHY = [
-  { t: "Entrance-focused courses", d: "Study pathways for JEE, NEET, AMU and Jamia entrance preparation." },
-  { t: "Small batches", d: "A focused classroom environment with room to ask questions and get guidance." },
-  { t: "Regular mock tests", d: "Practice with exam-style questions and review performance after each test." },
-  { t: "Doubt support", d: "Bring questions to your mentors and work through concepts together." },
-  { t: "Progress tracking", d: "Students and families can follow academic activity and progress." },
-  { t: "Digital practice tools", d: "Use online tests and review results from the student platform." },
+  { slug: "entrance-focused-courses", t: "Entrance-focused courses", d: "Study pathways for JEE, NEET, AMU and Jamia entrance preparation." },
+  { slug: "small-batches", t: "Small batches", d: "A focused classroom environment with room to ask questions and get guidance." },
+  { slug: "regular-mock-tests", t: "Regular mock tests", d: "Practice with exam-style questions and review performance after each test." },
+  { slug: "doubt-support", t: "Doubt support", d: "Bring questions to your mentors and work through concepts together." },
+  { slug: "progress-tracking", t: "Progress tracking", d: "Students and families can follow academic activity and progress." },
+  { slug: "digital-practice-tools", t: "Digital practice tools", d: "Use online tests and review results from the student platform." },
 ];
 
 const STUDENT_PORTAL_URL = "https://estudde.com/";
@@ -76,16 +78,19 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
   const shown = cat === "All" ? items : items.filter((g) => g.category === cat);
   const activeItem = active != null ? shown[active] : undefined;
   const closeRef = useRef<HTMLButtonElement>(null);
+  const swipeX = useRef<number | null>(null);
   const galleryOpen = active != null;
   useEffect(() => {
     if (!galleryOpen) return;
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setActive(null);
+      if (e.key === "ArrowLeft" && shown.length > 0) setActive((i) => (i == null ? i : (i - 1 + shown.length) % shown.length));
+      if (e.key === "ArrowRight" && shown.length > 0) setActive((i) => (i == null ? i : (i + 1) % shown.length));
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [galleryOpen]);
+  }, [galleryOpen, shown.length]);
   return (
     <div>
       <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter gallery by category">
@@ -104,16 +109,17 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
         <p className="mt-8 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No gallery items in this category yet.</p>
       ) : (
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {shown.map((g, i) => (
-          <Reveal key={g.id} delay={(i % 4) * 80} variant="pop">
+        {shown.map((g, i) => {
+          const isVideo = (g.mediaType ?? "image") === "video";
+          const tile = (
             <button
               onClick={() => setActive(i)}
-              className="group relative h-48 w-full overflow-hidden rounded-card border border-silver-200 bg-navy-800 text-left card-lift"
-              aria-label={`Open ${g.title}`}
+              className={`group relative h-48 w-full overflow-hidden rounded-card border border-silver-200 bg-navy-800 text-left card-lift ${g.animation && g.animation !== "none" ? bannerAnimationClass(g.animation) : ""}`}
+              aria-label={`Open ${isVideo ? "video" : "photo"}: ${g.title}`}
             >
               <SmartImage
-                src={(g as { image?: string }).image || `/images/gallery-${g.id}.jpg`}
-                alt={g.title}
+                src={g.image || `/images/gallery-${g.id}.jpg`}
+                alt={g.altText || g.title}
                 className="absolute inset-0 h-full w-full"
                 imgClassName="h-full w-full object-cover transition duration-500 group-hover:scale-[1.05]"
                 fallback={
@@ -124,32 +130,66 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
                 }
               />
               <span className="absolute inset-0 bg-gradient-to-t from-navy-800/70 to-transparent opacity-80 transition group-hover:opacity-95" />
-              <span className="absolute bottom-3 left-3 right-3 flex items-center justify-between"><span className="text-[12px] font-extrabold text-white drop-shadow">{g.title}</span><span className="text-lg opacity-0 transition duration-300 group-hover:opacity-100">🔍</span></span>
+              {isVideo ? (
+                <span className="absolute left-3 top-3 rounded-lg bg-navy-900/80 px-1.5 py-0.5 text-[10px] font-bold text-white">VIDEO</span>
+              ) : null}
+              <span className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                <span className="text-[12px] font-extrabold text-white drop-shadow">{g.title}</span>
+                {isVideo ? (
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-navy-800 shadow-card"><Play className="ml-0.5 h-4 w-4" /></span>
+                ) : (
+                  <span className="text-lg opacity-0 transition duration-300 group-hover:opacity-100">🔍</span>
+                )}
+              </span>
             </button>
-          </Reveal>
-        ))}
+          );
+          // Admin-chosen per-item motion replaces the default scroll-reveal
+          // for that tile (never both at once — no double animation).
+          return g.animation && g.animation !== "none" ? (
+            <div key={g.id}>{tile}</div>
+          ) : (
+            <Reveal key={g.id} delay={(i % 4) * 80} variant="pop">{tile}</Reveal>
+          );
+        })}
       </div>
       )}
       {activeItem ? (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-navy-800/80 p-4" role="dialog" aria-modal="true" aria-label="Gallery preview">
+        <div
+          className="fixed inset-0 z-[90] flex items-center justify-center bg-navy-800/80 p-4"
+          role="dialog" aria-modal="true" aria-label="Gallery preview"
+          onTouchStart={(e) => { swipeX.current = e.touches[0]?.clientX ?? null; }}
+          onTouchEnd={(e) => {
+            if (swipeX.current == null || shown.length === 0) return;
+            const dx = (e.changedTouches[0]?.clientX ?? swipeX.current) - swipeX.current;
+            swipeX.current = null;
+            if (Math.abs(dx) > 48) setActive((i) => (i == null ? i : (dx < 0 ? (i + 1) % shown.length : (i - 1 + shown.length) % shown.length)));
+          }}
+        >
           <div className="w-full max-w-2xl overflow-hidden rounded-card bg-white">
             <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
               <p className="text-sm font-extrabold text-navy-700">{activeItem.title}</p>
               <button ref={closeRef} onClick={() => setActive(null)} aria-label="Close gallery" className="rounded-lg p-1.5 hover:bg-silver-100"><X className="h-5 w-5" /></button>
             </div>
             <div className="relative h-72 bg-navy-800">
-              <SmartImage
-                src={activeItem.image || `/images/gallery-${activeItem.id}.jpg`}
-                alt={activeItem.title}
-                className="absolute inset-0 h-full w-full"
-                imgClassName="h-full w-full object-cover"
-                fallback={
-                  <div className="bg-metallic-dark flex h-72 items-center justify-center p-8 text-center">
-                    <p className="text-xl font-extrabold text-white">{activeItem.title}</p>
-                  </div>
-                }
-              />
+              {(activeItem.mediaType ?? "image") === "video" && activeItem.videoUrl ? (
+                <video src={activeItem.videoUrl} controls autoPlay playsInline className="absolute inset-0 h-full w-full bg-navy-950 object-contain" />
+              ) : (
+                <SmartImage
+                  src={activeItem.image || `/images/gallery-${activeItem.id}.jpg`}
+                  alt={activeItem.altText || activeItem.title}
+                  className="absolute inset-0 h-full w-full"
+                  imgClassName="h-full w-full object-cover"
+                  fallback={
+                    <div className="bg-metallic-dark flex h-72 items-center justify-center p-8 text-center">
+                      <p className="text-xl font-extrabold text-white">{activeItem.title}</p>
+                    </div>
+                  }
+                />
+              )}
             </div>
+            {activeItem.caption ? (
+              <p className="px-4 py-2.5 text-[13px] font-semibold text-muted">{activeItem.caption}</p>
+            ) : null}
             <div className="flex items-center justify-between px-4 py-3">
               <button onClick={() => setActive(((active ?? 0) - 1 + shown.length) % shown.length)} aria-label="Previous image" className="rounded-lg border border-silver-300 p-2"><ChevronLeft className="h-4 w-4" /></button>
               <p className="text-xs font-bold text-muted">{(active ?? 0) + 1} / {shown.length}</p>
@@ -225,7 +265,6 @@ function LivePhone() {
 export default function HomePage() {
   const [courseCat, setCourseCat] = useState<string>("All");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [selectedFaculty, setSelectedFaculty] = useState<FacultyMember | null>(null);
   // Live CMS rows (published/active only) swap in over the static fallbacks
   // below. Static-first paint keeps the page instant with no DB; a failed or
   // empty live fetch simply keeps the fallbacks — never an error screen.
@@ -235,12 +274,15 @@ export default function HomePage() {
   const [liveTestimonials, setLiveTestimonials] = useState<Testimonial[] | null>(null);
   const [liveWall, setLiveWall] = useState<{ rows: AcademyResult[] } | null>(null);
   const [liveBooks, setLiveBooks] = useState<LiveBookRow[] | null>(null);
+  // "About the Academy" media — independent from the gallery; null keeps the
+  // static single-photo design (exact original) when no rows are published.
+  const [liveAbout, setLiveAbout] = useState<{ rows: LiveAboutRow[]; layout: "grid" | "carousel" | "rotate"; animation: string } | null>(null);
   const { content: hc, ready: hcReady } = useHomepageContent();
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const [c, f, g, t, w, b] = await Promise.all([getLiveCourses(), getLiveFaculty(), getLiveGallery(), getLiveTestimonials(), getLiveShowcase(), getBooks()]);
+        const [c, f, g, t, w, b, am, ams] = await Promise.all([getLiveCourses(), getLiveFaculty(), getLiveGallery(), getLiveTestimonials(), getLiveShowcase(), getBooks(), getLiveAboutMedia(), getAboutMediaSettings()]);
         if (!mounted) return;
         // getLive* return null unless the database holds published rows, so a
         // swap always means fresher admin-published content. Shape-validate
@@ -278,7 +320,27 @@ export default function HomePage() {
           })));
         }
         if (g && g.every((r) => typeof r.id === "string" && typeof r.title === "string")) {
-          setLiveGallery(g.map((r) => ({ id: String(r.id), title: String(r.title), category: String(r.category ?? "Academy"), image: String(r.imageUrl ?? "") })));
+          setLiveGallery(g.map((r) => ({
+            id: String(r.id),
+            title: String(r.title),
+            category: String(r.category ?? "Academy"),
+            image: String(r.imageUrl ?? ""),
+            mediaType: r.mediaType === "video" ? ("video" as const) : ("image" as const),
+            videoUrl: r.videoUrl ? String(r.videoUrl) : undefined,
+            caption: r.caption ? String(r.caption) : undefined,
+            altText: r.altText ? String(r.altText) : undefined,
+            animation: r.animation ? String(r.animation) : undefined,
+          })));
+        }
+        // About media swaps in only when REAL image rows exist; layout and
+        // motion come from the same admin settings store.
+        if (am && am.length > 0 && am.every((r) => typeof r.id === "string" && typeof r.imageUrl === "string" && String(r.imageUrl).trim() !== "")) {
+          const st = ams ?? { layout: "grid" as const, animation: "none" };
+          setLiveAbout({
+            rows: am,
+            layout: st.layout === "carousel" || st.layout === "rotate" ? st.layout : "grid",
+            animation: typeof st.animation === "string" ? st.animation : "none",
+          });
         }
         if (t && t.every((r) => typeof r.id === "string" && typeof r.name === "string")) {
           setLiveTestimonials(t.map((r) => ({
@@ -396,6 +458,24 @@ export default function HomePage() {
           <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
+              {liveAbout && liveAbout.rows.length > 0 ? (
+                <AboutMediaDisplay
+                  rows={liveAbout.rows.map((r) => ({ id: r.id, imageUrl: r.imageUrl, caption: r.caption, altText: r.altText }))}
+                  layout={liveAbout.layout}
+                  animation={liveAbout.animation}
+                  badge={
+                    <>
+                      <span className="absolute bottom-4 left-4 rounded-xl border border-white/25 bg-navy-950/85 px-4 py-2.5 backdrop-blur">
+                        <span className="block text-sm font-bold text-white">Shaheen Bagh</span>
+                        <span className="block text-[10px] font-semibold tracking-widest text-brand-secondary-300">NEW DELHI</span>
+                      </span>
+                      <span className="absolute right-4 top-4 rounded-full border border-brand-secondary/50 bg-white/95 px-3 py-2 text-xs font-bold text-navy-900 shadow-card">
+                        Entrance preparation
+                      </span>
+                    </>
+                  }
+                />
+              ) : (
               <div className="relative min-h-[360px] overflow-hidden rounded-2xl border border-silver-200 bg-white shadow-card">
                 <SmartImage
                   src={SITE_PHOTOS.about}
@@ -418,6 +498,7 @@ export default function HomePage() {
                   Entrance preparation
                 </span>
               </div>
+              )}
             </Reveal>
             <Reveal variant="right">
               <div>
@@ -446,12 +527,19 @@ export default function HomePage() {
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {WHY.map((w, i) => (
                 <Reveal key={w.t} delay={(i % 3) * 60}>
-                  <article className="relative h-full rounded-2xl border border-silver-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-brand-primary/25 hover:shadow-card-hover">
+                  {/* Whole card → dedicated topic page */}
+                  <Link
+                    href={`/topics/${w.slug}`}
+                    className="group relative flex h-full flex-col rounded-2xl border border-silver-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-brand-primary/25 hover:shadow-card-hover"
+                  >
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary/5 text-sm font-bold text-brand-primary">0{i + 1}</div>
                     <h3 className="mt-5 text-base font-bold text-navy-950">{w.t}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-neutral-600">{w.d}</p>
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-neutral-600">{w.d}</p>
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-brand-primary transition group-hover:gap-2.5">
+                      Learn more <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
                     <span className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-brand-secondary/70 to-transparent" aria-hidden />
-                  </article>
+                  </Link>
                 </Reveal>
               ))}
             </div>
@@ -519,13 +607,14 @@ export default function HomePage() {
             {facultyList.length === 0 ? (
               <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-background p-8 text-center text-sm font-bold text-muted">No faculty profiles published yet.</p>
             ) : (
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {facultyList.map((f, i) => (
-                <Reveal key={f.id} delay={(i % 4) * 80} variant="pop">
-                  <FacultyCard f={f} onView={setSelectedFaculty} />
-                </Reveal>
-              ))}
-            </div>
+              <FacultyCarousel members={facultyList} />
+            )}
+            {facultyList.length === 0 ? null : (
+              <div className="mt-6 text-center">
+                <Link href="/faculty" className="inline-flex items-center gap-1.5 rounded-xl border-2 border-brand-primary px-5 py-2.5 text-sm font-bold text-brand-primary transition hover:bg-brand-primary/5">
+                  View more faculty <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             )}
           </div>
         </section>
@@ -603,13 +692,24 @@ export default function HomePage() {
                   ))}
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a href="/scholarship-tests" className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">Scholarship tests <ChevronRight className="h-4 w-4" /></a>
-                  <a href={STUDENT_PORTAL_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-5 py-3 text-sm font-bold text-navy-800 transition hover:border-brand-primary/30 hover:bg-brand-primary/5">Student Portal <span className="text-[10px]">↗</span></a>
+                  <a href={STUDENT_PORTAL_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">Open student platform <span className="text-[10px]">↗</span></a>
                 </div>
               </div>
             </Reveal>
             <Reveal variant="right">
-              <LivePhone />
+              {/* Whole phone mock → external student login (estudde.com) */}
+              <div className="group relative">
+                <LivePhone />
+                <a
+                  href={STUDENT_PORTAL_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open the Neuron Academy student test platform"
+                  className="absolute inset-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary/60"
+                >
+                  <span className="sr-only">Open student platform</span>
+                </a>
+              </div>
             </Reveal>
           </div>
         </section>
@@ -830,12 +930,6 @@ export default function HomePage() {
               document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
             }}
           />
-        </>
-      ) : null}
-      {selectedFaculty ? (
-        <>
-          <FacultyJsonLd faculty={selectedFaculty} />
-          <FacultyDetails member={selectedFaculty} onClose={() => setSelectedFaculty(null)} />
         </>
       ) : null}
     </div>

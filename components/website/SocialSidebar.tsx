@@ -1,6 +1,7 @@
 "use client";
 
 import { SOCIAL_LINKS } from "@/data/social";
+import { LogoMark } from "@/components/website/Logo";
 
 const ICONS: Record<string, React.ReactNode> = {
   instagram: (
@@ -37,12 +38,6 @@ const ICONS: Record<string, React.ReactNode> = {
 
 const APP_STORE_URL = "https://play.google.com/store/apps/details?id=com.proctur.app223551";
 
-const PLAY_STORE = (
-  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#1A73E8" aria-hidden="true">
-    <path d="M22 12c0-1.31-.21-2.57-.58-3.73-.46-1.44-1.18-2.73-2.09-3.77C18.21 3.5 16.91 2.84 15.43 2c-1.38-.79-2.84-1.14-4.32-1.14S8.77 1.21 7.39 2C5.91 2.84 4.61 3.5 3.5 4.49c-.91 1.04-1.63 2.33-2.09 3.77C.79 9.43.58 10.69.58 12c0 1.31.21 2.57.58 3.73.46 1.44 1.18 2.73 2.09 3.77C1.79 20.5 3.09 21.16 4.57 22c1.38.79 2.84 1.14 4.32 1.14s2.94-.35 4.32-1.14c1.44-.84 2.74-1.51 3.85-1.91.46-.17.73-.44.73-.73v-1.46c0-.29-.27-.56-.73-.73-1.11.4-2.41 1.07-3.85 1.91-1.38.79-2.84 1.14-4.32 1.14s-2.94-.35-4.32-1.14C1.79 19.16.5 18.5.5 12c0-6.5 5.3-12 11.5-12S23 5.5 23 12z" />
-  </svg>
-);
-
 export function SocialSidebar() {
   return (
     <>
@@ -72,10 +67,12 @@ export function SocialSidebar() {
             title="Download Student App"
             className="group flex items-center justify-end gap-0 px-3 py-2.5 text-silver-200 transition-all hover:bg-white/10 hover:text-white hover:pr-4 border-t border-silver-300/30"
           >
-            <span className="max-w-0 overflow-hidden whitespace-nowrap text-[12px] font-bold opacity-0 transition-all group-hover:ml-2 group-hover:max-w-[100px] group-hover:opacity-100">
+            <span className="max-w-0 overflow-hidden whitespace-nowrap text-[12px] font-bold opacity-0 transition-all group-hover:ml-2 group-hover:max-w-[180px] group-hover:opacity-100">
               Download Student App
             </span>
-            <span className="ml-2">{PLAY_STORE}</span>
+            <span className="ml-2 flex h-4 items-center">
+              <LogoMark size={18} />
+            </span>
           </a>
         </div>
       </div>
@@ -87,7 +84,7 @@ export function SocialSidebar() {
           </a>
         ))}
         <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" aria-label="Download Student App" title="Download Student App" className="rounded-full bg-navy-700 p-3 text-white shadow-card">
-          {PLAY_STORE}
+          <LogoMark size={18} className="ring-0" />
         </a>
       </div>
     </>

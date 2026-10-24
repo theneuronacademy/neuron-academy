@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { SmartImage } from "@/lib/siteImages";
 import type { FacultyMember } from "@/data/faculty";
-import { Button } from "@/components/ui/primitives";
 
-export function FacultyCard({ f, onView }: { f: FacultyMember; onView?: (m: FacultyMember) => void }) {
+export function FacultyCard({ f, delay }: { f: FacultyMember; delay?: number }) {
   const subjectColors: Record<string, string> = {
     Physics: "#1746B8",
     Biology: "#102B70",
@@ -38,13 +39,17 @@ export function FacultyCard({ f, onView }: { f: FacultyMember; onView?: (m: Facu
           {f.subject.toUpperCase()}
         </span>
       </div>
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col p-5" style={delay ? { transitionDelay: `${delay * 80}ms` } : undefined}>
         <h3 className="text-base font-bold tracking-tight text-navy-950">{f.name}</h3>
         <p className="text-[12px] font-bold text-brand-primary">{f.designation} • {f.experience}</p>
         <p className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed text-neutral-600">{f.intro}</p>
-        <Button variant="outline" size="sm" className="mt-4 w-full" onClick={() => onView?.(f)}>
-          View more
-        </Button>
+        {/* View more → dedicated faculty profile page (/faculty/[id]) */}
+        <Link
+          href={`/faculty/${f.id}`}
+          className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-brand-primary px-4 py-2.5 text-[13px] font-bold text-brand-primary transition hover:bg-brand-primary/5 active:bg-brand-primary/10"
+        >
+          View more <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </article>
   );

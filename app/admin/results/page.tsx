@@ -7,6 +7,7 @@
 
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useAdminGuard } from "@/components/admin/useAdminGuard";
 import { Button } from "@/components/ui/primitives";
 import { OfflineMarksForm } from "@/components/admin/OfflineMarksForm";
@@ -110,6 +111,7 @@ export default function AdminResultsPage() {
 
   return (
     <AdminLayout title="Results" subtitle={`${visible.length} results • auto-evaluated + offline uploads`}>
+      <AdminPageHeader title="Results" description={`${visible.length} results • auto-evaluated scores plus manual offline entries.`} />
       {failed ? (
         <p className="mb-4 rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">
           Results unavailable — check the database connection.

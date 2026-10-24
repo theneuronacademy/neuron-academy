@@ -7,6 +7,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
+import { SearchBar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/primitives";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -30,6 +31,7 @@ export default function AdminBooksPage() {
   const { ready: authReady, isAdmin } = useAdminAuth();
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<Book[]>([]);
+  const [search, setSearch] = useState("");
   const [modal, setModal] = useState(false);
   const [editing, setEditing] = useState<Book | null>(null);
   const [form, setForm] = useState<Partial<Book>>(EMPTY);
@@ -154,17 +156,28 @@ export default function AdminBooksPage() {
 
   const inputCls = "mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500";
   const set = (k: keyof Book, v: string | boolean | number) => setForm((f) => ({ ...f, [k]: v }));
+  // Client-side search over the loaded library (small dataset).
+  const filtered = rows.filter(
+    (b) =>
+      !search.trim() ||
+      `${b.title} ${b.author} ${b.subject} ${b.className} ${b.category}`.toLowerCase().includes(search.trim().toLowerCase())
+  );
 
   return (
     <AdminLayout title="Books" subtitle={`${rows.length} titles • only active books reach students`}>
-      <AdminPageHeader title="Book Library" description="Study material: covers, PDFs and external resources." actionLabel="Add Book" actionIcon={Plus} onAction={openNew} />
+      <AdminPageHeader title="Book Library" description={`${rows.length} titles • covers, PDFs and external resources.`} actionLabel="Add Book" actionIcon={Plus} onAction={openNew} />
       {saved ? (
         <p className="mt-3 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}
         </p>
       ) : null}
+      <div className="mt-1">
+        <SearchBar value={search} onChange={setSearch} placeholder="Search title, author, subject…" />
+      </div>
       {rows.length === 0 ? (
         <div className="mt-3"><EmptyState title="No books yet" desc="Add the first study book — nothing is seeded automatically." /></div>
+      ) : filtered.length === 0 ? (
+        <div className="mt-3"><EmptyState title="No matching books" desc="Try a different search term." /></div>
       ) : (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((b) => (

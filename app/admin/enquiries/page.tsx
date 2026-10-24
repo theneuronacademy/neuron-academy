@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminTable } from "@/components/admin/AdminTable";
 import { AdminStatusBadge, statusToneFor } from "@/components/admin/AdminStatusBadge";
 import { LoadingState, EmptyState } from "@/components/admin/AdminStates";
@@ -86,6 +87,7 @@ export default function EnquiriesPage() {
 
   return (
     <AdminLayout title="Enquiries" subtitle="Admission leads from the website contact form">
+      <AdminPageHeader title="Admission Enquiries" description={`${rows.length} enquiries • contact, convert or close leads as they arrive.`} />
       <div className="flex flex-wrap items-center gap-2">
         {STATUSES.map((s) => (
           <span key={s} className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[12px] font-bold text-navy-700 ring-1 ring-silver-200">

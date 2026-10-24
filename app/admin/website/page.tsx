@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BookOpen, Presentation, Home, Megaphone, GalleryHorizontal, Star, Trophy, Bell, Globe, CheckCircle2 } from "lucide-react";
+import { BookOpen, Presentation, Home, Megaphone, GalleryHorizontal, Images, Star, Trophy, Bell, Globe, CheckCircle2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { LoadingState } from "@/components/admin/AdminStates";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
@@ -15,7 +15,8 @@ const SECTIONS = [
   { href: "/admin/website/faculty", label: "Faculty Page", desc: "4 public profiles", icon: Presentation },
   { href: "/admin/website/banners", label: "Banners", desc: "Promotional carousel", icon: Home },
   { href: "/admin/website/popups", label: "Popups", desc: "Demo / scholarship offers", icon: Megaphone },
-  { href: "/admin/website/gallery", label: "Gallery", desc: "8 placeholder photos", icon: GalleryHorizontal },
+  { href: "/admin/website/gallery", label: "Gallery", desc: "Photos & videos — admin-managed", icon: GalleryHorizontal },
+  { href: "/admin/website/about-media", label: "About Media", desc: "About images • layout + motion", icon: Images },
   { href: "/admin/website/testimonials", label: "Testimonials", desc: "4 demo quotes", icon: Star },
   { href: "/admin/website/results", label: "Web Results", desc: "4 demo selections", icon: Trophy },
   { href: "/admin/website/announcements", label: "Announcements", desc: "Top running banner", icon: Bell },
@@ -72,7 +73,6 @@ export default function WebsiteOverviewPage() {
           </Link>
         ))}
       </div>
-      <p className="text-[12px] text-muted">Edits here are UI demos in Phase 2 — backend sync arrives with the API layer (services/adminApi.ts).</p>
     </AdminLayout>
   );
 }

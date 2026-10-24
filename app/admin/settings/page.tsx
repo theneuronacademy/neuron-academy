@@ -81,14 +81,14 @@ export default function SettingsPage() {
       {/* No settings API exists; this page is display-only. Academy profile
           is configured via the deployment environment. */}
       <p className="mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-bold text-amber-800" role="note">
-        Display only — academy profile is configured via the deployment environment. Changes here are not saved anywhere.
+        Display only — the academy profile here is informational and not saved.
       </p>
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-[13px] font-bold text-amber-700">
-          <CheckCircle2 className="h-4 w-4" /> Not saved — contact the developer to change the academy profile.
-        </p>
+        <CheckCircle2 className="h-4 w-4" /> Display only — the academy profile is configured in the deployment settings.
+      </p>
       ) : null}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div>
         <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
           <h3 className="text-[15px] font-extrabold text-navy-700">Academy Profile</h3>
           <div className="mt-3 grid gap-3">
@@ -108,16 +108,6 @@ export default function SettingsPage() {
           <Button variant="primary" size="sm" className="mt-4" onClick={() => { setSaved(true); window.setTimeout(() => setSaved(false), 2500); }}>
             Save Settings
           </Button>
-        </div>
-        <div className="rounded-card border border-silver-200 bg-white p-5 shadow-card">
-          <h3 className="text-[15px] font-extrabold text-navy-700">Backend Readiness</h3>
-          <ul className="mt-3 space-y-2 text-[13px] text-muted">
-            <li>• Demo data isolated in <code>data/admin.ts</code></li>
-            <li>• API-ready calls in <code>services/adminApi.ts</code></li>
-            <li>• Auth hook point: <code>lib/adminAuth.ts</code> + middleware (later)</li>
-            <li>• No database / payment in this phase</li>
-          </ul>
-          <p className="mt-3 rounded-xl bg-silver-50 p-3 text-[12px] text-muted">Swap each adminApi function body with fetch() — UI stays untouched.</p>
         </div>
       </div>
 

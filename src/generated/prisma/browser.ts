@@ -58,6 +58,11 @@ export type Popup = Prisma.PopupModel
  */
 export type GalleryItem = Prisma.GalleryItemModel
 /**
+ * Model AboutImage
+ * 
+ */
+export type AboutImage = Prisma.AboutImageModel
+/**
  * Model Testimonial
  * 
  */

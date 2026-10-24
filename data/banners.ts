@@ -3,6 +3,8 @@
 // this file only defines the shape + offline fallbacks for the
 // reusable Banner UI, and will map 1:1 to backend banner records later.
 
+import type { BannerAnimation } from "@/lib/types";
+
 export interface BannerContent {
   id: string;
   title: string;
@@ -12,6 +14,8 @@ export interface BannerContent {
   mediaUrl: string;
   buttonText: string;
   buttonUrl: string;
+  /** Motion style — absent/legacy rows default to "none". */
+  animation?: BannerAnimation;
   active: boolean;
   order: number;
 }

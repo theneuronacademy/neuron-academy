@@ -15,6 +15,7 @@ import { ACADEMY, CONTACT_INFO } from "@/data/site";
 import { POPUP_DEFAULTS, type PopupContent } from "@/data/popups";
 import { getVisibleAds } from "@/lib/mockStore";
 import type { Advertisement, AdType } from "@/lib/types";
+import { toBannerAnimation, type BannerAnimation } from "@/components/website/bannerMotion";
 import type { BannerContent } from "@/data/banners";
 
 /** Client-side API fetch — null on server, offline, no-DB, or bad shape. */
@@ -80,6 +81,11 @@ export interface LiveGalleryRow {
   title: string;
   category?: string;
   imageUrl?: string;
+  videoUrl?: string;
+  mediaType?: string;
+  caption?: string;
+  altText?: string;
+  animation?: string;
 }
 
 export interface LiveTestimonialRow {
@@ -116,6 +122,36 @@ export async function getLiveFaculty(): Promise<LiveFacultyRow[] | null> {
 
 export async function getLiveGallery(): Promise<LiveGalleryRow[] | null> {
   return pickDb<LiveGalleryRow>(await apiItems("/api/gallery"));
+}
+
+/** "About the Academy" media rows — fully independent from the gallery. */
+export interface LiveAboutRow {
+  id: string;
+  imageUrl: string;
+  publicId?: string;
+  caption?: string;
+  altText?: string;
+}
+
+export interface AboutMediaSettings {
+  layout: "grid" | "carousel" | "rotate";
+  animation: string;
+}
+
+export async function getLiveAboutMedia(): Promise<LiveAboutRow[] | null> {
+  return pickDb<LiveAboutRow>(await apiItems("/api/about-media"));
+}
+
+export async function getAboutMediaSettings(): Promise<AboutMediaSettings | null> {
+  try {
+    if (typeof window === "undefined") return null;
+    const res = await fetch("/api/about-media/settings", { cache: "no-store" });
+    const json = (await res.json().catch(() => null)) as { success?: boolean; data?: AboutMediaSettings } | null;
+    if (res.ok && json?.success === true && json.data) return json.data;
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 export async function getLiveTestimonials(): Promise<LiveTestimonialRow[] | null> {
@@ -270,6 +306,7 @@ export async function getBanners(): Promise<BannerContent[]> {
       mediaUrl: String(b.imageUrl ?? b.image ?? b.videoUrl ?? ""),
       buttonText: String(b.buttonText ?? ""),
       buttonUrl: String(b.buttonUrl ?? ""),
+      animation: (b.animation == null ? "none" : toBannerAnimation(b.animation)) as BannerAnimation,
       active: b.isActive ?? b.active ?? true,
       order: typeof b.displayOrder === "number" ? b.displayOrder : (b.order ?? i),
     }));
@@ -304,6 +341,7 @@ function bannerRowToAd(b: any, type: AdType): Advertisement | null {
   const end = b.endDate ? Date.parse(b.endDate) : NaN;
   if (!Number.isNaN(start) && now < start) return null;
   if (!Number.isNaN(end) && now > end) return null;
+  const animation: BannerAnimation = b.animation == null ? "none" : toBannerAnimation(b.animation);
   return {
     id: String(b.id),
     title: String(b.title ?? ""),
@@ -323,9 +361,10 @@ function bannerRowToAd(b: any, type: AdType): Advertisement | null {
     muted: true,
     loop: true,
     audioEnabled: false,
+    animation,
     createdAt: "",
     updatedAt: "",
-  };
+  } satisfies Advertisement;
 }
 
 export async function getLiveBanners(): Promise<Advertisement[] | null> {

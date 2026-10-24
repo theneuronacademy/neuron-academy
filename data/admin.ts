@@ -3,6 +3,8 @@
 // Real APIs will replace services/adminApi.ts without touching UI.
 // Public website content stays in /data/* — this file is admin-only.
 
+import type { BannerAnimation } from "@/lib/types";
+
 export interface AdminStudent {
   id: string;
   studentId: string;
@@ -65,6 +67,8 @@ export interface AdminBanner {
   videoUrl: string;
   buttonText: string;
   buttonUrl: string;
+  /** Motion/animation style (defaults to "none" when absent). */
+  animation?: BannerAnimation;
   startDate: string;
   endDate: string;
   active: boolean;

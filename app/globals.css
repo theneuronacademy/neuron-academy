@@ -295,6 +295,12 @@ label {
   animation: spin360 16s linear infinite;
 }
 
+/* Banner carousel autoplay progress bar (TopRunningBanner) */
+@keyframes ticker-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 /* Drifting wave ribbons (motion.tsx WaveDivider) */
 .wave-divider .wave-a {
   animation: wave-drift 9s linear infinite;

@@ -479,21 +479,23 @@ export async function removeCloudinaryAsset(
   publicId: string,
   options: { resourceType?: "image" | "video" } = {}
 ): Promise<{ ok: true; deleted: boolean } | { ok: false; error: string }> {
-  // Use cloudinaryInstance uploader to destroy
+  // Destroy is async in the SDK — it MUST be awaited (older code read .result
+  // off the un-awaited Promise, so every delete reported failure).
   try {
-    const result: any = (cloudinaryInstance as any).uploader.destroy(publicId, {
+    const result: any = await (cloudinaryInstance as any).uploader.destroy(publicId, {
       resource_type: options.resourceType ?? "image",
     });
 
     // Cloudinary returns: { result: "ok" | "not found", id: "...", ... }
-    if (result.result === "ok" || result.result === "deleted") {
+    if (result?.result === "ok" || result?.result === "deleted") {
       return { ok: true, deleted: true };
     }
-    if (result.result === "not found") {
+    if (result?.result === "not found") {
       // Asset already deleted; not an error, just report
       return { ok: true, deleted: false };
     }
-    return { ok: false, error: `Cloudinary delete failed: ${JSON.stringify(result)}` };
+    console.error("[Cloudinary] Unexpected delete response:", result);
+    return { ok: false, error: "Cloudinary could not delete the asset." };
   } catch (err) {
     console.error("[Cloudinary] Error removing asset:", err);
     return { ok: false, error: "Cloudinary delete request failed." };

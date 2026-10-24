@@ -367,6 +367,10 @@ model Banner {
   videoUrl     String?
   buttonText   String?
   buttonUrl    String?
+  // Motion/animation style applied on the public website.
+  // Allowed values: none | fade | slide-up | slide-left | slide-right | float | zoom
+  // (validated in the API layer; unknown values fall back to "none").
+  animation    String   @default("none")
   startDate    DateTime?
   endDate      DateTime?
   isActive     Boolean  @default(true)
@@ -392,11 +396,39 @@ model Popup {
 }
 
 model GalleryItem {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  // Nullable since video-only rows have no image asset.
+  imageUrl      String?
+  videoUrl      String?
+  // Cloudinary public IDs for the image/video assets (server-only value).
+  publicId      String?
+  videoPublicId String?
+  caption       String?
+  altText       String?
+  // "image" | "video" (validated in the API layer).
+  mediaType     String   @default("image")
+  category      String   @default("Academy")
+  displayOrder  Int      @default(0)
+  isActive      Boolean  @default(true)
+  // Motion/animation style applied on the public website.
+  // Allowed values: none | fade | slide-up | slide-left | slide-right | float | zoom
+  // (validated in the API layer; unknown values fall back to "none").
+  animation     String   @default("none")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// "About the Academy" section media — separate from the academy gallery on
+// purpose: both are independently configurable (requirement: changing one
+// must not unintentionally replace the other).
+model AboutImage {
   id           String   @id @default(cuid())
-  title        String
-  description  String?
   imageUrl     String
-  category     String   @default("Academy")
+  publicId     String?
+  caption      String?
+  altText      String?
   displayOrder Int      @default(0)
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())

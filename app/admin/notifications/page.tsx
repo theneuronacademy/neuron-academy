@@ -250,7 +250,7 @@ export default function NotificationsPage() {
         // Phase 18c-step3 — history is server-authoritative (persisted audit):
         // refetch so every number shown comes from the database.
         void refreshHistory();
-        flash(now ? `Notification sent (priority ${json?.data?.delivery?.priority ?? priority}).${sms ? ` SMS ${sms.sent ?? 0} sent, ${sms.failed ?? 0} failed, ${skipped} skipped.${sms.error ? ` ${sms.error}` : ""}` : ""}` : "Notification scheduled. It stays Scheduled until the project scheduler executes it.");
+        flash(now ? `Notification sent (priority ${json?.data?.delivery?.priority ?? priority}).${sms ? ` SMS ${sms.sent ?? 0} sent, ${sms.failed ?? 0} failed, ${skipped} skipped.${sms.error ? ` ${sms.error}` : ""}` : ""}` : "Notification scheduled — it will be delivered at the scheduled time.");
         return;
       }
       if (json?.code === "MASS_CONFIRM_REQUIRED") {
@@ -294,7 +294,7 @@ export default function NotificationsPage() {
 
   return (
     <AdminLayout title="Notifications" subtitle="Announce to batches, faculty or individuals">
-        <AdminPageHeader title="Notifications" description="Broadcast via in-app, push and SMS (MSG91). Scheduled items need the project scheduler." actionLabel="Create Notification" actionIcon={Plus} onAction={openComposer} />
+        <AdminPageHeader title="Notifications" description="Send in-app, push and SMS messages to students and staff." actionLabel="Send Notification" actionIcon={Plus} onAction={openComposer} />
       {saved ? (
         <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" /> {saved}

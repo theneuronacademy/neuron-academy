@@ -9,12 +9,10 @@ import {
   Layers,
   FileText,
   Inbox,
-  CalendarCheck,
   UserPlus,
   PlusCircle,
   Megaphone,
   ImagePlus,
-  CheckCircle2,
   Wifi,
   WifiOff,
   RefreshCw,
@@ -156,25 +154,13 @@ export default function AdminDashboardPage() {
         <StatCard label="Pending Enquiries" value={liveStats?.newEnquiries ?? stats.pendingEnquiries} sub={liveStats ? "New enquiries awaiting contact" : "Demo data"} icon={Inbox} accent="crimson" />
       </div>
 
-      {liveStats ? (
-        <div>
-          <h3 className="text-sm font-extrabold tracking-widest text-muted">LIVE TEST PLATFORM • POSTGRESQL</h3>
-          <div className="mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard label="Total Tests" value={liveStats.totalTests} sub="Database count" icon={FileText} accent="navy" />
-            <StatCard label="Published Tests" value={liveStats.publishedTests} sub={`${liveStats.liveTests} live now`} icon={Megaphone} accent="teal" />
-            <StatCard label="Upcoming Tests" value={liveStats.scheduledTests} sub={`${liveStats.completedTests} completed`} icon={CalendarCheck} accent="navy" />
-            <StatCard label="Total Results" value={liveStats.totalResults} sub={`${liveStats.totalAttempts} attempts`} icon={CheckCircle2} accent="teal" />
-          </div>
-        </div>
-      ) : null}
-
       <div>
         <h3 className="text-sm font-extrabold tracking-widest text-muted">QUICK ACTIONS</h3>
-        <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <QuickAction icon={UserPlus} label="Add Student" desc="Enroll a learner" onClick={() => router.push("/admin/students")} />
           <QuickAction icon={PlusCircle} label="Create Test" desc="Live / offline / practice" onClick={() => router.push("/admin/tests")} />
           <QuickAction icon={Megaphone} label="Publish Announcement" desc="Top running banner" onClick={() => router.push("/admin/website/announcements")} />
-          <QuickAction icon={ImagePlus} label="Add Banner" desc="Promo without code" onClick={() => router.push("/admin/website/banners")} />
+          <QuickAction icon={ImagePlus} label="Upload Media" desc="Gallery photos & videos" onClick={() => router.push("/admin/website/gallery")} />
         </div>
       </div>
 

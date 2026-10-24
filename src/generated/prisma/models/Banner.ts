@@ -43,6 +43,7 @@ export type BannerMinAggregateOutputType = {
   videoUrl: string | null
   buttonText: string | null
   buttonUrl: string | null
+  animation: string | null
   startDate: Date | null
   endDate: Date | null
   isActive: boolean | null
@@ -60,6 +61,7 @@ export type BannerMaxAggregateOutputType = {
   videoUrl: string | null
   buttonText: string | null
   buttonUrl: string | null
+  animation: string | null
   startDate: Date | null
   endDate: Date | null
   isActive: boolean | null
@@ -77,6 +79,7 @@ export type BannerCountAggregateOutputType = {
   videoUrl: number
   buttonText: number
   buttonUrl: number
+  animation: number
   startDate: number
   endDate: number
   isActive: number
@@ -104,6 +107,7 @@ export type BannerMinAggregateInputType = {
   videoUrl?: true
   buttonText?: true
   buttonUrl?: true
+  animation?: true
   startDate?: true
   endDate?: true
   isActive?: true
@@ -121,6 +125,7 @@ export type BannerMaxAggregateInputType = {
   videoUrl?: true
   buttonText?: true
   buttonUrl?: true
+  animation?: true
   startDate?: true
   endDate?: true
   isActive?: true
@@ -138,6 +143,7 @@ export type BannerCountAggregateInputType = {
   videoUrl?: true
   buttonText?: true
   buttonUrl?: true
+  animation?: true
   startDate?: true
   endDate?: true
   isActive?: true
@@ -242,6 +248,7 @@ export type BannerGroupByOutputType = {
   videoUrl: string | null
   buttonText: string | null
   buttonUrl: string | null
+  animation: string
   startDate: Date | null
   endDate: Date | null
   isActive: boolean
@@ -282,6 +289,7 @@ export type BannerWhereInput = {
   videoUrl?: Prisma.StringNullableFilter<"Banner"> | string | null
   buttonText?: Prisma.StringNullableFilter<"Banner"> | string | null
   buttonUrl?: Prisma.StringNullableFilter<"Banner"> | string | null
+  animation?: Prisma.StringFilter<"Banner"> | string
   startDate?: Prisma.DateTimeNullableFilter<"Banner"> | Date | string | null
   endDate?: Prisma.DateTimeNullableFilter<"Banner"> | Date | string | null
   isActive?: Prisma.BoolFilter<"Banner"> | boolean
@@ -299,6 +307,7 @@ export type BannerOrderByWithRelationInput = {
   videoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   buttonText?: Prisma.SortOrderInput | Prisma.SortOrder
   buttonUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  animation?: Prisma.SortOrder
   startDate?: Prisma.SortOrderInput | Prisma.SortOrder
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -319,6 +328,7 @@ export type BannerWhereUniqueInput = Prisma.AtLeast<{
   videoUrl?: Prisma.StringNullableFilter<"Banner"> | string | null
   buttonText?: Prisma.StringNullableFilter<"Banner"> | string | null
   buttonUrl?: Prisma.StringNullableFilter<"Banner"> | string | null
+  animation?: Prisma.StringFilter<"Banner"> | string
   startDate?: Prisma.DateTimeNullableFilter<"Banner"> | Date | string | null
   endDate?: Prisma.DateTimeNullableFilter<"Banner"> | Date | string | null
   isActive?: Prisma.BoolFilter<"Banner"> | boolean
@@ -336,6 +346,7 @@ export type BannerOrderByWithAggregationInput = {
   videoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   buttonText?: Prisma.SortOrderInput | Prisma.SortOrder
   buttonUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  animation?: Prisma.SortOrder
   startDate?: Prisma.SortOrderInput | Prisma.SortOrder
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -361,6 +372,7 @@ export type BannerScalarWhereWithAggregatesInput = {
   videoUrl?: Prisma.StringNullableWithAggregatesFilter<"Banner"> | string | null
   buttonText?: Prisma.StringNullableWithAggregatesFilter<"Banner"> | string | null
   buttonUrl?: Prisma.StringNullableWithAggregatesFilter<"Banner"> | string | null
+  animation?: Prisma.StringWithAggregatesFilter<"Banner"> | string
   startDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Banner"> | Date | string | null
   endDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Banner"> | Date | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Banner"> | boolean
@@ -378,6 +390,7 @@ export type BannerCreateInput = {
   videoUrl?: string | null
   buttonText?: string | null
   buttonUrl?: string | null
+  animation?: string
   startDate?: Date | string | null
   endDate?: Date | string | null
   isActive?: boolean
@@ -395,6 +408,7 @@ export type BannerUncheckedCreateInput = {
   videoUrl?: string | null
   buttonText?: string | null
   buttonUrl?: string | null
+  animation?: string
   startDate?: Date | string | null
   endDate?: Date | string | null
   isActive?: boolean
@@ -412,6 +426,7 @@ export type BannerUpdateInput = {
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buttonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buttonUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  animation?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -429,6 +444,7 @@ export type BannerUncheckedUpdateInput = {
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buttonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buttonUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  animation?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -446,6 +462,7 @@ export type BannerCreateManyInput = {
   videoUrl?: string | null
   buttonText?: string | null
   buttonUrl?: string | null
+  animation?: string
   startDate?: Date | string | null
   endDate?: Date | string | null
   isActive?: boolean
@@ -463,6 +480,7 @@ export type BannerUpdateManyMutationInput = {
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buttonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buttonUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  animation?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -480,6 +498,7 @@ export type BannerUncheckedUpdateManyInput = {
   videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buttonText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   buttonUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  animation?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -497,6 +516,7 @@ export type BannerCountOrderByAggregateInput = {
   videoUrl?: Prisma.SortOrder
   buttonText?: Prisma.SortOrder
   buttonUrl?: Prisma.SortOrder
+  animation?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -518,6 +538,7 @@ export type BannerMaxOrderByAggregateInput = {
   videoUrl?: Prisma.SortOrder
   buttonText?: Prisma.SortOrder
   buttonUrl?: Prisma.SortOrder
+  animation?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -535,6 +556,7 @@ export type BannerMinOrderByAggregateInput = {
   videoUrl?: Prisma.SortOrder
   buttonText?: Prisma.SortOrder
   buttonUrl?: Prisma.SortOrder
+  animation?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -558,6 +580,7 @@ export type BannerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   videoUrl?: boolean
   buttonText?: boolean
   buttonUrl?: boolean
+  animation?: boolean
   startDate?: boolean
   endDate?: boolean
   isActive?: boolean
@@ -575,6 +598,7 @@ export type BannerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   videoUrl?: boolean
   buttonText?: boolean
   buttonUrl?: boolean
+  animation?: boolean
   startDate?: boolean
   endDate?: boolean
   isActive?: boolean
@@ -592,6 +616,7 @@ export type BannerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   videoUrl?: boolean
   buttonText?: boolean
   buttonUrl?: boolean
+  animation?: boolean
   startDate?: boolean
   endDate?: boolean
   isActive?: boolean
@@ -609,6 +634,7 @@ export type BannerSelectScalar = {
   videoUrl?: boolean
   buttonText?: boolean
   buttonUrl?: boolean
+  animation?: boolean
   startDate?: boolean
   endDate?: boolean
   isActive?: boolean
@@ -617,7 +643,7 @@ export type BannerSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BannerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subtitle" | "description" | "imageUrl" | "videoUrl" | "buttonText" | "buttonUrl" | "startDate" | "endDate" | "isActive" | "displayOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["banner"]>
+export type BannerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "subtitle" | "description" | "imageUrl" | "videoUrl" | "buttonText" | "buttonUrl" | "animation" | "startDate" | "endDate" | "isActive" | "displayOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["banner"]>
 
 export type $BannerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Banner"
@@ -631,6 +657,7 @@ export type $BannerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     videoUrl: string | null
     buttonText: string | null
     buttonUrl: string | null
+    animation: string
     startDate: Date | null
     endDate: Date | null
     isActive: boolean
@@ -1068,6 +1095,7 @@ export interface BannerFieldRefs {
   readonly videoUrl: Prisma.FieldRef<"Banner", 'String'>
   readonly buttonText: Prisma.FieldRef<"Banner", 'String'>
   readonly buttonUrl: Prisma.FieldRef<"Banner", 'String'>
+  readonly animation: Prisma.FieldRef<"Banner", 'String'>
   readonly startDate: Prisma.FieldRef<"Banner", 'DateTime'>
   readonly endDate: Prisma.FieldRef<"Banner", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"Banner", 'Boolean'>

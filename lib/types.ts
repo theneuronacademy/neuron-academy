@@ -2,6 +2,7 @@
 // the localStorage mock store later without changing components.
 
 export type AdMediaType = "image" | "video";
+
 export type AdType =
   | "hero"
   | "banner"
@@ -10,6 +11,16 @@ export type AdType =
   | "course"
   | "admission"
   | "result";
+
+/** Motion/animation style for admin-configured banners. */
+export type BannerAnimation =
+  | "none"
+  | "fade"
+  | "slide-up"
+  | "slide-left"
+  | "slide-right"
+  | "float"
+  | "zoom";
 
 export interface Advertisement {
   id: string;
@@ -30,6 +41,8 @@ export interface Advertisement {
   muted: boolean;
   loop: boolean;
   audioEnabled: boolean;
+  /** Optional motion style — absent means no animation (legacy rows). */
+  animation?: BannerAnimation;
   createdAt: string;
   updatedAt: string;
 }

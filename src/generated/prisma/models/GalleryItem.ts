@@ -39,9 +39,16 @@ export type GalleryItemMinAggregateOutputType = {
   title: string | null
   description: string | null
   imageUrl: string | null
+  videoUrl: string | null
+  publicId: string | null
+  videoPublicId: string | null
+  caption: string | null
+  altText: string | null
+  mediaType: string | null
   category: string | null
   displayOrder: number | null
   isActive: boolean | null
+  animation: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -51,9 +58,16 @@ export type GalleryItemMaxAggregateOutputType = {
   title: string | null
   description: string | null
   imageUrl: string | null
+  videoUrl: string | null
+  publicId: string | null
+  videoPublicId: string | null
+  caption: string | null
+  altText: string | null
+  mediaType: string | null
   category: string | null
   displayOrder: number | null
   isActive: boolean | null
+  animation: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,9 +77,16 @@ export type GalleryItemCountAggregateOutputType = {
   title: number
   description: number
   imageUrl: number
+  videoUrl: number
+  publicId: number
+  videoPublicId: number
+  caption: number
+  altText: number
+  mediaType: number
   category: number
   displayOrder: number
   isActive: number
+  animation: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -85,9 +106,16 @@ export type GalleryItemMinAggregateInputType = {
   title?: true
   description?: true
   imageUrl?: true
+  videoUrl?: true
+  publicId?: true
+  videoPublicId?: true
+  caption?: true
+  altText?: true
+  mediaType?: true
   category?: true
   displayOrder?: true
   isActive?: true
+  animation?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,9 +125,16 @@ export type GalleryItemMaxAggregateInputType = {
   title?: true
   description?: true
   imageUrl?: true
+  videoUrl?: true
+  publicId?: true
+  videoPublicId?: true
+  caption?: true
+  altText?: true
+  mediaType?: true
   category?: true
   displayOrder?: true
   isActive?: true
+  animation?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -109,9 +144,16 @@ export type GalleryItemCountAggregateInputType = {
   title?: true
   description?: true
   imageUrl?: true
+  videoUrl?: true
+  publicId?: true
+  videoPublicId?: true
+  caption?: true
+  altText?: true
+  mediaType?: true
   category?: true
   displayOrder?: true
   isActive?: true
+  animation?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -207,10 +249,17 @@ export type GalleryItemGroupByOutputType = {
   id: string
   title: string
   description: string | null
-  imageUrl: string
+  imageUrl: string | null
+  videoUrl: string | null
+  publicId: string | null
+  videoPublicId: string | null
+  caption: string | null
+  altText: string | null
+  mediaType: string
   category: string
   displayOrder: number
   isActive: boolean
+  animation: string
   createdAt: Date
   updatedAt: Date
   _count: GalleryItemCountAggregateOutputType | null
@@ -242,10 +291,17 @@ export type GalleryItemWhereInput = {
   id?: Prisma.StringFilter<"GalleryItem"> | string
   title?: Prisma.StringFilter<"GalleryItem"> | string
   description?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
-  imageUrl?: Prisma.StringFilter<"GalleryItem"> | string
+  imageUrl?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  videoUrl?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  publicId?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  videoPublicId?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  caption?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  altText?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  mediaType?: Prisma.StringFilter<"GalleryItem"> | string
   category?: Prisma.StringFilter<"GalleryItem"> | string
   displayOrder?: Prisma.IntFilter<"GalleryItem"> | number
   isActive?: Prisma.BoolFilter<"GalleryItem"> | boolean
+  animation?: Prisma.StringFilter<"GalleryItem"> | string
   createdAt?: Prisma.DateTimeFilter<"GalleryItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GalleryItem"> | Date | string
 }
@@ -254,10 +310,17 @@ export type GalleryItemOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  imageUrl?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  videoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  publicId?: Prisma.SortOrderInput | Prisma.SortOrder
+  videoPublicId?: Prisma.SortOrderInput | Prisma.SortOrder
+  caption?: Prisma.SortOrderInput | Prisma.SortOrder
+  altText?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   category?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  animation?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -269,10 +332,17 @@ export type GalleryItemWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.GalleryItemWhereInput | Prisma.GalleryItemWhereInput[]
   title?: Prisma.StringFilter<"GalleryItem"> | string
   description?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
-  imageUrl?: Prisma.StringFilter<"GalleryItem"> | string
+  imageUrl?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  videoUrl?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  publicId?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  videoPublicId?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  caption?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  altText?: Prisma.StringNullableFilter<"GalleryItem"> | string | null
+  mediaType?: Prisma.StringFilter<"GalleryItem"> | string
   category?: Prisma.StringFilter<"GalleryItem"> | string
   displayOrder?: Prisma.IntFilter<"GalleryItem"> | number
   isActive?: Prisma.BoolFilter<"GalleryItem"> | boolean
+  animation?: Prisma.StringFilter<"GalleryItem"> | string
   createdAt?: Prisma.DateTimeFilter<"GalleryItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GalleryItem"> | Date | string
 }, "id">
@@ -281,10 +351,17 @@ export type GalleryItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  imageUrl?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  videoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  publicId?: Prisma.SortOrderInput | Prisma.SortOrder
+  videoPublicId?: Prisma.SortOrderInput | Prisma.SortOrder
+  caption?: Prisma.SortOrderInput | Prisma.SortOrder
+  altText?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   category?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  animation?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.GalleryItemCountOrderByAggregateInput
@@ -301,10 +378,17 @@ export type GalleryItemScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"GalleryItem"> | string
   title?: Prisma.StringWithAggregatesFilter<"GalleryItem"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"GalleryItem"> | string | null
-  imageUrl?: Prisma.StringWithAggregatesFilter<"GalleryItem"> | string
+  imageUrl?: Prisma.StringNullableWithAggregatesFilter<"GalleryItem"> | string | null
+  videoUrl?: Prisma.StringNullableWithAggregatesFilter<"GalleryItem"> | string | null
+  publicId?: Prisma.StringNullableWithAggregatesFilter<"GalleryItem"> | string | null
+  videoPublicId?: Prisma.StringNullableWithAggregatesFilter<"GalleryItem"> | string | null
+  caption?: Prisma.StringNullableWithAggregatesFilter<"GalleryItem"> | string | null
+  altText?: Prisma.StringNullableWithAggregatesFilter<"GalleryItem"> | string | null
+  mediaType?: Prisma.StringWithAggregatesFilter<"GalleryItem"> | string
   category?: Prisma.StringWithAggregatesFilter<"GalleryItem"> | string
   displayOrder?: Prisma.IntWithAggregatesFilter<"GalleryItem"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"GalleryItem"> | boolean
+  animation?: Prisma.StringWithAggregatesFilter<"GalleryItem"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"GalleryItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"GalleryItem"> | Date | string
 }
@@ -313,10 +397,17 @@ export type GalleryItemCreateInput = {
   id?: string
   title: string
   description?: string | null
-  imageUrl: string
+  imageUrl?: string | null
+  videoUrl?: string | null
+  publicId?: string | null
+  videoPublicId?: string | null
+  caption?: string | null
+  altText?: string | null
+  mediaType?: string
   category?: string
   displayOrder?: number
   isActive?: boolean
+  animation?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -325,10 +416,17 @@ export type GalleryItemUncheckedCreateInput = {
   id?: string
   title: string
   description?: string | null
-  imageUrl: string
+  imageUrl?: string | null
+  videoUrl?: string | null
+  publicId?: string | null
+  videoPublicId?: string | null
+  caption?: string | null
+  altText?: string | null
+  mediaType?: string
   category?: string
   displayOrder?: number
   isActive?: boolean
+  animation?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -337,10 +435,17 @@ export type GalleryItemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaType?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  animation?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -349,10 +454,17 @@ export type GalleryItemUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaType?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  animation?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -361,10 +473,17 @@ export type GalleryItemCreateManyInput = {
   id?: string
   title: string
   description?: string | null
-  imageUrl: string
+  imageUrl?: string | null
+  videoUrl?: string | null
+  publicId?: string | null
+  videoPublicId?: string | null
+  caption?: string | null
+  altText?: string | null
+  mediaType?: string
   category?: string
   displayOrder?: number
   isActive?: boolean
+  animation?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -373,10 +492,17 @@ export type GalleryItemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaType?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  animation?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -385,10 +511,17 @@ export type GalleryItemUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  videoPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  altText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaType?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  animation?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -398,9 +531,16 @@ export type GalleryItemCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  videoUrl?: Prisma.SortOrder
+  publicId?: Prisma.SortOrder
+  videoPublicId?: Prisma.SortOrder
+  caption?: Prisma.SortOrder
+  altText?: Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   category?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  animation?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -414,9 +554,16 @@ export type GalleryItemMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  videoUrl?: Prisma.SortOrder
+  publicId?: Prisma.SortOrder
+  videoPublicId?: Prisma.SortOrder
+  caption?: Prisma.SortOrder
+  altText?: Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   category?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  animation?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -426,9 +573,16 @@ export type GalleryItemMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  videoUrl?: Prisma.SortOrder
+  publicId?: Prisma.SortOrder
+  videoPublicId?: Prisma.SortOrder
+  caption?: Prisma.SortOrder
+  altText?: Prisma.SortOrder
+  mediaType?: Prisma.SortOrder
   category?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  animation?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -444,9 +598,16 @@ export type GalleryItemSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   title?: boolean
   description?: boolean
   imageUrl?: boolean
+  videoUrl?: boolean
+  publicId?: boolean
+  videoPublicId?: boolean
+  caption?: boolean
+  altText?: boolean
+  mediaType?: boolean
   category?: boolean
   displayOrder?: boolean
   isActive?: boolean
+  animation?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["galleryItem"]>
@@ -456,9 +617,16 @@ export type GalleryItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   title?: boolean
   description?: boolean
   imageUrl?: boolean
+  videoUrl?: boolean
+  publicId?: boolean
+  videoPublicId?: boolean
+  caption?: boolean
+  altText?: boolean
+  mediaType?: boolean
   category?: boolean
   displayOrder?: boolean
   isActive?: boolean
+  animation?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["galleryItem"]>
@@ -468,9 +636,16 @@ export type GalleryItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   title?: boolean
   description?: boolean
   imageUrl?: boolean
+  videoUrl?: boolean
+  publicId?: boolean
+  videoPublicId?: boolean
+  caption?: boolean
+  altText?: boolean
+  mediaType?: boolean
   category?: boolean
   displayOrder?: boolean
   isActive?: boolean
+  animation?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["galleryItem"]>
@@ -480,14 +655,21 @@ export type GalleryItemSelectScalar = {
   title?: boolean
   description?: boolean
   imageUrl?: boolean
+  videoUrl?: boolean
+  publicId?: boolean
+  videoPublicId?: boolean
+  caption?: boolean
+  altText?: boolean
+  mediaType?: boolean
   category?: boolean
   displayOrder?: boolean
   isActive?: boolean
+  animation?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type GalleryItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "imageUrl" | "category" | "displayOrder" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["galleryItem"]>
+export type GalleryItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "imageUrl" | "videoUrl" | "publicId" | "videoPublicId" | "caption" | "altText" | "mediaType" | "category" | "displayOrder" | "isActive" | "animation" | "createdAt" | "updatedAt", ExtArgs["result"]["galleryItem"]>
 
 export type $GalleryItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "GalleryItem"
@@ -496,10 +678,17 @@ export type $GalleryItemPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     title: string
     description: string | null
-    imageUrl: string
+    imageUrl: string | null
+    videoUrl: string | null
+    publicId: string | null
+    videoPublicId: string | null
+    caption: string | null
+    altText: string | null
+    mediaType: string
     category: string
     displayOrder: number
     isActive: boolean
+    animation: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["galleryItem"]>
@@ -929,9 +1118,16 @@ export interface GalleryItemFieldRefs {
   readonly title: Prisma.FieldRef<"GalleryItem", 'String'>
   readonly description: Prisma.FieldRef<"GalleryItem", 'String'>
   readonly imageUrl: Prisma.FieldRef<"GalleryItem", 'String'>
+  readonly videoUrl: Prisma.FieldRef<"GalleryItem", 'String'>
+  readonly publicId: Prisma.FieldRef<"GalleryItem", 'String'>
+  readonly videoPublicId: Prisma.FieldRef<"GalleryItem", 'String'>
+  readonly caption: Prisma.FieldRef<"GalleryItem", 'String'>
+  readonly altText: Prisma.FieldRef<"GalleryItem", 'String'>
+  readonly mediaType: Prisma.FieldRef<"GalleryItem", 'String'>
   readonly category: Prisma.FieldRef<"GalleryItem", 'String'>
   readonly displayOrder: Prisma.FieldRef<"GalleryItem", 'Int'>
   readonly isActive: Prisma.FieldRef<"GalleryItem", 'Boolean'>
+  readonly animation: Prisma.FieldRef<"GalleryItem", 'String'>
   readonly createdAt: Prisma.FieldRef<"GalleryItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"GalleryItem", 'DateTime'>
 }

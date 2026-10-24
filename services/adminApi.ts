@@ -33,6 +33,7 @@ import {
   type AdminStudent,
   type AdminTest,
 } from "@/data/admin";
+import { toBannerAnimation } from "@/components/website/bannerMotion";
 
 interface ApiEnvelope<T> {
   success: boolean;
@@ -87,6 +88,7 @@ function toAdminBanner(r: any): AdminBanner {
     videoUrl: String(r.videoUrl ?? ""),
     buttonText: String(r.buttonText ?? ""),
     buttonUrl: String(r.buttonUrl ?? ""),
+    animation: r.animation == null ? undefined : toBannerAnimation(r.animation),
     startDate: r.startDate ? new Date(r.startDate).toISOString().slice(0, 10) : "",
     endDate: r.endDate ? new Date(r.endDate).toISOString().slice(0, 10) : "",
     active: r.isActive ?? r.active ?? true,

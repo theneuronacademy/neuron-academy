@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { LoadingState } from "@/components/admin/AdminStates";
 import { useAdminGuard } from "@/components/admin/useAdminGuard";
 
 interface Batch { id: string; name: string }
@@ -88,10 +90,20 @@ export default function AdminTimetablePage() {
     }
   }
 
-  const inputCls = "rounded-xl border border-silver-300 px-3 py-2 text-sm outline-none focus:border-teal-500";
+  const inputCls = "w-full rounded-xl border border-silver-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-500";
+  const labelCls = "mb-1 block text-[11px] font-bold text-navy-700";
+
+  if (!ready) {
+    return (
+      <AdminLayout title="Timetable" subtitle="Weekly class schedules per batch">
+        <LoadingState message="Loading timetable…" />
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="Timetable" subtitle="Weekly class schedules per batch">
+      <AdminPageHeader title="Timetable" description={`${items.length} scheduled classes • filter by batch, add or delete entries.`} />
       <div className="flex flex-wrap gap-2">
         <select value={batchId} onChange={(e) => { setBatchId(e.target.value); void load(e.target.value); }} className="rounded-xl border border-silver-300 bg-white px-3 py-2 text-[13px] font-bold text-navy-700">
           <option value="">All batches</option>
@@ -101,19 +113,33 @@ export default function AdminTimetablePage() {
       {err ? <p className="mt-3 rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson-600" role="alert">{err}</p> : null}
       {msg ? <p className="mt-3 rounded-xl border border-teal-200 bg-teal-50 px-4 py-2.5 text-[13px] font-bold text-teal-700" role="status">{msg}</p> : null}
 
-      <div className="mt-3 rounded-card border border-silver-200 bg-white p-4 shadow-card">
+      <div className="rounded-card border border-silver-200 bg-white p-4 shadow-card">
         <p className="text-[14px] font-extrabold text-navy-700">Add class{batches.find((b) => b.id === batchId)?.name ? ` — ${batches.find((b) => b.id === batchId)?.name}` : ""}</p>
         <div className="mt-2 grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
-          <input value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} placeholder="Subject" className={inputCls} />
-          <input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Topic (optional)" className={inputCls} />
-          <select value={form.dayOfWeek} onChange={(e) => setForm((f) => ({ ...f, dayOfWeek: e.target.value }))} className={inputCls}>
-            {DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}
-          </select>
-          <input type="time" value={form.startTime} onChange={(e) => setForm((f) => ({ ...f, startTime: e.target.value }))} className={inputCls} />
-          <input type="time" value={form.endTime} onChange={(e) => setForm((f) => ({ ...f, endTime: e.target.value }))} className={inputCls} />
-          <input value={form.room} onChange={(e) => setForm((f) => ({ ...f, room: e.target.value }))} placeholder="Room (optional)" className={inputCls} />
+          <label className={labelCls}>Subject *
+            <input value={form.subject} onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))} placeholder="Physics" className={inputCls} />
+          </label>
+          <label className={labelCls}>Topic
+            <input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Rotational motion (optional)" className={inputCls} />
+          </label>
+          <label className={labelCls}>Day
+            <select value={form.dayOfWeek} onChange={(e) => setForm((f) => ({ ...f, dayOfWeek: e.target.value }))} className={inputCls}>
+              {DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}
+            </select>
+          </label>
+          <label className={labelCls}>Starts
+            <input type="time" value={form.startTime} onChange={(e) => setForm((f) => ({ ...f, startTime: e.target.value }))} className={inputCls} />
+          </label>
+          <label className={labelCls}>Ends
+            <input type="time" value={form.endTime} onChange={(e) => setForm((f) => ({ ...f, endTime: e.target.value }))} className={inputCls} />
+          </label>
+          <label className={labelCls}>Room
+            <input value={form.room} onChange={(e) => setForm((f) => ({ ...f, room: e.target.value }))} placeholder="A-2 (optional)" className={inputCls} />
+          </label>
         </div>
-        <button onClick={create} disabled={busy} className="mt-2 rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">Add Class</button>
+        <div className="mt-2">
+          <button onClick={create} disabled={busy} className="rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">{busy ? "Adding…" : "Add Class"}</button>
+        </div>
       </div>
 
       <div className="mt-3 overflow-x-auto rounded-card border border-silver-200 bg-white shadow-card">

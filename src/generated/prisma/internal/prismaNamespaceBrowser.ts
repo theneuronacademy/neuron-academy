@@ -59,6 +59,7 @@ export const ModelName = {
   Banner: 'Banner',
   Popup: 'Popup',
   GalleryItem: 'GalleryItem',
+  AboutImage: 'AboutImage',
   Testimonial: 'Testimonial',
   Result: 'Result',
   TestAccess: 'TestAccess',
@@ -233,6 +234,7 @@ export const BannerScalarFieldEnum = {
   videoUrl: 'videoUrl',
   buttonText: 'buttonText',
   buttonUrl: 'buttonUrl',
+  animation: 'animation',
   startDate: 'startDate',
   endDate: 'endDate',
   isActive: 'isActive',
@@ -268,14 +270,36 @@ export const GalleryItemScalarFieldEnum = {
   title: 'title',
   description: 'description',
   imageUrl: 'imageUrl',
+  videoUrl: 'videoUrl',
+  publicId: 'publicId',
+  videoPublicId: 'videoPublicId',
+  caption: 'caption',
+  altText: 'altText',
+  mediaType: 'mediaType',
   category: 'category',
+  displayOrder: 'displayOrder',
+  isActive: 'isActive',
+  animation: 'animation',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GalleryItemScalarFieldEnum = (typeof GalleryItemScalarFieldEnum)[keyof typeof GalleryItemScalarFieldEnum]
+
+
+export const AboutImageScalarFieldEnum = {
+  id: 'id',
+  imageUrl: 'imageUrl',
+  publicId: 'publicId',
+  caption: 'caption',
+  altText: 'altText',
   displayOrder: 'displayOrder',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type GalleryItemScalarFieldEnum = (typeof GalleryItemScalarFieldEnum)[keyof typeof GalleryItemScalarFieldEnum]
+export type AboutImageScalarFieldEnum = (typeof AboutImageScalarFieldEnum)[keyof typeof AboutImageScalarFieldEnum]
 
 
 export const TestimonialScalarFieldEnum = {

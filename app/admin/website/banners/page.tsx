@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, CheckCircle2, Eye, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Pencil, Trash2, CheckCircle2, Eye, ArrowUp, ArrowDown, Sparkles, TriangleAlert } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminStatusBadge } from "@/components/admin/AdminStatusBadge";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/primitives";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { getBanners } from "@/services/adminApi";
+import { BANNER_ANIMATIONS, bannerAnimationClass, toBannerAnimation } from "@/components/website/bannerMotion";
 import type { AdminBanner } from "@/data/admin";
 
 const EMPTY: Omit<AdminBanner, "id"> = {
@@ -23,6 +24,7 @@ const EMPTY: Omit<AdminBanner, "id"> = {
   videoUrl: "",
   buttonText: "",
   buttonUrl: "",
+  animation: "none",
   startDate: "",
   endDate: "",
   active: true,
@@ -31,8 +33,9 @@ const EMPTY: Omit<AdminBanner, "id"> = {
 
 function BannerPreview({ b }: { b: Partial<AdminBanner> }) {
   const hasVideo = Boolean(b.videoUrl);
+  const animationClass = b.animation && b.animation !== "none" ? bannerAnimationClass(b.animation) : "";
   return (
-    <div className="overflow-hidden rounded-2xl border border-silver-300 bg-white shadow-card">
+    <div className={`overflow-hidden rounded-2xl border border-silver-300 bg-white shadow-card ${animationClass}`}>
       <div className="flex items-center justify-between border-b border-silver-200 bg-silver-50 px-3 py-2">
         <p className="text-[11px] font-bold text-muted">PREVIEW • HOMEPAGE CAROUSEL</p>
         <AdminStatusBadge tone={b.active ? "green" : "gray"}>{b.active ? "Active" : "Inactive"}</AdminStatusBadge>
@@ -85,7 +88,7 @@ export default function BannersPage() {
         const res = await fetch("/api/banners", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows((json.data.items as Array<{ id: string; title?: string; subtitle?: string; description?: string; imageUrl?: string; videoUrl?: string; buttonText?: string; buttonUrl?: string; startDate?: string; endDate?: string; isActive?: boolean; displayOrder?: number }>).map((b) => ({
+          setRows((json.data.items as Array<{ id: string; title?: string; subtitle?: string; description?: string; imageUrl?: string; videoUrl?: string; buttonText?: string; buttonUrl?: string; animation?: string; startDate?: string; endDate?: string; isActive?: boolean; displayOrder?: number }>).map((b) => ({
             id: b.id,
             title: b.title ?? "",
             subtitle: b.subtitle ?? "",
@@ -94,6 +97,7 @@ export default function BannersPage() {
             videoUrl: b.videoUrl ?? "",
             buttonText: b.buttonText ?? "",
             buttonUrl: b.buttonUrl ?? "",
+            animation: toBannerAnimation(b.animation),
             startDate: b.startDate ? new Date(b.startDate).toISOString().slice(0, 10) : "",
             endDate: b.endDate ? new Date(b.endDate).toISOString().slice(0, 10) : "",
             active: b.isActive ?? true,
@@ -129,7 +133,7 @@ export default function BannersPage() {
   };
   const openEdit = (r: AdminBanner) => {
     setEditing(r);
-    setForm({ title: r.title, subtitle: r.subtitle, description: r.description, image: r.image, videoUrl: r.videoUrl, buttonText: r.buttonText, buttonUrl: r.buttonUrl, startDate: r.startDate, endDate: r.endDate, active: r.active, order: r.order });
+    setForm({ title: r.title, subtitle: r.subtitle, description: r.description, image: r.image, videoUrl: r.videoUrl, buttonText: r.buttonText, buttonUrl: r.buttonUrl, animation: toBannerAnimation(r.animation), startDate: r.startDate, endDate: r.endDate, active: r.active, order: r.order });
     setModal(true);
   };
   const save = async () => {
@@ -145,6 +149,7 @@ export default function BannersPage() {
       videoUrl: form.videoUrl,
       buttonText: form.buttonText,
       buttonUrl: form.buttonUrl,
+      animation: toBannerAnimation(form.animation),
       startDate: form.startDate || undefined,
       endDate: form.endDate || undefined,
       isActive: form.active,
@@ -160,8 +165,8 @@ export default function BannersPage() {
         });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success) {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));
-          setSaved("Banner updated — no code needed.");
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, ...form, animation: toBannerAnimation(form.animation) } : r)));
+          setSaved(typeof json.warning === "string" && json.warning ? json.warning : "Banner updated — no code needed.");
           setModal(false);
         } else {
           setFormError(json?.error ?? "Could not update banner. Nothing was saved.");
@@ -185,12 +190,13 @@ export default function BannersPage() {
             videoUrl: item.videoUrl ?? "",
             buttonText: item.buttonText ?? "",
             buttonUrl: item.buttonUrl ?? "",
+            animation: toBannerAnimation(item.animation),
             startDate: item.startDate ? new Date(item.startDate).toISOString().slice(0, 10) : "",
             endDate: item.endDate ? new Date(item.endDate).toISOString().slice(0, 10) : "",
             active: item.isActive ?? true,
             order: item.displayOrder ?? 0,
           }]);
-          setSaved("Banner created — no code needed.");
+          setSaved(typeof json.warning === "string" && json.warning ? json.warning : "Banner created — no code needed.");
           setModal(false);
         } else {
           setFormError(json?.error ?? "Could not create banner. Nothing was saved.");
@@ -282,8 +288,8 @@ export default function BannersPage() {
     <AdminLayout title="Banners" subtitle="Promotional carousel — create promos without touching code">
       <AdminPageHeader title="Banner Manager" description={`${filtered.length} banners • display order controls homepage carousel sequence.`} actionLabel="Add Banner" actionIcon={Plus} onAction={openAdd} />
       {saved ? (
-        <p className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700">
-          <CheckCircle2 className="h-4 w-4" /> {saved}
+        <p className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-[13px] font-bold ${saved.endsWith("no code needed.") ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"}`} role="status">
+          {saved.endsWith("no code needed.") ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <TriangleAlert className="h-4 w-4 shrink-0" />} {saved}
         </p>
       ) : null}
       <AdminToolbar>
@@ -386,6 +392,27 @@ export default function BannersPage() {
           Description
           <textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={3} placeholder="Small batches, weekly mocks…" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm font-medium outline-none focus:border-teal-500" />
         </label>
+        {/* Motion / Animation Style — admin-visible entrance effects. */}
+        <div className="mt-3">
+          <p className="flex items-center gap-1.5 text-[12px] font-bold text-navy-700">
+            <Sparkles className="h-3.5 w-3.5 text-teal-600" /> Motion / Animation Style
+          </p>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            {BANNER_ANIMATIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                title={opt.hint}
+                aria-pressed={form.animation === opt.value}
+                onClick={() => set("animation", opt.value)}
+                className={`rounded-xl border px-3 py-2 text-left text-[12px] font-bold transition ${form.animation === opt.value ? "border-teal-500 bg-teal-50 text-teal-700" : "border-silver-300 bg-white text-navy-700 hover:border-teal-400"}`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-[11px] text-muted">{BANNER_ANIMATIONS.find((o) => o.value === form.animation)?.hint}</p>
+        </div>
         <div className="mt-4">
           <p className="mb-2 text-[11px] font-bold tracking-widest text-muted">LIVE PREVIEW</p>
           <BannerPreview b={form} />

@@ -7,6 +7,12 @@ export interface GalleryItem {
   title: string;
   category: string;
   image: string;
+  // Multi-media extensions (gallery supports images AND videos).
+  mediaType?: "image" | "video";
+  videoUrl?: string;
+  caption?: string;
+  altText?: string;
+  animation?: string;
 }
 
 export const GALLERY_CATEGORIES = ["Academy", "Classes", "Faculty", "Events", "Workshops", "Achievements"] as const;

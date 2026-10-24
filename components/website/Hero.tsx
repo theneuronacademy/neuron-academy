@@ -10,6 +10,8 @@ import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
 import { Marquee } from "@/components/website/motion";
 import { EXAM_TICKER } from "@/lib/websiteData";
 import { PublicBackground } from "@/components/design-system/BackgroundPatterns";
+import { bannerAnimationClass } from "@/components/website/bannerMotion";
+import { cn } from "@/lib/utils";
 
 const EXAM_PILLS = [
   { label: "JEE", color: "border-brand-primary/20 bg-brand-primary/10 text-brand-primary" },
@@ -54,7 +56,7 @@ function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) 
             }
           }}
           aria-label={muted ? "Unmute video" : "Mute video"}
-          className="absolute bottom-4 right-4 rounded-full bg-neutral-900/80 p-2.5 text-white backdrop-blur hover:bg-neutral-800"
+          className="absolute bottom-4 right-4 z-[3] rounded-full bg-neutral-900/80 p-2.5 text-white backdrop-blur hover:bg-neutral-800"
         >
           {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
         </button>
@@ -145,7 +147,13 @@ export function Hero() {
 
         <div className="relative mx-auto w-full max-w-[640px]">
           <div className="absolute -inset-3 rounded-[30px] bg-gradient-to-br from-brand-primary/15 via-brand-secondary/15 to-brand-primary/10 blur-xl" aria-hidden />
-          <div className="relative isolate h-[350px] overflow-hidden rounded-[24px] border border-silver-200 bg-navy-900 shadow-xl sm:h-[430px] lg:h-[500px]">
+          <div
+            className={cn(
+              "group relative isolate h-[350px] overflow-hidden rounded-[24px] border border-silver-200 bg-navy-900 shadow-xl transition duration-500 hover:border-silver-300 hover:shadow-card-hover sm:h-[430px] lg:h-[500px]",
+              // Admin-selected motion style for the featured banner.
+              active && active.animation && active.animation !== "none" ? bannerAnimationClass(active.animation) : "",
+            )}
+          >
             {active ? (
               <AdMedia ad={active} large />
             ) : (
@@ -162,13 +170,13 @@ export function Hero() {
                 }
               />
             )}
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950/90 via-navy-950/45 to-transparent px-5 pb-5 pt-24 sm:px-7 sm:pb-7">
+            <div className="absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-navy-950/90 via-navy-950/45 to-transparent px-5 pb-5 pt-24 sm:px-7 sm:pb-7">
               {active ? (
                 <>
                   <p className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-secondary-300">{active.subtitle || "Featured at Neuron Academy"}</p>
                   <p className="mt-2 text-xl font-bold text-white sm:text-2xl">{active.title}</p>
                   {active.description ? <p className="mt-1 max-w-lg text-sm text-white/80">{active.description}</p> : null}
-                  {active.ctaText ? <a href={active.ctaLink || "#courses"} className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-white underline decoration-brand-secondary underline-offset-4">{active.ctaText}<ArrowRight className="h-4 w-4" /></a> : null}
+                  {active.ctaText ? <a href={active.ctaLink || "#courses"} className="relative z-[3] mt-3 inline-flex items-center gap-2 text-sm font-bold text-white underline decoration-brand-secondary underline-offset-4">{active.ctaText}<ArrowRight className="h-4 w-4" /></a> : null}
                 </>
               ) : (
                 <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold text-white backdrop-blur">
@@ -176,6 +184,11 @@ export function Hero() {
                 </p>
               )}
             </div>
+            {active && active.ctaLink ? (
+              <a href={active.ctaLink} target={active.ctaLink.startsWith("http") ? "_blank" : undefined} rel={active.ctaLink.startsWith("http") ? "noopener noreferrer" : undefined} className="absolute inset-0 z-[2] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary/60" aria-label={`${active.title} — open banner destination`}>
+                <span className="sr-only">{active.ctaText || active.title}</span>
+              </a>
+            ) : null}
           </div>
         </div>
       </div>

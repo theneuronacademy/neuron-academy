@@ -405,6 +405,7 @@ export const ModelName = {
   Banner: 'Banner',
   Popup: 'Popup',
   GalleryItem: 'GalleryItem',
+  AboutImage: 'AboutImage',
   Testimonial: 'Testimonial',
   Result: 'Result',
   TestAccess: 'TestAccess',
@@ -451,7 +452,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "enquiry" | "announcement" | "bookmark" | "timetableEntry" | "doubt" | "doubtReply" | "material" | "assignment" | "submission" | "gradebookConfig" | "parentMessage" | "adminAuditLog" | "adminPermission" | "adminRolePermission" | "notificationSchedulerRun" | "homepageContent"
+    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "aboutImage" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "enquiry" | "announcement" | "bookmark" | "timetableEntry" | "doubt" | "doubtReply" | "material" | "assignment" | "submission" | "gradebookConfig" | "parentMessage" | "adminAuditLog" | "adminPermission" | "adminRolePermission" | "notificationSchedulerRun" | "homepageContent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1044,6 +1045,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.GalleryItemCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.GalleryItemCountAggregateOutputType> | number
+        }
+      }
+    }
+    AboutImage: {
+      payload: Prisma.$AboutImagePayload<ExtArgs>
+      fields: Prisma.AboutImageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AboutImageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AboutImageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>
+        }
+        findFirst: {
+          args: Prisma.AboutImageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AboutImageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>
+        }
+        findMany: {
+          args: Prisma.AboutImageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>[]
+        }
+        create: {
+          args: Prisma.AboutImageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>
+        }
+        createMany: {
+          args: Prisma.AboutImageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AboutImageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>[]
+        }
+        delete: {
+          args: Prisma.AboutImageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>
+        }
+        update: {
+          args: Prisma.AboutImageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>
+        }
+        deleteMany: {
+          args: Prisma.AboutImageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AboutImageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AboutImageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>[]
+        }
+        upsert: {
+          args: Prisma.AboutImageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutImagePayload>
+        }
+        aggregate: {
+          args: Prisma.AboutImageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAboutImage>
+        }
+        groupBy: {
+          args: Prisma.AboutImageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AboutImageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AboutImageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AboutImageCountAggregateOutputType> | number
         }
       }
     }
@@ -3505,6 +3580,7 @@ export const BannerScalarFieldEnum = {
   videoUrl: 'videoUrl',
   buttonText: 'buttonText',
   buttonUrl: 'buttonUrl',
+  animation: 'animation',
   startDate: 'startDate',
   endDate: 'endDate',
   isActive: 'isActive',
@@ -3540,14 +3616,36 @@ export const GalleryItemScalarFieldEnum = {
   title: 'title',
   description: 'description',
   imageUrl: 'imageUrl',
+  videoUrl: 'videoUrl',
+  publicId: 'publicId',
+  videoPublicId: 'videoPublicId',
+  caption: 'caption',
+  altText: 'altText',
+  mediaType: 'mediaType',
   category: 'category',
+  displayOrder: 'displayOrder',
+  isActive: 'isActive',
+  animation: 'animation',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GalleryItemScalarFieldEnum = (typeof GalleryItemScalarFieldEnum)[keyof typeof GalleryItemScalarFieldEnum]
+
+
+export const AboutImageScalarFieldEnum = {
+  id: 'id',
+  imageUrl: 'imageUrl',
+  publicId: 'publicId',
+  caption: 'caption',
+  altText: 'altText',
   displayOrder: 'displayOrder',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type GalleryItemScalarFieldEnum = (typeof GalleryItemScalarFieldEnum)[keyof typeof GalleryItemScalarFieldEnum]
+export type AboutImageScalarFieldEnum = (typeof AboutImageScalarFieldEnum)[keyof typeof AboutImageScalarFieldEnum]
 
 
 export const TestimonialScalarFieldEnum = {
@@ -4769,6 +4867,7 @@ export type GlobalOmitConfig = {
   banner?: Prisma.BannerOmit
   popup?: Prisma.PopupOmit
   galleryItem?: Prisma.GalleryItemOmit
+  aboutImage?: Prisma.AboutImageOmit
   testimonial?: Prisma.TestimonialOmit
   result?: Prisma.ResultOmit
   testAccess?: Prisma.TestAccessOmit
