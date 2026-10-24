@@ -31,6 +31,12 @@ function parseMediaType(v: unknown): "image" | "video" | undefined | "invalid" {
   return "invalid";
 }
 
+/** Normalize raw driver timestamp values into ISO strings. */
+function toIso(v: unknown): string {
+  const d = v instanceof Date ? v : new Date(String(v));
+  return Number.isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+}
+
 export async function GET(req: NextRequest) {
   const db = getDb();
   if (!db) {
@@ -133,18 +139,48 @@ export async function POST(req: NextRequest) {
       if (mediaTypeIsVideo) {
         return fail("The academy-media database update has not been applied yet — video items cannot be saved until it is. No data was lost.", 503);
       }
+      // Legacy shape: only the pre-media columns. Every model-level create
+      // (create/createMany) references the pending columns internally, so the
+      // transitional insert is parameterized raw SQL over the legacy shape.
       try {
-        // Explicit legacy shape (only the pre-media columns).
-        const legacy = {
-          title: data.title,
-          description: data.description,
-          imageUrl: data.imageUrl,
-          category: data.category,
-          displayOrder: data.displayOrder,
-          isActive: data.isActive,
+        const id = crypto.randomUUID();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rows = await db.$queryRaw<Array<Record<string, any>>>`
+          INSERT INTO "GalleryItem" ("id", "title", "description", "imageUrl", "category", "displayOrder", "isActive", "createdAt", "updatedAt")
+          VALUES (
+            ${id},
+            ${data.title},
+            ${data.description ?? null},
+            ${data.imageUrl ?? null},
+            ${data.category ?? "Academy"},
+            ${data.displayOrder ?? 0},
+            ${data.isActive ?? true},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+          )
+          RETURNING "id", "title", "description", "imageUrl", "category", "displayOrder", "isActive", "createdAt", "updatedAt"`;
+        const row = rows[0] as (Record<string, unknown> & { id: string }) | undefined;
+        if (!row) return serverError("gallery:create-fallback", new Error("Created row could not be read back."));
+        // RAW driver rows carry no Date objects — normalize each column.
+        const item = {
+          id: row.id,
+          title: row.title,
+          description: (row.description as string | null) ?? null,
+          imageUrl: (row.imageUrl as string | null) ?? null,
+          category: row.category,
+          mediaType: "image",
+          videoUrl: null,
+          publicId: null,
+          videoPublicId: null,
+          caption: null,
+          altText: null,
+          animation: "none",
+          displayOrder: Number(row.displayOrder ?? 0),
+          isActive: Boolean(row.isActive),
+          createdAt: toIso(row.createdAt),
+          updatedAt: toIso(row.updatedAt),
         };
-        const created = await db.galleryItem.create({ data: legacy });
-        return ok({ item: created, warning: "Saved without the new media fields — the academy-media database update has not been applied yet." }, 201);
+        return ok({ item, warning: "Saved without the new media fields — the academy-media database update has not been applied yet." }, 201);
       } catch (err2) {
         return serverError("gallery:create", err2);
       }

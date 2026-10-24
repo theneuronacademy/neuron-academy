@@ -93,11 +93,25 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (msg.includes("P2025")) return fail("Banner not found.", 404);
     if (isMissingAnimationColumn(err)) {
       // animation column not migrated yet — save everything but animation
-      // so the rest of the edit still persists.
+      // so the rest of the edit still persists. The count-only updateMany +
+      // legacy-shape fetch is used because a model-level update also fetches
+      // the full row afterwards, which needs the pending column.
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const row = await (db as any).banner.update({ where: { id }, data: patchWithoutAnimation(patch(body)) });
-        return ok({ item: { ...row, animation: "none" }, warning: "Animation style could not be saved yet (migration pending); the rest of the banner was saved." });
+        const legacySelect = {
+          id: true, title: true, subtitle: true, description: true,
+          imageUrl: true, videoUrl: true, buttonText: true, buttonUrl: true,
+          startDate: true, endDate: true, isActive: true, displayOrder: true,
+          createdAt: true, updatedAt: true,
+        };
+        const before = await db.banner.findUnique({ where: { id }, select: legacySelect });
+        if (!before) return fail("Banner not found.", 404);
+        const legacyPatch = patchWithoutAnimation(patch(body));
+        const result = await db.banner.updateMany({ where: { id }, data: legacyPatch });
+        if (result.count !== 1) return fail("Banner not found.", 404);
+        return ok({
+          item: { ...before, ...legacyPatch, animation: "none", updatedAt: new Date() },
+          warning: "Animation style could not be saved yet (migration pending); the rest of the banner was saved.",
+        });
       } catch (err2) {
         const msg2 = err2 instanceof Error ? err2.message : "";
         if (msg2.includes("P2025")) return fail("Banner not found.", 404);
@@ -115,7 +129,10 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const db = getDb();
   if (!db) return dbNotConfigured("Deleting a banner");
   try {
-    await db.banner.delete({ where: { id } });
+    // deleteMany performs a pure delete; the model-level delete additionally
+    // fetches the full row, which needs the pending animation column.
+    const result = await db.banner.deleteMany({ where: { id } });
+    if (result.count !== 1) return fail("Banner not found.", 404);
     return ok({ deleted: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";

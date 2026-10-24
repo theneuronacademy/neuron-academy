@@ -13,6 +13,12 @@ import { isBannerAnimation, toBannerAnimation } from "@/components/website/banne
 
 export const dynamic = "force-dynamic";
 
+/** Normalize raw driver timestamp values into ISO strings. */
+function toIso(v: unknown): string {
+  const d = v instanceof Date ? v : new Date(String(v));
+  return Number.isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+}
+
 /**
  * listBanners — plain findMany returns every scalar field, which needs the
  * `animation` column to exist. Until the additive banner-animation migration
@@ -81,8 +87,7 @@ export async function POST(req: NextRequest) {
   const wantsAnimation = typeof body.animation === "string" && body.animation !== "none";
   const animation = wantsAnimation ? toBannerAnimation(body.animation) : "none";
   try {
-    const created = await db.banner.create({
-      data: wantsAnimation
+    const created = await db.banner.create({ data: wantsAnimation
         ? {
             title: String(body.title),
             subtitle: typeof body.subtitle === "string" ? body.subtitle : undefined,
@@ -114,27 +119,53 @@ export async function POST(req: NextRequest) {
     return ok({ item: created }, 201);
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";
-    if (wantsAnimation && (msg.includes("P2022") || msg.toLowerCase().includes("animation"))) {
+    if (msg.includes("P2022") || msg.toLowerCase().includes("animation")) {
       // Migration for banner animation not applied yet — retry once without
-      // persisting the animation value so creation still succeeds.
+      // persisting the animation value so creation still succeeds. Every
+      // model-level create references the pending column internally, so the
+      // transitional insert is parameterized raw SQL over the legacy shape.
       try {
+        const id = crypto.randomUUID();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const created = await (db as any).banner.create({
-          data: {
-            title: String(body.title),
-            subtitle: typeof body.subtitle === "string" ? body.subtitle : undefined,
-            description: typeof body.description === "string" ? body.description : undefined,
-            imageUrl: isNonEmpty(body.imageUrl ?? body.image) ? String(body.imageUrl ?? body.image) : undefined,
-            videoUrl: typeof body.videoUrl === "string" ? body.videoUrl : undefined,
-            buttonText: typeof body.buttonText === "string" ? body.buttonText : undefined,
-            buttonUrl: typeof body.buttonUrl === "string" ? body.buttonUrl : undefined,
-            startDate: parseDate(body.startDate),
-            endDate: parseDate(body.endDate),
-            isActive: typeof body.isActive === "boolean" ? body.isActive : body.active === true,
-            displayOrder: typeof body.displayOrder === "number" ? body.displayOrder : typeof body.order === "number" ? body.order : 0,
-          },
-        });
-        return ok({ item: { ...created, animation: "none" }, warning: "Animation style could not be saved yet (migration pending); banner was created without animation." }, 201);
+        const rows = await db.$queryRaw<Array<Record<string, any>>>`
+          INSERT INTO "Banner" ("id", "title", "subtitle", "description", "imageUrl", "videoUrl", "buttonText", "buttonUrl", "startDate", "endDate", "isActive", "displayOrder", "createdAt", "updatedAt")
+          VALUES (
+            ${id},
+            ${String(body.title)},
+            ${typeof body.subtitle === "string" ? body.subtitle : null},
+            ${typeof body.description === "string" ? body.description : null},
+            ${isNonEmpty(body.imageUrl ?? body.image) ? String(body.imageUrl ?? body.image) : null},
+            ${typeof body.videoUrl === "string" ? body.videoUrl : null},
+            ${typeof body.buttonText === "string" ? body.buttonText : null},
+            ${typeof body.buttonUrl === "string" ? body.buttonUrl : null},
+            ${parseDate(body.startDate)},
+            ${parseDate(body.endDate)},
+            ${typeof body.isActive === "boolean" ? body.isActive : body.active === true},
+            ${typeof body.displayOrder === "number" ? Math.max(0, Math.round(body.displayOrder)) : typeof body.order === "number" ? Math.max(0, Math.round(body.order)) : 0},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+          )
+          RETURNING "id", "title", "subtitle", "description", "imageUrl", "videoUrl", "buttonText", "buttonUrl", "startDate", "endDate", "isActive", "displayOrder", "createdAt", "updatedAt"`;
+        const row = rows[0] as (Record<string, unknown> & { id: string }) | undefined;
+        if (!row) return serverError("banners:create-fallback", new Error("Created banner could not be read back."));
+        const item = {
+          id: row.id,
+          title: row.title,
+          subtitle: (row.subtitle as string | null) ?? null,
+          description: (row.description as string | null) ?? null,
+          imageUrl: (row.imageUrl as string | null) ?? null,
+          videoUrl: (row.videoUrl as string | null) ?? null,
+          buttonText: (row.buttonText as string | null) ?? null,
+          buttonUrl: (row.buttonUrl as string | null) ?? null,
+          startDate: row.startDate ? toIso(row.startDate) : null,
+          endDate: row.endDate ? toIso(row.endDate) : null,
+          animation: "none",
+          isActive: Boolean(row.isActive),
+          displayOrder: Number(row.displayOrder ?? 0),
+          createdAt: toIso(row.createdAt),
+          updatedAt: toIso(row.updatedAt),
+        };
+        return ok({ item, warning: "Animation style could not be saved yet (migration pending); banner was created without animation." }, 201);
       } catch (err2) {
         return serverError("banners:create", err2);
       }

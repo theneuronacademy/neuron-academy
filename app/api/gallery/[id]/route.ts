@@ -27,6 +27,24 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     if (!row) return fail("Gallery item not found.", 404);
     return ok({ item: row });
   } catch (err) {
+    if (isMissingMediaColumns(err)) {
+      // Migration pending — reply with the legacy columns only.
+      try {
+        const row = await db.galleryItem.findUnique({
+          where: { id },
+          select: { id: true, title: true, description: true, imageUrl: true, category: true, displayOrder: true, isActive: true, createdAt: true, updatedAt: true },
+        });
+        if (!row) return fail("Gallery item not found.", 404);
+        return ok({
+          item: { ...row, mediaType: "image", videoUrl: null, publicId: null, videoPublicId: null, caption: null, altText: null, animation: "none" },
+          warning: "Media fields pending a database update; showing the legacy item.",
+        });
+      } catch (err2) {
+        const msg2 = err2 instanceof Error ? err2.message : "";
+        if (msg2.includes("P2025")) return fail("Gallery item not found.", 404);
+        return serverError("gallery:get", err2);
+      }
+    }
     return serverError("gallery:get", err);
   }
 }
@@ -70,17 +88,31 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (msg.includes("P2025")) return fail("Gallery item not found.", 404);
     if (isMissingMediaColumns(err)) {
       try {
-        // Explicit legacy shape (only the pre-media columns).
-        const legacy = {
-          title: patch.title as string | undefined,
-          description: patch.description as string | undefined,
-          imageUrl: patch.imageUrl as string | undefined,
-          category: patch.category as string | undefined,
-          isActive: patch.isActive as boolean | undefined,
-          displayOrder: patch.displayOrder as number | undefined,
+        // Transitional write: count-only updateMany (model-level update also
+        // fetches the full row afterwards, which needs the pending columns),
+        // then reply with the pre-read legacy shape merged with the patch.
+        const legacySelect = { id: true, title: true, description: true, imageUrl: true, category: true, displayOrder: true, isActive: true, createdAt: true, updatedAt: true } as const;
+        const before = await db.galleryItem.findUnique({ where: { id }, select: legacySelect });
+        if (!before) return fail("Gallery item not found.", 404);
+        const legacyPatch: Record<string, unknown> = {};
+        for (const key of ["title", "description", "imageUrl", "category", "isActive", "displayOrder"] as const) {
+          if (patch[key] !== undefined) legacyPatch[key] = patch[key];
+        }
+        const result = await db.galleryItem.updateMany({ where: { id }, data: legacyPatch });
+        if (result.count !== 1) return fail("Gallery item not found.", 404);
+        const item = {
+          ...before,
+          ...legacyPatch,
+          mediaType: "image",
+          videoUrl: null,
+          publicId: null,
+          videoPublicId: null,
+          caption: null,
+          altText: null,
+          animation: "none",
+          updatedAt: new Date(),
         };
-        const row = await db.galleryItem.update({ where: { id }, data: legacy });
-        return ok({ item: row, warning: "Updated without the new media fields — the academy-media database update has not been applied yet." });
+        return ok({ item, warning: "Updated without the new media fields — the academy-media database update has not been applied yet." });
       } catch (err2) {
         const msg2 = err2 instanceof Error ? err2.message : "";
         if (msg2.includes("P2025")) return fail("Gallery item not found.", 404);
@@ -97,16 +129,37 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   if (!auth.ok) return fail(auth.error, auth.status);
   const db = getDb();
   if (!db) return dbNotConfigured("Deleting a gallery item");
+  // Media asset ids live in columns the pending academy-media migration adds;
+  // resolve them best-effort so Cloudinary cleanup still runs when present.
+  let mediaIds: { publicId: string | null; videoPublicId: string | null } | null = null;
+  let pendingMediaUpdate = false;
   try {
-    const row = await db.galleryItem.findUnique({ where: { id } });
-    if (!row) return fail("Gallery item not found.", 404);
-    await db.galleryItem.delete({ where: { id } });
+    const full = await db.galleryItem.findUnique({
+      where: { id },
+      select: { id: true, publicId: true, videoPublicId: true },
+    });
+    if (full) mediaIds = { publicId: full.publicId, videoPublicId: full.videoPublicId };
+  } catch (err) {
+    if (isMissingMediaColumns(err)) pendingMediaUpdate = true;
+    else return serverError("gallery:delete", err);
+  }
+  try {
+    const exists = await db.galleryItem.findUnique({ where: { id }, select: { id: true } });
+    if (!exists) return fail("Gallery item not found.", 404);
+    // deleteMany performs a pure delete; the model-level delete additionally
+    // fetches the full row, which needs the pending academy-media columns.
+    const result = await db.galleryItem.deleteMany({ where: { id } });
+    if (result.count !== 1) return fail("Gallery item not found.", 404);
     // Database delete succeeded — free its media files best-effort (external
     // URLs without a public id are never touched; referenced assets kept).
-    const warning = await cleanupMediaAssets(db, [
-      { publicId: row.publicId, resourceType: "image" },
-      { publicId: row.videoPublicId, resourceType: "video" },
+    const cleanupWarning = await cleanupMediaAssets(db, [
+      { publicId: mediaIds?.publicId, resourceType: "image" },
+      { publicId: mediaIds?.videoPublicId, resourceType: "video" },
     ]);
+    const warning =
+      pendingMediaUpdate && !cleanupWarning
+        ? "Deleted without media-file cleanup — the academy-media database update has not been applied yet."
+        : cleanupWarning;
     return warning ? ok({ deleted: true, warning }) : ok({ deleted: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";
