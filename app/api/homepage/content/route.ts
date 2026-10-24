@@ -1,6 +1,8 @@
-// Editable homepage content (ADMIN only).
-// GET /api/homepage/content — list all homepage content items
-// POST /api/homepage/content — create or upsert a content item by key
+// Editable homepage content.
+// GET /api/homepage/content — PUBLIC: list active content items (only
+// isActive rows, non-sensitive key/value copy) so the public homepage can
+// read admin edits directly.
+// POST /api/homepage/content — ADMIN only: create or upsert an item.
 
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
@@ -10,8 +12,6 @@ import { requireApiRole } from "@/lib/server-auth";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const auth = requireApiRole(req, ["ADMIN"]);
-  if (!auth.ok) return fail(auth.error, auth.status);
   const db = getDb();
   if (!db) return dbNotConfigured("Reading homepage content");
   try {

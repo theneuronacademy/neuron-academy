@@ -38,6 +38,37 @@ function pickDb<T>(result: { items: T[]; source: string } | null): T[] | null {
   return null;
 }
 
+/**
+ * Short-lived fetch cache for hot public site GETs. Several homepage
+ * components mount concurrently and used to fire the identical request
+ * (e.g. /api/banners × 4 per page load); this fades that to one request
+ * with a short TTL. Admin/demo saves dispatch `neuron-ads-updated`
+ * (mockStore) or `storage`, which bust the cache so reloads are fresh.
+ */
+const apiCache = new Map<string, { at: number; promise: Promise<{ items: unknown[]; source: string } | null> }>();
+const API_CACHE_TTL_MS = 30_000;
+
+async function apiItemsCached<T>(path: string): Promise<{ items: T[]; source: string } | null> {
+  if (typeof window === "undefined") return apiItems<T>(path);
+  const hit = apiCache.get(path);
+  if (hit && Date.now() - hit.at < API_CACHE_TTL_MS) {
+    return hit.promise as Promise<{ items: T[]; source: string } | null>;
+  }
+  const promise = apiItems<T>(path) as Promise<{ items: T[]; source: string } | null>;
+  apiCache.set(path, { at: Date.now(), promise: promise as Promise<{ items: unknown[]; source: string } | null> });
+  promise.catch(() => apiCache.delete(path));
+  return promise;
+}
+
+if (typeof window !== "undefined") {
+  const bust = () => {
+    apiCache.delete("/api/banners");
+    apiCache.delete("/api/popups");
+  };
+  window.addEventListener("neuron-ads-updated", bust);
+  window.addEventListener("storage", () => apiCache.clear());
+}
+
 export async function getSiteSettings() {
   return { academy: ACADEMY, contact: CONTACT_INFO };
 }
@@ -369,7 +400,7 @@ function bannerRowToAd(b: any, type: AdType): Advertisement | null {
 
 export async function getLiveBanners(): Promise<Advertisement[] | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = pickDb<any>(await apiItems("/api/banners"));
+  const db = pickDb<any>(await apiItemsCached<any>("/api/banners"));
   if (!db) return null;
   const ads = db
     .map((b) => bannerRowToAd(b, "banner"))
@@ -380,7 +411,7 @@ export async function getLiveBanners(): Promise<Advertisement[] | null> {
 
 export async function getLivePopups(): Promise<Advertisement[] | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = pickDb<any>(await apiItems("/api/popups"));
+  const db = pickDb<any>(await apiItemsCached<any>("/api/popups"));
   if (!db) return null;
   const ads = db
     .map((b) => bannerRowToAd(b, "popup"))
