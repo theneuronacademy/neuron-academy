@@ -187,6 +187,30 @@ export async function getAboutMediaSettings(): Promise<AboutMediaSettings | null
   }
 }
 
+/**
+ * Dedicated homepage hero image — independent from banner records. Null when
+ * nothing is saved (or the database is unavailable/detached): callers pair it
+ * with the static campus-photo fallback explicitly.
+ */
+export interface LiveHeroImage {
+  imageUrl: string;
+  altText: string;
+}
+
+export async function getLiveHeroImage(): Promise<LiveHeroImage | null> {
+  try {
+    if (typeof window === "undefined") return null;
+    const res = await fetch("/api/homepage/hero-image", { cache: "no-store" });
+    const json = (await res.json().catch(() => null)) as
+      | { success?: boolean; data?: { item?: LiveHeroImage | null } }
+      | null;
+    if (res.ok && json?.success === true && json.data?.item?.imageUrl) return json.data.item;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getLiveTestimonials(): Promise<LiveTestimonialRow[] | null> {
   return pickDb<LiveTestimonialRow>(await apiItems("/api/testimonials"));
 }

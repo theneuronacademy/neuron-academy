@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Volume2, VolumeX, ArrowRight, Phone, ShieldCheck, MapPin } from "lucide-react";
-import type { Advertisement } from "@/lib/types";
-import { getHeroAds } from "@/lib/mockStore";
-import { getLiveBanners } from "@/services/siteApi";
+import { ArrowRight, Phone, ShieldCheck, MapPin } from "lucide-react";
+import { getLiveHeroImage, type LiveHeroImage } from "@/services/siteApi";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
 import { Marquee } from "@/components/website/motion";
 import { EXAM_TICKER } from "@/lib/websiteData";
 import { PublicBackground } from "@/components/design-system/BackgroundPatterns";
-import { bannerAnimationClass } from "@/components/website/bannerMotion";
-import { cn } from "@/lib/utils";
 
 const EXAM_PILLS = [
   { label: "JEE", color: "border-brand-primary/20 bg-brand-primary/10 text-brand-primary" },
@@ -20,97 +16,25 @@ const EXAM_PILLS = [
   { label: "Jamia Entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
 ];
 
-function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [muted, setMuted] = useState(ad.muted !== false);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    setMuted(ad.muted !== false);
-    setFailed(false);
-  }, [ad.id, ad.muted]);
-
-  if (ad.mediaType === "video" && ad.mediaUrl && !failed) {
-    return (
-      <div className="relative h-full w-full overflow-hidden">
-        <video
-          ref={videoRef}
-          src={ad.mediaUrl}
-          poster={ad.posterUrl || undefined}
-          preload="metadata"
-          autoPlay={ad.autoplay !== false}
-          muted={muted}
-          loop={ad.loop !== false}
-          playsInline
-          onError={() => setFailed(true)}
-          className="h-full w-full object-contain"
-        />
-        <button
-          onClick={() => {
-            const v = videoRef.current;
-            if (v) {
-              const next = !muted;
-              v.muted = next;
-              setMuted(next);
-              if (!next) v.play().catch(() => {});
-            }
-          }}
-          aria-label={muted ? "Unmute video" : "Mute video"}
-          className="absolute bottom-4 right-4 z-[3] rounded-full bg-neutral-900/80 p-2.5 text-white backdrop-blur hover:bg-neutral-800"
-        >
-          {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-        </button>
-      </div>
-    );
-  }
-
-  if (ad.mediaUrl && !failed) {
-    // Audit fix #4: show the admin banner in full — object-cover cropped
-    // portrait/square posters and kenburns panned them out of frame. The
-    // card's navy backdrop gives contained media an intentional frame
-    // without changing the banner dimensions or the admin-selected motion.
-    return <Image src={ad.mediaUrl} alt={ad.title || "Neuron Academy featured announcement"} width={1200} height={800} unoptimized className="h-full w-full object-contain" priority={large} onError={() => setFailed(true)} />;
-  }
-
-  return (
-    <SmartImage
-      src={SITE_PHOTOS.hero}
-      alt="Neuron Academy campus"
-      className="h-full w-full"
-      imgClassName="animate-kenburns h-full w-full object-cover"
-      eager={large}
-      fallback={
-        <div className="bg-neutral-900 flex h-full w-full flex-col justify-end overflow-hidden p-6 sm:p-8">
-          <div className="animate-kenburns absolute inset-0 opacity-25" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, #1746B8 0, transparent 42%), radial-gradient(circle at 80% 25%, #D4AF37 0, transparent 38%), radial-gradient(circle at 50% 90%, #0A1D50 0, transparent 35%)" }} />
-          <p className="relative text-[11px] font-bold tracking-[0.2em] text-brand-secondary">NEURON ACADEMY • SHAHEEN BAGH</p>
-          <p className="relative mt-2 max-w-md text-2xl font-extrabold text-white sm:text-3xl">{ad.title}</p>
-          {ad.subtitle ? <p className="relative mt-1 text-sm font-bold text-neutral-300">{ad.subtitle}</p> : null}
-        </div>
-      }
-    />
-  );
-}
-
+/**
+ * Split hero. The right-side card shows the dedicated "Homepage Hero Image"
+ * managed independently in Website → Homepage (admin) — it never reads
+ * banner records, so banner management cannot change this card and this
+ * upload cannot change the full-width banner carousel. Without a dedicated
+ * image the card keeps its original campus-photo fallback.
+ */
 export function Hero() {
-  const [heroAds, setHeroAds] = useState<Advertisement[]>([]);
+  const [heroImage, setHeroImage] = useState<LiveHeroImage | null>(null);
+  const [imageFailed, setImageFailed] = useState(false);
 
   useEffect(() => {
-    const load = () => {
-      void getLiveBanners().then((live) => setHeroAds(live && live.length > 0 ? [live[0]] : getHeroAds()));
-    };
-    load();
-    window.addEventListener("neuron-ads-updated", load);
-    window.addEventListener("storage", load);
-    return () => {
-      window.removeEventListener("neuron-ads-updated", load);
-      window.removeEventListener("storage", load);
-    };
+    void getLiveHeroImage().then((img) => setHeroImage(img));
   }, []);
 
-  const active = heroAds[0];
+  const showImage = Boolean(heroImage?.imageUrl) && !imageFailed;
 
   return (
-    <section id="home" className="relative overflow-hidden bg-white">
+    <section id="home" className="relative bg-white overflow-hidden">
       <PublicBackground className="opacity-35" />
       <div className="pointer-events-none absolute -right-24 top-10 h-80 w-80 rounded-full bg-brand-primary/10 blur-3xl" aria-hidden />
       <div className="pointer-events-none absolute bottom-10 left-1/4 h-48 w-48 rounded-full bg-brand-secondary/10 blur-3xl" aria-hidden />
@@ -151,15 +75,20 @@ export function Hero() {
 
         <div className="relative mx-auto w-full max-w-[640px]">
           <div className="absolute -inset-3 rounded-[30px] bg-gradient-to-br from-brand-primary/15 via-brand-secondary/15 to-brand-primary/10 blur-xl" aria-hidden />
-          <div
-            className={cn(
-              "group relative isolate h-[350px] overflow-hidden rounded-[24px] border border-silver-200 bg-navy-900 shadow-xl transition duration-500 hover:border-silver-300 hover:shadow-card-hover sm:h-[430px] lg:h-[500px]",
-              // Admin-selected motion style for the featured banner.
-              active && active.animation && active.animation !== "none" ? bannerAnimationClass(active.animation) : "",
-            )}
-          >
-            {active ? (
-              <AdMedia ad={active} large />
+          <div className="group relative isolate h-[350px] overflow-hidden rounded-[24px] border border-silver-200 bg-navy-900 shadow-xl transition duration-500 hover:border-silver-300 hover:shadow-card-hover sm:h-[430px] lg:h-[500px]">
+            {showImage ? (
+              // object-contain keeps the artwork fully visible at its own
+              // aspect ratio — navy backdrop frames whatever is not covered.
+              <Image
+                src={heroImage?.imageUrl ?? ""}
+                alt={heroImage?.altText || "Neuron Academy featured announcement"}
+                width={1200}
+                height={800}
+                unoptimized
+                className="h-full w-full object-contain"
+                priority
+                onError={() => setImageFailed(true)}
+              />
             ) : (
               <SmartImage
                 src={SITE_PHOTOS.hero}
@@ -175,24 +104,10 @@ export function Hero() {
               />
             )}
             <div className="absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-navy-950/90 via-navy-950/45 to-transparent px-5 pb-5 pt-24 sm:px-7 sm:pb-7">
-              {active ? (
-                <>
-                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-brand-secondary-300">{active.subtitle || "Featured at Neuron Academy"}</p>
-                  <p className="mt-2 text-xl font-bold text-white sm:text-2xl">{active.title}</p>
-                  {active.description ? <p className="mt-1 max-w-lg text-sm text-white/80">{active.description}</p> : null}
-                  {active.ctaText ? <a href={active.ctaLink || "#courses"} className="relative z-[3] mt-3 inline-flex items-center gap-2 text-sm font-bold text-white underline decoration-brand-secondary underline-offset-4">{active.ctaText}<ArrowRight className="h-4 w-4" /></a> : null}
-                </>
-              ) : (
-                <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold text-white backdrop-blur">
-                  <MapPin className="h-4 w-4 text-brand-secondary-300" /> Shaheen Bagh, New Delhi
-                </p>
-              )}
+              <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold text-white backdrop-blur">
+                <MapPin className="h-4 w-4 text-brand-secondary-300" /> Shaheen Bagh, New Delhi
+              </p>
             </div>
-            {active && active.ctaLink ? (
-              <a href={active.ctaLink} target={active.ctaLink.startsWith("http") ? "_blank" : undefined} rel={active.ctaLink.startsWith("http") ? "noopener noreferrer" : undefined} className="absolute inset-0 z-[2] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary/60" aria-label={`${active.title} — open banner destination`}>
-                <span className="sr-only">{active.ctaText || active.title}</span>
-              </a>
-            ) : null}
           </div>
         </div>
       </div>
