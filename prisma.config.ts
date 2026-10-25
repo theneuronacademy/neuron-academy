@@ -5,8 +5,14 @@
 
 import "dotenv/config";
 
+// CLI commands that reach a live database (e.g. `prisma migrate deploy`)
+// prefer DIRECT_URL — a direct/session connection. Prisma Migrate cannot
+// run reliably through a transaction pooler (Supabase port 6543). Runtime
+// app traffic is unaffected: lib/prisma.ts keeps using DATABASE_URL.
 const databaseUrl =
-  process.env.DATABASE_URL ?? "postgresql://postgres:postgres@localhost:5432/neuron_academy";
+  process.env.DIRECT_URL ??
+  process.env.DATABASE_URL ??
+  "postgresql://postgres:postgres@localhost:5432/neuron_academy";
 
 import { defineConfig } from "prisma/config";
 
