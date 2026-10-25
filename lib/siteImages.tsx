@@ -26,13 +26,16 @@ export function SmartImage({
 }) {
   const [failed, setFailed] = useState(false);
 
-  if (failed) return <>{fallback}</>;
+  // A blank src is a data gap (e.g. admin rows saved without an image).
+  // Rendering <img src=""> re-requests the current page URL — show the
+  // designed fallback node instead.
+  if (failed || src.trim() === "") return <>{fallback}</>;
 
   return (
     <div className={className}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={src}
+        src={src.trim()}
         alt={alt}
         loading={eager ? "eager" : "lazy"}
         onError={() => setFailed(true)}
