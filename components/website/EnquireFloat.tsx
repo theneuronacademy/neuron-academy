@@ -36,7 +36,7 @@ export function EnquireFloat() {
         target={MODE === "whatsapp" ? "_blank" : undefined}
         rel="noreferrer"
         aria-label="Enquire now on WhatsApp"
-        className="animate-glow fixed bottom-20 left-4 z-40 hidden items-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-extrabold text-white shadow-card transition hover:brightness-110 md:inline-flex"
+        className="animate-glow fixed bottom-20 right-4 z-40 hidden items-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-extrabold text-white shadow-card transition hover:brightness-110 md:inline-flex"
       >
         <MessageCircle className="h-4 w-4" /> Enquire Now
       </a>
@@ -45,7 +45,7 @@ export function EnquireFloat() {
         target={MODE === "whatsapp" ? "_blank" : undefined}
         rel="noreferrer"
         aria-label="Enquire now"
-        className="fixed bottom-20 right-4 z-40 rounded-full bg-[#25D366] p-3.5 text-white shadow-card transition hover:brightness-110 md:hidden"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom)+78px)] right-4 z-40 rounded-full bg-[#25D366] p-3.5 text-white shadow-card transition hover:brightness-110 md:hidden"
       >
         <MessageCircle className="h-5 w-5" />
       </a>

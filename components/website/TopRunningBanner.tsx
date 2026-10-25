@@ -94,19 +94,15 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
 
   if (ad.mediaUrl) {
     return (
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Audit fix #4: object-contain preserves the banner's aspect ratio —
-            object-cover cropped portrait/square banners, and the kenburns zoom
-            panned contained media out of frame. Card and slide dimensions are
-            unchanged (bg-navy-900 card, admin-selected entrance animation kept). */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={ad.mediaUrl}
-          alt={ad.title}
-          className="h-full w-full object-contain"
-          loading="eager"
-        />
-      </div>
+      // Full-width banner fix: the artwork renders in flow at the full slide
+      // width with its natural aspect ratio. The previous absolute
+      // object-contain frame was capped by the card's fixed min-height, so
+      // wide banners scaled down to ~340px tall and left large empty navy
+      // margins around a small central image. In-flow sizing keeps the whole
+      // artwork visible (never cropped or stretched) and lets the navy card
+      // grow to use the available width.
+      /* eslint-disable-next-line @next/next/no-img-element */
+      <img src={ad.mediaUrl} alt={ad.title} className="h-auto w-full" loading="eager" />
     );
   }
 
@@ -202,7 +198,7 @@ export function TopRunningBanner() {
                   <div key={ad.id} className="w-full shrink-0 px-0.5 sm:px-1.5">
                     <div
                       className={cn(
-                        "group relative min-h-[300px] w-full overflow-hidden rounded-card border border-silver-200 bg-navy-900 shadow-card transition duration-500 hover:border-silver-300 hover:shadow-card-hover sm:min-h-[340px]",
+                        "group relative flex min-h-[300px] w-full items-center overflow-hidden rounded-card border border-silver-200 bg-navy-900 shadow-card transition duration-500 hover:border-silver-300 hover:shadow-card-hover sm:min-h-[340px]",
                         // Admin-selected motion style — classes toggle per
                         // activation, so entrance animations replay without
                         // remounting the slide media.
@@ -210,35 +206,47 @@ export function TopRunningBanner() {
                       )}
                     >
                       <SlideMedia ad={ad} />
-                      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-navy-800/95 via-navy-800/70 to-navy-800/10" aria-hidden />
-                      <div className="relative z-[2] mx-auto flex min-h-[300px] max-w-7xl flex-col justify-center px-4 py-10 sm:min-h-[340px] sm:px-6">
-                        <p className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-[0.18em] text-brand-secondary-300 backdrop-blur">
-                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-secondary" />
-                          {(ad.subtitle || ad.type).toUpperCase()}
-                        </p>
-                        <h2 className="mt-3 max-w-2xl bg-gradient-to-r from-white via-brand-secondary-200 to-white bg-clip-text text-3xl font-extrabold leading-[1.05] tracking-tight text-transparent sm:text-4xl lg:text-[46px]">
-                          {ad.title}
-                        </h2>
-                        <p className="mt-3 max-w-xl text-[14.5px] leading-relaxed text-silver-200">{ad.description}</p>
-                        <div className="mt-5 flex flex-wrap items-center gap-3">
-                          {linked ? (
-                            // Whole card navigates to the banner destination —
-                            // the stretched link below covers the card.
-                            <span className="inline-flex items-center gap-1.5 rounded-xl bg-brand-secondary px-5 py-2.5 text-sm font-bold text-navy-950 shadow-card transition group-hover:bg-brand-secondary-300">
-                              {ad.ctaText} <ArrowRight className="h-4 w-4" />
-                            </span>
-                          ) : ad.ctaText ? (
-                            <a href="#courses" className="inline-flex items-center gap-1.5 rounded-xl bg-brand-secondary px-5 py-2.5 text-sm font-bold text-navy-950 shadow-card transition hover:bg-brand-secondary-300">
-                              {ad.ctaText} <ArrowRight className="h-4 w-4" />
-                            </a>
-                          ) : null}
-                          {!linked ? (
-                            <a href="#courses" className="rounded-xl border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-bold text-white backdrop-blur hover:border-brand-secondary">
-                              View All Courses
-                            </a>
-                          ) : null}
-                        </div>
-                      </div>
+                      {/* Overlaid copy is only for banners whose artwork does
+                          not already carry text (SlideMedia's gradient
+                          fallback). Uploaded artwork keeps its own headline —
+                          overlaying the admin title here duplicates it. */}
+                      {!ad.mediaUrl ? (
+                        <>
+                          <div className="absolute inset-0 z-[1] bg-gradient-to-r from-navy-800/95 via-navy-800/70 to-navy-800/10" aria-hidden />
+                          <div className="relative z-[2] mx-auto flex min-h-[300px] max-w-7xl flex-col justify-center px-4 py-10 sm:min-h-[340px] sm:px-6">
+                            <p className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold tracking-[0.18em] text-brand-secondary-300 backdrop-blur">
+                              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-secondary" />
+                              {(ad.subtitle || ad.type).toUpperCase()}
+                            </p>
+                            <h2 className="mt-3 max-w-2xl bg-gradient-to-r from-white via-brand-secondary-200 to-white bg-clip-text text-3xl font-extrabold leading-[1.05] tracking-tight text-transparent sm:text-4xl lg:text-[46px]">
+                              {ad.title}
+                            </h2>
+                            <p className="mt-3 max-w-xl text-[14.5px] leading-relaxed text-silver-200">{ad.description}</p>
+                            <div className="mt-5 flex flex-wrap items-center gap-3">
+                              {linked ? (
+                                // Whole card navigates to the banner destination
+                                // — the stretched link below covers the card.
+                                <span className="inline-flex items-center gap-1.5 rounded-xl bg-brand-secondary px-5 py-2.5 text-sm font-bold text-navy-950 shadow-card transition group-hover:bg-brand-secondary-300">
+                                  {ad.ctaText} <ArrowRight className="h-4 w-4" />
+                                </span>
+                              ) : (
+                                // Without a destination link the visible CTAs
+                                // are the only action — keep them here.
+                                <>
+                                  {ad.ctaText ? (
+                                    <a href="#courses" className="inline-flex items-center gap-1.5 rounded-xl bg-brand-secondary px-5 py-2.5 text-sm font-bold text-navy-950 shadow-card transition hover:bg-brand-secondary-300">
+                                      {ad.ctaText} <ArrowRight className="h-4 w-4" />
+                                    </a>
+                                  ) : null}
+                                  <a href="#courses" className="rounded-xl border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-bold text-white backdrop-blur hover:border-brand-secondary">
+                                    View All Courses
+                                  </a>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </>
+                      ) : null}
                       {linked ? (
                         <BannerLink
                           href={ad.ctaLink}
