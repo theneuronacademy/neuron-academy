@@ -31,7 +31,7 @@ export function FacultyDetails({ member, onClose }: { member: FacultyMember; onC
               </div>
             }
           />
-          <button onClick={onClose} aria-label="Close faculty profile" className="absolute right-3 top-3 rounded-full bg-navy-800/70 p-2 text-white hover:bg-navy-700">
+          <button onClick={onClose} aria-label="Close faculty profile" className="absolute right-3 top-3 rounded-full bg-navy-800/70 p-2.5 text-white hover:bg-navy-700">
             <X className="h-4 w-4" />
           </button>
         </div>

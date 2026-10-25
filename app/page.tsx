@@ -168,7 +168,7 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
           <div className="w-full max-w-2xl overflow-hidden rounded-card bg-white">
             <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
               <p className="text-sm font-extrabold text-navy-700">{activeItem.title}</p>
-              <button ref={closeRef} onClick={() => setActive(null)} aria-label="Close gallery" className="rounded-lg p-1.5 hover:bg-silver-100"><X className="h-5 w-5" /></button>
+              <button ref={closeRef} onClick={() => setActive(null)} aria-label="Close gallery" className="flex h-10 w-10 items-center justify-center rounded-lg hover:bg-silver-100 sm:h-9 sm:w-9"><X className="h-5 w-5" /></button>
             </div>
             <div className="relative h-72 bg-navy-800">
               {(activeItem.mediaType ?? "image") === "video" && activeItem.videoUrl ? (
@@ -349,7 +349,9 @@ export default function HomePage() {
             course: String(r.role ?? "Student"),
             photo: String(r.photo ?? ""),
             testimonial: String(r.message ?? ""),
-            achievement: `Rated ${typeof r.rating === "number" ? r.rating : 5}/5`,
+            // Achievement line: admin-set achievement wins; legacy rows fall
+            // back to the rating byline exactly as before.
+            achievement: typeof r.achievement === "string" && r.achievement.trim() !== "" ? r.achievement : `Rated ${typeof r.rating === "number" ? r.rating : 5}/5`,
           })));
         }
         // Results showcase: consented + active rows only (server-filtered).
@@ -364,6 +366,8 @@ export default function HomePage() {
               tag: String(r.achievement ?? ""),
               exam: String(r.exam ?? ""),
               year: String(r.year ?? ""),
+              description: String(r.description ?? ""),
+              image: String(r.imageUrl ?? ""),
               color: palette[i % palette.length],
             })),
           });
@@ -636,12 +640,29 @@ export default function HomePage() {
                 <Reveal key={t.id} delay={i * 70} variant="pop">
                   <div className="card-lift group relative overflow-hidden rounded-card border border-white/15 bg-white/5 p-6 backdrop-blur transition hover:bg-white/10">
                     <span className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${t.color}, transparent)` }} aria-hidden />
-                    <span className="animate-heartbeat flex h-14 w-14 items-center justify-center rounded-2xl text-white transition group-hover:scale-110" style={{ backgroundColor: `${t.color}33`, border: `1px solid ${t.color}66`, animationDelay: `${i * 0.3}s` }}>
-                      {i === 0 ? <Trophy className="h-6 w-6" style={{ color: t.color }} /> : <Medal className="h-6 w-6" style={{ color: t.color }} />}
-                    </span>
+                    {t.image ? (
+                      <SmartImage
+                        src={t.image}
+                        alt={`${t.name} — featured result`}
+                        className="mt-6 h-40 w-full overflow-hidden rounded-xl bg-navy-800/60"
+                        imgClassName="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        fallback={
+                          <div className="flex h-full w-full items-center justify-center">
+                            <span className="animate-heartbeat flex h-14 w-14 items-center justify-center rounded-2xl text-white transition group-hover:scale-110" style={{ backgroundColor: `${t.color}33`, border: `1px solid ${t.color}66`, animationDelay: `${i * 0.3}s` }}>
+                              {i === 0 ? <Trophy className="h-6 w-6" style={{ color: t.color }} /> : <Medal className="h-6 w-6" style={{ color: t.color }} />}
+                            </span>
+                          </div>
+                        }
+                      />
+                    ) : (
+                      <span className="animate-heartbeat flex h-14 w-14 items-center justify-center rounded-2xl text-white transition group-hover:scale-110" style={{ backgroundColor: `${t.color}33`, border: `1px solid ${t.color}66`, animationDelay: `${i * 0.3}s` }}>
+                        {i === 0 ? <Trophy className="h-6 w-6" style={{ color: t.color }} /> : <Medal className="h-6 w-6" style={{ color: t.color }} />}
+                      </span>
+                    )}
                     <p className="mt-4 text-2xl font-extrabold text-white">{t.score}</p>
                     <p className="mt-1 text-sm font-extrabold text-silver-200">{t.name}</p>
                     <p className="text-[12px] font-bold" style={{ color: t.color }}>{t.tag}</p>
+                    {t.description ? <p className="mt-2 text-[12px] font-medium leading-relaxed text-silver-300">{t.description}</p> : null}
                     {wallLive ? null : (
                       <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold tracking-widest text-silver-300"><Star className="h-3 w-3" /> DEMO — VERIFY BEFORE PUBLISH</p>
                     )}

@@ -45,10 +45,10 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
   return (
     <div className="fixed inset-0 z-[80] flex items-end justify-center bg-navy-800/60 p-4 backdrop-blur-sm sm:items-center" role="dialog" aria-modal="true" aria-label={ad.title}>
       <div className="relative w-full max-w-lg overflow-hidden rounded-[20px] bg-white shadow-2xl animate-slide-up">
-        <button onClick={close} aria-label="Close advertisement" className="absolute right-3 top-3 z-10 rounded-full bg-navy-800/70 p-2 text-white hover:bg-navy-700">
+        <button onClick={close} aria-label="Close advertisement" className="absolute right-3 top-3 z-10 rounded-full bg-navy-800/70 p-2.5 text-white hover:bg-navy-700">
           <X className="h-4 w-4" />
         </button>
-        <div className="relative h-56 bg-navy-800 sm:h-64">
+        <div className="relative bg-navy-800">
           {showVideo ? (
             <video
               ref={videoRef}
@@ -58,13 +58,16 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
               muted={muted}
               loop={ad.loop !== false}
               playsInline
-              className="absolute inset-0 h-full w-full object-cover"
+              className="block h-auto max-h-[280px] w-full object-contain sm:max-h-[340px]"
             />
           ) : ad.mediaUrl ? (
+            // Audit fix #5: responsive sizing + object-contain preserve the
+            // media's natural aspect ratio — the fixed-height box with
+            // object-cover cropped portrait/square popup images.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={ad.mediaUrl} alt={ad.title} className="absolute inset-0 h-full w-full object-cover" />
+            <img src={ad.mediaUrl} alt={ad.title} className="block h-auto max-h-[280px] w-full object-contain sm:max-h-[340px]" />
           ) : (
-            <div className="bg-metallic-dark absolute inset-0 flex items-center justify-center p-6">
+            <div className="bg-metallic-dark flex h-56 items-center justify-center p-6 sm:h-64">
               <p className="text-center text-xl font-extrabold text-white">{ad.title}</p>
             </div>
           )}

@@ -125,6 +125,7 @@ export interface LiveTestimonialRow {
   role?: string;
   photo?: string;
   message?: string;
+  achievement?: string;
   rating?: number;
 }
 
@@ -135,6 +136,7 @@ export interface LiveShowcaseRow {
   achievement?: string;
   score?: string;
   year?: string;
+  description?: string;
   imageUrl?: string;
 }
 
@@ -269,7 +271,8 @@ export async function getTestimonials(): Promise<Testimonial[]> {
       course: String(t.role ?? "Student"),
       photo: String(t.photo ?? ""),
       testimonial: String(t.message ?? ""),
-      achievement: `Rated ${t.rating ?? 5}/5`,
+      // Admin-set achievement wins; legacy rows keep the rating byline.
+      achievement: typeof t.achievement === "string" && t.achievement.trim() !== "" ? t.achievement : `Rated ${t.rating ?? 5}/5`,
     }));
   }
   return TESTIMONIALS;

@@ -9,6 +9,10 @@ export interface AcademyResult {
   tag: string;
   exam: string;
   year: string;
+  // Optional row photo + student-specific description (admin-managed via
+  // the results-showcase CMS; legacy/static rows omit both).
+  image?: string;
+  description?: string;
   color: string;
 }
 

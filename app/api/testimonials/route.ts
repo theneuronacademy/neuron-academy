@@ -46,12 +46,16 @@ export async function POST(req: NextRequest) {
   }
   const missing = missingFields(body, ["name", "message"]);
   if (missing.length > 0) return fail(`Missing required fields: ${missing.join(", ")}.`, 400);
+  if (typeof body.achievement === "string" && body.achievement.trim().length > 80) {
+    return fail("Achievement is too long (max 80 characters).", 400);
+  }
   try {
     const created = await db.testimonial.create({
       data: {
         name: String(body.name),
         role: typeof body.role === "string" ? body.role : "Student",
         message: String(body.message),
+        achievement: typeof body.achievement === "string" && body.achievement.trim() !== "" ? body.achievement.trim() : undefined,
         photo: typeof body.photo === "string" ? body.photo : undefined,
         rating: typeof body.rating === "number" ? Math.min(5, Math.max(1, body.rating)) : 5,
       },

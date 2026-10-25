@@ -386,10 +386,10 @@ function GrantAccessPageContent() {
               <div className="flex justify-end gap-1.5">
                 {g.status === "ACTIVE" && (
                   <>
-                    <button onClick={() => openExtendModal(g)} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500" title="Extend">
+                    <button onClick={() => openExtendModal(g)} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8" title="Extend">
                       <Filter className="h-4 w-4" />
                     </button>
-                    <button onClick={() => openRevokeModal(g)} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50" title="Revoke">
+                    <button onClick={() => openRevokeModal(g)} className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8" title="Revoke">
                       <XCircle className="h-4 w-4" />
                     </button>
                   </>
@@ -415,7 +415,7 @@ function GrantAccessPageContent() {
                 <select
                   value={selectedTest?.id || ""}
                   onChange={(e) => setSelectedTest(tests.find(t => t.id === e.target.value) || null)}
-                  className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500"
+                  className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm"
                   required
                 >
                   <option value="">Select test</option>
@@ -431,7 +431,7 @@ function GrantAccessPageContent() {
                 <select
                   value={selectedStudent?.id || ""}
                   onChange={(e) => setSelectedStudent(students.find(s => s.id === e.target.value) || null)}
-                  className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500"
+                  className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm"
                   required
                 >
                   <option value="">Select student</option>
@@ -447,17 +447,17 @@ function GrantAccessPageContent() {
             <div className="grid grid-cols-2 gap-4">
               <label className="block text-[12px] font-bold text-navy-700">
                 Expires At (optional)
-                <input type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+                <input type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
               </label>
               <label className="block text-[12px] font-bold text-navy-700">
                 Payment Reference (UPI Txn ID)
-                <input value={paymentRef} onChange={(e) => setPaymentRef(e.target.value)} placeholder="UPI123456789" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+                <input value={paymentRef} onChange={(e) => setPaymentRef(e.target.value)} placeholder="UPI123456789" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
               </label>
             </div>
 
             <label className="block text-[12px] font-bold text-navy-700">
               Amount Paid (₹)
-              <input type="number" step="0.01" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+              <input type="number" step="0.01" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
             </label>
 
             <p className="rounded-xl bg-amber-50 px-3.5 py-2.5 text-[12px] font-bold text-amber-800">
@@ -479,7 +479,7 @@ function GrantAccessPageContent() {
             <p className="text-sm text-navy-700">Extend access for <b>{selectedGrant.studentName}</b> to <b>{selectedGrant.testTitle}</b></p>
             <label className="block text-[12px] font-bold text-navy-700">
               New Expiry Date *
-              <input type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" required />
+              <input type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" required />
             </label>
             <p className="rounded-xl bg-teal-50 px-3.5 py-2.5 text-[12px] font-bold text-teal-800">A new grant will be created with the extended expiry. The previous grant will be marked REVOKED.</p>
           </div>

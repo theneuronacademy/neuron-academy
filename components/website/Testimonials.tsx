@@ -52,8 +52,8 @@ export function Testimonials({ items = TESTIMONIALS }: { items?: Testimonial[] }
             ))}
           </div>
           <div className="flex gap-2">
-            <button onClick={() => setI((i - 1 + items.length) % items.length)} aria-label="Previous testimonial" className="rounded-lg border border-neutral-200 p-2 text-neutral-700 hover:border-brand-primary"><ChevronLeft className="h-4 w-4" /></button>
-            <button onClick={() => setI((i + 1) % items.length)} aria-label="Next testimonial" className="rounded-lg border border-neutral-200 p-2 text-neutral-700 hover:border-brand-primary"><ChevronRight className="h-4 w-4" /></button>
+            <button onClick={() => setI((i - 1 + items.length) % items.length)} aria-label="Previous testimonial" className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 text-neutral-700 hover:border-brand-primary"><ChevronLeft className="h-4 w-4" /></button>
+            <button onClick={() => setI((i + 1) % items.length)} aria-label="Next testimonial" className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 text-neutral-700 hover:border-brand-primary"><ChevronRight className="h-4 w-4" /></button>
           </div>
         </div>
       </Card>

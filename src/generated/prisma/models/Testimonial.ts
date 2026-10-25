@@ -41,6 +41,7 @@ export type TestimonialMinAggregateOutputType = {
   name: string | null
   role: string | null
   message: string | null
+  achievement: string | null
   photo: string | null
   rating: number | null
   isActive: boolean | null
@@ -54,6 +55,7 @@ export type TestimonialMaxAggregateOutputType = {
   name: string | null
   role: string | null
   message: string | null
+  achievement: string | null
   photo: string | null
   rating: number | null
   isActive: boolean | null
@@ -67,6 +69,7 @@ export type TestimonialCountAggregateOutputType = {
   name: number
   role: number
   message: number
+  achievement: number
   photo: number
   rating: number
   isActive: number
@@ -92,6 +95,7 @@ export type TestimonialMinAggregateInputType = {
   name?: true
   role?: true
   message?: true
+  achievement?: true
   photo?: true
   rating?: true
   isActive?: true
@@ -105,6 +109,7 @@ export type TestimonialMaxAggregateInputType = {
   name?: true
   role?: true
   message?: true
+  achievement?: true
   photo?: true
   rating?: true
   isActive?: true
@@ -118,6 +123,7 @@ export type TestimonialCountAggregateInputType = {
   name?: true
   role?: true
   message?: true
+  achievement?: true
   photo?: true
   rating?: true
   isActive?: true
@@ -218,6 +224,7 @@ export type TestimonialGroupByOutputType = {
   name: string
   role: string
   message: string
+  achievement: string | null
   photo: string | null
   rating: number
   isActive: boolean
@@ -254,6 +261,7 @@ export type TestimonialWhereInput = {
   name?: Prisma.StringFilter<"Testimonial"> | string
   role?: Prisma.StringFilter<"Testimonial"> | string
   message?: Prisma.StringFilter<"Testimonial"> | string
+  achievement?: Prisma.StringNullableFilter<"Testimonial"> | string | null
   photo?: Prisma.StringNullableFilter<"Testimonial"> | string | null
   rating?: Prisma.IntFilter<"Testimonial"> | number
   isActive?: Prisma.BoolFilter<"Testimonial"> | boolean
@@ -267,6 +275,7 @@ export type TestimonialOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  achievement?: Prisma.SortOrderInput | Prisma.SortOrder
   photo?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -283,6 +292,7 @@ export type TestimonialWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Testimonial"> | string
   role?: Prisma.StringFilter<"Testimonial"> | string
   message?: Prisma.StringFilter<"Testimonial"> | string
+  achievement?: Prisma.StringNullableFilter<"Testimonial"> | string | null
   photo?: Prisma.StringNullableFilter<"Testimonial"> | string | null
   rating?: Prisma.IntFilter<"Testimonial"> | number
   isActive?: Prisma.BoolFilter<"Testimonial"> | boolean
@@ -296,6 +306,7 @@ export type TestimonialOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  achievement?: Prisma.SortOrderInput | Prisma.SortOrder
   photo?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -317,6 +328,7 @@ export type TestimonialScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Testimonial"> | string
   role?: Prisma.StringWithAggregatesFilter<"Testimonial"> | string
   message?: Prisma.StringWithAggregatesFilter<"Testimonial"> | string
+  achievement?: Prisma.StringNullableWithAggregatesFilter<"Testimonial"> | string | null
   photo?: Prisma.StringNullableWithAggregatesFilter<"Testimonial"> | string | null
   rating?: Prisma.IntWithAggregatesFilter<"Testimonial"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"Testimonial"> | boolean
@@ -330,6 +342,7 @@ export type TestimonialCreateInput = {
   name: string
   role?: string
   message: string
+  achievement?: string | null
   photo?: string | null
   rating?: number
   isActive?: boolean
@@ -343,6 +356,7 @@ export type TestimonialUncheckedCreateInput = {
   name: string
   role?: string
   message: string
+  achievement?: string | null
   photo?: string | null
   rating?: number
   isActive?: boolean
@@ -356,6 +370,7 @@ export type TestimonialUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  achievement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -369,6 +384,7 @@ export type TestimonialUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  achievement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -382,6 +398,7 @@ export type TestimonialCreateManyInput = {
   name: string
   role?: string
   message: string
+  achievement?: string | null
   photo?: string | null
   rating?: number
   isActive?: boolean
@@ -395,6 +412,7 @@ export type TestimonialUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  achievement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -408,6 +426,7 @@ export type TestimonialUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  achievement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -421,6 +440,7 @@ export type TestimonialCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  achievement?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -439,6 +459,7 @@ export type TestimonialMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  achievement?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -452,6 +473,7 @@ export type TestimonialMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   role?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  achievement?: Prisma.SortOrder
   photo?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -472,6 +494,7 @@ export type TestimonialSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   name?: boolean
   role?: boolean
   message?: boolean
+  achievement?: boolean
   photo?: boolean
   rating?: boolean
   isActive?: boolean
@@ -485,6 +508,7 @@ export type TestimonialSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   name?: boolean
   role?: boolean
   message?: boolean
+  achievement?: boolean
   photo?: boolean
   rating?: boolean
   isActive?: boolean
@@ -498,6 +522,7 @@ export type TestimonialSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   name?: boolean
   role?: boolean
   message?: boolean
+  achievement?: boolean
   photo?: boolean
   rating?: boolean
   isActive?: boolean
@@ -511,6 +536,7 @@ export type TestimonialSelectScalar = {
   name?: boolean
   role?: boolean
   message?: boolean
+  achievement?: boolean
   photo?: boolean
   rating?: boolean
   isActive?: boolean
@@ -519,7 +545,7 @@ export type TestimonialSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TestimonialOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "role" | "message" | "photo" | "rating" | "isActive" | "displayOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["testimonial"]>
+export type TestimonialOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "role" | "message" | "achievement" | "photo" | "rating" | "isActive" | "displayOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["testimonial"]>
 
 export type $TestimonialPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Testimonial"
@@ -529,6 +555,7 @@ export type $TestimonialPayload<ExtArgs extends runtime.Types.Extensions.Interna
     name: string
     role: string
     message: string
+    achievement: string | null
     photo: string | null
     rating: number
     isActive: boolean
@@ -962,6 +989,7 @@ export interface TestimonialFieldRefs {
   readonly name: Prisma.FieldRef<"Testimonial", 'String'>
   readonly role: Prisma.FieldRef<"Testimonial", 'String'>
   readonly message: Prisma.FieldRef<"Testimonial", 'String'>
+  readonly achievement: Prisma.FieldRef<"Testimonial", 'String'>
   readonly photo: Prisma.FieldRef<"Testimonial", 'String'>
   readonly rating: Prisma.FieldRef<"Testimonial", 'Int'>
   readonly isActive: Prisma.FieldRef<"Testimonial", 'Boolean'>

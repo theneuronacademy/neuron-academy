@@ -29,6 +29,9 @@ export function showcaseValidation(body: Record<string, unknown>): string | null
       return "Image URL must be an http(s) URL under 500 characters.";
     }
   }
+  if (body.description !== undefined && body.description !== "" && String(body.description).trim().length > 400) {
+    return "Description is too long (max 400 characters).";
+  }
   return null;
 }
 

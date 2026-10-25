@@ -365,7 +365,7 @@ export default function NotificationsPage() {
         <div className="grid gap-3">
           <label className="block text-[12px] font-bold text-navy-700">
             Audience
-            <select value={audience} onChange={(e) => { setAudience(e.target.value); void refreshEstimate(e.target.value); }} aria-label="Audience" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+            <select value={audience} onChange={(e) => { setAudience(e.target.value); void refreshEstimate(e.target.value); }} aria-label="Audience" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
               {audiences.map((a) => (
                 <option key={a} value={a}>{a}</option>
               ))}
@@ -398,7 +398,7 @@ export default function NotificationsPage() {
           <div className="grid grid-cols-2 gap-3">
             <label className="block text-[12px] font-bold text-navy-700">
               Priority
-              <select value={priority} onChange={(e) => setPriority(e.target.value)} aria-label="Priority" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+              <select value={priority} onChange={(e) => setPriority(e.target.value)} aria-label="Priority" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
                 {PRIORITY_OPTIONS.map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
@@ -406,7 +406,7 @@ export default function NotificationsPage() {
             </label>
             <label className="block text-[12px] font-bold text-navy-700">
               SMS template
-              <select value={templateKey} onChange={(e) => { const v = e.target.value; setTemplateKey(v); if (v === "EMERGENCY_ALERT") setChannels(["SMS", "PUSH", "IN_APP"]); }} aria-label="SMS template" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+              <select value={templateKey} onChange={(e) => { const v = e.target.value; setTemplateKey(v); if (v === "EMERGENCY_ALERT") setChannels(["SMS", "PUSH", "IN_APP"]); }} aria-label="SMS template" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
                 {TEMPLATE_OPTIONS.map((t) => (
                   <option key={t.key} value={t.key}>{t.label}</option>
                 ))}
@@ -415,15 +415,15 @@ export default function NotificationsPage() {
           </div>
           <label className="block text-[12px] font-bold text-navy-700">
             Title *
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Mock on Sunday" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Mock on Sunday" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Message *
-            <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} placeholder="JEE Main Mock 14 starts 10 AM…" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+            <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} placeholder="JEE Main Mock 14 starts 10 AM…" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Schedule (optional — leave empty for Send now)
-            <input type="date" value={schedule} onChange={(e) => setSchedule(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+            <input type="date" value={schedule} onChange={(e) => setSchedule(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
           </label>
           {channels.includes("SMS") && (estimate?.smsEligible ?? 0) > 1 ? (
             <label className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-[12px] font-bold text-amber-800">

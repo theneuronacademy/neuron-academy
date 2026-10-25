@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
-import { COURSES } from "@/data/courses";
+import { COURSES, COURSE_INTEREST_CLASSES } from "@/data/courses";
 import { submitEnquiry } from "@/services/siteApi";
 
-const inputCls = "w-full rounded-xl border border-silver-300 bg-white px-4 py-2.5 text-sm text-ink placeholder:text-muted/70 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20";
+const inputCls = "w-full rounded-xl border border-silver-300 bg-white px-4 py-2.5 text-base text-ink placeholder:text-muted/70 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 sm:text-sm";
 
 type Phase = "idle" | "submitting" | "success" | "error";
 
@@ -74,18 +74,21 @@ export function ContactForm({ admission = false }: { admission?: boolean }) {
         <input name="email" type="email" placeholder="Email" className={inputCls} aria-label="Email" />
         <select name="course" className={inputCls} aria-label="Course interested in" defaultValue="">
           <option value="" disabled>Course Interested In</option>
-          {COURSES.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+          {/* Audit fix #7: options come from one data source only (data/courses.ts)
+              — the full coaching catalogue + every tuition class the academy teaches. */}
+          <optgroup label="Courses">
+            {COURSES.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+          </optgroup>
+          <optgroup label="Classes / Dropper">
+            {COURSE_INTEREST_CLASSES.map((cl) => <option key={cl} value={cl}>{cl}</option>)}
+          </optgroup>
         </select>
       </div>
       {admission ? (
         <div className="grid gap-3 sm:grid-cols-2">
           <select name="className" className={inputCls} aria-label="Class or exam" defaultValue="">
             <option value="" disabled>Class / Exam</option>
-            <option>Class 9</option>
-            <option>Class 10</option>
-            <option>Class 11</option>
-            <option>Class 12</option>
-            <option>Dropper</option>
+            {COURSE_INTEREST_CLASSES.map((cl) => <option key={cl}>{cl}</option>)}
           </select>
           <select name="batch" className={inputCls} aria-label="Preferred batch" defaultValue="">
             <option value="" disabled>Preferred Batch</option>

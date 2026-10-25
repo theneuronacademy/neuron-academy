@@ -94,15 +94,15 @@ export default function SettingsPage() {
           <div className="mt-3 grid gap-3">
             <label className="block text-[12px] font-bold text-navy-700">
               Academy name
-              <input value={academy} onChange={(e) => setAcademy(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+              <input value={academy} onChange={(e) => setAcademy(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
             </label>
             <label className="block text-[12px] font-bold text-navy-700">
               Contact phone
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
             </label>
             <label className="block text-[12px] font-bold text-navy-700">
               Contact email
-              <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+              <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
             </label>
           </div>
           <Button variant="primary" size="sm" className="mt-4" onClick={() => { setSaved(true); window.setTimeout(() => setSaved(false), 2500); }}>

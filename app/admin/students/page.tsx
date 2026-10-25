@@ -193,7 +193,7 @@ export default function StudentsPage() {
     );
   }
 
-  const inputCls = "mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500";
+  const inputCls = "mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm";
 
   return (
     <AdminLayout title="Students" subtitle={`${filtered.length} of ${rows.length} learners`}>
@@ -249,10 +249,10 @@ export default function StudentsPage() {
               className: "text-right",
               render: (r) => (
                 <div className="flex justify-end gap-1.5">
-                  <button onClick={() => setView(r)} aria-label={`View ${r.name}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+                  <button onClick={() => setView(r)} aria-label={`View ${r.name}`} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
                     <Eye className="h-4 w-4" />
                   </button>
-                  <button onClick={() => openEdit(r)} aria-label={`Edit ${r.name}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+                  <button onClick={() => openEdit(r)} aria-label={`Edit ${r.name}`} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
                     <Pencil className="h-4 w-4" />
                   </button>
                 </div>

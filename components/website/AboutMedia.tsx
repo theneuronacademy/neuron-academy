@@ -109,14 +109,14 @@ export function AboutMediaDisplay({
                 <button
                   onClick={() => go(-1)}
                   aria-label="Previous About photo"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-navy-950/70 p-2 text-white backdrop-blur transition hover:bg-navy-950"
+                  className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-navy-950/70 text-white backdrop-blur transition hover:bg-navy-950"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => go(1)}
                   aria-label="Next About photo"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-navy-950/70 p-2 text-white backdrop-blur transition hover:bg-navy-950"
+                  className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-navy-950/70 text-white backdrop-blur transition hover:bg-navy-950"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>

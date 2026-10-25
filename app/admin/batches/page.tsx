@@ -236,16 +236,16 @@ export default function BatchesPage() {
               className: "text-right",
               render: (r) => (
                 <div className="flex justify-end gap-1.5">
-                  <button aria-label={`View ${r.name}`} onClick={() => router.push(`/admin/students?batch=${encodeURIComponent(r.name)}`)} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+                  <button aria-label={`View ${r.name}`} onClick={() => router.push(`/admin/students?batch=${encodeURIComponent(r.name)}`)} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
                     <Eye className="h-4 w-4" />
                   </button>
-                  <button aria-label={`Edit ${r.name}`} onClick={() => openEdit(r)} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+                  <button aria-label={`Edit ${r.name}`} onClick={() => openEdit(r)} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => deleteBatch(r.id, r.name)}
                     aria-label={`Delete ${r.name}`}
-                    className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -259,11 +259,11 @@ export default function BatchesPage() {
       <AdminModal open={modal} title="Create Batch" onClose={() => setModal(false)}>
         <label className="block text-[12px] font-bold text-navy-700">
           Batch name
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. JEE 2028-A" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. JEE 2028-A" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Course
-          <select value={courseId} onChange={(e) => setCourseId(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+          <select value={courseId} onChange={(e) => setCourseId(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
             <option value="">Select a course…</option>
             {courses.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
@@ -272,7 +272,7 @@ export default function BatchesPage() {
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Faculty (optional)
-          <select value={facultyId} onChange={(e) => setFacultyId(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+          <select value={facultyId} onChange={(e) => setFacultyId(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
             <option value="">Unassigned</option>
             {facultyList.map((f) => (
               <option key={f.id} value={f.id}>{f.name}</option>
@@ -294,7 +294,7 @@ export default function BatchesPage() {
       <AdminModal open={editing !== null} title={editing ? `Edit ${editing.name}` : "Edit batch"} onClose={() => setEditing(null)}>
         <label className="block text-[12px] font-bold text-navy-700">
           Faculty
-          <select value={editFaculty} onChange={(e) => setEditFaculty(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+          <select value={editFaculty} onChange={(e) => setEditFaculty(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
             <option value="">Unassigned</option>
             {facultyList.map((f) => (
               <option key={f.id} value={f.id}>{f.name}</option>
@@ -303,7 +303,7 @@ export default function BatchesPage() {
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Status
-          <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+          <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
             <option value="active">Active</option>
             <option value="upcoming">Upcoming</option>
             <option value="completed">Completed</option>

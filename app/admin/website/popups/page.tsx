@@ -38,10 +38,12 @@ function PopupPreview({ p }: { p: Partial<AdminPopup> }) {
       <div className="p-4">
         <div className="overflow-hidden rounded-xl bg-navy-800">
           {p.videoUrl ? (
-            <video src={p.videoUrl} controls className="h-44 w-full object-cover" />
+            <video src={p.videoUrl} controls className="h-44 w-full object-contain" />
           ) : p.image ? (
+            // Audit fix #5: preview keeps its fixed height but letterboxes
+            // instead of cropping — the admin preview matches the public popup.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.image} alt={p.title ?? "Popup"} className="h-44 w-full object-cover" />
+            <img src={p.image} alt={p.title ?? "Popup"} className="h-44 w-full object-contain" />
           ) : (
             <div className="bg-metallic-dark flex h-44 items-center justify-center p-4 text-center text-sm font-extrabold text-white">{p.title || "Popup title"}</div>
           )}
@@ -301,11 +303,11 @@ export default function PopupsPage() {
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-[12px] font-bold text-navy-700">
             Title *
-            <input value={form.title} onChange={(e) => set("title", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="Book Your Free Demo" />
+            <input value={form.title} onChange={(e) => set("title", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="Book Your Free Demo" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Display frequency
-            <select value={form.frequency} onChange={(e) => set("frequency", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+            <select value={form.frequency} onChange={(e) => set("frequency", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
               <option value="once-per-session">Once per session</option>
               <option value="once-per-day">Once per day</option>
               <option value="every-visit">Every visit</option>
@@ -313,27 +315,27 @@ export default function PopupsPage() {
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Image URL
-            <input value={form.image} onChange={(e) => set("image", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="https://…" />
+            <input value={form.image} onChange={(e) => set("image", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="https://…" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Video URL
-            <input value={form.videoUrl} onChange={(e) => set("videoUrl", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="https://… (optional)" />
+            <input value={form.videoUrl} onChange={(e) => set("videoUrl", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="https://… (optional)" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Button text
-            <input value={form.buttonText} onChange={(e) => set("buttonText", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="Book Free Demo" />
+            <input value={form.buttonText} onChange={(e) => set("buttonText", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="Book Free Demo" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Button URL
-            <input value={form.buttonUrl} onChange={(e) => set("buttonUrl", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="#contact" />
+            <input value={form.buttonUrl} onChange={(e) => set("buttonUrl", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="#contact" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Start date
-            <input type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+            <input type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             End date
-            <input type="date" value={form.endDate} onChange={(e) => set("endDate", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+            <input type="date" value={form.endDate} onChange={(e) => set("endDate", e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
           </label>
         </div>
         <CloudinaryUpload
@@ -354,7 +356,7 @@ export default function PopupsPage() {
         />
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Message
-          <textarea value={form.message} onChange={(e) => set("message", e.target.value)} rows={3} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="Attend 2 demo classes + 1 mock test free…" />
+          <textarea value={form.message} onChange={(e) => set("message", e.target.value)} rows={3} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="Attend 2 demo classes + 1 mock test free…" />
         </label>
         <label className="mt-3 flex items-center gap-2 text-[13px] font-bold text-navy-700">
           <input type="checkbox" checked={form.active} onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))} className="h-4 w-4 accent-teal-600" /> Active

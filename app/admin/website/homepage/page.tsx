@@ -220,16 +220,16 @@ export default function HomepageContentPage() {
       <AdminModal open={modal} title={editing ? "Edit Content" : "Add Content"} onClose={() => { setModal(false); setEditing(null); }}>
         <label className="block text-[12px] font-bold text-navy-700">
           Content key
-          <input value={key} onChange={(e) => setKey(e.target.value)} placeholder="e.g. hero.headline" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={key} onChange={(e) => setKey(e.target.value)} placeholder="e.g. hero.headline" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
           <p className="mt-1 text-[11px] text-muted">Used to look up the value on the public site.</p>
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Value
-          <input value={value} onChange={(e) => setValue(e.target.value)} placeholder="e.g. Neuron Academy — Shaheen Bagh" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={value} onChange={(e) => setValue(e.target.value)} placeholder="e.g. Neuron Academy — Shaheen Bagh" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Type
-          <select value={type} onChange={(e) => setType(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+          <select value={type} onChange={(e) => setType(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
             <option value="text">Text</option>
             <option value="url">URL</option>
             <option value="html">HTML</option>

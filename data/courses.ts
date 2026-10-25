@@ -21,6 +21,27 @@ export interface Course {
 
 export const COURSE_CATEGORIES = ["Engineering", "Medical", "University Entrance", "Foundation"] as const;
 
+// Single source for enquiry-form "interested in" options (audit fix #7):
+// the coaching catalogue below (course names actually offered) plus the school
+// tuition classes the academy teaches (Classes 1–12; see the faq classes
+// entry). Keep every website form dropdown driven from here so the option
+// lists can never drift apart again.
+export const COURSE_INTEREST_CLASSES: string[] = [
+  "Class 1",
+  "Class 2",
+  "Class 3",
+  "Class 4",
+  "Class 5",
+  "Class 6",
+  "Class 7",
+  "Class 8",
+  "Class 9",
+  "Class 10",
+  "Class 11",
+  "Class 12",
+  "Dropper",
+];
+
 export const COURSES: Course[] = [
   {
     id: "jee",

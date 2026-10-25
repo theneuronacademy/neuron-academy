@@ -63,7 +63,7 @@ export function AnnouncementBar() {
       <button
         onClick={() => setDismissed(true)}
         aria-label="Dismiss announcement"
-        className="absolute right-3 rounded-md p-1 text-silver-300 hover:bg-white/10 hover:text-white"
+        className="absolute right-2 flex h-8 w-8 items-center justify-center rounded-md text-silver-300 hover:bg-white/10 hover:text-white"
       >
         <X className="h-4 w-4" />
       </button>

@@ -31,3 +31,7 @@ case; do not assume the database is empty.
 - Do not run `prisma/seed.ts`, demo cleanup scripts, or test-data scripts
   against production.
 - Future schema changes must add a migration after the active baseline.
+- `prisma/migrations/20261025120000_showcase_description_testimonial_achievement/`
+  adds two nullable columns additively (`ResultShowcase.description`,
+  `Testimonial.achievement`). It is applied by the normal `migrate deploy`
+  pipeline; legacy rows keep their fallback display.

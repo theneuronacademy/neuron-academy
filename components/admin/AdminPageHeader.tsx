@@ -28,12 +28,12 @@ export function AdminPageHeader({
       </div>
       <div className="flex gap-2">
         {secondaryLabel && onSecondary ? (
-          <Button variant="outline" size="sm" onClick={onSecondary}>
+          <Button variant="outline" size="sm" onClick={onSecondary} className="px-5 py-3 sm:px-3 sm:py-1.5">
             {secondaryLabel}
           </Button>
         ) : null}
         {actionLabel && onAction ? (
-          <Button variant="primary" size="sm" onClick={onAction}>
+          <Button variant="primary" size="sm" onClick={onAction} className="px-5 py-3 sm:px-3 sm:py-1.5">
             {ActionIcon ? <ActionIcon className="h-4 w-4" /> : null}
             {actionLabel}
           </Button>

@@ -43,6 +43,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(typeof body.image === "string" ? { image: body.image } : {}),
         ...(typeof body.duration === "string" ? { duration: body.duration } : {}),
         ...(typeof body.fee === "number" ? { fee: body.fee } : {}),
+        // Course-edit parity: persist category/mode from the admin form with
+        // the same type guards as the courses POST. `undefined` is treated by
+        // Prisma as "leave the existing value untouched".
+        category: typeof body.category === "string" ? body.category : undefined,
+        mode: typeof body.mode === "string" ? body.mode : undefined,
         ...(body.status === "ACTIVE" || body.status === "INACTIVE" ? { status: body.status } : {}),
         ...(typeof body.displayOrder === "number" ? { displayOrder: body.displayOrder } : {}),
       },

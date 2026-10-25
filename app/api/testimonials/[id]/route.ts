@@ -33,12 +33,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return fail("Invalid JSON body.", 400);
   }
   try {
+    if (typeof body.achievement === "string" && body.achievement.trim().length > 80) {
+      return fail("Achievement is too long (max 80 characters).", 400);
+    }
     const row = await db.testimonial.update({
       where: { id },
       data: {
         ...(typeof body.name === "string" ? { name: body.name } : {}),
         ...(typeof body.role === "string" ? { role: body.role } : {}),
         ...(typeof body.message === "string" ? { message: body.message } : {}),
+        ...(body.achievement !== undefined ? { achievement: typeof body.achievement === "string" && body.achievement.trim() !== "" ? body.achievement.trim() : null } : {}),
         ...(typeof body.photo === "string" ? { photo: body.photo } : {}),
         ...(typeof body.rating === "number" ? { rating: Math.min(5, Math.max(1, body.rating)) } : {}),
         ...(typeof body.isActive === "boolean" ? { isActive: body.isActive } : {}),

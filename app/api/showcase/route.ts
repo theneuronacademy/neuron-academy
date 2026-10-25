@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
         achievement: String(body.achievement).trim(),
         score: isNonEmpty(body.score) ? String(body.score).trim() : undefined,
         year: body.year !== undefined && body.year !== "" ? String(body.year).trim() : "",
+        description: isNonEmpty(body.description) ? String(body.description).trim() : undefined,
         imageUrl: isNonEmpty(body.imageUrl) ? String(body.imageUrl).trim() : undefined,
         displayOrder: Number.isFinite(Number(body.displayOrder)) ? Math.floor(Number(body.displayOrder)) : 0,
         consent,

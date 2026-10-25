@@ -255,16 +255,16 @@ export default function AdminTestsPage() {
                     <td className="px-4 py-3 text-right pr-4">
                       <div className="flex items-center justify-end gap-1.5">
                         <Link href={`/admin/tests/${t.id}/configure`}>
-                          <button className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500" aria-label={`Configure ${t.title}`}>
+                          <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8" aria-label={`Configure ${t.title}`}>
                             <Eye className="h-4 w-4" />
                           </button>
                         </Link>
                         <Link href={`/admin/tests/${t.id}/edit`}>
-                          <button className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500" aria-label={`Edit ${t.title}`}>
+                          <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8" aria-label={`Edit ${t.title}`}>
                             <Pencil className="h-4 w-4" />
                           </button>
                         </Link>
-                        <button onClick={() => duplicate(t.id)} disabled={busy === t.id} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500 disabled:opacity-50" aria-label={`Duplicate ${t.title}`}>
+                        <button onClick={() => duplicate(t.id)} disabled={busy === t.id} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8 disabled:opacity-50" aria-label={`Duplicate ${t.title}`}>
                           <Copy className="h-4 w-4" />
                         </button>
                         {t.status !== "PUBLISHED" && t.status !== "LIVE" && t.status !== "COMPLETED" ? (
@@ -294,7 +294,7 @@ export default function AdminTestsPage() {
                             <Megaphone className="h-4 w-4 inline mr-1" /> Publish Results
                           </button>
                         ) : null}
-                        <button onClick={() => remove(t.id)} disabled={busy === t.id} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50 disabled:opacity-50" aria-label={`Delete ${t.title}`}>
+                        <button onClick={() => remove(t.id)} disabled={busy === t.id} className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8 disabled:opacity-50" aria-label={`Delete ${t.title}`}>
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>

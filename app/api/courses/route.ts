@@ -69,6 +69,12 @@ export async function POST(req: NextRequest) {
         image: typeof body.image === "string" ? body.image : undefined,
         duration: typeof body.duration === "string" ? body.duration : undefined,
         fee: typeof body.fee === "number" ? body.fee : undefined,
+        // Audit fix: persist category/mode supplied by the admin courses
+        // form — they were silently dropped before, so every created course
+        // used the model defaults. Omitted fields still fall back to the
+        // model defaults (category: "Engineering", mode: null).
+        category: typeof body.category === "string" ? body.category : undefined,
+        mode: typeof body.mode === "string" ? body.mode : undefined,
       },
     });
     return ok({ item: created }, 201);

@@ -29,6 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (body.achievement !== undefined) patch.achievement = String(body.achievement).trim();
     if (body.score !== undefined) patch.score = body.score === "" ? null : String(body.score).trim();
     if (body.year !== undefined) patch.year = String(body.year).trim();
+    if (body.description !== undefined) patch.description = body.description === "" ? null : String(body.description).trim();
     if (body.imageUrl !== undefined) patch.imageUrl = body.imageUrl === "" ? null : String(body.imageUrl).trim();
     if (body.displayOrder !== undefined && Number.isFinite(Number(body.displayOrder))) {
       patch.displayOrder = Math.floor(Number(body.displayOrder));
@@ -43,6 +44,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       score: merged.score ?? "",
       year: merged.year ?? "",
       imageUrl: merged.imageUrl ?? "",
+      description: merged.description ?? "",
     });
     if (invalid) return fail(invalid, 400);
     if (!activationAllowed(merged.consent === true, merged.isActive === true)) {

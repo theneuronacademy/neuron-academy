@@ -151,7 +151,7 @@ export default function FromPdfPage() {
                 <FileText className="h-4 w-4 text-teal-600" /> {file.name}
                 <span className="font-semibold text-muted">({(file.size / 1024).toFixed(0)} KB)</span>
               </p>
-              <button onClick={() => { setFile(null); setSummary(null); setStats(null); setPhase("idle"); }} aria-label="Remove file" className="rounded-lg p-1.5 hover:bg-silver-100">
+              <button onClick={() => { setFile(null); setSummary(null); setStats(null); setPhase("idle"); }} aria-label="Remove file" className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-silver-100">
                 <X className="h-4 w-4" />
               </button>
             </div>

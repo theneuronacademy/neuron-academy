@@ -17,7 +17,9 @@ interface Row {
   id: string;
   studentName: string;
   course: string;
+  message: string;
   achievement: string;
+  photo: string;
   active: boolean;
 }
 
@@ -32,6 +34,7 @@ export default function TestimonialsAdminPage() {
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [achievement, setAchievement] = useState("");
+  const [message, setMessage] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
   // Phase 17 — persistence errors surface honestly (no local writes).
@@ -45,20 +48,24 @@ export default function TestimonialsAdminPage() {
         const res = await fetch("/api/testimonials", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows((json.data.items as Array<{ id: string; studentName?: string; name?: string; course?: string; achievement?: string; isActive?: boolean }>).map((t) => ({
+          // Database rows use the API contract fields (name/role/message/
+          // achievement/photo); the demo fallback uses the course/course label.
+          setRows((json.data.items as Array<{ id: string; studentName?: string; name?: string; course?: string; role?: string; message?: string; achievement?: string; photo?: string; isActive?: boolean }>).map((t) => ({
             id: t.id,
             studentName: t.studentName ?? t.name ?? "",
-            course: t.course ?? "",
+            course: t.course ?? t.role ?? "",
+            message: t.message ?? "",
             achievement: t.achievement ?? "",
+            photo: t.photo ?? "",
             active: t.isActive ?? true,
           })));
         } else {
           const { TESTIMONIALS } = await import("@/data/testimonials");
-          setRows(TESTIMONIALS.map((t) => ({ id: t.id, studentName: t.studentName, course: t.course, achievement: t.achievement, active: true })));
+          setRows(TESTIMONIALS.map((t) => ({ id: t.id, studentName: t.studentName, course: t.course, message: t.testimonial, achievement: t.achievement, photo: t.photo, active: true })));
         }
       } catch {
         const { TESTIMONIALS } = await import("@/data/testimonials");
-        setRows(TESTIMONIALS.map((t) => ({ id: t.id, studentName: t.studentName, course: t.course, achievement: t.achievement, active: true })));
+        setRows(TESTIMONIALS.map((t) => ({ id: t.id, studentName: t.studentName, course: t.course, message: t.testimonial, achievement: t.achievement, photo: t.photo, active: true })));
       }
       setReady(true);
     })();
@@ -66,10 +73,23 @@ export default function TestimonialsAdminPage() {
 
   const filtered = useMemo(() => rows.filter((r) => !search.trim() || `${r.studentName} ${r.course}`.toLowerCase().includes(search.toLowerCase())), [rows, search]);
 
+  // The UI fields map onto the API contract exactly:
+  //   Student name  -> name        (required)
+  //   Course        -> role
+  //   Achievement   -> achievement (optional display line)
+  //   Testimonial   -> message     (required — the quote itself)
+  //   Student photo -> photo
   const save = async () => {
-    if (!name.trim()) return;
     setFormError(null);
-    const payload = { studentName: name.trim(), course: course.trim(), achievement: achievement.trim(), photo: photoUrl || undefined, isActive: true };
+    if (!name.trim()) {
+      setFormError("Student name is required.");
+      return;
+    }
+    if (!message.trim()) {
+      setFormError("The testimonial quote is required.");
+      return;
+    }
+    const payload = { name: name.trim(), role: course.trim(), achievement: achievement.trim(), message: message.trim(), photo: photoUrl || undefined, isActive: true };
     try {
       if (editing) {
         const res = await fetch(`/api/testimonials/${editing.id}`, {
@@ -80,7 +100,7 @@ export default function TestimonialsAdminPage() {
         });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success !== false) {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, studentName: name.trim(), course: course.trim(), achievement: achievement.trim() } : r)));
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, studentName: name.trim(), course: course.trim(), message: message.trim(), achievement: achievement.trim(), photo: photoUrl } : r)));
           setSaved("Testimonial updated.");
           setModal(false);
           setEditing(null);
@@ -98,7 +118,7 @@ export default function TestimonialsAdminPage() {
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && json.data?.item) {
           const item = json.data.item;
-          setRows((p) => [...p, { id: item.id, studentName: item.studentName, course: item.course ?? "", achievement: item.achievement ?? "", active: true }]);
+          setRows((p) => [...p, { id: item.id, studentName: String(item.name ?? item.studentName ?? ""), course: String(item.course ?? item.role ?? ""), message: String(item.message ?? ""), achievement: String(item.achievement ?? ""), photo: String(item.photo ?? ""), active: true }]);
           setSaved("Testimonial added.");
           setModal(false);
         } else {
@@ -114,6 +134,7 @@ export default function TestimonialsAdminPage() {
     setName("");
     setCourse("");
     setAchievement("");
+    setMessage("");
     setPhotoUrl("");
     window.setTimeout(() => setSaved(null), 2500);
   };
@@ -168,7 +189,7 @@ export default function TestimonialsAdminPage() {
 
   return (
     <AdminLayout title="Testimonials" subtitle="Student success quotes">
-      <AdminPageHeader title="Testimonials" description="Quotes shown on the homepage carousel." actionLabel="Add Testimonial" actionIcon={Plus} onAction={() => { setEditing(null); setName(""); setCourse(""); setAchievement(""); setFormError(null); setModal(true); }} />
+      <AdminPageHeader title="Testimonials" description="Quotes shown on the homepage carousel." actionLabel="Add Testimonial" actionIcon={Plus} onAction={() => { setEditing(null); setName(""); setCourse(""); setAchievement(""); setMessage(""); setPhotoUrl(""); setFormError(null); setModal(true); }} />
       {pageError ? (
         <p className="rounded-xl border border-crimson-200 bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">
           {pageError}
@@ -213,15 +234,18 @@ export default function TestimonialsAdminPage() {
                       setName(r.studentName);
                       setCourse(r.course);
                       setAchievement(r.achievement);
+                      setMessage(r.message);
+                      setPhotoUrl(r.photo);
                       setFormError(null);
                       setModal(true);
                     }}
                     aria-label={`Edit ${r.studentName}`}
-                    className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"
+                    title="Edit"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8"
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
-                  <button onClick={() => void remove(r)} aria-label={`Delete ${r.studentName}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
+                  <button onClick={() => void remove(r)} aria-label={`Delete ${r.studentName}`} title="Delete" className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -234,15 +258,25 @@ export default function TestimonialsAdminPage() {
       <AdminModal open={modal} title={editing ? "Edit Testimonial" : "Add Testimonial"} onClose={() => { setModal(false); setEditing(null); }}>
         <label className="block text-[12px] font-bold text-navy-700">
           Student name
-          <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="e.g. Ayan Khan" />
+          <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="e.g. Ayan Khan" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Course
-          <input value={course} onChange={(e) => setCourse(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="JEE Main + Advanced" />
+          <input value={course} onChange={(e) => setCourse(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="JEE Main + Advanced" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Achievement
-          <input value={achievement} onChange={(e) => setAchievement(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="AIR 42 — JEE Advanced 2026" />
+          <input value={achievement} onChange={(e) => setAchievement(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="AIR 42 — JEE Advanced 2026" maxLength={80} />
+        </label>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Testimonial (the quote shown publicly — required)
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={4}
+            placeholder="Share the student’s experience in their own words…"
+            className="mt-1.5 w-full resize-y rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm"
+          />
         </label>
         <CloudinaryUpload
           category="gallery"

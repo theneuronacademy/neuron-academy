@@ -41,6 +41,7 @@ export type ResultShowcaseMinAggregateOutputType = {
   achievement: string | null
   score: string | null
   year: string | null
+  description: string | null
   imageUrl: string | null
   displayOrder: number | null
   consent: boolean | null
@@ -56,6 +57,7 @@ export type ResultShowcaseMaxAggregateOutputType = {
   achievement: string | null
   score: string | null
   year: string | null
+  description: string | null
   imageUrl: string | null
   displayOrder: number | null
   consent: boolean | null
@@ -71,6 +73,7 @@ export type ResultShowcaseCountAggregateOutputType = {
   achievement: number
   score: number
   year: number
+  description: number
   imageUrl: number
   displayOrder: number
   consent: number
@@ -96,6 +99,7 @@ export type ResultShowcaseMinAggregateInputType = {
   achievement?: true
   score?: true
   year?: true
+  description?: true
   imageUrl?: true
   displayOrder?: true
   consent?: true
@@ -111,6 +115,7 @@ export type ResultShowcaseMaxAggregateInputType = {
   achievement?: true
   score?: true
   year?: true
+  description?: true
   imageUrl?: true
   displayOrder?: true
   consent?: true
@@ -126,6 +131,7 @@ export type ResultShowcaseCountAggregateInputType = {
   achievement?: true
   score?: true
   year?: true
+  description?: true
   imageUrl?: true
   displayOrder?: true
   consent?: true
@@ -228,6 +234,7 @@ export type ResultShowcaseGroupByOutputType = {
   achievement: string
   score: string | null
   year: string
+  description: string | null
   imageUrl: string | null
   displayOrder: number
   consent: boolean
@@ -266,6 +273,7 @@ export type ResultShowcaseWhereInput = {
   achievement?: Prisma.StringFilter<"ResultShowcase"> | string
   score?: Prisma.StringNullableFilter<"ResultShowcase"> | string | null
   year?: Prisma.StringFilter<"ResultShowcase"> | string
+  description?: Prisma.StringNullableFilter<"ResultShowcase"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"ResultShowcase"> | string | null
   displayOrder?: Prisma.IntFilter<"ResultShowcase"> | number
   consent?: Prisma.BoolFilter<"ResultShowcase"> | boolean
@@ -281,6 +289,7 @@ export type ResultShowcaseOrderByWithRelationInput = {
   achievement?: Prisma.SortOrder
   score?: Prisma.SortOrderInput | Prisma.SortOrder
   year?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   consent?: Prisma.SortOrder
@@ -299,6 +308,7 @@ export type ResultShowcaseWhereUniqueInput = Prisma.AtLeast<{
   achievement?: Prisma.StringFilter<"ResultShowcase"> | string
   score?: Prisma.StringNullableFilter<"ResultShowcase"> | string | null
   year?: Prisma.StringFilter<"ResultShowcase"> | string
+  description?: Prisma.StringNullableFilter<"ResultShowcase"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"ResultShowcase"> | string | null
   displayOrder?: Prisma.IntFilter<"ResultShowcase"> | number
   consent?: Prisma.BoolFilter<"ResultShowcase"> | boolean
@@ -314,6 +324,7 @@ export type ResultShowcaseOrderByWithAggregationInput = {
   achievement?: Prisma.SortOrder
   score?: Prisma.SortOrderInput | Prisma.SortOrder
   year?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   consent?: Prisma.SortOrder
@@ -337,6 +348,7 @@ export type ResultShowcaseScalarWhereWithAggregatesInput = {
   achievement?: Prisma.StringWithAggregatesFilter<"ResultShowcase"> | string
   score?: Prisma.StringNullableWithAggregatesFilter<"ResultShowcase"> | string | null
   year?: Prisma.StringWithAggregatesFilter<"ResultShowcase"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"ResultShowcase"> | string | null
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"ResultShowcase"> | string | null
   displayOrder?: Prisma.IntWithAggregatesFilter<"ResultShowcase"> | number
   consent?: Prisma.BoolWithAggregatesFilter<"ResultShowcase"> | boolean
@@ -352,6 +364,7 @@ export type ResultShowcaseCreateInput = {
   achievement: string
   score?: string | null
   year?: string
+  description?: string | null
   imageUrl?: string | null
   displayOrder?: number
   consent?: boolean
@@ -367,6 +380,7 @@ export type ResultShowcaseUncheckedCreateInput = {
   achievement: string
   score?: string | null
   year?: string
+  description?: string | null
   imageUrl?: string | null
   displayOrder?: number
   consent?: boolean
@@ -382,6 +396,7 @@ export type ResultShowcaseUpdateInput = {
   achievement?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   year?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -397,6 +412,7 @@ export type ResultShowcaseUncheckedUpdateInput = {
   achievement?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   year?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -412,6 +428,7 @@ export type ResultShowcaseCreateManyInput = {
   achievement: string
   score?: string | null
   year?: string
+  description?: string | null
   imageUrl?: string | null
   displayOrder?: number
   consent?: boolean
@@ -427,6 +444,7 @@ export type ResultShowcaseUpdateManyMutationInput = {
   achievement?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   year?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -442,6 +460,7 @@ export type ResultShowcaseUncheckedUpdateManyInput = {
   achievement?: Prisma.StringFieldUpdateOperationsInput | string
   score?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   year?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -457,6 +476,7 @@ export type ResultShowcaseCountOrderByAggregateInput = {
   achievement?: Prisma.SortOrder
   score?: Prisma.SortOrder
   year?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   consent?: Prisma.SortOrder
@@ -476,6 +496,7 @@ export type ResultShowcaseMaxOrderByAggregateInput = {
   achievement?: Prisma.SortOrder
   score?: Prisma.SortOrder
   year?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   consent?: Prisma.SortOrder
@@ -491,6 +512,7 @@ export type ResultShowcaseMinOrderByAggregateInput = {
   achievement?: Prisma.SortOrder
   score?: Prisma.SortOrder
   year?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   consent?: Prisma.SortOrder
@@ -512,6 +534,7 @@ export type ResultShowcaseSelect<ExtArgs extends runtime.Types.Extensions.Intern
   achievement?: boolean
   score?: boolean
   year?: boolean
+  description?: boolean
   imageUrl?: boolean
   displayOrder?: boolean
   consent?: boolean
@@ -527,6 +550,7 @@ export type ResultShowcaseSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   achievement?: boolean
   score?: boolean
   year?: boolean
+  description?: boolean
   imageUrl?: boolean
   displayOrder?: boolean
   consent?: boolean
@@ -542,6 +566,7 @@ export type ResultShowcaseSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   achievement?: boolean
   score?: boolean
   year?: boolean
+  description?: boolean
   imageUrl?: boolean
   displayOrder?: boolean
   consent?: boolean
@@ -557,6 +582,7 @@ export type ResultShowcaseSelectScalar = {
   achievement?: boolean
   score?: boolean
   year?: boolean
+  description?: boolean
   imageUrl?: boolean
   displayOrder?: boolean
   consent?: boolean
@@ -565,7 +591,7 @@ export type ResultShowcaseSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ResultShowcaseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentName" | "exam" | "achievement" | "score" | "year" | "imageUrl" | "displayOrder" | "consent" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["resultShowcase"]>
+export type ResultShowcaseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentName" | "exam" | "achievement" | "score" | "year" | "description" | "imageUrl" | "displayOrder" | "consent" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["resultShowcase"]>
 
 export type $ResultShowcasePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ResultShowcase"
@@ -577,6 +603,7 @@ export type $ResultShowcasePayload<ExtArgs extends runtime.Types.Extensions.Inte
     achievement: string
     score: string | null
     year: string
+    description: string | null
     imageUrl: string | null
     displayOrder: number
     consent: boolean
@@ -1012,6 +1039,7 @@ export interface ResultShowcaseFieldRefs {
   readonly achievement: Prisma.FieldRef<"ResultShowcase", 'String'>
   readonly score: Prisma.FieldRef<"ResultShowcase", 'String'>
   readonly year: Prisma.FieldRef<"ResultShowcase", 'String'>
+  readonly description: Prisma.FieldRef<"ResultShowcase", 'String'>
   readonly imageUrl: Prisma.FieldRef<"ResultShowcase", 'String'>
   readonly displayOrder: Prisma.FieldRef<"ResultShowcase", 'Int'>
   readonly consent: Prisma.FieldRef<"ResultShowcase", 'Boolean'>

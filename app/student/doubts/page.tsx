@@ -126,8 +126,8 @@ export default function StudentDoubtsPage() {
         {err ? <p className="mt-2 rounded-xl border border-crimson-200 bg-crimson-50 px-3 py-2 text-[13px] font-bold text-crimson-600" role="alert">{err}</p> : null}
         {saved ? <p className="mt-2 rounded-xl border border-teal-200 bg-teal-50 px-3 py-2 text-[13px] font-bold text-teal-700" role="status">{saved}</p> : null}
         <div className="mt-2 grid gap-2 sm:grid-cols-[180px_1fr]">
-          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject (optional)" className="rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
-          <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Type your question in detail (min 10 characters)…" rows={3} className="rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject (optional)" className="rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
+          <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Type your question in detail (min 10 characters)…" rows={3} className="rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </div>
         <button onClick={ask} disabled={busy} className="mt-2 rounded-xl bg-navy-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">
           {busy ? "Sending…" : "Ask Faculty"}

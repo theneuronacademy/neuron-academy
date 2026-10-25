@@ -440,6 +440,10 @@ model Testimonial {
   name         String
   role         String   @default("Student")
   message      String
+  // Optional achievement line (e.g. "AIR 42 — JEE Advanced 2026") shown
+  // next to the course in the public carousel byline. Nullable so legacy
+  // rows keep their display fallback ("Rated <rating>/5") untouched.
+  achievement  String?
   photo        String?
   rating       Int      @default(5)
   isActive     Boolean  @default(true)
@@ -855,6 +859,10 @@ model ResultShowcase {
   achievement String
   score       String?
   year        String   @default("")
+  // Optional longer student-specific description shown on the toppers wall
+  // underneath the achievement (e.g. context about NTA AIR / batch). Nullable
+  // so legacy rows keep working untouched.
+  description String?
   imageUrl    String?
   displayOrder Int     @default(0)
   // Consent/approval for publishing an identifiable name/photo. The public

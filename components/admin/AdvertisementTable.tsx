@@ -60,11 +60,11 @@ export function AdvertisementTable({
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-1.5">
                   {ad.type === "popup" ? (
-                    <button onClick={() => onPreviewPopup(ad)} aria-label={`Preview popup ${ad.title}`} title="Preview Popup" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Eye className="h-4 w-4" /></button>
+                    <button onClick={() => onPreviewPopup(ad)} aria-label={`Preview popup ${ad.title}`} title="Preview Popup" className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8"><Eye className="h-4 w-4" /></button>
                   ) : null}
-                  <Link href={`/admin/advertisements/${ad.id}/edit`} aria-label={`Edit ${ad.title}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Pencil className="h-4 w-4" /></Link>
-                  <button onClick={() => onToggle(ad.id)} aria-label={`${ad.isActive ? "Deactivate" : "Activate"} ${ad.title}`} title={ad.isActive ? "Deactivate" : "Activate"} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Power className="h-4 w-4" /></button>
-                  <button onClick={() => onDelete(ad.id)} aria-label={`Delete ${ad.title}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"><Trash2 className="h-4 w-4" /></button>
+                  <Link href={`/admin/advertisements/${ad.id}/edit`} aria-label={`Edit ${ad.title}`} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8"><Pencil className="h-4 w-4" /></Link>
+                  <button onClick={() => onToggle(ad.id)} aria-label={`${ad.isActive ? "Deactivate" : "Activate"} ${ad.title}`} title={ad.isActive ? "Deactivate" : "Activate"} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8"><Power className="h-4 w-4" /></button>
+                  <button onClick={() => onDelete(ad.id)} aria-label={`Delete ${ad.title}`} className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </td>
             </tr>

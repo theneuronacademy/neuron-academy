@@ -49,12 +49,12 @@ export function QuestionCard({
         </div>
         <div className="flex shrink-0 gap-1.5">
           {onMoveUp ? (
-            <button onClick={onMoveUp} aria-label="Move question up" title="Move up" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+            <button onClick={onMoveUp} aria-label="Move question up" title="Move up" className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
               <ArrowUp className="h-4 w-4" />
             </button>
           ) : null}
           {onMoveDown ? (
-            <button onClick={onMoveDown} aria-label="Move question down" title="Move down" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+            <button onClick={onMoveDown} aria-label="Move question down" title="Move down" className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
               <ArrowDown className="h-4 w-4" />
             </button>
           ) : null}
@@ -63,10 +63,10 @@ export function QuestionCard({
               <CheckCircle2 className="h-4 w-4" />
             </button>
           ) : null}
-          <button onClick={onEdit} aria-label="Edit question" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+          <button onClick={onEdit} aria-label="Edit question" className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
             <Pencil className="h-4 w-4" />
           </button>
-          <button onClick={onDelete} aria-label="Delete question" className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
+          <button onClick={onDelete} aria-label="Delete question" className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8">
             <Trash2 className="h-4 w-4" />
           </button>
         </div>

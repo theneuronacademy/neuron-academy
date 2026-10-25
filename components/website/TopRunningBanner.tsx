@@ -69,7 +69,7 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
           loop={ad.loop !== false}
           playsInline
           onError={() => setFailed(true)}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain"
         />
         <button
           onClick={(e) => {
@@ -95,11 +95,15 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
   if (ad.mediaUrl) {
     return (
       <div className="absolute inset-0 overflow-hidden">
+        {/* Audit fix #4: object-contain preserves the banner's aspect ratio —
+            object-cover cropped portrait/square banners, and the kenburns zoom
+            panned contained media out of frame. Card and slide dimensions are
+            unchanged (bg-navy-900 card, admin-selected entrance animation kept). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={ad.mediaUrl}
           alt={ad.title}
-          className="animate-kenburns h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+          className="h-full w-full object-contain"
           loading="eager"
         />
       </div>
@@ -276,10 +280,10 @@ export function TopRunningBanner() {
               ))}
             </div>
             <div className="flex gap-1.5">
-              <button onClick={() => go(-1)} aria-label="Previous banner" className="rounded-full border border-silver-300 bg-white p-2 text-navy-700 shadow-sm hover:border-teal-500">
+              <button onClick={() => go(-1)} aria-label="Previous banner" className="flex h-10 w-10 items-center justify-center rounded-full border border-silver-300 bg-white text-navy-700 shadow-sm hover:border-teal-500">
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <button onClick={() => go(1)} aria-label="Next banner" className="rounded-full border border-silver-300 bg-white p-2 text-navy-700 shadow-sm hover:border-teal-500">
+              <button onClick={() => go(1)} aria-label="Next banner" className="flex h-10 w-10 items-center justify-center rounded-full border border-silver-300 bg-white text-navy-700 shadow-sm hover:border-teal-500">
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>

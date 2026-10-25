@@ -199,9 +199,9 @@ export default function ImportReviewPage() {
                   </div>
                 </div>
                 <div className="flex shrink-0 gap-1.5">
-                  <button onClick={() => setEditing(q)} aria-label="Edit question" className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => setEditing(q)} aria-label="Edit question" className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8"><Pencil className="h-4 w-4" /></button>
                   <button onClick={() => mutate(`/api/tests/import/${id}/approve`, { ids: [q.id] })} aria-label="Approve question" title="Approve" className="rounded-lg border border-teal-100 bg-teal-50 p-2 text-teal-700 hover:bg-teal-100"><CheckCircle2 className="h-4 w-4" /></button>
-                  <button onClick={() => mutate(`/api/tests/import/${id}/reject`, { ids: [q.id] })} aria-label="Reject question" title="Reject" className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"><XCircle className="h-4 w-4" /></button>
+                  <button onClick={() => mutate(`/api/tests/import/${id}/reject`, { ids: [q.id] })} aria-label="Reject question" title="Reject" className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8"><XCircle className="h-4 w-4" /></button>
                 </div>
               </div>
               <div className="mt-3 grid gap-1.5">
@@ -301,7 +301,7 @@ function CandidateEditor({ initial, importId, onCancel, onSaved }: { initial: Ca
       <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-card bg-white p-5 shadow-card-hover">
         <div className="flex items-center justify-between">
           <h3 className="text-[15px] font-extrabold text-navy-700">Edit Candidate (stays pending until approved)</h3>
-          <button onClick={onCancel} aria-label="Close editor" className="rounded-lg p-1.5 hover:bg-silver-100"><X className="h-4 w-4" /></button>
+          <button onClick={onCancel} aria-label="Close editor" className="flex h-10 w-10 items-center justify-center rounded-lg hover:bg-silver-100 sm:h-8 sm:w-8"><X className="h-4 w-4" /></button>
         </div>
         {error ? <p className="mt-3 rounded-xl bg-crimson-50 px-4 py-2.5 text-sm font-bold text-crimson" role="alert">{error}</p> : null}
         <div className="mt-3 grid gap-3">

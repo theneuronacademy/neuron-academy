@@ -201,7 +201,7 @@ export default function FacultyAdminPage() {
               className: "text-right",
               render: (r) => (
                 <div className="flex justify-end gap-1.5">
-                  <button onClick={() => setView(r)} aria-label={`View ${r.name}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+                  <button onClick={() => setView(r)} aria-label={`View ${r.name}`} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
                     <Eye className="h-4 w-4" />
                   </button>
                   <button
@@ -214,7 +214,7 @@ export default function FacultyAdminPage() {
                   <button
                     onClick={() => deleteFaculty(r)}
                     aria-label={`Delete ${r.name}`}
-                    className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -228,19 +228,19 @@ export default function FacultyAdminPage() {
       <AdminModal open={modal} title="Add Faculty" onClose={() => setModal(false)}>
         <label className="block text-[12px] font-bold text-navy-700">
           Full name
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Dr. S. Rao" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Dr. S. Rao" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Email
-          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="faculty@example.com" inputMode="email" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="faculty@example.com" inputMode="email" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Phone
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="10-digit mobile" inputMode="tel" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="10-digit mobile" inputMode="tel" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </label>
         <label className="mt-3 block text-[12px] font-bold text-navy-700">
           Subject (optional)
-          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. Physics" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="e.g. Physics" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </label>
         {formError ? (
           <p className="mt-3 rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>

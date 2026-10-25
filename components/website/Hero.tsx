@@ -43,7 +43,7 @@ function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) 
           loop={ad.loop !== false}
           playsInline
           onError={() => setFailed(true)}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain"
         />
         <button
           onClick={() => {
@@ -65,7 +65,11 @@ function AdMedia({ ad, large = false }: { ad: Advertisement; large?: boolean }) 
   }
 
   if (ad.mediaUrl && !failed) {
-    return <Image src={ad.mediaUrl} alt={ad.title || "Neuron Academy featured announcement"} width={1200} height={800} unoptimized className="animate-kenburns h-full w-full object-cover" priority={large} onError={() => setFailed(true)} />;
+    // Audit fix #4: show the admin banner in full — object-cover cropped
+    // portrait/square posters and kenburns panned them out of frame. The
+    // card's navy backdrop gives contained media an intentional frame
+    // without changing the banner dimensions or the admin-selected motion.
+    return <Image src={ad.mediaUrl} alt={ad.title || "Neuron Academy featured announcement"} width={1200} height={800} unoptimized className="h-full w-full object-contain" priority={large} onError={() => setFailed(true)} />;
   }
 
   return (

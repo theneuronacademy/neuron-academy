@@ -172,7 +172,7 @@ export default function AnnouncementsPage() {
                 <button
                   onClick={() => void remove(r)}
                   aria-label="Delete announcement"
-                  className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -185,7 +185,7 @@ export default function AnnouncementsPage() {
       <AdminModal open={modal} title="Publish Announcement" onClose={() => setModal(false)}>
         <label className="block text-[12px] font-bold text-navy-700">
           Ticker message
-          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. Scholarship Test on Oct 12 — Register Free" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. Scholarship Test on Oct 12 — Register Free" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </label>
         <CloudinaryUpload
           category="banners"

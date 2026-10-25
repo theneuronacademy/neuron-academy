@@ -17,6 +17,8 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 interface Row {
   id: string;
   name: string;
+  description: string;
+  image: string;
   category: string;
   duration: string;
   mode: string;
@@ -36,6 +38,7 @@ export default function WebsiteCoursesPage() {
   const [category, setCategory] = useState("Engineering");
   const [duration, setDuration] = useState("1 year");
   const [mode, setMode] = useState("Offline + Online");
+  const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
   // Phase 17 — persistence errors surface honestly (no local writes).
@@ -49,9 +52,11 @@ export default function WebsiteCoursesPage() {
         const res = await fetch("/api/courses", { cache: "no-store" });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && Array.isArray(json.data?.items)) {
-          setRows((json.data.items as Array<{ id: string; name?: string; category?: string; duration?: string; mode?: string; isActive?: boolean; admissionOpen?: boolean }>).map((c) => ({
+          setRows((json.data.items as Array<{ id: string; name?: string; description?: string; image?: string; category?: string; duration?: string; mode?: string; isActive?: boolean; admissionOpen?: boolean }>).map((c) => ({
             id: c.id,
             name: c.name ?? "",
+            description: c.description ?? "",
+            image: c.image ?? "",
             category: c.category ?? "Engineering",
             duration: c.duration ?? "1 year",
             mode: c.mode ?? "Offline + Online",
@@ -59,11 +64,11 @@ export default function WebsiteCoursesPage() {
           })));
         } else {
           const { COURSES } = await import("@/data/courses");
-          setRows(COURSES.map((c) => ({ id: c.id, name: c.name, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
+          setRows(COURSES.map((c) => ({ id: c.id, name: c.name, description: c.desc, image: c.image, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
         }
       } catch {
         const { COURSES } = await import("@/data/courses");
-        setRows(COURSES.map((c) => ({ id: c.id, name: c.name, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
+        setRows(COURSES.map((c) => ({ id: c.id, name: c.name, description: c.desc, image: c.image, category: c.category, duration: c.duration, mode: c.mode, admissionOpen: c.admissionOpen })));
       }
       setReady(true);
     })();
@@ -85,6 +90,7 @@ export default function WebsiteCoursesPage() {
     setCategory("Engineering");
     setDuration("1 year");
     setMode("Offline + Online");
+    setDescription("");
     setImageUrl("");
     setModal(true);
   };
@@ -94,14 +100,22 @@ export default function WebsiteCoursesPage() {
     setCategory(r.category);
     setDuration(r.duration);
     setMode(r.mode);
-    setImageUrl("");
+    // Load the stored description + image so edit mode starts from the
+    // existing record (audit finding: edit used to reset these fields).
+    setDescription(r.description ?? "");
+    setImageUrl(r.image ?? "");
     setModal(true);
   };
   const save = async () => {
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      setFormError("Course name is required.");
+      return;
+    }
     // Phase 17 — courses persist via the API only (no local writes).
+    // The API contract stores the image under `image` (PATCH/POST share it),
+    // so the form must send that field name.
     setFormError(null);
-    const payload = { name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim(), imageUrl: imageUrl.trim() || undefined, isActive: true };
+    const payload = { name: name.trim(), description: description.trim() || undefined, category: category.trim(), duration: duration.trim(), mode: mode.trim(), image: imageUrl.trim() || undefined, isActive: true };
     try {
       if (editing) {
         const res = await fetch(`/api/courses/${editing.id}`, {
@@ -112,7 +126,7 @@ export default function WebsiteCoursesPage() {
         });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success !== false) {
-          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim() } : r)));
+          setRows((p) => p.map((r) => (r.id === editing.id ? { ...r, name: name.trim(), description: description.trim(), image: imageUrl.trim(), category: category.trim(), duration: duration.trim(), mode: mode.trim() } : r)));
           setSaved("Course updated.");
           setModal(false);
         } else {
@@ -129,7 +143,7 @@ export default function WebsiteCoursesPage() {
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success && json.data?.item) {
           const item = json.data.item;
-          setRows((p) => [...p, { id: item.id, name: item.name, category: item.category ?? "Engineering", duration: item.duration ?? "1 year", mode: item.mode ?? "Offline + Online", admissionOpen: true }]);
+          setRows((p) => [...p, { id: item.id, name: item.name, description: String(item.description ?? ""), image: String(item.image ?? ""), category: item.category ?? "Engineering", duration: item.duration ?? "1 year", mode: item.mode ?? "Offline + Online", admissionOpen: true }]);
           setSaved("Course added.");
           setModal(false);
         } else {
@@ -234,10 +248,10 @@ export default function WebsiteCoursesPage() {
               className: "text-right",
               render: (r) => (
                 <div className="flex justify-end gap-1.5">
-                  <button onClick={() => openEdit(r)} aria-label={`Edit ${r.name}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500">
+                  <button onClick={() => openEdit(r)} aria-label={`Edit ${r.name}`} title="Edit" className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8">
                     <Pencil className="h-4 w-4" />
                   </button>
-                  <button onClick={() => void remove(r)} aria-label={`Delete ${r.name}`} className="rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50">
+                  <button onClick={() => void remove(r)} aria-label={`Delete ${r.name}`} title="Delete" className="flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -250,12 +264,12 @@ export default function WebsiteCoursesPage() {
       <AdminModal open={modal} title={editing ? "Edit Course" : "Add Course"} onClose={() => setModal(false)}>
         <label className="block text-[12px] font-bold text-navy-700">
           Course name
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. JEE Main + Advanced" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. JEE Main + Advanced" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
         </label>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <label className="block text-[12px] font-bold text-navy-700">
             Category
-            <select value={category} onChange={(e) => setCategory(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+            <select value={category} onChange={(e) => setCategory(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
               <option value="Engineering">Engineering</option>
               <option value="Medical">Medical</option>
               <option value="Foundation">Foundation</option>
@@ -264,17 +278,21 @@ export default function WebsiteCoursesPage() {
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Duration
-            <input value={duration} onChange={(e) => setDuration(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" placeholder="1 year" />
+            <input value={duration} onChange={(e) => setDuration(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" placeholder="1 year" />
           </label>
           <label className="block text-[12px] font-bold text-navy-700">
             Mode
-            <select value={mode} onChange={(e) => setMode(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500">
+            <select value={mode} onChange={(e) => setMode(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
               <option value="Offline + Online">Offline + Online</option>
               <option value="Offline">Offline</option>
               <option value="Online">Online</option>
             </select>
           </label>
         </div>
+        <label className="mt-3 block text-[12px] font-bold text-navy-700">
+          Description
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} placeholder="What students learn, batches covered, highlights…" className="mt-1.5 w-full resize-y rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
+        </label>
         <CloudinaryUpload
           category="courses"
           accept="image/jpeg,image/png,image/webp,image/avif"
@@ -283,7 +301,7 @@ export default function WebsiteCoursesPage() {
           buttonLabel={imageUrl ? "Replace course image" : "Upload course image"}
           onUploadComplete={(url) => setImageUrl(url)}
         />
-        <p className="mt-2 text-[12px] text-muted">Only these fields are editable here. Admission status toggles from the table.</p>
+        <p className="mt-2 text-[12px] text-muted">Description and image are saved with the course; edit mode keeps the existing image. Admission status toggles from the table.</p>
         {formError ? (
           <p className="rounded-xl bg-crimson-50 px-3.5 py-2.5 text-[13px] font-bold text-crimson" role="alert">{formError}</p>
         ) : null}

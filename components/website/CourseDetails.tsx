@@ -32,7 +32,7 @@ export function CourseDetails({ course, onClose, onEnroll }: { course: Course; o
             }
           />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-800/85 to-transparent" />
-          <button onClick={onClose} aria-label="Close course details" className="absolute right-3 top-3 rounded-full bg-navy-800/70 p-2 text-white hover:bg-navy-700">
+          <button onClick={onClose} aria-label="Close course details" className="absolute right-3 top-3 rounded-full bg-navy-800/70 p-2.5 text-white hover:bg-navy-700">
             <X className="h-4 w-4" />
           </button>
           <div className="absolute bottom-3 left-4 right-4">

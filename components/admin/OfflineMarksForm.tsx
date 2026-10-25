@@ -122,7 +122,7 @@ export function OfflineMarksForm() {
       </label>
       <label className="block text-[12px] font-bold text-navy-700">
         Marks (max {test?.totalMarks ?? "—"})
-        <input value={marks} onChange={(e) => setMarks(e.target.value)} type="number" min={0} step={0.5} placeholder="e.g. 42" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+        <input value={marks} onChange={(e) => setMarks(e.target.value)} type="number" min={0} step={0.5} placeholder="e.g. 42" className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
       </label>
       <div className="flex items-end">
         <button type="submit" disabled={busy} className="w-full rounded-xl bg-navy-700 px-4 py-2.5 text-sm font-bold text-white hover:bg-navy-800 disabled:opacity-50">

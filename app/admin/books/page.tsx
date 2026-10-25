@@ -154,7 +154,7 @@ export default function AdminBooksPage() {
     );
   }
 
-  const inputCls = "mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500";
+  const inputCls = "mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm";
   const set = (k: keyof Book, v: string | boolean | number) => setForm((f) => ({ ...f, [k]: v }));
   // Client-side search over the loaded library (small dataset).
   const filtered = rows.filter(
@@ -198,11 +198,11 @@ export default function AdminBooksPage() {
                 <h3 className="text-[15px] font-extrabold text-navy-700">{b.title}</h3>
                 <p className="mt-0.5 text-[12px] text-muted">{[b.author, b.subject, b.className, b.category].filter(Boolean).join(" • ") || "—"}</p>
                 <div className="mt-3 flex items-center gap-1.5 border-t border-silver-100 pt-3">
-                  <button onClick={() => openEdit(b)} aria-label={`Edit ${b.title}`} className="rounded-lg border border-silver-300 p-2 text-navy-700 hover:border-teal-500"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => openEdit(b)} aria-label={`Edit ${b.title}`} className="flex h-10 w-10 items-center justify-center rounded-lg border border-silver-300 text-navy-700 hover:border-teal-500 sm:h-8 sm:w-8"><Pencil className="h-4 w-4" /></button>
                   <button onClick={() => void toggleActive(b)} className="rounded-lg border border-silver-300 px-3 py-2 text-[12px] font-bold text-navy-700 hover:border-teal-500">
                     {b.isActive ? "Deactivate" : "Activate"}
                   </button>
-                  <button onClick={() => void remove(b)} aria-label={`Delete ${b.title}`} className="ml-auto rounded-lg border border-crimson-100 p-2 text-crimson hover:bg-crimson-50"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => void remove(b)} aria-label={`Delete ${b.title}`} className="ml-auto flex h-10 w-10 items-center justify-center rounded-lg border border-crimson-100 text-crimson hover:bg-crimson-50 sm:h-8 sm:w-8"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
             </article>

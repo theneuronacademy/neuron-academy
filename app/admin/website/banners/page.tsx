@@ -366,7 +366,7 @@ export default function BannersPage() {
           ))}
           <label className="block text-[12px] font-bold text-navy-700">
             Display order
-            <input value={form.order} onChange={(e) => set("order", Number(e.target.value) || 1)} type="number" min={1} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-sm outline-none focus:border-teal-500" />
+            <input value={form.order} onChange={(e) => set("order", Number(e.target.value) || 1)} type="number" min={1} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm" />
           </label>
           <label className="flex items-center gap-2 text-[13px] font-bold text-navy-700">
             <input type="checkbox" checked={form.active} onChange={(e) => set("active", e.target.checked)} className="h-4 w-4 accent-teal-600" /> Active
