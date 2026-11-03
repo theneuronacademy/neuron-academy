@@ -68,7 +68,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
                 src={course.image}
                 alt={`${course.name} at Neuron Academy`}
                 className="absolute inset-0 h-full w-full"
-                imgClassName="h-full w-full object-cover"
+                imgClassName="h-full w-full object-contain"
                 eager
                 fallback={
                   <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, #183653, ${accent})` }}>

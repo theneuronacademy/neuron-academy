@@ -24,7 +24,7 @@ export function CourseDetails({ course, onClose, onEnroll }: { course: Course; o
             src={course.image}
             alt={course.name}
             className="absolute inset-0 h-full w-full"
-            imgClassName="h-full w-full object-cover"
+            imgClassName="h-full w-full object-contain"
             fallback={
               <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, #183653, ${accent})` }}>
                 <p className="text-2xl font-extrabold text-white">{course.imageLabel}</p>

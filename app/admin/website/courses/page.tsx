@@ -223,7 +223,7 @@ export default function WebsiteCoursesPage() {
       ) : null}
       <AdminToolbar>
         <SearchBar value={search} onChange={setSearch} placeholder="Search courses…" />
-        <FilterBar value={cat} onChange={setCat} ariaLabel="Filter by category" options={[{ value: "all", label: "All categories" }, { value: "Engineering", label: "Engineering" }, { value: "Medical", label: "Medical" }, { value: "Foundation", label: "Foundation" }, { value: "School", label: "School" }]} />
+        <FilterBar value={cat} onChange={setCat} ariaLabel="Filter by category" options={[{ value: "all", label: "All categories" }, { value: "Engineering", label: "Engineering" }, { value: "Medical", label: "Medical" }, { value: "School", label: "School" }, { value: "Foundation", label: "Foundation" }, { value: "Crash Course", label: "Crash Course" }, { value: "Entrance Exams", label: "Entrance Exams" }, { value: "Test Series", label: "Test Series" }]} />
       </AdminToolbar>
       {filtered.length === 0 ? (
         <EmptyState title="No courses match" desc="Try a different search or category." />
@@ -272,8 +272,12 @@ export default function WebsiteCoursesPage() {
             <select value={category} onChange={(e) => setCategory(e.target.value)} className="mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm">
               <option value="Engineering">Engineering</option>
               <option value="Medical">Medical</option>
-              <option value="Foundation">Foundation</option>
               <option value="School">School</option>
+              <option value="Foundation">Foundation</option>
+              <option value="Crash Course">Crash Course</option>
+              <option value="Entrance Exams">Entrance Exams</option>
+              <option value="Test Series">Test Series</option>
+              <option value="Others">Others</option>
             </select>
           </label>
           <label className="block text-[12px] font-bold text-navy-700">

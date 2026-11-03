@@ -12,6 +12,10 @@ export function CourseCard({ course, index = 0, onDetails }: { course: Course; i
     Medical: "#102B70",
     "University Entrance": "#A98418",
     Foundation: "#4D5D75",
+    "Crash Course": "#EF4444",
+    "Entrance Exams": "#F59E0B",
+    "Test Series": "#8B5CF6",
+    Others: "#6B7280",
   };
   const categoryColor = categoryColors[course.category] || "#1746B8";
 
@@ -26,7 +30,7 @@ export function CourseCard({ course, index = 0, onDetails }: { course: Course; i
           src={course.image || `/images/course-${course.id}.jpg`}
           alt={course.name}
           className="absolute inset-0 h-full w-full"
-          imgClassName="h-full w-full object-cover transition duration-700 group-hover:scale-[1.07]"
+          imgClassName="h-full w-full object-contain transition duration-700 group-hover:scale-[1.07]"
           fallback={
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden p-5" style={{ background: `linear-gradient(135deg, #0A1D50 0%, ${accent}99 60%, #D4AF37 100%)` }}>
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 25% 25%, #fff 0, transparent 40%)" }} />

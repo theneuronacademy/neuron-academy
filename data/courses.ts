@@ -19,7 +19,7 @@ export interface Course {
   admissionOpen: boolean;
 }
 
-export const COURSE_CATEGORIES = ["Engineering", "Medical", "University Entrance", "Foundation"] as const;
+export const COURSE_CATEGORIES = ["Engineering", "Medical", "School", "Foundation", "Crash Course", "Entrance Exams", "Test Series", "Others"] as const;
 
 // Single source for enquiry-form "interested in" options (audit fix #7):
 // the coaching catalogue below (course names actually offered) plus the school

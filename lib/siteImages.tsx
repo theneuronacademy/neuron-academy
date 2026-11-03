@@ -39,7 +39,7 @@ export function SmartImage({
         alt={alt}
         loading={eager ? "eager" : "lazy"}
         onError={() => setFailed(true)}
-        className={imgClassName ?? "h-full w-full object-cover"}
+        className={imgClassName ?? "h-full w-full object-contain"}
       />
     </div>
   );

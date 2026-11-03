@@ -11,7 +11,6 @@ const PORTAL_LINKS = [
   { href: "https://estudde.com/", label: "Student Portal", external: true },
   { href: "https://web.proctur.com/", label: "Faculty Portal", external: true },
   { href: "https://play.google.com/store/apps/details?id=com.proctur.app223551", label: "Download Student App", external: true },
-  { href: "/admin/login", label: "Admin login" },
 ];
 
 function PortalLink({ link, className, onClick }: { link: { href: string; label: string; external?: boolean }; className?: string; onClick?: () => void }) {
