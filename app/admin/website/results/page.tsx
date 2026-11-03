@@ -26,7 +26,7 @@ interface Row {
   active: boolean;
 }
 
-const EXAMS = ["JEE Main", "JEE Advanced", "NEET", "AMU", "JMI"];
+const EXAMS = ["JEE Main", "JEE Advanced", "NEET", "AMU", "JMI", "CM SHRI", "Others"];
 
 export default function WebResultsPage() {
   const router = useRouter();
