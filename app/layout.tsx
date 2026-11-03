@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: "Courses, faculty, admissions, learning and academic preparation.",
   },
   icons: {
-    icon: "/icon.svg",
+    icon: "/images/logo.png",
     apple: "/images/logo.png",
   },
   manifest: "/manifest.webmanifest",
