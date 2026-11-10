@@ -184,7 +184,7 @@ Scene cut points: 0:05.4 · 0:13.1 · 0:15.0 · 0:20.0 · 0:30.0 · 0:36.6 · 0:
 
 For the 50 s cut divide every time by 1.28.
 
-To change any text, date or price: edit `src/ad.html`, then run `node src/render.js silent.mp4`, `python3 src/music.py music.wav` and `bash src/build.sh`.
+To change any text, date or price: edit `src/ad.html`, then run `node src/render.mjs silent.mp4`, `python3 src/music.py music.wav` and `bash src/build.sh`.
 
 ---
 
