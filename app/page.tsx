@@ -14,6 +14,7 @@ import { AnnouncementBar } from "@/components/website/AnnouncementBar";
 import { Navbar } from "@/components/website/Navbar";
 import { TopRunningBanner } from "@/components/website/TopRunningBanner";
 import { Hero } from "@/components/website/Hero";
+import { CrashCourseAd } from "@/components/website/CrashCourseAd";
 import { AdvertisementPopup } from "@/components/website/AdvertisementPopup";
 import { MobileActionBar } from "@/components/website/MobileActionBar";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
@@ -428,6 +429,7 @@ export default function HomePage() {
         {/* RUNNING BANNER — at the very start, admin-controlled */}
         <TopRunningBanner />
         <Hero />
+        <CrashCourseAd />
 
         {/* Academy features */}
         <section className="relative overflow-hidden border-y border-silver-200 bg-gradient-to-b from-white to-silver-50">
