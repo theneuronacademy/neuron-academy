@@ -16,7 +16,7 @@ export function OrganizationJsonLd() {
     url: SITE_URL,
     logo: `${SITE_URL}/images/logo.png`,
     description:
-      "JEE, NEET, AMU & Jamia entrance coaching in Shaheen Bagh, New Delhi — small batches, weekly mocks and mentor-guided preparation.",
+      "Coaching for Classes 6 to 12 in Shaheen Bagh, New Delhi — JMI, AMU and CM SHRI school entrances, CBSE boards, NEET and JEE, with small batches, weekly mocks and mentor-guided preparation.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "FA-23, near Shaheen Masjid, Shaheen Bagh, Jamia Nagar",
@@ -42,8 +42,9 @@ export function OrganizationJsonLd() {
       "NEET UG",
       "AMU Entrance Exam",
       "Jamia Millia Islamia Entrance",
+      "CM SHRI Entrance",
+      "CBSE Board Examinations",
       "Foundation Courses",
-      "Olympiad Preparation",
     ],
     offers: {
       "@type": "OfferCatalog",

@@ -18,13 +18,13 @@ const WHY_TOPICS: Topic[] = [
     slug: "entrance-focused-courses",
     eyebrow: "WHY NEURON ACADEMY",
     title: "Entrance-focused courses",
-    lead: "Study pathways built around JEE, NEET, AMU and Jamia entrance patterns — not generic syllabus coverage.",
+    lead: "Study pathways built around JMI, AMU, CM SHRI, NEET and JEE entrance patterns — not generic syllabus coverage.",
     paragraphs: [
       "Every course at Neuron Academy is designed backwards from the entrance test you are preparing for. Chapters are sequenced by exam weightage, practice sets mirror the actual paper style, and revision cycles are timed against the real admission calendar.",
       "You are never studying in the dark. From the first week you know which chapters matter most for your target exam, how quickly you must finish the syllabus, and when the full-length revision blocks begin.",
     ],
     bullets: [
-      "Dedicated pathways for JEE, NEET, AMU and Jamia entrances.",
+      "Dedicated pathways for JMI, AMU and CM SHRI school entrances, NEET and JEE.",
       "Chapter sequencing follows exam weightage and past papers.",
       "Practice material matches the question style of each entrance.",
       "Revision and mock-test cycles timed to the admission calendar.",

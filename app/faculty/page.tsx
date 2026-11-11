@@ -8,7 +8,7 @@ import { getPublicFacultyList } from "@/services/siteServer";
 
 export const metadata: Metadata = {
   title: "Faculty | Neuron Academy",
-  description: "Meet the educators at Neuron Academy — subject specialists for JEE, NEET, AMU & Jamia entrance preparation in Shaheen Bagh, New Delhi.",
+  description: "Meet the educators at Neuron Academy — subject specialists for school entrances (JMI, AMU, CM SHRI), CBSE boards, NEET and JEE in Shaheen Bagh, New Delhi.",
 };
 
 export default async function FacultyListingPage() {

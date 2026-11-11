@@ -8,7 +8,7 @@ import { DEFAULT_ANNOUNCEMENT } from "@/lib/websiteData";
 const ROTATING = [
   DEFAULT_ANNOUNCEMENT.text,
   "JEE + NEET Batches — Book Your Free Demo Class",
-  "AMU & Jamia Entrance Special Batches — Limited Seats",
+  "JMI, AMU & CM SHRI Entrance Batches — Limited Seats",
   "Weekly Mock Tests With Ranks Every Saturday",
 ];
 

@@ -55,7 +55,7 @@ import type { Course } from "@/data/courses";
 import type { FacultyMember } from "@/data/faculty";
 
 const TRUST = [
-  { icon: BookOpen, title: "Focused Courses", desc: "Preparation for JEE, NEET, AMU and Jamia entrances." },
+  { icon: BookOpen, title: "Focused Courses", desc: "School entrances (JMI, AMU, CM SHRI), CBSE boards, NEET and JEE." },
   { icon: FileText, title: "Regular Practice", desc: "Mock tests and question practice for exam preparation." },
   { icon: Users, title: "Mentor Support", desc: "Guidance from the academy’s faculty team." },
   { icon: Target, title: "Progress Tools", desc: "Academic activity and performance in one place." },
@@ -63,7 +63,7 @@ const TRUST = [
 ];
 
 const WHY = [
-  { slug: "entrance-focused-courses", t: "Entrance-focused courses", d: "Study pathways for JEE, NEET, AMU and Jamia entrance preparation." },
+  { slug: "entrance-focused-courses", t: "Entrance-focused courses", d: "Study pathways for JMI, AMU and CM SHRI entrances, CBSE boards, NEET and JEE." },
   { slug: "small-batches", t: "Small batches", d: "A focused classroom environment with room to ask questions and get guidance." },
   { slug: "regular-mock-tests", t: "Regular mock tests", d: "Practice with exam-style questions and review performance after each test." },
   { slug: "doubt-support", t: "Doubt support", d: "Bring questions to your mentors and work through concepts together." },
@@ -512,7 +512,7 @@ export default function HomePage() {
               <div>
                 <SectionHeader eyebrow="ABOUT" title={hc["about.heading"] || "A structured approach to exam preparation"} />
                 <p className="mt-4 text-[15px] leading-relaxed text-muted">
-                  {hc["about.text"] || "Neuron Academy supports students preparing for JEE, NEET, AMU and Jamia entrance exams through focused classes, regular practice and mentor support."}
+                  {hc["about.text"] || "Neuron Academy supports students from Class 6 to 12 preparing for JMI, AMU and CM SHRI school entrances, CBSE board exams, NEET and JEE through focused classes, regular practice and mentor support."}
                 </p>
                 <ul className="mt-5 space-y-3 text-[14px] text-ink">
                   {["Focused courses for entrance preparation.", "Small batches and support from mentors.", "Regular mock tests and question practice.", "Digital tools for assessment and progress tracking."].map((t) => (
