@@ -5,13 +5,13 @@
 import { NextRequest } from "next/server";
 import { dbNotConfigured, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
-import { getUserFromRequest } from "@/lib/session";
 import { resolveCoverUrl, resolveStorageUrl } from "@/lib/storageProvider";
 import { resolveStudent } from "@/lib/testAccess";
+import { viewerFor, withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   if (!db) return dbNotConfigured("Reading books");
   try {
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     // Scholarship students: ALL-visibility books only. Everyone else
     // (regular students, anonymous website visitors): active books.
     let scholarship = false;
-    const viewer = getUserFromRequest(req);
+    const viewer = viewerFor(req);
     if (viewer?.role === "STUDENT") {
       const profile = await resolveStudent(db, viewer.id, viewer.email);
       scholarship = !!profile && profile.studentType === "SCHOLARSHIP";
@@ -54,4 +54,8 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     return serverError("books:list", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }

@@ -8,10 +8,11 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
+import { withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   if (!db) return dbNotConfigured("Reading homepage content");
   try {
@@ -51,4 +52,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return serverError("homepage:content:create", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }

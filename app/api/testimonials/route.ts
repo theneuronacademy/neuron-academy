@@ -5,13 +5,13 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
-import { getUserFromRequest } from "@/lib/session";
 import { missingFields } from "@/lib/validation";
 import { TESTIMONIALS } from "@/data/testimonials";
+import { viewerFor, withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   if (!db) {
     return ok({
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     });
   }
   // Phase 17 — ADMIN sees all testimonials; others only active ones.
-  const viewer = getUserFromRequest(req);
+  const viewer = viewerFor(req);
   try {
     const rows = await db.testimonial.findMany({
       where: viewer?.role === "ADMIN" ? {} : { isActive: true },
@@ -64,4 +64,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return serverError("testimonials:create", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }

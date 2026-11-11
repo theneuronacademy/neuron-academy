@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { publicPath } from "@/lib/publicPath";
 
 export function useHomepageContent() {
   const [content, setContent] = useState<Record<string, string>>({});
@@ -10,7 +11,7 @@ export function useHomepageContent() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch("/api/homepage/content", { cache: "no-store" });
+        const res = await fetch(publicPath("/api/homepage/content"), { cache: "no-store" });
         if (res.ok) {
           const json = await res.json();
           if (json?.success && Array.isArray(json.data?.items)) {

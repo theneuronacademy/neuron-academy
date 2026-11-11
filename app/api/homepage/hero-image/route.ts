@@ -15,6 +15,7 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { cleanupMediaAssets } from "@/lib/media-cleanup";
+import { withPublicCache } from "@/lib/publicView";
 
 // Keep these in sync with the client (services/siteApi.ts getLiveHeroImage).
 const KEY_URL = "hero.image";
@@ -43,7 +44,7 @@ async function readHeroContent(db: NonNullable<ReturnType<typeof getDb>>): Promi
   };
 }
 
-export async function GET() {
+async function handleGet() {
   const db = getDb();
   if (!db) {
     // No database configured — the public hero card falls back to its
@@ -122,4 +123,8 @@ export async function DELETE(req: NextRequest) {
   } catch (err) {
     return serverError("homepage:heroImage:remove", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet());
 }

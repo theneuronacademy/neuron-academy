@@ -11,9 +11,9 @@ export const metadata: Metadata = {
   openGraph: { title: TITLE, description: DESCRIPTION, type: "website", siteName: "Neuron Academy", locale: "en_IN", url: "/" },
 };
 
-// Re-generate the page every two minutes so admin banner changes reach the
-// first HTML quickly; the browser also refreshes banners after loading.
-export const revalidate = 120;
+// Re-generate the page at most every five minutes; the browser refreshes
+// banners and lists after loading, so admin changes still show promptly.
+export const revalidate = 300;
 
 export default async function HomePage() {
   const [bannerRows, initial] = await Promise.all([getPublicBannerRows(), getHomeInitialData()]);

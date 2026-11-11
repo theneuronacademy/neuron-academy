@@ -17,12 +17,13 @@ import { getVisibleAds } from "@/lib/mockStore";
 import type { Advertisement, AdType } from "@/lib/types";
 import { toBannerAnimation, type BannerAnimation } from "@/components/website/bannerMotion";
 import type { BannerContent } from "@/data/banners";
+import { publicPath } from "@/lib/publicPath";
 
 /** Client-side API fetch — null on server, offline, no-DB, or bad shape. */
 async function apiItems<T>(path: string): Promise<{ items: T[]; source: string } | null> {
   try {
     if (typeof window === "undefined") return null;
-    const res = await fetch(path, { cache: "no-store" });
+    const res = await fetch(publicPath(path), { cache: "no-store" });
     if (!res.ok) return null;
     const json = await res.json();
     if (!json || json.success !== true || !json.data || !Array.isArray(json.data.items)) return null;
@@ -178,7 +179,7 @@ export async function getLiveAboutMedia(): Promise<LiveAboutRow[] | null> {
 export async function getAboutMediaSettings(): Promise<AboutMediaSettings | null> {
   try {
     if (typeof window === "undefined") return null;
-    const res = await fetch("/api/about-media/settings", { cache: "no-store" });
+    const res = await fetch(publicPath("/api/about-media/settings"), { cache: "no-store" });
     const json = (await res.json().catch(() => null)) as { success?: boolean; data?: AboutMediaSettings } | null;
     if (res.ok && json?.success === true && json.data) return json.data;
     return null;
@@ -200,7 +201,7 @@ export interface LiveHeroImage {
 export async function getLiveHeroImage(): Promise<LiveHeroImage | null> {
   try {
     if (typeof window === "undefined") return null;
-    const res = await fetch("/api/homepage/hero-image", { cache: "no-store" });
+    const res = await fetch(publicPath("/api/homepage/hero-image"), { cache: "no-store" });
     const json = (await res.json().catch(() => null)) as
       | { success?: boolean; data?: { item?: LiveHeroImage | null } }
       | null;

@@ -8,16 +8,16 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
-import { getUserFromRequest } from "@/lib/session";
 import { isNonEmpty, missingFields } from "@/lib/validation";
 import { activationAllowed, showcaseValidation } from "@/lib/showcase";
+import { viewerFor, withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   if (!db) return ok({ items: [], source: "demo" });
-  const viewer = getUserFromRequest(req);
+  const viewer = viewerFor(req);
   try {
     const rows = await db.resultShowcase.findMany({
       where: viewer?.role === "ADMIN" ? {} : { isActive: true, consent: true },
@@ -69,4 +69,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return serverError("showcase:create", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }

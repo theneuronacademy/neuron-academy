@@ -5,19 +5,19 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
-import { getUserFromRequest } from "@/lib/session";
 import { missingFields, parseDate } from "@/lib/validation";
 import { DEMO_POPUPS } from "@/data/admin";
+import { viewerFor, withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
 const FREQUENCIES = ["ONCE_PER_SESSION", "ONCE_PER_DAY", "EVERY_VISIT"] as const;
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   if (!db) return ok({ items: DEMO_POPUPS, source: "demo" });
   // Phase 17 — ADMIN sees all popups; others only active, in-window ones.
-  const viewer = getUserFromRequest(req);
+  const viewer = viewerFor(req);
   const now = new Date();
   try {
     const rows = await db.popup.findMany({
@@ -74,4 +74,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return serverError("popups:create", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }
