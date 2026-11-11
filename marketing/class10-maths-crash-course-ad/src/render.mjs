@@ -1,5 +1,5 @@
 // Renders ad.html frame-by-frame (1080x1920, 30 fps) and pipes frames to ffmpeg.
-// Usage: node render.mjs <out-silent.mp4> [seconds]   (needs the "playwright" package and ffmpeg)
+// Usage: node render.mjs <out-silent.mp4> [seconds] [page.html]   (needs the "playwright" package and ffmpeg)
 import { chromium } from "playwright";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,7 +11,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
-await page.goto("file://" + path.join(here, "ad.html"));
+await page.goto("file://" + path.join(here, process.argv[4] || "ad.html"));
 await page.evaluate(() => document.fonts.ready);
 
 const ff = spawn(
