@@ -74,17 +74,8 @@ export function SocialSidebar() {
           </a>
         </div>
       </div>
-      {/* Mobile: compact horizontal row, bottom-left (mobile action bar sits bottom-right) */}
-      <div className="fixed bottom-20 left-4 z-40 flex gap-2 md:hidden">
-        {SOCIAL_LINKS.slice(0, 3).map((s) => (
-          <a key={s.label} href={s.href} target="_blank" rel="noreferrer" aria-label={s.label} className="rounded-full bg-navy-700 p-3 text-white shadow-card">
-            {ICONS[s.icon]}
-          </a>
-        ))}
-        <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" aria-label="Download Student App" title="Download Student App" className="rounded-full bg-navy-700 p-3 text-white shadow-card">
-          <LogoMark size={18} className="ring-0" />
-        </a>
-      </div>
+      {/* Mobile: no floating row — it covered page content and buttons. Social links
+          stay in the footer; Call / WhatsApp / Directions are in MobileActionBar. */}
     </>
   );
 }

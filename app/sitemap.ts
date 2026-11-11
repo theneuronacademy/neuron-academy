@@ -34,12 +34,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     { url: `${BASE}/`, lastModified: now },
-    { url: `${BASE}/courses`, lastModified: now },
     ...courseSlugs.map((s) => ({ url: `${BASE}/courses/${s}`, lastModified: now })),
     { url: `${BASE}/scholarship-tests`, lastModified: now },
     { url: `${BASE}/faculty`, lastModified: now },
     ...facultyIds.map((id) => ({ url: `${BASE}/faculty/${id}`, lastModified: now })),
     ...TOPICS.map((t) => ({ url: `${BASE}/topics/${t.slug}`, lastModified: now })),
-    { url: `${BASE}/admin/login`, lastModified: now },
   ];
 }

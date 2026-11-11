@@ -46,8 +46,8 @@ export function SmartImage({
 }
 
 export const SITE_PHOTOS = {
-  hero: "/images/hero.jpg",
-  about: "/images/about-campus.jpg",
+  hero: "/images/hero.webp",
+  about: "/images/about-campus.webp",
   course: (id: string) => `/images/course-${id}.jpg`,
   faculty: (id: string) => `/images/faculty-${id}.jpg`,
   gallery: (id: string) => `/images/gallery-${id}.jpg`,

@@ -51,7 +51,7 @@ export function AnnouncementBar() {
   const ctaLink = admin ? admin.ctaLink : DEFAULT_ANNOUNCEMENT.ctaLink;
 
   return (
-    <div className="relative z-[60] flex items-center justify-center gap-3 overflow-hidden bg-gradient-to-r from-navy-950 via-navy-800 to-navy-950 px-4 py-2 text-center">
+    <div className="relative z-[60] flex items-center justify-center gap-3 overflow-hidden bg-gradient-to-r from-navy-950 via-navy-800 to-navy-950 px-10 py-2 text-center sm:px-4">
       <div className="pointer-events-none absolute inset-0 opacity-35" style={{ backgroundImage: "radial-gradient(circle at 10% 50%, rgba(212,175,55,.45) 0, transparent 30%), radial-gradient(circle at 90% 50%, rgba(23,70,184,.45) 0, transparent 30%)" }} aria-hidden />
       <p key={text} className="animate-fade-in relative truncate text-[12px] font-bold tracking-wide text-white">
         <Zap className="mr-1.5 inline h-3.5 w-3.5 text-brand-secondary-300" />
