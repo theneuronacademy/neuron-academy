@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
+import { sizedImage } from "@/lib/displayText";
 
 /**
  * SmartImage — tries to load a real photo from /images/.
@@ -35,7 +36,7 @@ export function SmartImage({
     <div className={className}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={src.trim()}
+        src={sizedImage(src.trim())}
         alt={alt}
         loading={eager ? "eager" : "lazy"}
         onError={() => setFailed(true)}

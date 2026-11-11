@@ -21,8 +21,8 @@ export function LearningProcess() {
       </Reveal>
       <ol className="mt-10 grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {STEPS.map((s, i) => (
-          <Reveal key={s.n} delay={i * 80}>
-            <li className="relative h-full">
+          <li key={s.n} className="relative h-full">
+            <Reveal delay={i * 80} className="relative h-full">
               {/* Whole card → dedicated topic page (/topics/[slug]) */}
               <Link
                 href={`/topics/${s.slug}`}
@@ -39,8 +39,8 @@ export function LearningProcess() {
                 </span>
               </Link>
               {i < STEPS.length - 1 ? <span className="absolute -right-3 top-1/2 hidden h-0.5 w-6 -translate-y-1/2 bg-brand-secondary/70 lg:block" aria-hidden /> : null}
-            </li>
-          </Reveal>
+            </Reveal>
+          </li>
         ))}
       </ol>
     </div>

@@ -15,6 +15,7 @@ type Db = any;
 
 import { COURSES, type Course } from "@/data/courses";
 import { FACULTY, type FacultyMember } from "@/data/faculty";
+import type { AcademyResult } from "@/data/results";
 import { getDb } from "@/lib/prisma";
 import { presentFaculty } from "@/lib/displayText";
 
@@ -47,10 +48,10 @@ function toCourse(row: {
     name: String(row.name),
     category: String(row.category ?? "Engineering"),
     desc: String(row.description ?? row.shortDescription ?? ""),
-    target: String(row.target ?? "Class 11–12"),
+    target: String(row.target ?? ""),
     duration: String(row.duration ?? "1 year"),
     mode: String(row.mode ?? "Offline + Online"),
-    faculty: String(row.facultyName ?? "Neuron Faculty"),
+    faculty: String(row.facultyName ?? ""),
     imageLabel: String(row.name),
     image: String(row.image ?? ""),
     accent: String(row.accent ?? "#1AA6B5"),
@@ -207,4 +208,114 @@ export async function getPublicFacultyList(): Promise<FacultyMember[]> {
     /* static fallback below */
   }
   return FACULTY;
+}
+
+/**
+ * Active, in-window banners for the home page's first render, with each
+ * image's natural size so the browser can reserve its space. Returns null
+ * when the database is unavailable — the page then loads banners in the
+ * browser exactly as before.
+ */
+export async function getPublicBannerRows(): Promise<Record<string, unknown>[] | null> {
+  try {
+    const db: Db = getDb();
+    if (!db) return null;
+    const now = new Date();
+    const rows = await db.banner.findMany({ where: { isActive: true }, orderBy: { displayOrder: "asc" }, take: 20 });
+    const visible = (rows as Record<string, unknown>[]).filter((b) => {
+      const start = b.startDate as Date | null | undefined;
+      const end = b.endDate as Date | null | undefined;
+      return (start == null || start <= now) && (end == null || end >= now);
+    });
+    return await Promise.all(
+      visible.map(async (b) => {
+        const row: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(b)) row[k] = v instanceof Date ? v.toISOString() : v;
+        const size = typeof b.imageUrl === "string" ? await cloudinaryImageSize(b.imageUrl) : null;
+        if (size) {
+          row.mediaWidth = size.width;
+          row.mediaHeight = size.height;
+        }
+        return row;
+      }),
+    );
+  } catch {
+    return null;
+  }
+}
+
+/** Natural pixel size of a Cloudinary image (fl_getinfo); null if it cannot be read quickly. */
+async function cloudinaryImageSize(url: string): Promise<{ width: number; height: number } | null> {
+  const marker = "/image/upload/";
+  if (!url.includes("res.cloudinary.com") || !url.includes(marker)) return null;
+  try {
+    const res = await fetch(url.replace(marker, `${marker}fl_getinfo/`), { signal: AbortSignal.timeout(3000), next: { revalidate: 86400 } });
+    if (!res.ok) return null;
+    const info = (await res.json()) as { input?: { width?: number; height?: number } };
+    const width = info.input?.width;
+    const height = info.input?.height;
+    return typeof width === "number" && typeof height === "number" && width > 0 && height > 0 ? { width, height } : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Courses, faculty and published results for the home page's first render,
+ * so they are present in the HTML search engines read. Each list is null
+ * when the database is unavailable or empty — the page then loads that list
+ * in the browser exactly as before. Queries and ordering mirror the public
+ * API routes the browser uses, so the refresh after load changes nothing.
+ */
+export async function getHomeInitialData(): Promise<{ courses: Course[] | null; faculty: FacultyMember[] | null; wall: AcademyResult[] | null }> {
+  const empty = { courses: null, faculty: null, wall: null };
+  let db: Db;
+  try {
+    db = getDb();
+  } catch {
+    return empty;
+  }
+  if (!db) return empty;
+
+  const safe = async <T>(run: () => Promise<T[]>): Promise<T[] | null> => {
+    try {
+      const rows = await run();
+      return Array.isArray(rows) && rows.length > 0 ? rows : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const [courseRows, facultyRows, wallRows] = await Promise.all([
+    safe(() => db.course.findMany({ where: { status: "ACTIVE" }, orderBy: { displayOrder: "asc" }, take: 200 })),
+    safe(() =>
+      db.faculty.findMany({
+        where: { status: "ACTIVE" },
+        select: { id: true, name: true, designation: true, subject: true, qualification: true, experience: true, bio: true, photo: true },
+        orderBy: { createdAt: "desc" },
+        take: 200,
+      }),
+    ),
+    // Only rows with confirmed consent that the academy has published.
+    safe(() => db.resultShowcase.findMany({ where: { isActive: true, consent: true }, orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }], take: 200 })),
+  ]);
+
+  const palette = ["#1746B8", "#D4AF37", "#102B70", "#7C8BA3"];
+  return {
+    courses: courseRows ? (courseRows as Parameters<typeof toCourse>[0][]).map(toCourse) : null,
+    faculty: facultyRows ? (facultyRows as Parameters<typeof toFacultyMember>[0][]).map(toFacultyMember) : null,
+    wall: wallRows
+      ? (wallRows as Record<string, unknown>[]).map((r, i) => ({
+          id: String(r.id),
+          name: String(r.studentName),
+          score: String(r.score ?? r.achievement ?? ""),
+          tag: String(r.achievement ?? ""),
+          exam: String(r.exam ?? ""),
+          year: String(r.year ?? ""),
+          description: String(r.description ?? ""),
+          image: String(r.imageUrl ?? ""),
+          color: palette[i % palette.length],
+        }))
+      : null,
+  };
 }

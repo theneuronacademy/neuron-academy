@@ -37,6 +37,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/`, lastModified: now },
     ...courseSlugs.map((s) => ({ url: `${BASE}/courses/${s}`, lastModified: now })),
     { url: `${BASE}/scholarship-tests`, lastModified: now },
+    { url: `${BASE}/privacy-policy`, lastModified: now },
+    { url: `${BASE}/terms`, lastModified: now },
     { url: `${BASE}/faculty`, lastModified: now },
     ...facultyIds.map((id) => ({ url: `${BASE}/faculty/${id}`, lastModified: now })),
     ...EXAM_PAGES.map((e) => ({ url: `${BASE}/coaching/${e.slug}`, lastModified: now })),

@@ -10,6 +10,7 @@ import { Faq } from "@/components/website/Faq";
 import { SectionHeader } from "@/components/ui/primitives";
 import { getFAQ } from "@/services/siteApi";
 import { getPublicCourseBySlug, getPublicCourseList, getPublicFacultyList, getPublishedCourseSlugs } from "@/services/siteServer";
+import { courseHighlights, courseSummary } from "@/lib/displayText";
 
 export async function generateStaticParams() {
   const slugs = await getPublishedCourseSlugs();
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!course) return { title: "Course Not Found" };
   return {
     title: `${course.name} in Shaheen Bagh, New Delhi`,
-    description: `${course.name} at Neuron Academy, Shaheen Bagh — ${course.desc} Duration: ${course.duration}. Mode: ${course.mode}.`.slice(0, 300),
+    description: `${course.name} at Neuron Academy, Shaheen Bagh — ${courseSummary(course.desc)} Duration: ${course.duration}. Mode: ${course.mode}.`.slice(0, 300),
     alternates: { canonical: `/courses/${slug}` },
   };
 }
@@ -36,6 +37,8 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   const shown = teachers.length > 0 ? teachers : faculty.slice(0, 2);
   const related = all.filter((c) => c.id !== course.id && c.category === course.category).slice(0, 3);
   const accent = course.accent || "#008C9E";
+  // Admin-entered highlights win; otherwise use the bullet list inside the description.
+  const highlights = course.highlights.length > 0 ? course.highlights : courseHighlights(course.desc);
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,11 +56,11 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
                 {course.category.toUpperCase()} {course.admissionOpen ? "• ADMISSION OPEN" : ""}
               </p>
               <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">{course.name}</h1>
-              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-silver-200">{course.desc}</p>
+              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-silver-200">{courseSummary(course.desc)}</p>
               <div className="mt-5 flex flex-wrap gap-2 text-[12px] font-bold text-white">
                 <span className="rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/20"><Clock className="mr-1 inline h-3.5 w-3.5" />{course.duration}</span>
                 <span className="rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/20"><MonitorPlay className="mr-1 inline h-3.5 w-3.5" />{course.mode}</span>
-                <span className="rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/20">🎯 {course.target}</span>
+                {course.target ? <span className="rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/20">🎯 {course.target}</span> : null}
               </div>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a href="#enquire" className="btn-metallic-sheen rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white">Enquire About This Course</a>
@@ -84,9 +87,9 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
         {/* Overview + highlights */}
         <section className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 lg:grid-cols-2">
           <div>
-            <SectionHeader eyebrow="OVERVIEW" title={`Who Is This For?`} desc={`${course.target}. ${course.faculty} lead every batch with weekly mocks and doubt support.`} />
+            <SectionHeader eyebrow="OVERVIEW" title="Course highlights" desc={course.target || undefined} />
             <ul className="mt-5 space-y-2.5">
-              {course.highlights.map((h) => (
+              {highlights.map((h) => (
                 <li key={h} className="flex gap-2 rounded-xl border border-silver-200 bg-white px-4 py-3 text-sm font-semibold text-ink shadow-card">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" /> {h}
                 </li>
@@ -96,7 +99,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           <div className="rounded-card border border-silver-200 bg-white p-6 shadow-card">
             <h2 className="text-lg font-extrabold text-navy-700">Batch Information</h2>
             <dl className="mt-4 space-y-3 text-sm">
-              {[["Duration", course.duration], ["Mode", course.mode], ["Target", course.target], ["Faculty", course.faculty], ["Subjects", course.subjects.join(" • ")]].map(([k, v]) => (
+              {[["Duration", course.duration], ["Mode", course.mode], ["For", course.target], ["Faculty", course.faculty], ["Subjects", course.subjects.join(" • ")]].filter(([, v]) => v).map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-4 border-b border-silver-100 pb-2.5 last:border-0">
                   <dt className="font-bold text-muted">{k}</dt>
                   <dd className="text-right font-extrabold text-navy-700">{v}</dd>

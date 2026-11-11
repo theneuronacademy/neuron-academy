@@ -362,6 +362,8 @@ export async function getBanners(): Promise<BannerContent[]> {
       description: String(b.description ?? ""),
       mediaType: (b.videoUrl ? "video" : "image") as "image" | "video",
       mediaUrl: String(b.imageUrl ?? b.image ?? b.videoUrl ?? ""),
+    mediaWidth: typeof b.mediaWidth === "number" ? b.mediaWidth : undefined,
+    mediaHeight: typeof b.mediaHeight === "number" ? b.mediaHeight : undefined,
       buttonText: String(b.buttonText ?? ""),
       buttonUrl: String(b.buttonUrl ?? ""),
       animation: (b.animation == null ? "none" : toBannerAnimation(b.animation)) as BannerAnimation,
@@ -423,6 +425,15 @@ function bannerRowToAd(b: any, type: AdType): Advertisement | null {
     createdAt: "",
     updatedAt: "",
   } satisfies Advertisement;
+}
+
+/** Map raw banner rows (from the API or the server-rendered page) to carousel ads. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function bannerRowsToAds(rows: any[]): Advertisement[] {
+  return rows
+    .map((b) => bannerRowToAd(b, "banner"))
+    .filter((a): a is Advertisement => a !== null)
+    .sort((a, b) => a.priority - b.priority);
 }
 
 export async function getLiveBanners(): Promise<Advertisement[] | null> {

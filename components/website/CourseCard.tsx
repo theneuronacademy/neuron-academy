@@ -4,6 +4,7 @@ import { Clock, MonitorPlay, ArrowRight, CheckCircle2 } from "lucide-react";
 import { SmartImage } from "@/lib/siteImages";
 import { CONTACT } from "@/data/contact";
 import type { Course } from "@/data/courses";
+import { courseSummary } from "@/lib/displayText";
 
 export function CourseCard({ course, index = 0, onDetails }: { course: Course; index?: number; onDetails?: (c: Course) => void }) {
   const accent = course.accent || "#1746B8";
@@ -55,7 +56,8 @@ export function CourseCard({ course, index = 0, onDetails }: { course: Course; i
       </div>
       <div className="flex flex-1 flex-col p-5">
         <h3 className="text-lg font-bold tracking-tight text-navy-950 transition group-hover:text-brand-primary">{course.name}</h3>
-        <p className="mt-1.5 flex-1 text-[13.5px] leading-relaxed text-neutral-600">{course.desc}</p>
+        <p className="mt-1.5 line-clamp-4 text-[13.5px] leading-relaxed text-neutral-600">{courseSummary(course.desc)}</p>
+        <div className="flex-1" />
         {course.subjects ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {course.subjects.map((s) => (
@@ -64,9 +66,9 @@ export function CourseCard({ course, index = 0, onDetails }: { course: Course; i
           </div>
         ) : null}
         <div className="mt-3 space-y-1 text-[12px] font-bold text-neutral-700/80">
-          <p className="flex items-center gap-1.5">{course.target}</p>
+          {course.target ? <p className="flex items-center gap-1.5">{course.target}</p> : null}
           <p className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {course.duration} • <MonitorPlay className="h-3.5 w-3.5" /> {course.mode}</p>
-          <p className="flex items-center gap-1.5 text-brand-primary"><CheckCircle2 className="h-3.5 w-3.5" /> {course.faculty}</p>
+          {course.faculty ? <p className="flex items-center gap-1.5 text-brand-primary"><CheckCircle2 className="h-3.5 w-3.5" /> {course.faculty}</p> : null}
         </div>
         <div className="metallic-divider my-3.5" />
         <div className="flex gap-2">

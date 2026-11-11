@@ -91,3 +91,38 @@ export function presentFaculty<T extends { name: string; designation: string; su
     experience: formatExperience(m.experience),
   };
 }
+
+/**
+ * Cloudinary delivery sizing without cropping: cap the width, pick a modern
+ * format and sensible quality. Admin uploads are often multi-megabyte PNGs;
+ * this serves a version sized for the screen. Other URLs, videos and URLs that
+ * already carry a transformation pass through unchanged.
+ */
+export function sizedImage(url: string, width = 1280): string {
+  const marker = "/image/upload/";
+  if (!url.includes("res.cloudinary.com") || !url.includes(marker)) return url;
+  const [head, tail] = url.split(marker);
+  if (!/^v\d+\//.test(tail)) return url;
+  return `${head}${marker}f_auto,q_auto,c_limit,w_${width}/${tail}`;
+}
+
+/**
+ * One-paragraph summary for a course card. Admin descriptions are full
+ * leaflets (title, slogan, summary, bullet list, sign-off); the card shows
+ * only the summary paragraph — the first full sentence that is not a
+ * heading, slogan or bullet. The complete text stays on the course page.
+ */
+export function courseSummary(description: string): string {
+  const lines = description.split(/\r?\n+/).map((l) => l.trim()).filter(Boolean);
+  const isSentence = (l: string) => l.length >= 60 && /[.!?]$/.test(l) && !/^[-•*]/.test(l) && l !== l.toUpperCase();
+  return lines.find(isSentence) ?? lines.find((l) => !/^[-•*]/.test(l) && l !== l.toUpperCase()) ?? description.trim();
+}
+
+/** The bullet points inside an admin course description ("- Complete syllabus coverage."). */
+export function courseHighlights(description: string): string[] {
+  return description
+    .split(/\r?\n+/)
+    .map((l) => l.trim())
+    .filter((l) => /^[-•*]\s*\S/.test(l))
+    .map((l) => l.replace(/^[-•*]\s*/, ""));
+}

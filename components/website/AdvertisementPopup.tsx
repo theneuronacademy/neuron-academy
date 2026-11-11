@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Volume2, VolumeX } from "lucide-react";
 import type { Advertisement } from "@/lib/types";
-import { getPopupAds, markPopupDismissed, wasPopupDismissedThisSession } from "@/lib/mockStore";
+import { getPopupAds, markPopupDismissed, markPopupSeen, wasPopupSeen } from "@/lib/mockStore";
 import { getLivePopups } from "@/services/siteApi";
+import { sizedImage } from "@/lib/displayText";
 
 export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement | null }) {
   const [ad, setAd] = useState<Advertisement | null>(forceAd ?? null);
@@ -18,12 +19,14 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
       setVisible(true);
       return;
     }
-    if (wasPopupDismissedThisSession()) return;
     const t = setTimeout(() => {
       // Phase 11: database popups win; mockStore stays dev fallback.
       void getLivePopups().then((live) => {
         const popups = live ?? getPopupAds();
-        if (popups.length > 0) {
+        // Once per visitor: a popup already shown on this device is not shown
+        // again, whether or not it was closed. A newly published popup is.
+        if (popups.length > 0 && !wasPopupSeen(popups[0].id)) {
+          markPopupSeen(popups[0].id);
           setAd(popups[0]);
           setMuted(popups[0].muted !== false);
           setVisible(true);
@@ -65,7 +68,7 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
             // media's natural aspect ratio — the fixed-height box with
             // object-cover cropped portrait/square popup images.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={ad.mediaUrl} alt={ad.title} className="block h-auto max-h-[280px] w-full object-contain sm:max-h-[340px]" />
+            <img src={sizedImage(ad.mediaUrl, 900)} alt={ad.title} className="block h-auto max-h-[280px] w-full object-contain sm:max-h-[340px]" />
           ) : (
             <div className="bg-metallic-dark flex h-56 items-center justify-center p-6 sm:h-64">
               <p className="text-center text-xl font-extrabold text-white">{ad.title}</p>

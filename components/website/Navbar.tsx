@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/websiteData";
 import { Logo } from "@/components/website/Logo";
@@ -31,6 +32,8 @@ function PortalLink({ link, className, onClick }: { link: { href: string; label:
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const onHome = pathname === "/";
   const [active, setActive] = useState("home");
 
   useEffect(() => {
@@ -67,7 +70,7 @@ export function Navbar() {
   const navLinkClass = (href: string) =>
     cn(
       "rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
-      active === href.replace(/^#/, "")
+      onHome && active === href.replace(/^#/, "")
         ? "bg-brand-primary/10 text-brand-primary"
         : "text-neutral-600 hover:bg-brand-primary/5 hover:text-brand-primary",
     );
@@ -84,11 +87,11 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-1 xl:flex" aria-label="Primary">
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className={navLinkClass(link.href)}>
+            <Link key={link.href} href={`/${link.href}`} className={navLinkClass(link.href)}>
               {link.label}
             </Link>
           ))}
-          <Link href="#books" className="rounded-lg px-3 py-2 text-sm font-semibold transition text-neutral-600 hover:bg-brand-primary/5 hover:text-brand-primary">
+          <Link href="/#books" className="rounded-lg px-3 py-2 text-sm font-semibold transition text-neutral-600 hover:bg-brand-primary/5 hover:text-brand-primary">
             Books
           </Link>
         </nav>
@@ -108,7 +111,7 @@ export function Navbar() {
               ))}
             </div>
           </details>
-          <Link href="#contact" className="inline-flex items-center justify-center rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">
+          <Link href="/#contact" className="inline-flex items-center justify-center rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">
             Enquire now
           </Link>
         </div>
@@ -128,11 +131,11 @@ export function Navbar() {
         <nav id="mobile-navigation" className="border-t border-silver-200 bg-white px-4 py-4 shadow-lg xl:hidden" aria-label="Mobile">
           <div className="mx-auto grid max-w-7xl gap-1 sm:px-2">
             {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className={cn("rounded-lg px-3 py-3 text-[15px] font-semibold", navLinkClass(link.href))}>
+              <Link key={link.href} href={`/${link.href}`} onClick={() => setOpen(false)} className={cn("rounded-lg px-3 py-3 text-[15px] font-semibold", navLinkClass(link.href))}>
                 {link.label}
               </Link>
             ))}
-            <Link href="#books" onClick={() => setOpen(false)} className={cn("rounded-lg px-3 py-3 text-[15px] font-semibold", navLinkClass("books"))}>
+            <Link href="/#books" onClick={() => setOpen(false)} className={cn("rounded-lg px-3 py-3 text-[15px] font-semibold", navLinkClass("books"))}>
               Books
             </Link>
             <div className="mt-2 grid grid-cols-2 gap-2 border-t border-silver-200 pt-3">
@@ -145,7 +148,7 @@ export function Navbar() {
                 />
               ))}
             </div>
-            <Link href="#contact" onClick={() => setOpen(false)} className="mt-2 rounded-xl bg-brand-primary px-4 py-3 text-center text-sm font-bold text-white shadow-primary">
+            <Link href="/#contact" onClick={() => setOpen(false)} className="mt-2 rounded-xl bg-brand-primary px-4 py-3 text-center text-sm font-bold text-white shadow-primary">
               Enquire now
             </Link>
           </div>
