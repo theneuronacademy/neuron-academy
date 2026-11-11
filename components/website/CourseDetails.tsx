@@ -5,6 +5,7 @@ import { X, CheckCircle2, Clock, MonitorPlay } from "lucide-react";
 import { SmartImage } from "@/lib/siteImages";
 import { CONTACT } from "@/data/contact";
 import type { Course } from "@/data/courses";
+import { courseSummary } from "@/lib/displayText";
 
 /** Full course details dialog (CourseDetails). */
 export function CourseDetails({ course, onClose, onEnroll }: { course: Course; onClose: () => void; onEnroll: () => void }) {
@@ -41,12 +42,12 @@ export function CourseDetails({ course, onClose, onEnroll }: { course: Course; o
           </div>
         </div>
         <div className="p-5 sm:p-6">
-          <p className="text-sm leading-relaxed text-muted">{course.desc}</p>
+          <p className="text-sm leading-relaxed text-muted">{courseSummary(course.desc)}</p>
           <div className="mt-3 grid grid-cols-2 gap-2 text-[12px] font-bold text-navy-700">
-            <p className="rounded-lg bg-silver-50 px-3 py-2 ring-1 ring-silver-200">🎯 {course.target}</p>
+            {course.target ? <p className="rounded-lg bg-silver-50 px-3 py-2 ring-1 ring-silver-200">🎯 {course.target}</p> : null}
             <p className="flex items-center gap-1 rounded-lg bg-silver-50 px-3 py-2 ring-1 ring-silver-200"><Clock className="h-3.5 w-3.5" /> {course.duration}</p>
             <p className="flex items-center gap-1 rounded-lg bg-silver-50 px-3 py-2 ring-1 ring-silver-200"><MonitorPlay className="h-3.5 w-3.5" /> {course.mode}</p>
-            <p className="rounded-lg bg-silver-50 px-3 py-2 ring-1 ring-silver-200">👨‍🏫 {course.faculty}</p>
+            {course.faculty ? <p className="rounded-lg bg-silver-50 px-3 py-2 ring-1 ring-silver-200">👨‍🏫 {course.faculty}</p> : null}
           </div>
           <p className="mt-4 text-[13px] font-extrabold text-navy-700">What you get</p>
           <ul className="mt-2 space-y-1.5">

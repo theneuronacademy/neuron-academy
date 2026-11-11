@@ -3,10 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  BookOpen, Users, FileText, Target, MonitorPlay, Bell, CheckCircle2,
-  Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight,
-  CalendarCheck, Trophy, MessageCircle, Smartphone, BarChart3, Wallet,
-  Sparkles, Medal, Star, GraduationCap, ArrowRight, Play,
+  BookOpen, Users, FileText, Target, MonitorPlay, CheckCircle2, Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, Play,
 } from "lucide-react";
 import { AnnouncementBar } from "@/components/website/AnnouncementBar";
 import { Navbar } from "@/components/website/Navbar";
@@ -20,7 +17,6 @@ import { MobileActionBar } from "@/components/website/MobileActionBar";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
 import { SocialSidebar } from "@/components/website/SocialSidebar";
 import { EnquireFloat } from "@/components/website/EnquireFloat";
-import { LearningProcess } from "@/components/website/LearningProcess";
 import { Faq } from "@/components/website/Faq";
 import { CourseCard } from "@/components/website/CourseCard";
 import { CourseDetails } from "@/components/website/CourseDetails";
@@ -58,15 +54,6 @@ const TRUST = [
   { icon: Users, title: "Mentor Support", desc: "Guidance from the academy’s faculty team." },
   { icon: Target, title: "Progress Tools", desc: "Academic activity and performance in one place." },
   { icon: MonitorPlay, title: "Digital Assessments", desc: "Online tests with results and question review." },
-];
-
-const WHY = [
-  { slug: "entrance-focused-courses", t: "Entrance-focused courses", d: "Study pathways for JMI, AMU and CM SHRI entrances, CBSE boards, NEET and JEE." },
-  { slug: "small-batches", t: "Small batches", d: "A focused classroom environment with room to ask questions and get guidance." },
-  { slug: "regular-mock-tests", t: "Regular mock tests", d: "Practice with exam-style questions and review performance after each test." },
-  { slug: "doubt-support", t: "Doubt support", d: "Bring questions to your mentors and work through concepts together." },
-  { slug: "progress-tracking", t: "Progress tracking", d: "Students and families can follow academic activity and progress." },
-  { slug: "digital-practice-tools", t: "Digital practice tools", d: "Use online tests and review results from the student platform." },
 ];
 
 const STUDENT_PORTAL_URL = "https://estudde.com/";
@@ -204,76 +191,26 @@ function GallerySection({ items: propItems }: { items?: GalleryItem[] }) {
 }
 
 /** Live animated phone mockup — cycles questions with a ticking timer. */
-function LivePhone() {
-  const slides = [
-    { q: "Q12. lim (x→0) sin 5x / 3x = ?", opts: ["5/3", "3/5", "1", "0"], pick: 0 },
-    { q: "Q13. 45 is what % of 180?", opts: ["20%", "22.5%", "25%", "30%"], pick: 2 },
-    { q: "Q14. Unit of force?", opts: ["Joule", "Newton", "Watt", "Pascal"], pick: 1 },
-  ];
-  const [s, setS] = useState(0);
-  const [secs, setSecs] = useState(29 * 60 + 42);
-  const viewRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(true);
-  useEffect(() => {
-    const el = viewRef.current;
-    if (!el || !("IntersectionObserver" in window)) return;
-    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.15 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  useEffect(() => {
-    if (!inView) return;
-    const t = setInterval(() => {
-      setSecs((x) => (x > 0 ? x - 1 : 29 * 60 + 59));
-      setS((x) => (x + 1) % slides.length);
-    }, 2600);
-    return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inView]);
-  const mm = String(Math.floor(secs / 60)).padStart(2, "0");
-  const ss = String(secs % 60).padStart(2, "0");
-  const cur = slides[s % slides.length];
-  return (
-    <div ref={viewRef} className="conic-ring mx-auto w-full max-w-[300px] rounded-[28px] bg-white shadow-card">
-      <div className="conic-inner animate-float-slow rounded-[28px] border-8 border-navy-800 bg-white">
-      <div className="flex items-center justify-between border-b border-silver-200 px-4 py-3">
-        <div><p className="text-xs font-extrabold text-navy-700">Sample assessment preview</p><p className="text-[11px] text-muted">Example question view</p></div>
-        <span className="rounded-full bg-brand-secondary/20 px-2 py-0.5 text-[10px] font-bold text-brand-secondary-800">PREVIEW</span>
-      </div>
-      <div className="space-y-2.5 p-4">
-        <div key={s} className="animate-fade-in rounded-xl bg-silver-50 p-3 ring-1 ring-silver-200">
-          <p className="text-[12px] font-bold text-navy-700">{cur.q}</p>
-          <div className="mt-2 grid grid-cols-2 gap-1.5">
-            {cur.opts.map((o, i) => (
-              <span key={o} className={`rounded-lg border px-2 py-1.5 text-center text-[12px] font-bold transition ${i === cur.pick ? "border-teal-500 bg-teal-500 text-white" : "border-silver-200 bg-white"}`}>{o}</span>
-            ))}
-          </div>
-        </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-silver-200">
-          <div className="h-full rounded-full bg-gradient-to-r from-teal-500 to-crimson transition-all duration-1000" style={{ width: `${35 + ((s % slides.length) + 1) * 18}%` }} />
-        </div>
-        <div className="flex items-center justify-between rounded-xl bg-navy-800 p-3 text-white">
-          <span className="text-[12px] font-bold tabular-nums">⏱ {mm}:{ss}</span>
-          <span className="rounded-lg bg-brand-secondary px-2.5 py-1 text-[11px] font-bold text-navy-950">Select answer</span>
-        </div>
-        <p className="text-center text-[11px] text-muted">Sample question interface</p>
-        </div>
-      </div>
-    </div>
-  );
+export interface HomeInitialData {
+  courses: Course[] | null;
+  faculty: FacultyMember[] | null;
+  wall: AcademyResult[] | null;
 }
 
-export default function HomePage({ initialBannerRows = null }: { initialBannerRows?: BannerRow[] | null }) {
+export default function HomePage({ initialBannerRows = null, initial = null }: { initialBannerRows?: BannerRow[] | null; initial?: HomeInitialData | null }) {
   const [courseCat, setCourseCat] = useState<string>("All");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [showAllCourses, setShowAllCourses] = useState(false);
+  // Courses, faculty and results arrive already rendered from the server
+  // (`initial`) so they are in the first HTML; the fetch below refreshes them.
   // Live CMS rows (published/active only) swap in over the static fallbacks
   // below. Static-first paint keeps the page instant with no DB; a failed or
   // empty live fetch simply keeps the fallbacks — never an error screen.
-  const [liveCourses, setLiveCourses] = useState<Course[] | null>(null);
-  const [liveFaculty, setLiveFaculty] = useState<FacultyMember[] | null>(null);
+  const [liveCourses, setLiveCourses] = useState<Course[] | null>(initial?.courses ?? null);
+  const [liveFaculty, setLiveFaculty] = useState<FacultyMember[] | null>(initial?.faculty ?? null);
   const [liveGallery, setLiveGallery] = useState<GalleryItem[] | null>(null);
   const [liveTestimonials, setLiveTestimonials] = useState<Testimonial[] | null>(null);
-  const [liveWall, setLiveWall] = useState<{ rows: AcademyResult[] } | null>(null);
+  const [liveWall, setLiveWall] = useState<{ rows: AcademyResult[] } | null>(initial?.wall ? { rows: initial.wall } : null);
   const [liveBooks, setLiveBooks] = useState<LiveBookRow[] | null>(null);
   // "About the Academy" media — independent from the gallery; null keeps the
   // static single-photo design (exact original) when no rows are published.
@@ -294,10 +231,10 @@ export default function HomePage({ initialBannerRows = null }: { initialBannerRo
             name: String(r.name),
             category: String(r.category ?? "Engineering"),
             desc: String(r.description ?? r.shortDescription ?? ""),
-            target: String(r.target ?? "Class 11–12"),
+            target: String(r.target ?? ""),
             duration: String(r.duration ?? "1 year"),
             mode: String(r.mode ?? "Offline + Online"),
-            faculty: String(r.facultyName ?? "Neuron Faculty"),
+            faculty: String(r.facultyName ?? ""),
             imageLabel: String(r.name),
             image: String(r.image ?? ""),
             accent: String(r.accent ?? "#1AA6B5"),
@@ -402,6 +339,8 @@ export default function HomePage({ initialBannerRows = null }: { initialBannerRo
   const facultyList = liveFaculty ?? FACULTY;
   const galleryList = liveGallery ?? GALLERY;
   const testimonialList = liveTestimonials ?? undefined;
+  // The section appears only once the academy has published testimonials.
+  const hasTestimonials = (testimonialList?.length ?? 0) > 0;
   // Showcase wall: live consented rows replace the static set; the DEMO badge
   // below renders only for static fallback rows, never for published data.
   const wall = liveWall?.rows ?? RESULTS;
@@ -456,6 +395,49 @@ export default function HomePage({ initialBannerRows = null }: { initialBannerRo
                 </Reveal>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* COURSES */}
+        <section id="courses" className="relative overflow-hidden bg-background">
+          <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-brand-secondary/10 blur-3xl" aria-hidden />
+          <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
+            <Reveal>
+              <SectionHeader eyebrow="COURSES" title="Find the right course for your goals" desc="Explore entrance preparation and foundation courses offered by Neuron Academy." />
+            </Reveal>
+            <Reveal delay={100}>
+              <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter courses by category">
+                {courseCats.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCourseCat(c)}
+                    aria-pressed={courseCat === c}
+                    className={`rounded-full px-4 py-2 text-[13px] font-semibold transition ${courseCat === c ? "bg-brand-primary text-white" : "border border-silver-300 bg-white text-navy-800 hover:border-brand-primary/40 hover:bg-brand-primary/5"}`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </Reveal>
+            {courses.length === 0 ? (
+              <p className="mt-8 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No courses available in this category yet.</p>
+            ) : (
+              <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {courses.map((c, i) => (
+                  <Reveal key={c.id} delay={(i % 3) * 90} variant="pop" className={!showAllCourses && i >= 4 ? "hidden sm:block" : undefined}>
+                    <CourseCard course={c} index={i} onDetails={setSelectedCourse} />
+                  </Reveal>
+                ))}
+              </div>
+            )}
+            {/* Phones show four courses first; larger screens always show all. */}
+            {courses.length > 4 ? (
+              <div className="mt-6 text-center sm:hidden">
+                <button type="button" onClick={() => setShowAllCourses((v) => !v)} className="inline-flex items-center gap-1.5 rounded-xl border-2 border-brand-primary px-5 py-2.5 text-sm font-bold text-brand-primary">
+                  {showAllCourses ? "Show fewer courses" : `Show all ${courses.length} courses`}
+                </button>
+              </div>
+            ) : null}
           </div>
         </section>
 
@@ -523,75 +505,6 @@ export default function HomePage({ initialBannerRows = null }: { initialBannerRo
           </div>
         </section>
 
-        {/* WHY */}
-        <section className="relative overflow-hidden bg-white">
-          <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
-          <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
-            <Reveal>
-              <SectionHeader eyebrow={hc["why.eyebrow"] || "WHY NEURON ACADEMY"} title={hc["why.title"] || "A focused learning experience"} desc={hc["why.desc"] || "Structured support for students preparing for entrance examinations."} />
-            </Reveal>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {WHY.map((w, i) => (
-                <Reveal key={w.t} delay={(i % 3) * 60}>
-                  {/* Whole card → dedicated topic page */}
-                  <Link
-                    href={`/topics/${w.slug}`}
-                    className="group relative flex h-full flex-col rounded-2xl border border-silver-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-brand-primary/25 hover:shadow-card-hover"
-                  >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary/5 text-sm font-bold text-brand-primary">0{i + 1}</div>
-                    <h3 className="mt-5 text-base font-bold text-navy-950">{w.t}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-neutral-600">{w.d}</p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-brand-primary transition group-hover:gap-2.5">
-                      Learn more <ArrowRight className="h-3.5 w-3.5" />
-                    </span>
-                    <span className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-brand-secondary/70 to-transparent" aria-hidden />
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* COURSES */}
-        <section id="courses" className="relative overflow-hidden bg-background">
-          <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-brand-secondary/10 blur-3xl" aria-hidden />
-          <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
-            <Reveal>
-              <SectionHeader eyebrow="COURSES" title="Find the right course for your goals" desc="Explore entrance preparation and foundation courses offered by Neuron Academy." />
-            </Reveal>
-            <Reveal delay={100}>
-              <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter courses by category">
-                {courseCats.map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setCourseCat(c)}
-                    aria-pressed={courseCat === c}
-                    className={`rounded-full px-4 py-2 text-[13px] font-semibold transition ${courseCat === c ? "bg-brand-primary text-white" : "border border-silver-300 bg-white text-navy-800 hover:border-brand-primary/40 hover:bg-brand-primary/5"}`}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </Reveal>
-            {courses.length === 0 ? (
-              <p className="mt-8 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No courses available in this category yet.</p>
-            ) : (
-              <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {courses.map((c, i) => (
-                  <Reveal key={c.id} delay={(i % 3) * 90} variant="pop">
-                    <CourseCard course={c} index={i} onDetails={setSelectedCourse} />
-                  </Reveal>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* LEARNING PROCESS */}
-        <section className="bg-background">
-          <LearningProcess />
-        </section>
-
         {/* EXAM TICKER divider */}
         <div className="bg-metallic-dark border-y border-white/10 py-3">
           <Marquee items={EXAM_TICKER} className="text-white" itemClassName="text-white" />
@@ -652,7 +565,8 @@ export default function HomePage({ initialBannerRows = null }: { initialBannerRo
         </section>
 
         {/* TESTIMONIALS */}
-        <WaveDivider flip className="bg-background text-navy-800" />
+        <WaveDivider flip className={hasTestimonials ? "bg-background text-navy-800" : "bg-white text-navy-800"} />
+        {hasTestimonials ? (
         <section className="relative overflow-hidden bg-background">
           <div className="pointer-events-none absolute -left-20 top-10 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-5xl px-4 py-20 sm:px-6">
@@ -664,87 +578,7 @@ export default function HomePage({ initialBannerRows = null }: { initialBannerRo
             </Reveal>
           </div>
         </section>
-
-{/* TEST PLATFORM */}
-        <section className="relative overflow-hidden bg-white">
-          <div className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-teal-500/10 blur-3xl" aria-hidden />
-          <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
-            <Reveal variant="left">
-              <div>
-                <SectionHeader eyebrow="TEST PLATFORM" title="Practice and review your progress" desc="Use the student platform for online tests, results and question-wise review." />
-                <ul className="mt-5 grid gap-2.5 text-sm font-semibold text-ink sm:grid-cols-2">
-                  {["Online tests", "Mock tests", "Results and rankings", "Performance review", "Regular assessment", "Question solutions"].map((t) => (
-                    <li key={t} className="flex items-center gap-2 rounded-xl border border-silver-200 bg-background px-3 py-3 text-neutral-700 transition hover:border-brand-primary/30 hover:shadow-card"><CheckCircle2 className="h-4 w-4 shrink-0 text-brand-primary" /> {t}</li>
-                  ))}
-                </ul>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <a href={STUDENT_PORTAL_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-5 py-3 text-sm font-bold text-white shadow-primary transition hover:bg-brand-primary-hover">Open student platform <span className="text-[10px]">↗</span></a>
-                </div>
-              </div>
-            </Reveal>
-            <Reveal variant="right">
-              {/* Whole phone mock → external student login (estudde.com) */}
-              <div className="group relative">
-                <LivePhone />
-                <a
-                  href={STUDENT_PORTAL_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Open the Neuron Academy student test platform"
-                  className="absolute inset-0 outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary/60"
-                >
-                  <span className="sr-only">Open student platform</span>
-                </a>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* TECHNOLOGY */}
-        <section className="bg-metallic-dark relative overflow-hidden">
-          <div className="pointer-events-none absolute left-1/4 top-0 h-64 w-64 rounded-full bg-teal-400/15 blur-3xl" aria-hidden />
-          <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
-            <Reveal variant="left">
-              <div>
-                <SectionHeader dark eyebrow="DIGITAL LEARNING" title="Learning supported by useful tools" desc="Online assessments, attendance and study resources are available through the student and faculty platforms." />
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {[
-                    { icon: MonitorPlay, t: "Digital assessments" },
-                    { icon: CalendarCheck, t: "Attendance" },
-                    { icon: BarChart3, t: "Progress tracking" },
-                    { icon: Trophy, t: "Results and rankings" },
-                    { icon: Bell, t: "Notifications" },
-                    { icon: BookOpen, t: "Question bank" },
-                  ].map((x, i) => (
-                    <Reveal key={x.t} delay={i * 60}>
-                      <div className="card-lift wiggle-on-hover flex items-center gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 transition hover:bg-white/10">
-                        <x.icon className="h-5 w-5 shrink-0 text-teal-300" /><span className="text-sm font-bold text-white">{x.t}</span>
-                      </div>
-                    </Reveal>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-            <Reveal variant="right">
-              <div className="conic-ring premium-ring rounded-[20px] bg-white p-5 sm:p-6">
-                <p className="flex items-center gap-2 text-sm font-extrabold text-navy-700"><Sparkles className="h-4 w-4 text-teal-600" /> Performance Dashboard</p>
-                <div className="mt-4 flex items-center gap-4">
-                  <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-navy-700 text-xl font-extrabold text-white ring-4 ring-teal-100"><GraduationCap className="h-8 w-8" /></span>
-                  <div className="flex-1 space-y-2 text-[12px] font-bold">
-                    <p>Attendance tracking — <span className="text-teal-600">auto</span></p>
-                    <p>Test analytics — <span className="text-teal-600">live</span></p>
-                    <p>Question bank — <span className="text-teal-600">included</span></p>
-                  </div>
-                </div>
-                <div className="mt-4 flex gap-3 text-center">
-                  <div className="flex-1 rounded-xl bg-silver-50 p-3 ring-1 ring-silver-200"><Smartphone className="mx-auto h-4 w-4 text-navy-700" /><p className="mt-1 text-[11px] font-bold">App</p></div>
-                  <div className="flex-1 rounded-xl bg-silver-50 p-3 ring-1 ring-silver-200"><Wallet className="mx-auto h-4 w-4 text-navy-700" /><p className="mt-1 text-[11px] font-bold">Fees</p></div>
-                  <div className="flex-1 rounded-xl bg-silver-50 p-3 ring-1 ring-silver-200"><MessageCircle className="mx-auto h-4 w-4 text-navy-700" /><p className="mt-1 text-[11px] font-bold">Support</p></div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
+        ) : null}
 
         {/* BOOKS */}
         <section id="books" className="relative overflow-hidden bg-white">

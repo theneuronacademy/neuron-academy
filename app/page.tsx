@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import HomePageClient from "./HomePageClient";
-import { getPublicBannerRows } from "@/services/siteServer";
+import { getHomeInitialData, getPublicBannerRows } from "@/services/siteServer";
 
 const TITLE = "Neuron Academy Shaheen Bagh | JMI, AMU, CBSE, NEET & JEE Coaching";
 const DESCRIPTION = "Coaching for Classes 6 to 12 in Shaheen Bagh: JMI, AMU and CM SHRI school entrances, CBSE boards, NEET and JEE.";
@@ -16,6 +16,6 @@ export const metadata: Metadata = {
 export const revalidate = 120;
 
 export default async function HomePage() {
-  const bannerRows = await getPublicBannerRows();
-  return <HomePageClient initialBannerRows={bannerRows} />;
+  const [bannerRows, initial] = await Promise.all([getPublicBannerRows(), getHomeInitialData()]);
+  return <HomePageClient initialBannerRows={bannerRows} initial={initial} />;
 }

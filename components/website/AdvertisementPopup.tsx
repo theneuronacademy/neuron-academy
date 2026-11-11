@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Volume2, VolumeX } from "lucide-react";
 import type { Advertisement } from "@/lib/types";
-import { getPopupAds, markPopupDismissed, wasPopupDismissedThisSession } from "@/lib/mockStore";
+import { getPopupAds, markPopupDismissed, markPopupSeen, wasPopupSeen } from "@/lib/mockStore";
 import { getLivePopups } from "@/services/siteApi";
 import { sizedImage } from "@/lib/displayText";
 
@@ -19,12 +19,14 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
       setVisible(true);
       return;
     }
-    if (wasPopupDismissedThisSession()) return;
     const t = setTimeout(() => {
       // Phase 11: database popups win; mockStore stays dev fallback.
       void getLivePopups().then((live) => {
         const popups = live ?? getPopupAds();
-        if (popups.length > 0) {
+        // Once per visitor: a popup already shown on this device is not shown
+        // again, whether or not it was closed. A newly published popup is.
+        if (popups.length > 0 && !wasPopupSeen(popups[0].id)) {
+          markPopupSeen(popups[0].id);
           setAd(popups[0]);
           setMuted(popups[0].muted !== false);
           setVisible(true);

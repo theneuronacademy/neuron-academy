@@ -8,6 +8,7 @@ import type { AdFilter, Advertisement } from "@/lib/types";
 
 const STORAGE_KEY = "neuron_ads_v1";
 const POPUP_KEY = "neuron_ad_popup_dismissed";
+const POPUP_SEEN_KEY = "neuron_ad_popup_seen";
 
 function todayISO(): string {
   const d = new Date();
@@ -194,9 +195,30 @@ export function markPopupDismissed(): void {
   }
 }
 
+/** Has this visitor already been shown this particular popup? */
+export function wasPopupSeen(id: string): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    return window.localStorage.getItem(POPUP_SEEN_KEY) === id;
+  } catch {
+    return true;
+  }
+}
+
+/** Remember the popup the moment it is shown, so it appears once per visitor
+ * (a new popup published by the academy is shown once again). */
+export function markPopupSeen(id: string): void {
+  try {
+    window.localStorage.setItem(POPUP_SEEN_KEY, id);
+  } catch {
+    /* ignore */
+  }
+}
+
 export function clearPopupDismissedForDemo(): void {
   try {
     window.localStorage.removeItem(POPUP_KEY);
+    window.localStorage.removeItem(POPUP_SEEN_KEY);
   } catch {
     /* ignore */
   }
