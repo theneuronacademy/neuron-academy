@@ -7,6 +7,7 @@ import { Footer } from "@/components/website/Footer";
 import { SmartImage } from "@/lib/siteImages";
 import { FacultyJsonLd } from "@/components/website/SchemaMarkup";
 import { getPublicFacultyBySlug, getPublicFacultyList, getPublishedFacultySlugs } from "@/services/siteServer";
+import { portraitPhoto } from "@/lib/displayText";
 
 export async function generateStaticParams() {
   const slugs = await getPublishedFacultySlugs();
@@ -39,7 +40,7 @@ export default async function FacultyProfilePage({ params }: { params: Promise<{
           <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[auto_1fr]">
             <div className="premium-ring relative h-56 w-56 overflow-hidden rounded-card-lg">
               <SmartImage
-                src={member.image || `/images/faculty-${member.id}.jpg`}
+                src={member.image ? portraitPhoto(member.image, 600, 600) : `/images/faculty-${member.id}.jpg`}
                 alt={`${member.name} — ${member.subject} faculty at Neuron Academy`}
                 className="absolute inset-0 h-full w-full"
                 imgClassName="h-full w-full object-cover"

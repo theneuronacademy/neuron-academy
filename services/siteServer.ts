@@ -16,6 +16,7 @@ type Db = any;
 import { COURSES, type Course } from "@/data/courses";
 import { FACULTY, type FacultyMember } from "@/data/faculty";
 import { getDb } from "@/lib/prisma";
+import { presentFaculty } from "@/lib/displayText";
 
 function cleanSlug(slug: unknown): string | null {
   if (typeof slug !== "string") return null;
@@ -70,7 +71,7 @@ function toFacultyMember(row: {
   bio?: string | null;
   photo?: string | null;
 }): FacultyMember {
-  return {
+  return presentFaculty({
     id: String(row.id),
     name: String(row.name),
     designation: String(row.designation ?? "Faculty"),
@@ -80,7 +81,7 @@ function toFacultyMember(row: {
     intro: String(row.bio ?? row.qualification ?? ""),
     image: String(row.photo ?? ""),
     profileUrl: "#faculty",
-  };
+  });
 }
 
 /** Published course slugs for prerendering (DB ACTIVE rows, else demo slugs). */
