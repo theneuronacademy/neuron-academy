@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { Download, Facebook, Instagram, Linkedin, MapPin, MessageCircle, Send, Star, Youtube } from "lucide-react";
 import { Logo } from "@/components/website/Logo";
-import { COURSES, CONTACT_INFO, SOCIAL_LINKS } from "@/lib/websiteData";
+import { CONTACT_INFO, SOCIAL_LINKS } from "@/lib/websiteData";
+import { EXAM_PAGES } from "@/data/exams";
 import { CONTACT } from "@/data/contact";
 
 const SOCIAL_ICONS = {
@@ -54,13 +55,14 @@ export function Footer() {
         <div>
           <p className="text-sm font-bold text-navy-950">Explore</p>
           <ul className="mt-4 space-y-3 text-sm">
-            {COURSES.map((course) => (
-              <li key={course.id}>
-                <a href="#courses" className="text-neutral-600 transition-colors hover:text-brand-primary">{course.name}</a>
+            {EXAM_PAGES.map((exam) => (
+              <li key={exam.slug}>
+                <Link href={`/coaching/${exam.slug}`} className="text-neutral-600 transition-colors hover:text-brand-primary">{exam.label} coaching</Link>
               </li>
             ))}
-            <li><a href="#faculty" className="text-neutral-600 transition-colors hover:text-brand-primary">Faculty</a></li>
-            <li><a href="#gallery" className="text-neutral-600 transition-colors hover:text-brand-primary">Campus gallery</a></li>
+            <li><Link href="/#courses" className="text-neutral-600 transition-colors hover:text-brand-primary">All courses</Link></li>
+            <li><Link href="/faculty" className="text-neutral-600 transition-colors hover:text-brand-primary">Faculty</Link></li>
+            <li><Link href="/#gallery" className="text-neutral-600 transition-colors hover:text-brand-primary">Campus gallery</Link></li>
           </ul>
         </div>
 

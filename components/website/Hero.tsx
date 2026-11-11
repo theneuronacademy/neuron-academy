@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight, Phone, ShieldCheck, MapPin } from "lucide-react";
 import { getLiveHeroImage, type LiveHeroImage } from "@/services/siteApi";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
@@ -10,12 +11,12 @@ import { EXAM_TICKER } from "@/lib/websiteData";
 import { PublicBackground } from "@/components/design-system/BackgroundPatterns";
 
 const EXAM_PILLS = [
-  { label: "JMI Entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
-  { label: "AMU Entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
-  { label: "CM SHRI", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
-  { label: "CBSE Boards", color: "border-brand-primary/20 bg-brand-primary/10 text-brand-primary" },
-  { label: "NEET", color: "border-silver-200 bg-white text-navy-800" },
-  { label: "JEE", color: "border-silver-200 bg-white text-navy-800" },
+  { label: "JMI Entrance", href: "/coaching/jmi-entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
+  { label: "AMU Entrance", href: "/coaching/amu-entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
+  { label: "CM SHRI", href: "/coaching/cm-shri-entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
+  { label: "CBSE Boards", href: "/coaching/class-10-cbse", color: "border-brand-primary/20 bg-brand-primary/10 text-brand-primary" },
+  { label: "NEET", href: "/#courses", color: "border-silver-200 bg-white text-navy-800" },
+  { label: "JEE", href: "/#courses", color: "border-silver-200 bg-white text-navy-800" },
 ];
 
 /**
@@ -55,9 +56,9 @@ export function Hero() {
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             {EXAM_PILLS.map((pill) => (
-              <span key={pill.label} className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold ${pill.color}`}>
+              <Link key={pill.label} href={pill.href} className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition hover:shadow-sm ${pill.color}`}>
                 {pill.label}
-              </span>
+              </Link>
             ))}
           </div>
           <div className="mt-8 flex flex-wrap gap-3">

@@ -6,6 +6,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const { COURSES } = await import("@/data/courses");
   const { TOPICS } = await import("@/data/topics");
+  const { EXAM_PAGES } = await import("@/data/exams");
 
   // Prefer live database slugs when a database is configured; fall back to
   // static data so `next build` never requires DATABASE_URL.
@@ -38,6 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/scholarship-tests`, lastModified: now },
     { url: `${BASE}/faculty`, lastModified: now },
     ...facultyIds.map((id) => ({ url: `${BASE}/faculty/${id}`, lastModified: now })),
+    ...EXAM_PAGES.map((e) => ({ url: `${BASE}/coaching/${e.slug}`, lastModified: now })),
     ...TOPICS.map((t) => ({ url: `${BASE}/topics/${t.slug}`, lastModified: now })),
   ];
 }
