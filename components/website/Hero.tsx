@@ -15,8 +15,8 @@ const EXAM_PILLS = [
   { label: "AMU Entrance", href: "/coaching/amu-entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
   { label: "CM SHRI", href: "/coaching/cm-shri-entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
   { label: "CBSE Boards", href: "/coaching/class-10-cbse", color: "border-brand-primary/20 bg-brand-primary/10 text-brand-primary" },
-  { label: "NEET", href: "/#courses", color: "border-silver-200 bg-white text-navy-800" },
-  { label: "JEE", href: "/#courses", color: "border-silver-200 bg-white text-navy-800" },
+  { label: "NEET", href: "/coaching/neet", color: "border-silver-200 bg-white text-navy-800" },
+  { label: "JEE", href: "/coaching/jee", color: "border-silver-200 bg-white text-navy-800" },
 ];
 
 /**

@@ -254,6 +254,135 @@ export const EXAM_PAGES: ExamPage[] = [
     ],
     conductedBy: "the Central Board of Secondary Education",
   },
+  {
+    slug: "neet",
+    label: "NEET",
+    eyebrow: "MEDICAL ENTRANCE",
+    title: "NEET Coaching in Shaheen Bagh",
+    metaTitle: "NEET Coaching in Shaheen Bagh, Delhi (Two-Year Programme)",
+    metaDescription:
+      "NEET-UG coaching at Neuron Academy, Shaheen Bagh, New Delhi: a two-year integrated programme in Physics, Chemistry and Biology with NCERT-focused teaching, chapter-wise tests, mock exams and PYQs.",
+    lead: "A two-year integrated programme for NEET-UG in Physics, Chemistry and Biology, built on NCERT.",
+    aboutHeading: "About NEET (UG)",
+    about: [
+      "NEET (UG) is the national entrance examination for admission to undergraduate medical courses in India. It is conducted by the National Testing Agency (NTA).",
+      "The examination tests Physics, Chemistry and Biology. The information bulletin published for each year gives the syllabus, eligibility, dates and the paper pattern.",
+    ],
+    official: { label: "neet.nta.nic.in", url: "https://neet.nta.nic.in" },
+    programmes: [
+      {
+        name: "NEET – Two-Year Integrated Programme",
+        courseSlug: "neet",
+        forWhom: "For students entering Class 11",
+        points: [
+          "Complete Physics, Chemistry and Biology syllabus",
+          "NCERT-focused, concept-oriented teaching",
+          "Chapter-wise tests and full-length mock exams",
+          "Previous years' questions, practice assignments and question banks",
+        ],
+      },
+    ],
+    approach: [
+      "NCERT-focused teaching in Physics, Chemistry and Biology.",
+      "Concepts first, then graded practice from assignments and question banks.",
+      "Chapter-wise tests through the year and full-length mock exams.",
+      "Previous years' questions worked into every chapter.",
+      "Dedicated doubt-clearing sessions.",
+      "Regular performance analysis and individual guidance.",
+    ],
+    faqs: [
+      {
+        question: "Who is the NEET programme for?",
+        answer: "It is a two-year integrated programme, designed to be taken through Classes 11 and 12.",
+      },
+      {
+        question: "Which subjects are covered?",
+        answer: "Physics, Chemistry and Biology, covering the complete syllabus with NCERT as the base.",
+      },
+      {
+        question: "Are classes offline or online?",
+        answer: `The NEET programme is held offline at ${ADDRESS}.`,
+      },
+      {
+        question: "How is progress checked?",
+        answer: "Through chapter-wise tests and full-length mock exams, followed by performance analysis and individual guidance.",
+      },
+      {
+        question: "Where can I find the official NEET syllabus, dates and application form?",
+        answer: "On the National Testing Agency's NEET website, neet.nta.nic.in. Dates, eligibility and the paper pattern are announced there each year and can change, so please confirm them at the source.",
+      },
+      {
+        question: "Does joining guarantee a medical seat?",
+        answer: "No coaching can guarantee a seat. Selection depends on the student's performance in the examination and on the counselling rules. We provide teaching, practice and honest feedback.",
+      },
+    ],
+    conductedBy: "the National Testing Agency",
+  },
+  {
+    slug: "jee",
+    label: "JEE",
+    eyebrow: "ENGINEERING ENTRANCE",
+    title: "JEE Main & Advanced Coaching in Shaheen Bagh",
+    metaTitle: "JEE Main & Advanced Coaching in Shaheen Bagh, Delhi",
+    metaDescription:
+      "JEE Main and JEE Advanced coaching at Neuron Academy, Shaheen Bagh, New Delhi: a two-year integrated programme in Physics, Chemistry and Mathematics with chapter-wise tests, mock exams and PYQs.",
+    lead: "A two-year integrated programme for JEE Main and JEE Advanced in Physics, Chemistry and Mathematics.",
+    aboutHeading: "About JEE Main and JEE Advanced",
+    about: [
+      "JEE Main is conducted by the National Testing Agency (NTA). It is used for admission to NITs, IIITs and other engineering institutions, and to qualify for JEE Advanced.",
+      "JEE Advanced is the entrance examination for the IITs. It is organised each year by one of the IITs.",
+      "Both examinations test Physics, Chemistry and Mathematics. The information bulletin and brochure for each year give the syllabus, eligibility, dates and the paper pattern.",
+    ],
+    official: { label: "jeemain.nta.nic.in", url: "https://jeemain.nta.nic.in" },
+    programmes: [
+      {
+        name: "JEE Main & Advanced – Two-Year Integrated Programme",
+        courseSlug: "jee-main-and-advance",
+        forWhom: "For students entering Class 11",
+        points: [
+          "Complete Physics, Chemistry and Mathematics syllabus",
+          "Concept-based teaching from basic to advanced levels",
+          "Chapter-wise tests and full-length mock exams",
+          "Previous years' questions, advanced assignments and practice worksheets",
+        ],
+      },
+    ],
+    approach: [
+      "NCERT fundamentals first, then advanced problem-solving.",
+      "Concept-based teaching from basic to advanced levels in Physics, Chemistry and Mathematics.",
+      "Advanced assignments and practice worksheets for every chapter.",
+      "Chapter-wise tests, full-length mock exams and previous years' questions.",
+      "Time-management and exam strategy practice.",
+      "Regular doubt-clearing sessions, performance analysis and individual guidance.",
+    ],
+    faqs: [
+      {
+        question: "Who is the JEE programme for?",
+        answer: "It is a two-year integrated programme, designed to be taken through Classes 11 and 12.",
+      },
+      {
+        question: "Does the programme cover both JEE Main and JEE Advanced?",
+        answer: "Yes. It prepares students for both, moving from NCERT fundamentals to advanced problem-solving in Physics, Chemistry and Mathematics.",
+      },
+      {
+        question: "Are classes offline or online?",
+        answer: `The JEE programme is held offline at ${ADDRESS}.`,
+      },
+      {
+        question: "How is progress checked?",
+        answer: "Through chapter-wise tests and full-length mock exams, followed by performance analysis and individual guidance.",
+      },
+      {
+        question: "Where can I find the official JEE syllabus, dates and application forms?",
+        answer: "For JEE Main, on the National Testing Agency's website, jeemain.nta.nic.in. For JEE Advanced, on jeeadv.ac.in. Dates, eligibility and paper patterns are announced there each year and can change.",
+      },
+      {
+        question: "Does joining guarantee admission to an IIT or NIT?",
+        answer: "No coaching can guarantee admission. Selection depends on the student's performance in the examinations and on the counselling rules. We provide teaching, practice and honest feedback.",
+      },
+    ],
+    conductedBy: "the National Testing Agency or the IITs",
+  },
 ];
 
 export function getExamPage(slug: string): ExamPage | undefined {
