@@ -22,7 +22,7 @@ export function Footer() {
         <div>
           <Logo />
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-neutral-600">
-            JEE, NEET, AMU and Jamia entrance preparation in Shaheen Bagh, New Delhi.
+            Coaching for Classes 6 to 12 in Shaheen Bagh, New Delhi: JMI, AMU and CM SHRI entrances, CBSE boards, NEET and JEE.
           </p>
           <a href={CONTACT.MAP_LINK_URL} target="_blank" rel="noopener noreferrer" className="mt-4 flex items-start gap-2 text-sm text-neutral-600 transition hover:text-brand-primary underline-offset-4 hover:underline">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" />
@@ -84,7 +84,7 @@ export function Footer() {
       <div className="border-t border-silver-200 bg-silver-50">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-neutral-500 sm:flex-row sm:px-6">
           <p>© {new Date().getFullYear()} Neuron Academy, Shaheen Bagh</p>
-          <p>JEE · NEET · AMU · Jamia preparation</p>
+          <p>JMI · AMU · CM SHRI · CBSE · NEET · JEE</p>
         </div>
       </div>
     </footer>

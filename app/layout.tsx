@@ -15,11 +15,11 @@ export const metadata: Metadata = {
     template: "%s | Neuron Academy",
   },
   description:
-    "Neuron Academy official website for courses, faculty, admissions, learning and academic preparation. JEE, NEET, AMU & Jamia entrance coaching in Shaheen Bagh, New Delhi.",
-  keywords: ["Neuron Academy", "JEE coaching", "NEET coaching", "AMU entrance", "Jamia entrance", "Shaheen Bagh academy", "admissions", "scholarship test"],
+    "Neuron Academy, Shaheen Bagh, New Delhi: coaching for Classes 6 to 12. JMI, AMU and CM SHRI school entrance preparation, CBSE board exams, NEET and JEE.",
+  keywords: ["Neuron Academy", "JMI entrance coaching", "Jamia school entrance", "AMU entrance coaching", "CM SHRI entrance", "CBSE board coaching", "NEET coaching", "JEE coaching", "Shaheen Bagh coaching", "scholarship test"],
   openGraph: {
     title: "Neuron Academy | Activate Your Neuron",
-    description: "Courses, faculty, admissions, learning and academic preparation — JEE, NEET, AMU & Jamia entrances.",
+    description: "Coaching for Classes 6 to 12 in Shaheen Bagh: JMI, AMU and CM SHRI school entrances, CBSE boards, NEET and JEE.",
     type: "website",
     siteName: "Neuron Academy",
     url: "/",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Neuron Academy | Activate Your Neuron",
-    description: "Courses, faculty, admissions, learning and academic preparation.",
+    description: "Coaching for Classes 6 to 12: JMI, AMU and CM SHRI school entrances, CBSE boards, NEET and JEE.",
   },
   icons: {
     icon: "/images/logo.png",
@@ -49,7 +49,7 @@ function OrganizationJsonLd() {
     name: "Neuron Academy",
     url: SITE_URL,
     description:
-      "JEE, NEET, AMU & Jamia entrance coaching in Shaheen Bagh, New Delhi — small batches, weekly mocks and mentor-guided preparation.",
+      "Coaching for Classes 6 to 12 in Shaheen Bagh, New Delhi — JMI, AMU and CM SHRI school entrances, CBSE boards, NEET and JEE, with small batches, weekly mocks and mentor-guided preparation.",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Shaheen Bagh, New Delhi",

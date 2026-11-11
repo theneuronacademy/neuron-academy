@@ -10,10 +10,12 @@ import { EXAM_TICKER } from "@/lib/websiteData";
 import { PublicBackground } from "@/components/design-system/BackgroundPatterns";
 
 const EXAM_PILLS = [
-  { label: "JEE", color: "border-brand-primary/20 bg-brand-primary/10 text-brand-primary" },
-  { label: "NEET", color: "border-silver-200 bg-white text-navy-800" },
+  { label: "JMI Entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
   { label: "AMU Entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
-  { label: "Jamia Entrance", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
+  { label: "CM SHRI", color: "border-brand-secondary/40 bg-brand-secondary/15 text-brand-secondary-800" },
+  { label: "CBSE Boards", color: "border-brand-primary/20 bg-brand-primary/10 text-brand-primary" },
+  { label: "NEET", color: "border-silver-200 bg-white text-navy-800" },
+  { label: "JEE", color: "border-silver-200 bg-white text-navy-800" },
 ];
 
 /**
@@ -44,12 +46,12 @@ export function Hero() {
           <p className="inline-flex items-center gap-2 rounded-full border border-brand-primary/15 bg-brand-primary/5 px-3.5 py-2 text-[11px] font-bold tracking-[0.14em] text-brand-primary">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-secondary" /> NEURON ACADEMY <span className="text-silver-400">/</span> SHAHEEN BAGH
           </p>
-          <h1 className="mt-6 text-[40px] font-extrabold leading-[1.07] tracking-tight text-navy-950 sm:text-5xl lg:text-[60px]">
-            Focused coaching for
-            <span className="mt-1 block text-brand-primary">your next big step.</span>
+          <h1 className="mt-6 text-[40px] font-extrabold leading-[1.07] tracking-tight text-navy-950 sm:text-5xl lg:text-[54px]">
+            School entrance and board exam coaching,
+            <span className="mt-1 block text-brand-primary">Class 6 to 12.</span>
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-neutral-600 sm:text-lg">
-            Prepare for JEE, NEET, AMU and Jamia entrances with a clear study plan, regular practice and support from your mentors.
+            Prepare for JMI, AMU and CM SHRI school entrances, CBSE board exams, NEET and JEE with concept-first teaching, regular practice and tests.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             {EXAM_PILLS.map((pill) => (
@@ -98,7 +100,7 @@ export function Hero() {
                 eager
                 fallback={
                   <div className="absolute inset-0 flex items-end bg-gradient-to-br from-navy-900 via-navy-800 to-brand-primary p-8">
-                    <p className="max-w-md text-2xl font-bold text-white sm:text-3xl">JEE · NEET · AMU · Jamia</p>
+                    <p className="max-w-md text-2xl font-bold text-white sm:text-3xl">JMI · AMU · CM SHRI · CBSE · NEET · JEE</p>
                   </div>
                 }
               />

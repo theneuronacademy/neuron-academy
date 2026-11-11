@@ -40,7 +40,7 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
 
 export function Logo({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) {
   return (
-    <Link href="/#home" className="group flex min-w-0 items-center gap-2.5" aria-label="Activate your neuron at Neuron Academy. NEET, JEE, JMI, AMU and other Olympiads.">
+    <Link href="/#home" className="group flex min-w-0 items-center gap-2.5" aria-label="Activate your neuron at Neuron Academy. JMI, AMU, CM SHRI, CBSE, NEET and JEE.">
       <span className="transition duration-300 group-hover:rotate-6 group-hover:scale-105">
         <LogoMark size={compact ? 38 : 48} />
       </span>
@@ -52,7 +52,7 @@ export function Logo({ dark = false, compact = false }: { dark?: boolean; compac
           NEURON ACADEMY
         </span>
         <span className={cn("mt-0.5 block whitespace-nowrap text-[6px] font-bold tracking-[0.1em] sm:text-[7px]", dark ? "text-silver-200" : "text-brand-secondary-700")}>
-          NEET • JEE • JMI • AMU • OTHER OLYMPIADS
+          JMI • AMU • CM SHRI • CBSE • NEET • JEE
         </span>
       </span>
     </Link>
