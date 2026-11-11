@@ -14,6 +14,8 @@ import { AnnouncementBar } from "@/components/website/AnnouncementBar";
 import { Navbar } from "@/components/website/Navbar";
 import { TopRunningBanner } from "@/components/website/TopRunningBanner";
 import { Hero } from "@/components/website/Hero";
+import { ToppersWall } from "@/components/website/ToppersWall";
+import { presentFaculty } from "@/lib/displayText";
 import { CrashCourseAd } from "@/components/website/CrashCourseAd";
 import { AdvertisementPopup } from "@/components/website/AdvertisementPopup";
 import { MobileActionBar } from "@/components/website/MobileActionBar";
@@ -308,7 +310,7 @@ export default function HomePage() {
           })) as Course[]);
         }
         if (f && f.every((r) => typeof r.id === "string" && typeof r.name === "string")) {
-          setLiveFaculty(f.map((m) => ({
+          setLiveFaculty(f.map((m) => presentFaculty({
             id: String(m.id),
             name: String(m.name),
             designation: String(m.designation ?? "Faculty"),
@@ -634,44 +636,7 @@ export default function HomePage() {
             <Reveal>
               <SectionHeader dark eyebrow="STUDENT ACHIEVEMENTS" title="Toppers’ wall" desc="Selections and scores our students have earned — verified by the academy." />
             </Reveal>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {wall.length === 0 ? (
-                <p className="col-span-full rounded-card border border-dashed border-white/20 p-8 text-center text-sm font-bold text-silver-300">No results published yet.</p>
-              ) : null}
-              {wall.map((t, i) => (
-                <Reveal key={t.id} delay={i * 70} variant="pop">
-                  <div className="card-lift group relative overflow-hidden rounded-card border border-white/15 bg-white/5 p-6 backdrop-blur transition hover:bg-white/10">
-                    <span className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${t.color}, transparent)` }} aria-hidden />
-                    {t.image ? (
-                      <SmartImage
-                        src={t.image}
-                        alt={`${t.name} — featured result`}
-                        className="mt-6 h-40 w-full overflow-hidden rounded-xl bg-navy-800/60"
-                        imgClassName="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        fallback={
-                          <div className="flex h-full w-full items-center justify-center">
-                            <span className="animate-heartbeat flex h-14 w-14 items-center justify-center rounded-2xl text-white transition group-hover:scale-110" style={{ backgroundColor: `${t.color}33`, border: `1px solid ${t.color}66`, animationDelay: `${i * 0.3}s` }}>
-                              {i === 0 ? <Trophy className="h-6 w-6" style={{ color: t.color }} /> : <Medal className="h-6 w-6" style={{ color: t.color }} />}
-                            </span>
-                          </div>
-                        }
-                      />
-                    ) : (
-                      <span className="animate-heartbeat flex h-14 w-14 items-center justify-center rounded-2xl text-white transition group-hover:scale-110" style={{ backgroundColor: `${t.color}33`, border: `1px solid ${t.color}66`, animationDelay: `${i * 0.3}s` }}>
-                        {i === 0 ? <Trophy className="h-6 w-6" style={{ color: t.color }} /> : <Medal className="h-6 w-6" style={{ color: t.color }} />}
-                      </span>
-                    )}
-                    <p className="mt-4 text-2xl font-extrabold text-white">{t.score}</p>
-                    <p className="mt-1 text-sm font-extrabold text-silver-200">{t.name}</p>
-                    <p className="text-[12px] font-bold" style={{ color: t.color }}>{t.tag}</p>
-                    {t.description ? <p className="mt-2 text-[12px] font-medium leading-relaxed text-silver-300">{t.description}</p> : null}
-                    {wallLive ? null : (
-                      <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold tracking-widest text-silver-300"><Star className="h-3 w-3" /> DEMO — VERIFY BEFORE PUBLISH</p>
-                    )}
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+            <ToppersWall rows={wall} demo={!wallLive} />
             <Reveal delay={150}>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
                 {[
