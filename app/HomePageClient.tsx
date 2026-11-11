@@ -10,7 +10,7 @@ import { Navbar } from "@/components/website/Navbar";
 import { TopRunningBanner, type BannerRow } from "@/components/website/TopRunningBanner";
 import { Hero } from "@/components/website/Hero";
 import { ToppersWall } from "@/components/website/ToppersWall";
-import { presentFaculty } from "@/lib/displayText";
+import { presentFaculty, sizedImage } from "@/lib/displayText";
 import { CrashCourseAd } from "@/components/website/CrashCourseAd";
 import { AdvertisementPopup } from "@/components/website/AdvertisementPopup";
 import { MobileActionBar } from "@/components/website/MobileActionBar";
@@ -595,7 +595,7 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
                     <article className="relative overflow-hidden rounded-2xl border border-silver-200 bg-white shadow-card">
                       <div className="relative h-48 overflow-hidden">
                         {b.coverImageUrl ? (
-                          <img src={b.coverImageUrl} alt={b.title} className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105" />
+                          <img src={sizedImage(b.coverImageUrl, 640)} alt={b.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105" />
                         ) : (
                           <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy-800 p-6 text-center">
                             <BookOpen className="h-8 w-8 mb-3 text-white" />

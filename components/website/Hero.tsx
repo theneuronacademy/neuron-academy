@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Phone, ShieldCheck, MapPin } from "lucide-react";
 import { getLiveHeroImage, type LiveHeroImage } from "@/services/siteApi";
 import { SmartImage, SITE_PHOTOS } from "@/lib/siteImages";
+import { sizedImage } from "@/lib/displayText";
 import { Marquee } from "@/components/website/motion";
 import { EXAM_TICKER } from "@/lib/websiteData";
 import { PublicBackground } from "@/components/design-system/BackgroundPatterns";
@@ -83,7 +84,7 @@ export function Hero() {
               // object-contain keeps the artwork fully visible at its own
               // aspect ratio — navy backdrop frames whatever is not covered.
               <Image
-                src={heroImage?.imageUrl ?? ""}
+                src={sizedImage(heroImage?.imageUrl ?? "")}
                 alt={heroImage?.altText || "Neuron Academy featured announcement"}
                 width={1200}
                 height={800}
