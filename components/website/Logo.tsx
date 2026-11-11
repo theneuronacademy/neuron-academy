@@ -40,7 +40,7 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
 
 export function Logo({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) {
   return (
-    <Link href="/#home" className="group flex min-w-0 items-center gap-2.5" aria-label="Activate your neuron at Neuron Academy. JMI, AMU, CM SHRI, CBSE, NEET and JEE.">
+    <Link href="/#home" className="group flex min-w-0 items-center gap-2.5">
       <span className="transition duration-300 group-hover:rotate-6 group-hover:scale-105">
         <LogoMark size={compact ? 38 : 48} />
       </span>

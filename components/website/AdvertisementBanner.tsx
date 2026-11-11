@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import type { Advertisement } from "@/lib/types";
+import { sizedImage } from "@/lib/displayText";
 
 export function AdvertisementBanner({ ad, compact = false }: { ad: Advertisement; compact?: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -28,7 +29,7 @@ export function AdvertisementBanner({ ad, compact = false }: { ad: Advertisement
           />
         ) : ad.mediaUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={ad.mediaUrl} alt={ad.title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+          <img src={sizedImage(ad.mediaUrl)} alt={ad.title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
         ) : (
           <div className="bg-metallic-dark absolute inset-0 flex items-center justify-center p-6">
             <p className="text-center text-lg font-extrabold text-white">{ad.title}</p>

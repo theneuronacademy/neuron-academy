@@ -91,3 +91,17 @@ export function presentFaculty<T extends { name: string; designation: string; su
     experience: formatExperience(m.experience),
   };
 }
+
+/**
+ * Cloudinary delivery sizing without cropping: cap the width, pick a modern
+ * format and sensible quality. Admin uploads are often multi-megabyte PNGs;
+ * this serves a version sized for the screen. Other URLs, videos and URLs that
+ * already carry a transformation pass through unchanged.
+ */
+export function sizedImage(url: string, width = 1280): string {
+  const marker = "/image/upload/";
+  if (!url.includes("res.cloudinary.com") || !url.includes(marker)) return url;
+  const [head, tail] = url.split(marker);
+  if (!/^v\d+\//.test(tail)) return url;
+  return `${head}${marker}f_auto,q_auto,c_limit,w_${width}/${tail}`;
+}

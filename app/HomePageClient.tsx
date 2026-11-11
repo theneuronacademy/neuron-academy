@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { AnnouncementBar } from "@/components/website/AnnouncementBar";
 import { Navbar } from "@/components/website/Navbar";
-import { TopRunningBanner } from "@/components/website/TopRunningBanner";
+import { TopRunningBanner, type BannerRow } from "@/components/website/TopRunningBanner";
 import { Hero } from "@/components/website/Hero";
 import { ToppersWall } from "@/components/website/ToppersWall";
 import { presentFaculty } from "@/lib/displayText";
@@ -263,7 +263,7 @@ function LivePhone() {
   );
 }
 
-export default function HomePage() {
+export default function HomePage({ initialBannerRows = null }: { initialBannerRows?: BannerRow[] | null }) {
   const [courseCat, setCourseCat] = useState<string>("All");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   // Live CMS rows (published/active only) swap in over the static fallbacks
@@ -427,7 +427,7 @@ export default function HomePage() {
         <ResultJsonLd results={wall} />
         <FAQJsonLd faqs={FAQS.map((f) => ({ question: f.question, answer: f.answer }))} />
         {/* RUNNING BANNER — at the very start, admin-controlled */}
-        <TopRunningBanner />
+        <TopRunningBanner initialRows={initialBannerRows} />
         <Hero />
         <CrashCourseAd />
 

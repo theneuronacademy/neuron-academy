@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Volume2, VolumeX, ArrowRight } from "lucide-react";
 import { getCarouselAds } from "@/lib/mockStore";
-import { getLiveBanners } from "@/services/siteApi";
+import { bannerRowsToAds, getLiveBanners } from "@/services/siteApi";
+import { sizedImage } from "@/lib/displayText";
 import type { Advertisement } from "@/lib/types";
 import { bannerAnimationClass } from "@/components/website/bannerMotion";
 import { cn } from "@/lib/utils";
@@ -102,7 +103,7 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
       // artwork visible (never cropped or stretched) and lets the navy card
       // grow to use the available width.
       /* eslint-disable-next-line @next/next/no-img-element */
-      <img src={ad.mediaUrl} alt={ad.title} className="h-auto w-full" loading="eager" />
+      <img src={sizedImage(ad.mediaUrl)} alt={ad.title} width={ad.mediaWidth} height={ad.mediaHeight} className="h-auto w-full" loading="eager" fetchPriority="high" />
     );
   }
 
@@ -123,6 +124,9 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
   );
 }
 
+/** A banner row as sent by the server page (dates already serialised). */
+export type BannerRow = Record<string, unknown>;
+
 /**
  * TopRunningBanner — admin-controlled promotional banners rendered as
  * floating cards: rounded corners, breathing room from the page edge and
@@ -131,8 +135,10 @@ function SlideMedia({ ad }: { ad: Advertisement }) {
  * destinations navigate in-page), with the admin-selected motion/entrance
  * animation (motion preferences honoured globally in CSS).
  */
-export function TopRunningBanner() {
-  const [ads, setAds] = useState<Advertisement[]>([]);
+export function TopRunningBanner({ initialRows }: { initialRows?: BannerRow[] | null }) {
+  // Rows rendered on the server put the banner in the first HTML, so the
+  // page does not jump when it arrives; the live fetch below still refreshes it.
+  const [ads, setAds] = useState<Advertisement[]>(() => (initialRows ? bannerRowsToAds(initialRows) : []));
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchX = useRef<number | null>(null);
@@ -141,7 +147,10 @@ export function TopRunningBanner() {
     // Phase 11: database banners win; mockStore stays dev fallback.
     void getLiveBanners().then((live) => {
       if (live && live.length > 0) {
-        setAds(live);
+        setAds((prev) => {
+          const known = new Map(prev.map((a) => [a.id, a]));
+          return live.map((a) => ({ ...a, mediaWidth: a.mediaWidth ?? known.get(a.id)?.mediaWidth, mediaHeight: a.mediaHeight ?? known.get(a.id)?.mediaHeight }));
+        });
       } else {
         const local = getCarouselAds();
         if (local.length > 0) {

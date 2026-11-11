@@ -29,6 +29,9 @@ export interface Advertisement {
   description: string;
   mediaType: AdMediaType;
   mediaUrl: string;
+  /** Natural size of an image banner, when known, so the page can reserve its space. */
+  mediaWidth?: number;
+  mediaHeight?: number;
   posterUrl: string;
   ctaText: string;
   ctaLink: string;

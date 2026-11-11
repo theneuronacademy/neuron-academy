@@ -208,3 +208,53 @@ export async function getPublicFacultyList(): Promise<FacultyMember[]> {
   }
   return FACULTY;
 }
+
+/**
+ * Active, in-window banners for the home page's first render, with each
+ * image's natural size so the browser can reserve its space. Returns null
+ * when the database is unavailable — the page then loads banners in the
+ * browser exactly as before.
+ */
+export async function getPublicBannerRows(): Promise<Record<string, unknown>[] | null> {
+  try {
+    const db: Db = getDb();
+    if (!db) return null;
+    const now = new Date();
+    const rows = await db.banner.findMany({ where: { isActive: true }, orderBy: { displayOrder: "asc" }, take: 20 });
+    const visible = (rows as Record<string, unknown>[]).filter((b) => {
+      const start = b.startDate as Date | null | undefined;
+      const end = b.endDate as Date | null | undefined;
+      return (start == null || start <= now) && (end == null || end >= now);
+    });
+    return await Promise.all(
+      visible.map(async (b) => {
+        const row: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(b)) row[k] = v instanceof Date ? v.toISOString() : v;
+        const size = typeof b.imageUrl === "string" ? await cloudinaryImageSize(b.imageUrl) : null;
+        if (size) {
+          row.mediaWidth = size.width;
+          row.mediaHeight = size.height;
+        }
+        return row;
+      }),
+    );
+  } catch {
+    return null;
+  }
+}
+
+/** Natural pixel size of a Cloudinary image (fl_getinfo); null if it cannot be read quickly. */
+async function cloudinaryImageSize(url: string): Promise<{ width: number; height: number } | null> {
+  const marker = "/image/upload/";
+  if (!url.includes("res.cloudinary.com") || !url.includes(marker)) return null;
+  try {
+    const res = await fetch(url.replace(marker, `${marker}fl_getinfo/`), { signal: AbortSignal.timeout(3000), next: { revalidate: 86400 } });
+    if (!res.ok) return null;
+    const info = (await res.json()) as { input?: { width?: number; height?: number } };
+    const width = info.input?.width;
+    const height = info.input?.height;
+    return typeof width === "number" && typeof height === "number" && width > 0 && height > 0 ? { width, height } : null;
+  } catch {
+    return null;
+  }
+}

@@ -5,6 +5,7 @@ import { X, Volume2, VolumeX } from "lucide-react";
 import type { Advertisement } from "@/lib/types";
 import { getPopupAds, markPopupDismissed, wasPopupDismissedThisSession } from "@/lib/mockStore";
 import { getLivePopups } from "@/services/siteApi";
+import { sizedImage } from "@/lib/displayText";
 
 export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement | null }) {
   const [ad, setAd] = useState<Advertisement | null>(forceAd ?? null);
@@ -65,7 +66,7 @@ export function AdvertisementPopup({ forceAd = null }: { forceAd?: Advertisement
             // media's natural aspect ratio — the fixed-height box with
             // object-cover cropped portrait/square popup images.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={ad.mediaUrl} alt={ad.title} className="block h-auto max-h-[280px] w-full object-contain sm:max-h-[340px]" />
+            <img src={sizedImage(ad.mediaUrl, 900)} alt={ad.title} className="block h-auto max-h-[280px] w-full object-contain sm:max-h-[340px]" />
           ) : (
             <div className="bg-metallic-dark flex h-56 items-center justify-center p-6 sm:h-64">
               <p className="text-center text-xl font-extrabold text-white">{ad.title}</p>
