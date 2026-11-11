@@ -6,12 +6,12 @@ import type { Testimonial } from "@/data/testimonials";
 import type { AcademyResult } from "@/data/results";
 import { CONTACT } from "@/data/contact";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://neuronacademy.in";
+import { SITE_URL } from "@/lib/site";
 
 export function OrganizationJsonLd() {
   const json = {
     "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
+    "@type": ["EducationalOrganization", "LocalBusiness"],
     name: "Neuron Academy",
     url: SITE_URL,
     logo: `${SITE_URL}/images/logo.png`,
@@ -30,6 +30,18 @@ export function OrganizationJsonLd() {
       latitude: 28.5562,
       longitude: 77.2891,
     },
+    image: `${SITE_URL}/opengraph-image.jpg`,
+    hasMap: CONTACT.MAP_LINK_URL,
+    areaServed: ["Shaheen Bagh", "Jamia Nagar", "Okhla", "New Delhi"],
+    // Matches CONTACT.hours: Monday–Saturday, 8:00 AM–10:30 PM.
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        opens: "08:00",
+        closes: "22:30",
+      },
+    ],
     telephone: CONTACT.phoneHref.replace("tel:", ""),
     email: CONTACT.email,
     sameAs: [

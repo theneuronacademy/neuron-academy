@@ -17,9 +17,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const member = await getPublicFacultyBySlug(id);
-  if (!member) return { title: "Faculty Not Found | Neuron Academy" };
+  if (!member) return { title: "Faculty Not Found" };
   return {
-    title: `${member.name} — ${member.subject} Faculty | Neuron Academy`,
+    title: `${member.name} — ${member.subject} Faculty`,
+    alternates: { canonical: `/faculty/${member.id}` },
     description: `${member.name}, ${member.designation} (${member.subject}) at Neuron Academy. ${member.intro}`.slice(0, 300),
   };
 }

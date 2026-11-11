@@ -6,27 +6,27 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://neuronacademy.in";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Neuron Academy | Activate Your Neuron",
+    default: "Neuron Academy Shaheen Bagh | JMI, AMU, CBSE, NEET & JEE Coaching",
     template: "%s | Neuron Academy",
   },
   description:
     "Neuron Academy, Shaheen Bagh, New Delhi: coaching for Classes 6 to 12. JMI, AMU and CM SHRI school entrance preparation, CBSE board exams, NEET and JEE.",
   keywords: ["Neuron Academy", "JMI entrance coaching", "Jamia school entrance", "AMU entrance coaching", "CM SHRI entrance", "CBSE board coaching", "NEET coaching", "JEE coaching", "Shaheen Bagh coaching", "scholarship test"],
   openGraph: {
-    title: "Neuron Academy | Activate Your Neuron",
+    title: "Neuron Academy Shaheen Bagh | JMI, AMU, CBSE, NEET & JEE Coaching",
     description: "Coaching for Classes 6 to 12 in Shaheen Bagh: JMI, AMU and CM SHRI school entrances, CBSE boards, NEET and JEE.",
     type: "website",
     siteName: "Neuron Academy",
-    url: "/",
+    locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Neuron Academy | Activate Your Neuron",
+    title: "Neuron Academy Shaheen Bagh | JMI, AMU, CBSE, NEET & JEE Coaching",
     description: "Coaching for Classes 6 to 12: JMI, AMU and CM SHRI school entrances, CBSE boards, NEET and JEE.",
   },
   icons: {

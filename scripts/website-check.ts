@@ -99,7 +99,7 @@ async function main(): Promise<void> {
   }
 
   // 5. homepage consumes live data with static fallbacks intact.
-  const home = read("app/page.tsx");
+  const home = read("app/HomePageClient.tsx");
   check("homepage loads live CMS on mount", home.includes("getLiveCourses") && home.includes("getLiveFaculty") && home.includes("getLiveGallery") && home.includes("getLiveTestimonials"));
   check("homepage keeps static fallbacks where they exist", home.includes("liveFaculty ?? FACULTY") && home.includes("liveGallery ?? GALLERY"));
   check("homepage validates live rows before swapping", home.includes('typeof r.id === "string"'));
@@ -133,7 +133,7 @@ async function checkDetailSlugs(): Promise<void> {
   check("course lookup requires ACTIVE status", srv.includes("where: { slug: key, status: \"ACTIVE\" }"));
   check("faculty lookup requires ACTIVE status", srv.includes("where: { id: key, status: \"ACTIVE\" }"));
   check("faculty public select excludes PII", !/select:\s*\{[^}]*\b(email|phone|userId)\b/.test(srv) && srv.includes("photo: true"));
-  check("server helpers never imported by client UI", !read("app/page.tsx").includes("siteServer") && !read("components/website/Testimonials.tsx").includes("siteServer"));
+  check("server helpers never imported by client UI", !read("app/HomePageClient.tsx").includes("siteServer") && !read("components/website/Testimonials.tsx").includes("siteServer"));
 
   // Static: detail pages resolve live slugs, keep 404s and resolved metadata.
   // (Faculty detail routes on /faculty/[id]; the resolver helpers keep the
@@ -201,8 +201,9 @@ async function checkShowcase(): Promise<void> {
   check("admin form captures consent + publish", admin.includes("Consent confirmed") && admin.includes("Publish immediately"));
 
   // Static: homepage wall prefers published rows, keeps honest empty state.
-  const home = read("app/page.tsx");
+  const home = read("app/HomePageClient.tsx");
   check("wall loads live showcase", home.includes("getLiveShowcase"));
-  check("wall badge only on static fallback", home.includes("wallLive ? null : (") && home.includes("DEMO — VERIFY BEFORE PUBLISH"));
-  check("wall keeps empty state", home.includes("No results published yet."));
+  const wallUi = read("components/website/ToppersWall.tsx");
+  check("wall badge only on static fallback", home.includes("demo={!wallLive}") && wallUi.includes("DEMO — VERIFY BEFORE PUBLISH"));
+  check("wall keeps empty state", wallUi.includes("No results published yet."));
 }

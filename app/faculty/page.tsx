@@ -7,7 +7,8 @@ import { FacultyJsonLd } from "@/components/website/SchemaMarkup";
 import { getPublicFacultyList } from "@/services/siteServer";
 
 export const metadata: Metadata = {
-  title: "Faculty | Neuron Academy",
+  title: "Faculty",
+  alternates: { canonical: "/faculty" },
   description: "Meet the educators at Neuron Academy — subject specialists for school entrances (JMI, AMU, CM SHRI), CBSE boards, NEET and JEE in Shaheen Bagh, New Delhi.",
 };
 
