@@ -56,7 +56,7 @@
 | CTA | 0:37.5–0:42 | Aaj hi WhatsApp kijiye — nine seven one one nine… one seven three one seven. | One clear instruction |
 | Sign-off | 0:42–0:45 | Activate your Neuron — at Neuron Academy. | Brand recall |
 
-Word count: 92 spoken words (about 195 syllables). At a natural advertising pace this fills roughly 36 s of speech and leaves about 9 s for pauses, which is what stops the narration sounding rushed.
+Word count: 113 spoken words, counting each digit of the phone number as a word (about 195 syllables). At a natural advertising pace this fills roughly 36 s of speech and leaves about 9 s for pauses, which is what stops the narration sounding rushed.
 
 **What the script deliberately does not say:** no marks or results promised, no "limited seats", no faculty claims, no testimonials, no discount other than the stated ₹2,999 → ₹1,999.
 
