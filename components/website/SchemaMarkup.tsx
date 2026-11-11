@@ -45,6 +45,7 @@ export function OrganizationJsonLd() {
     telephone: CONTACT.phoneHref.replace("tel:", ""),
     email: CONTACT.email,
     sameAs: [
+      CONTACT.GOOGLE_PROFILE_URL,
       "https://www.instagram.com/neuron.academy_",
       "https://www.youtube.com/@neuron.academy",
     ],

@@ -874,6 +874,9 @@ export default function HomePage() {
                     <a href={CONTACT.MAP_LINK_URL} target="_blank" rel="noreferrer" className="mt-2 inline-flex text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
                       Open in Google Maps
                     </a>
+                    <a href={CONTACT.GOOGLE_PROFILE_URL} target="_blank" rel="noreferrer" className="ml-5 mt-2 inline-flex text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
+                      See our Google profile and reviews
+                    </a>
                   </>
                 ) : (
                   <div className="mt-4 flex h-36 flex-col items-center justify-center gap-1 rounded-card border border-dashed border-silver-300 bg-silver-50 px-4 text-center">
