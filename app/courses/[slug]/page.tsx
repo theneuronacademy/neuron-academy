@@ -19,10 +19,11 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const course = await getPublicCourseBySlug(slug);
-  if (!course) return { title: "Course Not Found | Neuron Academy" };
+  if (!course) return { title: "Course Not Found" };
   return {
-    title: `${course.name} | Neuron Academy`,
-    description: `${course.name} — ${course.desc} Duration: ${course.duration}. Mode: ${course.mode}.`,
+    title: `${course.name} in Shaheen Bagh, New Delhi`,
+    description: `${course.name} at Neuron Academy, Shaheen Bagh — ${course.desc} Duration: ${course.duration}. Mode: ${course.mode}.`.slice(0, 300),
+    alternates: { canonical: `/courses/${slug}` },
   };
 }
 

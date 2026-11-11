@@ -8,7 +8,8 @@ import { getDb } from "@/lib/prisma";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Scholarship Tests | Neuron Academy",
+  title: "Scholarship Tests",
+  alternates: { canonical: "/scholarship-tests" },
   description: "Free and paid scholarship mock tests at Neuron Academy, Shaheen Bagh. Register, start your test, and get instant results.",
 };
 

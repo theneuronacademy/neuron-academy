@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "https://neuronacademy.in";
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin"] }],
-    sitemap: `${base}/sitemap.xml`,
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin", "/student", "/parent", "/offline"] }],
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

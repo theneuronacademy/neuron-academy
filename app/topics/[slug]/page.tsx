@@ -14,9 +14,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const topic = getTopicBySlug(slug);
-  if (!topic) return { title: "Topic Not Found | Neuron Academy" };
+  if (!topic) return { title: "Topic Not Found" };
   return {
-    title: `${topic.title} | Neuron Academy`,
+    title: topic.title,
+    alternates: { canonical: `/topics/${topic.slug}` },
     description: topic.lead.slice(0, 300),
   };
 }
