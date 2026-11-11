@@ -4,6 +4,7 @@ import type { Course } from "@/data/courses";
 import type { FacultyMember } from "@/data/faculty";
 import type { Testimonial } from "@/data/testimonials";
 import type { AcademyResult } from "@/data/results";
+import { CONTACT } from "@/data/contact";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://neuronacademy.in";
 
@@ -18,7 +19,7 @@ export function OrganizationJsonLd() {
       "JEE, NEET, AMU & Jamia entrance coaching in Shaheen Bagh, New Delhi — small batches, weekly mocks and mentor-guided preparation.",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Shaheen Bagh",
+      streetAddress: "FA-23, near Shaheen Masjid, Shaheen Bagh, Jamia Nagar",
       addressLocality: "New Delhi",
       addressRegion: "Delhi",
       postalCode: "110025",
@@ -29,13 +30,11 @@ export function OrganizationJsonLd() {
       latitude: 28.5562,
       longitude: 77.2891,
     },
-    telephone: "+91-9876543210",
-    email: "info@neuronacademy.in",
+    telephone: CONTACT.phoneHref.replace("tel:", ""),
+    email: CONTACT.email,
     sameAs: [
-      "https://www.facebook.com/neuronacademy",
-      "https://www.instagram.com/neuronacademy",
-      "https://www.youtube.com/@neuronacademy",
-      "https://www.linkedin.com/company/neuronacademy",
+      "https://www.instagram.com/neuron.academy_",
+      "https://www.youtube.com/@neuron.academy",
     ],
     knowsAbout: [
       "JEE Main",

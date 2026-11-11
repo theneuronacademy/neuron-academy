@@ -15,7 +15,7 @@ export const ACADEMY = {
     primaryButton: { label: "Explore Courses", href: "#courses" },
     secondaryButton: { label: "Book Free Demo", href: "#contact" },
     backgroundType: "gradient" as const,
-    backgroundUrl: "/images/hero.jpg",
+    backgroundUrl: "/images/hero.webp",
   },
 };
 
