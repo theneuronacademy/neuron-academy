@@ -875,7 +875,10 @@ export default function HomePage() {
                       Open in Google Maps
                     </a>
                     <a href={CONTACT.GOOGLE_PROFILE_URL} target="_blank" rel="noreferrer" className="ml-5 mt-2 inline-flex text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
-                      See our Google profile and reviews
+                      See our Google profile
+                    </a>
+                    <a href={CONTACT.GOOGLE_REVIEW_URL} target="_blank" rel="noreferrer" className="ml-5 mt-2 inline-flex text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
+                      Write a Google review
                     </a>
                   </>
                 ) : (

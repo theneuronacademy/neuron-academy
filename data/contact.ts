@@ -10,6 +10,8 @@ export const CONTACT = {
   hours: "Monday–Saturday · 8:00 AM–10:30 PM",
   // The academy's Google Business Profile (share link supplied by the academy).
   GOOGLE_PROFILE_URL: "https://share.google/7BHPtqdvXK9XuFijN",
+  // Opens the "write a review" box on the Google profile.
+  GOOGLE_REVIEW_URL: "https://g.page/r/CfaL5uWb4XhOEAE/review",
   MAP_EMBED_URL: "https://www.google.com/maps?q=Neuron%20Academy%2C%20FA-23%2C%20near%20Shaheen%20Masjid%2C%20Shaheen%20Bagh%2C%20Jamia%20Nagar%2C%20New%20Delhi%20110025&output=embed",
   MAP_LINK_URL: "https://www.google.com/maps/search/?api=1&query=FA-23%2C%20near%20Shaheen%20Masjid%2C%20Shaheen%20Bagh%2C%20Jamia%20Nagar%2C%20New%20Delhi%20110025",
 };

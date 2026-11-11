@@ -28,8 +28,8 @@ export function Footer() {
             <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" />
             {CONTACT_INFO.address}
           </a>
-          <a href={CONTACT.GOOGLE_PROFILE_URL} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
-            <Star className="h-4 w-4" aria-hidden /> Find us and review us on Google
+          <a href={CONTACT.GOOGLE_REVIEW_URL} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
+            <Star className="h-4 w-4" aria-hidden /> Review us on Google
           </a>
           <div className="mt-5 flex gap-2">
             {SOCIAL_LINKS.map((social) => {
