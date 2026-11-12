@@ -173,7 +173,7 @@ ACTIVATE YOUR NEURON AT NEURON ACADEMY
 
 **YouTube Shorts**
 
-Title (57 characters):
+Title (56 characters):
 ```
 HCF × LCM = Product? Not Always! | Class 10 Real Numbers
 ```
