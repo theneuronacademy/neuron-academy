@@ -8,6 +8,7 @@ import { getUserFromRequest } from "@/lib/session";
 export const dynamic = "force-dynamic";
 
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
+const POLL_INTERVAL = 30000; // 30 seconds — matches the 30 s look-back of the queries below
 
 export async function GET(request: NextRequest) {
   const viewer = getUserFromRequest(request);
@@ -47,7 +48,9 @@ export async function GET(request: NextRequest) {
         send("heartbeat", { timestamp: new Date().toISOString() });
       }, HEARTBEAT_INTERVAL);
 
-      // Poll for changes every 5 seconds
+      // Poll for changes every 30 seconds. (Was 5 s: three database queries
+      // twelve times a minute for as long as an admin dashboard tab stayed
+      // open, which dominated the server CPU allowance.)
       const pollInterval = setInterval(async () => {
         if (isClosed) {
           clearInterval(pollInterval);
@@ -109,7 +112,7 @@ export async function GET(request: NextRequest) {
         } catch (error) {
           console.error("SSE poll error:", error);
         }
-      }, 5000);
+      }, POLL_INTERVAL);
 
       // Cleanup on close
       request.signal.addEventListener("abort", () => {

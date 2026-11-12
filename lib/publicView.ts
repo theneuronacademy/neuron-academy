@@ -16,9 +16,9 @@ import { getUserFromRequest } from "@/lib/session";
 export { publicPath } from "@/lib/publicPath";
 
 /** Seconds a public response may be served from the CDN before it is refreshed. */
-const FRESH_SECONDS = 60;
+const FRESH_SECONDS = 300;
 /** Seconds a stale copy may still be served while a fresh one is fetched in the background. */
-const STALE_SECONDS = 600;
+const STALE_SECONDS = 3600;
 
 export function isPublicView(req: Request): boolean {
   try {

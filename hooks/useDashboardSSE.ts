@@ -100,8 +100,23 @@ export function useDashboardSSE(onEvent?: (event: DashboardEvent) => void) {
   }, []);
 
   useEffect(() => {
-    connect();
-    return () => disconnect();
+    // Keep the live feed open only while the dashboard tab is actually being
+    // looked at: a forgotten background tab would otherwise hold a server
+    // function running for hours.
+    const sync = () => {
+      if (document.visibilityState === "visible") {
+        reconnectAttempts.current = 0;
+        connect();
+      } else {
+        disconnect();
+      }
+    };
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      document.removeEventListener("visibilitychange", sync);
+      disconnect();
+    };
   }, [connect, disconnect]);
 
   return { connected, lastEvent, error, reconnect: connect };
