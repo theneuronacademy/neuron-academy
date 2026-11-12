@@ -208,7 +208,7 @@ ACTIVATE YOUR NEURON AT NEURON ACADEMY
 
 **YouTube Shorts**
 
-Title (60 characters):
+Title (63 characters):
 ```
 Discriminant Trick: Nature of Roots in Seconds | Class 10 Maths
 ```
