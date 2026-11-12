@@ -86,7 +86,11 @@ async function main(): Promise<void> {
   const facultyApi = read("app/api/faculty/route.ts");
   check("faculty hides inactive profiles publicly", facultyApi.includes('{ status: "ACTIVE" }') && facultyApi.includes('viewer?.role === "ADMIN" ? {}'));
   const coursesApi = read("app/api/courses/route.ts");
-  check("courses hide inactive publicly, all for ADMIN", coursesApi.includes('{ status: "ACTIVE" }') && coursesApi.includes("getUserFromRequest(req)"));
+  check("courses hide inactive publicly, all for ADMIN", coursesApi.includes('{ status: "ACTIVE" }') && (coursesApi.includes("getUserFromRequest(req)") || coursesApi.includes("viewerFor(req)")));
+  // Public-view reads are CDN-cached, so they must never depend on the session.
+  const publicView = read("lib/publicView.ts");
+  check("public-view reads ignore the session", publicView.includes("isPublicView(req) ? null : getUserFromRequest(req)"));
+  check("only successful public-view reads are cacheable", publicView.includes("isPublicView(req) && res.status === 200"));
   const galleryApi = read("app/api/gallery/route.ts");
   check("gallery filters isActive for non-admin", galleryApi.includes("{ isActive: true }"));
   const testiApi = read("app/api/testimonials/route.ts");

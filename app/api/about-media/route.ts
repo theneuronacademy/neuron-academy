@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
-import { getUserFromRequest } from "@/lib/session";
+import { viewerFor, withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,7 @@ function isMissingAboutTable(err: unknown): boolean {
   return msg.includes("P2021") && msg.includes("AboutImage");
 }
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   if (!db) {
     // No database configured — the public About section falls back to its
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     return ok({ items: [], source: "fallback" });
   }
   // ADMIN sees all rows (including unpublished); visitors only active ones.
-  const viewer = getUserFromRequest(req);
+  const viewer = viewerFor(req);
   try {
     const rows = await db.aboutImage.findMany({
       where: viewer?.role === "ADMIN" ? {} : { isActive: true },
@@ -75,4 +75,8 @@ export async function POST(req: NextRequest) {
     }
     return serverError("aboutMedia:create", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }

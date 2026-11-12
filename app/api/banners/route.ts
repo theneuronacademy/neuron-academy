@@ -6,10 +6,10 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
-import { getUserFromRequest } from "@/lib/session";
 import { isNonEmpty, missingFields, parseDate } from "@/lib/validation";
 import { DEMO_BANNERS } from "@/data/admin";
 import { isBannerAnimation, toBannerAnimation } from "@/components/website/bannerMotion";
+import { viewerFor, withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
@@ -46,12 +46,12 @@ async function listBanners(db: import("@prisma/client").PrismaClient) {
   }
 }
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   if (!db) return ok({ items: DEMO_BANNERS, source: "demo" });
   // Phase 17 — ADMIN manages the full catalogue (incl. drafts/inactive);
   // everyone else sees only active, in-window banners (no draft disclosure).
-  const viewer = getUserFromRequest(req);
+  const viewer = viewerFor(req);
   const now = new Date();
   try {
     const rows = await listBanners(db);
@@ -172,4 +172,8 @@ export async function POST(req: NextRequest) {
     }
     return serverError("banners:create", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }

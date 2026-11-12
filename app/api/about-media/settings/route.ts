@@ -10,6 +10,7 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { toBannerAnimation } from "@/components/website/bannerMotion";
+import { withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +30,7 @@ function parseLayout(v: string | null | undefined): AboutLayoutSetting {
   return (LAYOUTS as readonly string[]).includes(v ?? "") ? (v as AboutLayoutSetting) : ABOUT_DEFAULT_SETTINGS.layout;
 }
 
-export async function GET() {
+async function handleGet() {
   const db = getDb();
   if (!db) return ok({ ...ABOUT_DEFAULT_SETTINGS, source: "defaults" });
   try {
@@ -87,4 +88,8 @@ export async function PATCH(req: NextRequest) {
     }
     return serverError("aboutMedia:settings:update", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet());
 }

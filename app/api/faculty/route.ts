@@ -4,10 +4,10 @@
 import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
-import { getUserFromRequest } from "@/lib/session";
 import { requireApiRole } from "@/lib/server-auth";
 import { isEmail, isNonEmpty, isPhone, missingFields } from "@/lib/validation";
 import { DEMO_FACULTY } from "@/data/admin";
+import { viewerFor, withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
@@ -29,12 +29,12 @@ function toAdmin(f: any) {
   };
 }
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   // P0: email/phone are PII — ADMIN sessions get the full shape, everyone
   // else (website cards, anonymous) gets the public shape. Demo rows are
   // fictional but go through the same strip for a consistent contract.
-  const viewer = getUserFromRequest(req);
+  const viewer = viewerFor(req);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const toPublic = (f: any) => {
     const { email: _e, phone: _p, ...rest } = toAdmin(f);
@@ -93,4 +93,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return serverError("faculty:create", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }

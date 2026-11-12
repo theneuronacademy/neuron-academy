@@ -5,13 +5,13 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
-import { getUserFromRequest } from "@/lib/session";
 import { isNonEmpty, missingFields, toSlug } from "@/lib/validation";
 import { COURSES } from "@/data/courses";
+import { viewerFor, withPublicCache } from "@/lib/publicView";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   const db = getDb();
   if (!db) {
     return ok({
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
   try {
     // Unpublished courses stay invisible publicly; ADMIN sees everything
     // for catalogue management (same pattern as gallery/testimonials).
-    const viewer = getUserFromRequest(req);
+    const viewer = viewerFor(req);
     const rows = await db.course.findMany({
       where: viewer?.role === "ADMIN" ? {} : { status: "ACTIVE" },
       orderBy: { displayOrder: "asc" },
@@ -81,4 +81,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return serverError("courses:create", err);
   }
+}
+
+export async function GET(req: NextRequest) {
+  return withPublicCache(req, await handleGet(req));
 }

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 // Phase 13 — public scholarship catalogue. Cacheable (no personalized data);
 // metadata only — never questions, answers, or admin internals.
-export const revalidate = 60;
+export const revalidate = 300;
 
 interface CatalogueTest {
   id: string;
