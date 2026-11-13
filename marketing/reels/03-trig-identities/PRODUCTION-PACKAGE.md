@@ -1,6 +1,6 @@
 # NEURON ACADEMY Reel 03 – Three Trigonometric Identities from One
 
-**Status:** silent animated preview rendered (`output/trig-identities-silent-preview.mp4`, 36.0 s, 1080 × 1920, 30 fps, no music). The final reel is timed once the voice-over below is recorded.
+**Status:** final reel rendered with the supplied voice-over: `output/trig-identities-final.mp4` (31.5 s, 1080 × 1920, 30 fps, H.264 + AAC, no music). The 31.0 s recording is used at its natural pace; only the whispered trap line was lifted about 5 dB to match the rest (`assets/voiceover-fitted.mp3`). Scene timings below are the planned ones; the final cut follows the voice (`src/timing.json`, `subtitles-final.srt`).
 
 | Field | Value |
 |---|---|

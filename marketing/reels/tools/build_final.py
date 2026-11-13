@@ -2,7 +2,8 @@
 Tightens pauses, drops listed non-speech sounds, speeds the voice just enough to finish under the
 limit, then writes <reel>/src/reel-final.html whose seek() is warped so each cue lands on its word.
 Usage: python3 tools/build_final.py <reel-dir> <voice.mp3> <work-dir>
-Reads <reel-dir>/src/timing.json: {"drop":[[a,b],...], "anchors":[[design_s, original_audio_s],...], "design_end":39}
+Reads <reel-dir>/src/timing.json: {"drop":[[a,b],...], "anchors":[[design_s, original_audio_s],...], "design_end":39,
+ "natural":true (optional: keep the recording's own pauses), "gain":[[a,b,dB],...] (optional: lift quiet passages)}
 """
 import json, subprocess, sys, wave, re, os
 import numpy as np
@@ -12,6 +13,9 @@ GAP, PAD, LIMIT, TAIL, SR = 0.10, 0.03, 39.6, 0.45, 44100
 raw = f"{work}/raw.wav"
 subprocess.run(["ffmpeg","-y","-loglevel","error","-i",voice,"-ar",str(SR),"-ac","1",raw],check=True)
 w = wave.open(raw); x = np.frombuffer(w.readframes(w.getnframes()),dtype=np.int16).astype(np.float32)/32768
+for a,b,g in cfg.get('gain',[]):
+    i,j = int(a*SR),int(b*SR); r = int(.05*SR); e = np.ones(j-i); e[:r] = np.linspace(0,1,r); e[-r:] = np.linspace(1,0,r)
+    x[i:j] *= 1+(10**(g/20)-1)*e
 n = len(x); win = int(.02*SR)
 db = 20*np.log10(np.sqrt(np.convolve(x**2,np.ones(win)/win,'same'))+1e-6)
 low = db < -38; sil = []; k = 0
@@ -31,7 +35,9 @@ for a,b in segs:
     c[:f] *= np.linspace(0,1,f); c[-f:] *= np.linspace(1,0,f)
     starts.append((a2,pos)); out.append(c); pos += len(c)/SR
     g = np.zeros(int(GAP*SR),np.float32); out.append(g); pos += GAP
-tight = np.concatenate(out[:-1]); tight_len = len(tight)/SR
+tight = np.concatenate(out[:-1])
+if cfg.get('natural'): tight = x; starts = [(0.0,0.0)]
+tight_len = len(tight)/SR
 tempo = max(1.0, (tight_len+TAIL)/LIMIT)
 ww = wave.open(f"{work}/tight.wav","wb"); ww.setnchannels(1); ww.setsampwidth(2); ww.setframerate(SR)
 ww.writeframes((np.clip(tight,-1,1)*32767).astype(np.int16).tobytes()); ww.close()
