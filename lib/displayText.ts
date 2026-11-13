@@ -126,3 +126,19 @@ export function courseHighlights(description: string): string[] {
     .filter((l) => /^[-•*]\s*\S/.test(l))
     .map((l) => l.replace(/^[-•*]\s*/, ""));
 }
+
+const ROMAN: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10, XI: 11, XII: 12 };
+
+/** "VIII" / "Xth" / "10" / "Class 9" → "Class 8" / "Class 10" / "Class 10" / "Class 9"; other text is returned tidied. */
+export function classLabel(raw: string): string {
+  const s = raw.trim().replace(/^class\s*/i, "").replace(/(st|nd|rd|th)$/i, "").trim();
+  const n = /^\d{1,2}$/.test(s) ? Number(s) : ROMAN[s.toUpperCase()];
+  return n && n >= 1 && n <= 12 ? `Class ${n}` : raw.trim();
+}
+
+/** Display names for common admin shorthand in book/resource tags. */
+export function resourceTag(raw: string): string {
+  const s = raw.trim();
+  const map: Record<string, string> = { math: "Mathematics", maths: "Mathematics", "questions bank": "Question Bank", "question banks": "Question Bank" };
+  return map[s.toLowerCase()] ?? s;
+}

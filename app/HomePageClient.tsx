@@ -10,7 +10,7 @@ import { Navbar } from "@/components/website/Navbar";
 import { TopRunningBanner, type BannerRow } from "@/components/website/TopRunningBanner";
 import { Hero } from "@/components/website/Hero";
 import { ToppersWall } from "@/components/website/ToppersWall";
-import { presentFaculty, sizedImage } from "@/lib/displayText";
+import { classLabel, courseHighlights, courseSummary, presentFaculty, resourceTag, sizedImage, titleCaseName } from "@/lib/displayText";
 import { CrashCourseAd } from "@/components/website/CrashCourseAd";
 import { AdvertisementPopup } from "@/components/website/AdvertisementPopup";
 import { MobileActionBar } from "@/components/website/MobileActionBar";
@@ -584,71 +584,74 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
         <section id="books" className="relative overflow-hidden bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="OUR BOOKS" title="Study books & resources" desc="Recommended books and study materials for entrance preparation." />
+              <SectionHeader eyebrow="STUDY MATERIAL" title="Question banks & study resources" desc="Practice material prepared by Neuron Academy for entrance and board examinations." />
             </Reveal>
             {(liveBooks ?? []).length === 0 ? (
               <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No books published yet.</p>
             ) : (
-              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {(liveBooks ?? []).map((b, i) => (
-                  <Reveal key={b.id} delay={(i % 3) * 90} variant="pop">
-                    <article className="relative overflow-hidden rounded-2xl border border-silver-200 bg-white shadow-card">
-                      <div className="relative h-48 overflow-hidden">
+              <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {(liveBooks ?? []).map((b, i) => {
+                  const open = b.visibleTo === "ALL";
+                  const link = b.pdfUrl || b.externalUrl;
+                  const points = courseHighlights(b.description ?? "").slice(0, 4);
+                  const tags = [b.subject && resourceTag(b.subject), b.className && classLabel(b.className), b.category && resourceTag(b.category)].filter(Boolean) as string[];
+                  return (
+                  <Reveal key={b.id} delay={(i % 3) * 90} variant="pop" className="h-full">
+                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-silver-200 bg-white shadow-card">
+                      {/* Whole cover visible: contained on a soft backdrop instead of cropped. */}
+                      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-silver-50 to-brand-primary/5">
                         {b.coverImageUrl ? (
-                          <img src={sizedImage(b.coverImageUrl, 640)} alt={b.title} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105" />
+                          <img src={sizedImage(b.coverImageUrl, 800)} alt={`Cover: ${b.title}`} loading="lazy" className="absolute inset-0 h-full w-full object-contain p-3" />
                         ) : (
                           <div className="absolute inset-0 flex flex-col items-center justify-center bg-navy-800 p-6 text-center">
-                            <BookOpen className="h-8 w-8 mb-3 text-white" />
+                            <BookOpen className="mb-3 h-8 w-8 text-white" aria-hidden />
                             <p className="text-sm font-extrabold text-white">{b.title}</p>
                           </div>
                         )}
-                        <span className="absolute top-3 right-3 rounded-full bg-teal-500 px-2.5 py-1 text-[10px] font-extrabold text-white tracking-widest">
-                          {b.visibleTo === "ALL" ? "ALL STUDENTS" : "REGULAR ONLY"}
-                        </span>
                       </div>
-                      <div className="p-4">
-                        <h3 className="text-[15px] font-extrabold text-navy-700">{b.title}</h3>
-                        {b.author && (
-                          <p className="mt-0.5 text-[12px] text-muted">{b.author}</p>
-                        )}
-                        <p className="mt-2 text-[13px] leading-relaxed text-muted line-clamp-2">
-                          {b.description || "No description available."}
-                        </p>
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {b.subject && <span className="text-[11px] font-bold text-brand-primary bg-brand-primary/10 px-2 py-1 rounded">{b.subject}</span>}
-                          {b.className && <span className="text-[11px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded">{b.className}</span>}
-                          {b.category && <span className="text-[11px] font-bold text-navy-700 bg-silver-100 px-2 py-1 rounded">{b.category}</span>}
+                      <div className="flex flex-1 flex-col p-5">
+                        <div className="flex flex-wrap gap-1.5">
+                          <span className={open ? "rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-emerald-200" : "rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-800 ring-1 ring-amber-200"}>
+                            {open ? "Free to view" : "Enrolled students"}
+                          </span>
+                          {tags.map((t) => (
+                            <span key={t} className="rounded-full bg-silver-50 px-2.5 py-1 text-[11px] font-bold text-navy-700 ring-1 ring-silver-200">{t}</span>
+                          ))}
                         </div>
-                        <div className="mt-4 flex items-center justify-between">
-                          {b.visibleTo !== "ALL" ? (
-                            <a
-                              href={STUDENT_PORTAL_URL}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 rounded-xl border border-silver-300 px-4 py-2 text-sm font-bold text-navy-700 transition hover:border-brand-primary/30 hover:bg-brand-primary/5"
-                            >
-                              Student portal only <span className="text-[10px]">↗</span>
+                        <h3 className="mt-3 text-base font-extrabold leading-snug text-navy-950">{b.title}</h3>
+                        {b.author ? <p className="mt-1 text-[13px] font-semibold text-muted">By {titleCaseName(b.author)}</p> : null}
+                        {b.description ? (
+                          <p className="mt-3 line-clamp-3 text-[13.5px] leading-relaxed text-neutral-700">{courseSummary(b.description)}</p>
+                        ) : null}
+                        {points.length > 0 ? (
+                          <ul className="mt-3 space-y-1.5">
+                            {points.map((pt) => (
+                              <li key={pt} className="flex gap-2 text-[13px] leading-snug text-neutral-700">
+                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" aria-hidden /> {pt}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                        <div className="mt-auto pt-5">
+                          {!open ? (
+                            <a href={STUDENT_PORTAL_URL} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand-primary px-4 py-2.5 text-sm font-bold text-brand-primary transition hover:bg-brand-primary/5">
+                              Open in student portal <ArrowRight className="h-4 w-4" aria-hidden />
                             </a>
-                          ) : b.pdfUrl || b.externalUrl ? (
-                            <a
-                              href={b.pdfUrl || b.externalUrl}
-                              target={b.externalUrl ? "_blank" : "_self"}
-                              rel={b.externalUrl ? "noopener noreferrer" : undefined}
-                              className="inline-flex items-center gap-2 rounded-xl bg-navy-700 px-4 py-2 text-sm font-bold text-white hover:bg-navy-800"
-                            >
-                              {b.pdfUrl ? "View PDF" : "Visit Link"}
-                              <span className="text-[10px]">↗</span>
+                          ) : link ? (
+                            <a href={link} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-primary-hover">
+                              {b.pdfUrl ? "View PDF" : "Open resource"} <ArrowRight className="h-4 w-4" aria-hidden />
                             </a>
                           ) : (
-                            <span className="inline-flex items-center gap-2 rounded-xl bg-silver-100 px-4 py-2 text-sm font-bold text-navy-700">
-                              No link available
-                            </span>
+                            <a href={`${CONTACT.whatsappHref}?text=${encodeURIComponent(`Hello, I would like details about "${b.title}".`)}`} target="_blank" rel="noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand-primary px-4 py-2.5 text-sm font-bold text-brand-primary">
+                              Ask on WhatsApp <ArrowRight className="h-4 w-4" aria-hidden />
+                            </a>
                           )}
                         </div>
                       </div>
                     </article>
                   </Reveal>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
