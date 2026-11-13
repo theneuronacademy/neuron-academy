@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:02,877
+Bina solve kiye batao —
+roots real hain ya nahi?
+
+2
+00:00:03,026 --> 00:00:04,591
+Poora solve karne ki zaroorat nahi.
+
+3
+00:00:04,636 --> 00:00:06,613
+Bas ek number nikaalo —
+Discriminant.
+
+4
+00:00:06,653 --> 00:00:08,990
+D equals b square minus 4ac.
+
+5
+00:00:09,275 --> 00:00:12,469
+Agar D zero se bada hai —
+do alag real roots.
+
+6
+00:00:12,575 --> 00:00:15,063
+D barabar zero —
+do barabar real roots.
+
+7
+00:00:15,149 --> 00:00:17,580
+Aur D zero se chhota —
+koi real root nahi.
+
+8
+00:00:17,718 --> 00:00:21,124
+Ab hamara sawaal:
+a = 2, b = −4, c = 3.
+
+9
+00:00:31,259 --> 00:00:35,470
+Minus 4 ka square plus 16 hota hai,
+minus 16 nahi.
+

@@ -1,6 +1,6 @@
 # NEURON ACADEMY Reel 02 – The HCF × LCM Trap
 
-**Status:** silent animated preview rendered (`output/hcf-lcm-trap-silent-preview.mp4`, 38.0 s, 1080 × 1920, 30 fps, H.264 + silent AAC track, no music). The final reel is made after Yasir records the voice-over in Deliverable 6.
+**Status:** final reel rendered with the supplied voice-over: `output/hcf-lcm-trap-final.mp4` (39.7 s, 1080 × 1920, 30 fps, H.264 + AAC, no music). The supplied recording was 53.5 s; pauses were tightened, non-speech sounds removed and the voice sped up 1.18× to finish under 40 s (`assets/voiceover-fitted.mp3`). Scene timings in this document are the planned ones; the final cut follows the voice (`src/timing.json`, `subtitles-final.srt`). The earlier silent preview is kept alongside.
 
 | Field | Value |
 |---|---|

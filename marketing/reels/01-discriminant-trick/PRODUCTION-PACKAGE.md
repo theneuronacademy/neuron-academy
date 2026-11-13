@@ -1,6 +1,6 @@
 # NEURON ACADEMY Reel 01 – The Discriminant Trick
 
-**Status:** silent animated preview rendered (`output/discriminant-trick-silent-preview.mp4`, 39.0 s, 1080 × 1920, 30 fps, H.264 + silent AAC track, no music). The final reel is made after Yasir records the voice-over in Deliverable 6; scenes and subtitles are then re-timed to the recording.
+**Status:** final reel rendered with the supplied voice-over: `output/discriminant-trick-final.mp4` (39.7 s, 1080 × 1920, 30 fps, H.264 + AAC, no music). The supplied recording was 51.1 s; pauses were tightened, non-speech sounds removed and the voice sped up 1.10× to finish under 40 s (`assets/voiceover-fitted.mp3`). Scene timings in this document are the planned ones; the final cut follows the voice (`src/timing.json`, `subtitles-final.srt`). The earlier silent preview is kept alongside.
 
 **Inputs chosen for this reel**
 
