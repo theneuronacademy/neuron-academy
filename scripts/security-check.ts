@@ -431,12 +431,32 @@ check(
     "store admin routes are ADMIN-only",
     storeAdminOrders.split(guard).length - 1 >= 2 && storeAdminOrder.includes(guard) && storeAdminSettings.split(guard).length - 1 >= 2
   );
-  check("only the admin route can set an order PAID", storeAdminOrder.includes('status: "PAID"') && storeSubmit.split("storeOrder.update(").length - 1 === 1 && !storeSubmit.includes("paidAt") && !storeCreate.includes("paidAt") && !storeCreate.includes('"PAID"'));
+  check("an order becomes PAID only through an admin or a payment confirmed with Razorpay", storeAdminOrder.includes('status: "PAID"') && storeSubmit.split("storeOrder.update(").length - 1 === 1 && !storeSubmit.includes("paidAt") && !storeCreate.includes("paidAt") && !storeCreate.includes('"PAID"'));
   check("buyer report moves an order to SUBMITTED only", storeSubmit.includes('status: "SUBMITTED"') && storeSubmit.includes("isAccessToken(token)"));
   check("download requires a PAID order", storeDownload.includes('order.status !== "PAID"') && storeDownload.indexOf('order.status !== "PAID"') < storeDownload.indexOf("resolveStorageUrl("));
   check("download responses are never cached", storeDownload.includes('"Cache-Control", "no-store"'));
   check("orders can only be placed for sellable items", storeCreate.includes("isSellable(book, settings)") && storeCreate.includes("checkRateLimit("));
   check("public books API strips paid files", booksPublic.includes("publicBook(") && booksPublic.includes("b.isPaid ? null"));
+
+  // Automatic payments: the buyer's browser is never the source of truth.
+  const gw = read("lib/razorpay.ts");
+  const payRoute = read("app/api/store/orders/[token]/pay/route.ts");
+  const payReturn = read("app/api/store/pay/return/route.ts");
+  check("Razorpay keys are read only from server environment variables", gw.includes("process.env.RAZORPAY_KEY_SECRET") && !gw.includes("NEXT_PUBLIC") && !/rzp_(test|live)_[A-Za-z0-9]{6,}/.test(gw + payRoute + payReturn));
+  check(
+    "a gateway payment is confirmed by asking Razorpay, with status, amount and reference all matching",
+    gw.includes("fetchGatewayLink(order.gatewayLinkId)") && gw.includes('link.status === "paid"') && gw.includes("link.amount === expected") && gw.includes("link.amountPaid >= expected") && gw.includes("link.referenceId === order.gatewayRef")
+  );
+  check(
+    "the payment return route trusts nothing from the query string but the link id",
+    payReturn.includes("isGatewayLinkId(linkId)") && payReturn.includes("syncGatewayPayment(db, order)") && !payReturn.includes("razorpay_payment_link_status") && !payReturn.includes("storeOrder.update") && !payReturn.includes('"PAID"')
+  );
+  check("the pay route is token-keyed, rate-limited and never marks an order paid itself", payRoute.includes("isAccessToken(token)") && payRoute.includes("checkRateLimit(") && !payRoute.includes("paidAt") && !payRoute.includes('status: "PAID"'));
+  check("the amount charged comes from the stored order, not the request", payRoute.includes("amountRupees: order.amount") && !payRoute.includes("searchParams.get(\"amount"));
+  for (const f of ["components/store/BuyForm.tsx", "components/store/OrderActions.tsx", "app/store/[id]/page.tsx", "app/admin/store/page.tsx"]) {
+    const src = read(f);
+    check("no Razorpay secret reference in client code: " + f, !src.includes("RAZORPAY_KEY_SECRET") || f === "app/admin/store/page.tsx" && !src.includes("process.env"));
+  }
 
   const paidRow = { isPaid: true, pdfUrl: "supabase://b/k.pdf", externalUrl: "https://x.test/f", cachedPdfUrl: "https://signed", paymentLink: "https://pay" };
   const stripped = store.publicBook(paidRow) as Record<string, unknown>;
@@ -451,7 +471,7 @@ check(
   const tokens = new Set(Array.from({ length: 200 }, () => store.newAccessToken()));
   check("order tokens are long, unique and well-formed", tokens.size === 200 && [...tokens].every((t) => store.isAccessToken(t)) && !store.isAccessToken("short") && !store.isAccessToken("../../etc/passwd"));
   check("order numbers avoid look-alike characters", Array.from({ length: 200 }, () => store.newOrderNo()).every((n) => /^NA-[2-9A-HJ-KMNP-Z]{6}$/.test(n)));
-  const settings = { upiId: "neuron@okaxis", payeeName: "Neuron Academy", paymentLink: null, instructions: null };
+  const settings = { upiId: "neuron@okaxis", payeeName: "Neuron Academy", paymentLink: null, instructions: null, gateway: false };
   const sellable = { isActive: true, isPaid: true, price: 199, pdfUrl: "supabase://b/k.pdf", externalUrl: null, paymentLink: null };
   check(
     "an item is sellable only with a price, a file and a way to pay",
@@ -460,7 +480,8 @@ check(
       !store.isSellable({ ...sellable, price: null }, settings) &&
       !store.isSellable({ ...sellable, pdfUrl: null }, settings) &&
       !store.isSellable(sellable, { ...settings, upiId: null }) &&
-      store.isSellable({ ...sellable, paymentLink: "https://pay.test/x" }, { ...settings, upiId: null })
+      store.isSellable({ ...sellable, paymentLink: "https://pay.test/x" }, { ...settings, upiId: null }) &&
+      store.isSellable(sellable, { ...settings, upiId: null, gateway: true })
   );
   const uri = store.upiPayUri(settings, 199, "NA-ABC234") ?? "";
   check("UPI link carries payee, amount and order number", uri.startsWith("upi://pay?") && uri.includes("pa=neuron%40okaxis") && uri.includes("am=199.00") && uri.includes("cu=INR") && uri.includes("NA-ABC234"));
