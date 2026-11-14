@@ -18,7 +18,7 @@ function readMemory(): Record<string, string> {
 }
 
 /** Buyer details → places the order → continues to the payment step. */
-export function BuyForm({ bookId, priceLabel }: { bookId: string; priceLabel: string }) {
+export function BuyForm({ bookId, priceLabel, instantPay = false }: { bookId: string; priceLabel: string; instantPay?: boolean }) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -46,6 +46,7 @@ export function BuyForm({ bookId, priceLabel }: { bookId: string; priceLabel: st
       const json = await res.json().catch(() => null);
       if (!res.ok || json?.success !== true || typeof json.data?.token !== "string") {
         setError(json?.error ?? "Could not place the order. Please try again.");
+        setBusy(false);
         return;
       }
       try {
@@ -53,11 +54,16 @@ export function BuyForm({ bookId, priceLabel }: { bookId: string; priceLabel: st
       } catch {
         /* the order link still works without this */
       }
+      if (instantPay) {
+        // Straight to the payment page; the buyer returns to the order page, paid.
+        window.location.assign(`/api/store/orders/${json.data.token}/pay`);
+        return;
+      }
       router.push(`/store/order/${json.data.token}`);
-    } catch {
-      setError("Cannot reach the server. Check your connection and try again.");
-    } finally {
       setBusy(false);
+    } catch {
+      setBusy(false);
+      setError("Cannot reach the server. Check your connection and try again.");
     }
   }
 
@@ -86,10 +92,12 @@ export function BuyForm({ bookId, priceLabel }: { bookId: string; priceLabel: st
       {error ? <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-bold text-red-700">{error}</p> : null}
       <button type="submit" disabled={busy} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-primary px-5 py-3.5 text-base font-bold text-white transition hover:bg-brand-primary-hover disabled:opacity-60">
         {busy ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden /> : null}
-        Continue to payment · {priceLabel} {busy ? null : <ArrowRight className="h-5 w-5" aria-hidden />}
+        {instantPay ? "Pay" : "Continue to payment ·"} {priceLabel} {busy ? null : <ArrowRight className="h-5 w-5" aria-hidden />}
       </button>
       <p className="text-[13px] leading-relaxed text-neutral-600">
-        You pay on the next step. Your download unlocks after the academy confirms the payment.
+        {instantPay
+          ? "You pay on Razorpay's secure page by UPI, card or net banking. Your download opens straight after payment."
+          : "You pay on the next step. Your download unlocks after the academy confirms the payment."}
       </p>
     </form>
   );

@@ -938,6 +938,10 @@ model StoreOrder {
   verifiedBy     String?          // admin who verified the payment
   adminNote      String?
   source         String           @default("WEBSITE") // WEBSITE | ADMIN
+  // Payment gateway (Razorpay Payment Link created for this order), when used.
+  gatewayLinkId  String?          @unique
+  gatewayLinkUrl String?
+  gatewayRef     String?          // reference_id sent to the gateway for the current link
   downloadCount  Int              @default(0)
   lastDownloadAt DateTime?
   createdAt      DateTime         @default(now())

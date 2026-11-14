@@ -30,7 +30,7 @@ export default async function StorePage() {
             <SectionHeader
               eyebrow="STUDY MATERIAL STORE"
               title="Question banks and study material"
-              desc="Prepared by Neuron Academy's teachers. Pay online and download the PDF once your payment is confirmed."
+              desc={items.some((i) => i.instantPay) ? "Prepared by Neuron Academy's teachers. Pay online and download the PDF straight away." : "Prepared by Neuron Academy's teachers. Pay online and download the PDF once your payment is confirmed."}
             />
             {items.length === 0 ? (
               <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-white p-10 text-center text-sm font-bold text-muted">

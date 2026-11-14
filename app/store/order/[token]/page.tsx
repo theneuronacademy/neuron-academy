@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import QRCode from "qrcode";
-import { AlertTriangle, CheckCircle2, Clock, Download, ExternalLink, MessageCircle, Smartphone, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, Download, ExternalLink, MessageCircle, ShieldCheck, Smartphone, XCircle } from "lucide-react";
 import { Navbar } from "@/components/website/Navbar";
 import { Footer } from "@/components/website/Footer";
 import { CopyButton, CopyPageLink, PaymentReferenceForm, RefreshStatus } from "@/components/store/OrderActions";
 import { CONTACT } from "@/data/contact";
 import { getDb } from "@/lib/prisma";
+import { syncGatewayPayment } from "@/lib/razorpay";
 import { isAccessToken, loadStoreSettings, upiPayUri } from "@/lib/store";
 import { rupees } from "@/lib/displayText";
 
@@ -29,12 +30,17 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const db = getDb();
   if (!db) notFound();
 
-  const order = await db.storeOrder.findUnique({
-    where: { accessToken: token },
-    include: { book: { select: { paymentLink: true } } },
-  });
+  const readOrder = () => db.storeOrder.findUnique({ where: { accessToken: token }, include: { book: { select: { paymentLink: true } } } });
+  let order = await readOrder();
   if (!order) notFound();
   const settings = await loadStoreSettings(db);
+
+  // Paid on Razorpay but not recorded yet (the buyer closed the payment page
+  // early, or pressed "Check status")? Ask Razorpay and unlock the download.
+  if (settings.gateway && order.gatewayLinkId && (order.status === "PENDING" || order.status === "SUBMITTED")) {
+    const { paid } = await syncGatewayPayment(db, order);
+    if (paid) order = (await readOrder()) ?? order;
+  }
 
   const view = STATUS_VIEW[order.status];
   const amount = rupees(order.amount);
@@ -47,9 +53,17 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
 
   // The ways to pay, shown in full while waiting for payment and kept
   // available (collapsed) once the buyer has reported paying.
-  const howToPay = waiting ? (
+  const howToPay = !waiting ? null : settings.gateway ? (
     <>
-            
+      <p className="mt-2 text-[15px] leading-relaxed text-neutral-700">Pay securely with UPI, a card or net banking. Your download opens on this page as soon as the payment goes through.</p>
+      <a href={`/api/store/orders/${token}/pay`} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-primary px-5 py-3.5 text-base font-bold text-white transition hover:bg-brand-primary-hover">
+        <ShieldCheck className="h-5 w-5" aria-hidden /> Pay {amount} now
+      </a>
+      <p className="mt-3 text-[13px] leading-relaxed text-neutral-600">Payments are handled by Razorpay. Already paid? Press Check status.</p>
+      <div className="mt-3"><RefreshStatus /></div>
+    </>
+  ) : (
+    <>
             {settings.instructions ? <p className="mt-2 whitespace-pre-line text-[15px] leading-relaxed text-neutral-700">{settings.instructions}</p> : null}
 
             {payLink ? (
@@ -84,7 +98,16 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
               <p className="mt-4 text-[15px] leading-relaxed text-neutral-700">Please message the academy on WhatsApp for payment details.</p>
             ) : null}
     </>
-  ) : null;
+  );
+
+  const problems: Record<string, string> = {
+    file: "The file could not be opened just now. Please message the academy and we will send it to you.",
+    server: "Something went wrong opening the file. Please try again in a minute.",
+    pay: "The payment page could not be opened just now. Please try again in a minute.",
+    busy: "Too many attempts. Please wait a few minutes and try again.",
+    unpaid: "We could not confirm a payment for this order. If money left your account, press Check status in a minute, or message the academy.",
+  };
+  const problemText = order.status !== "PAID" || problem === "file" || problem === "server" ? problems[problem ?? ""] : undefined;
 
   return (
     <div className="min-h-screen bg-background">
@@ -111,10 +134,10 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
           <CopyPageLink />
         </div>
 
-        {problem === "file" || problem === "server" ? (
+        {problemText ? (
           <p role="alert" className="mt-4 flex gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-            {problem === "file" ? "The file could not be opened just now. Please message the academy and we will send it to you." : "Something went wrong opening the file. Please try again in a minute."}
+            {problemText}
           </p>
         ) : null}
 
@@ -133,12 +156,12 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
         {/* PENDING — step 1: pay */}
         {order.status === "PENDING" ? (
           <section className="mt-8 rounded-2xl border border-silver-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-extrabold text-navy-950">Step 1: Pay {amount}</h2>
+            <h2 className="text-lg font-extrabold text-navy-950">{settings.gateway ? `Pay ${amount}` : `Step 1: Pay ${amount}`}</h2>
             {howToPay}
           </section>
         ) : null}
 
-        {order.status === "PENDING" ? (
+        {order.status === "PENDING" && !settings.gateway ? (
           <section className="mt-6 rounded-2xl border border-silver-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-extrabold text-navy-950">Step 2: Tell us you have paid</h2>
             <p className="mt-2 text-[15px] leading-relaxed text-neutral-700">After paying, enter the transaction number so the academy can match your payment.</p>

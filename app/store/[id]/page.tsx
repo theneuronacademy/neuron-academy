@@ -114,7 +114,7 @@ export default async function StoreItemPage({ params }: { params: Promise<{ id: 
               <p className="mt-1 text-[13px] text-neutral-600">One-time payment for the PDF.</p>
               <div className="my-5 h-px bg-silver-200" />
               {item.sellable ? (
-                <BuyForm bookId={item.id} priceLabel={rupees(item.price)} />
+                <BuyForm bookId={item.id} priceLabel={rupees(item.price)} instantPay={item.instantPay} />
               ) : (
                 <div>
                   <p className="text-[15px] leading-relaxed text-neutral-700">Online ordering for this item is not open yet. Message the academy to buy it.</p>
@@ -124,7 +124,7 @@ export default async function StoreItemPage({ params }: { params: Promise<{ id: 
                 </div>
               )}
               <ul className="mt-5 space-y-2 border-t border-silver-200 pt-5 text-[13px] leading-relaxed text-neutral-700">
-                <li className="flex gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" aria-hidden /> You pay Neuron Academy directly. The download unlocks after the academy confirms your payment.</li>
+                <li className="flex gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" aria-hidden /> {item.instantPay ? "Pay online by UPI, card or net banking. The download opens straight after payment." : "You pay Neuron Academy directly. The download unlocks after the academy confirms your payment."}</li>
                 <li className="flex gap-2"><FileText className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" aria-hidden /> For your own study. Please do not share or resell the file.</li>
               </ul>
             </div>
