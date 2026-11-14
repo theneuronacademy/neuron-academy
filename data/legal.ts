@@ -40,7 +40,7 @@ export const PRIVACY_POLICY: LegalDoc = {
       bullets: [
         "Enquiry and admission forms: the student's or parent's name, mobile number, email address (if given), the course or class of interest, preferred batch and any message you write.",
         "Student registration for tests on this website: name, mobile number (verified by a one-time password sent by SMS), email address and password, and the tests attempted with their answers and scores.",
-        "Study material bought on this website: your name, mobile number, email address (if given), the item bought and the payment transaction number you enter. Payments go directly to the academy by UPI or a payment link; this website does not collect or store card, bank or UPI PIN details.",
+        "Study material bought on this website: your name, mobile number, email address (if given), the item bought and the payment transaction number you enter. Payments are made through Razorpay, our payment partner, or directly to the academy by UPI; Razorpay receives your name and contact details to process the payment and handles the card, bank or UPI details itself. This website does not collect or store card, bank or UPI PIN details.",
         "When you call, message or WhatsApp us: your number and what you choose to tell us.",
         "Technical information: like most websites, our hosting provider records basic details such as IP address, browser type and the pages requested. The site also stores small items on your device, for example to remember that you have already seen an announcement.",
         "Student results and photographs: published on this website only with the consent of the student or, for a minor, the parent or guardian.",
@@ -141,7 +141,7 @@ export const TERMS: LegalDoc = {
       heading: "5. Study material bought online",
       bullets: [
         "Study material sold on this website is a digital PDF. Nothing is posted to you.",
-        "You pay the academy directly. Your download unlocks on your order page after the academy confirms that the payment has been received.",
+        "Payment is made online through Razorpay (UPI, card or net banking) and your download unlocks on your order page as soon as the payment goes through. If online payment is unavailable, you pay the academy directly and the download unlocks after the academy confirms that the payment has been received.",
         "The file is for the buyer's own study. Please do not share, resell or upload it.",
         "Please read the description and any free sample before buying. If you paid twice, paid the wrong amount or cannot open your file, contact us with your order number.",
       ],
