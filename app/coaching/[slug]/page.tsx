@@ -8,6 +8,13 @@ import { SectionHeader } from "@/components/ui/primitives";
 import { FAQJsonLd } from "@/components/website/SchemaMarkup";
 import { CONTACT } from "@/data/contact";
 import { EXAM_PAGES, getExamPage } from "@/data/exams";
+import { getDb } from "@/lib/prisma";
+import { getStoreItems } from "@/lib/store";
+import { itemsForExam } from "@/lib/storeLinks";
+import { rupees, sizedImage } from "@/lib/displayText";
+
+// Study material for the exam comes from the admin panel; refresh it at most every five minutes.
+export const revalidate = 300;
 
 export function generateStaticParams() {
   return EXAM_PAGES.map((e) => ({ slug: e.slug }));
@@ -32,6 +39,7 @@ export default async function ExamCoachingPage({ params }: { params: Promise<{ s
 
   const whatsapp = `${CONTACT.whatsappHref}?text=${encodeURIComponent(`Hello, I would like details about ${exam.title.replace(" in Shaheen Bagh", "")} at Neuron Academy.`)}`;
   const others = EXAM_PAGES.filter((e) => e.slug !== exam.slug);
+  const material = itemsForExam((await getStoreItems(getDb())) ?? [], exam.slug).slice(0, 6);
 
   return (
     <div className="min-h-screen bg-background">
@@ -111,6 +119,27 @@ export default async function ExamCoachingPage({ params }: { params: Promise<{ s
             </p>
           </div>
         </section>
+
+        {/* Study material on sale for this exam */}
+        {material.length > 0 ? (
+          <section className="mx-auto max-w-7xl px-4 pb-14 sm:px-6">
+            <SectionHeader eyebrow="STUDY MATERIAL" title={`Question banks for ${exam.label}`} desc="Prepared by Neuron Academy's teachers. Buy online and download the PDF." />
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {material.map((item) => (
+                <Link key={item.id} href={`/store/${item.id}`} className="flex gap-4 rounded-2xl border border-silver-200 bg-white p-4 shadow-card transition hover:border-brand-primary/40">
+                  {item.coverImageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={sizedImage(item.coverImageUrl, 240)} alt={`Cover: ${item.title}`} loading="lazy" className="h-24 w-20 shrink-0 rounded-lg border border-silver-200 object-cover" />
+                  ) : null}
+                  <span className="min-w-0">
+                    <span className="block text-[15px] font-bold leading-snug text-navy-950">{item.title}</span>
+                    <span className="mt-2 block text-sm font-extrabold text-brand-primary">{rupees(item.price)} · Digital PDF</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {/* FAQ */}
         <section className="bg-white">
