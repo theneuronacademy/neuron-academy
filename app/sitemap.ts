@@ -33,10 +33,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
+  // Paid study material (store item pages).
+  let storeIds: string[] = [];
+  if (process.env.DATABASE_URL) {
+    try {
+      const { getDb } = await import("@/lib/prisma");
+      const { getStoreItems } = await import("@/lib/store");
+      storeIds = ((await getStoreItems(getDb())) ?? []).map((i) => i.id);
+    } catch {
+      /* build-safe: no store pages listed */
+    }
+  }
+
   return [
     { url: `${BASE}/`, lastModified: now },
     ...courseSlugs.map((s) => ({ url: `${BASE}/courses/${s}`, lastModified: now })),
     { url: `${BASE}/scholarship-tests`, lastModified: now },
+    { url: `${BASE}/store`, lastModified: now },
+    ...storeIds.map((id) => ({ url: `${BASE}/store/${id}`, lastModified: now })),
     { url: `${BASE}/privacy-policy`, lastModified: now },
     { url: `${BASE}/terms`, lastModified: now },
     { url: `${BASE}/faculty`, lastModified: now },

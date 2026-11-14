@@ -75,6 +75,8 @@ export const ModelName = {
   PushSubscription: 'PushSubscription',
   ResultShowcase: 'ResultShowcase',
   Book: 'Book',
+  StoreOrder: 'StoreOrder',
+  StoreSettings: 'StoreSettings',
   Enquiry: 'Enquiry',
   Announcement: 'Announcement',
   Bookmark: 'Bookmark',
@@ -606,10 +608,52 @@ export const BookScalarFieldEnum = {
   updatedAt: 'updatedAt',
   cachedCoverUrl: 'cachedCoverUrl',
   cachedPdfUrl: 'cachedPdfUrl',
-  cacheExpiresAt: 'cacheExpiresAt'
+  cacheExpiresAt: 'cacheExpiresAt',
+  isPaid: 'isPaid',
+  price: 'price',
+  mrp: 'mrp',
+  paymentLink: 'paymentLink',
+  sampleUrl: 'sampleUrl'
 } as const
 
 export type BookScalarFieldEnum = (typeof BookScalarFieldEnum)[keyof typeof BookScalarFieldEnum]
+
+
+export const StoreOrderScalarFieldEnum = {
+  id: 'id',
+  orderNo: 'orderNo',
+  accessToken: 'accessToken',
+  bookId: 'bookId',
+  bookTitle: 'bookTitle',
+  amount: 'amount',
+  buyerName: 'buyerName',
+  buyerMobile: 'buyerMobile',
+  buyerEmail: 'buyerEmail',
+  status: 'status',
+  paymentRef: 'paymentRef',
+  paidAt: 'paidAt',
+  verifiedBy: 'verifiedBy',
+  adminNote: 'adminNote',
+  source: 'source',
+  downloadCount: 'downloadCount',
+  lastDownloadAt: 'lastDownloadAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreOrderScalarFieldEnum = (typeof StoreOrderScalarFieldEnum)[keyof typeof StoreOrderScalarFieldEnum]
+
+
+export const StoreSettingsScalarFieldEnum = {
+  id: 'id',
+  upiId: 'upiId',
+  payeeName: 'payeeName',
+  paymentLink: 'paymentLink',
+  instructions: 'instructions',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreSettingsScalarFieldEnum = (typeof StoreSettingsScalarFieldEnum)[keyof typeof StoreSettingsScalarFieldEnum]
 
 
 export const EnquiryScalarFieldEnum = {

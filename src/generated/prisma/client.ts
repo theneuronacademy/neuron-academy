@@ -162,6 +162,16 @@ export type ResultShowcase = Prisma.ResultShowcaseModel
  */
 export type Book = Prisma.BookModel
 /**
+ * Model StoreOrder
+ * 
+ */
+export type StoreOrder = Prisma.StoreOrderModel
+/**
+ * Model StoreSettings
+ * 
+ */
+export type StoreSettings = Prisma.StoreSettingsModel
+/**
  * Model Enquiry
  * 
  */

@@ -61,6 +61,7 @@ export function Footer() {
               </li>
             ))}
             <li><Link href="/#courses" className="text-neutral-600 transition-colors hover:text-brand-primary">All courses</Link></li>
+            <li><Link href="/store" className="text-neutral-600 transition-colors hover:text-brand-primary">Study material store</Link></li>
             <li><Link href="/faculty" className="text-neutral-600 transition-colors hover:text-brand-primary">Faculty</Link></li>
             <li><Link href="/#gallery" className="text-neutral-600 transition-colors hover:text-brand-primary">Campus gallery</Link></li>
           </ul>

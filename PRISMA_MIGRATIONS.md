@@ -35,3 +35,9 @@ case; do not assume the database is empty.
   adds two nullable columns additively (`ResultShowcase.description`,
   `Testimonial.achievement`). It is applied by the normal `migrate deploy`
   pipeline; legacy rows keep their fallback display.
+- `prisma/migrations/20261113120000_store_orders/` adds the study material
+  store additively: five nullable/defaulted columns on `Book` (`isPaid`,
+  `price`, `mrp`, `paymentLink`, `sampleUrl`), the `StoreOrder` and
+  `StoreSettings` tables and the `StoreOrderStatus` enum. Existing rows are
+  unchanged (`isPaid` defaults to false). Applied by the normal
+  `migrate deploy` pipeline.

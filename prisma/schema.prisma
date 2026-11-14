@@ -897,11 +897,65 @@ model Book {
     cachedCoverUrl String?
     cachedPdfUrl   String?
     cacheExpiresAt DateTime?
+    // Store: a paid item is bought through /store and its file is released
+    // only to paid orders (the public books API never exposes its file).
+    isPaid       Boolean        @default(false)
+    price        Int?           // selling price in rupees
+    mrp          Int?           // optional crossed-out price in rupees
+    paymentLink  String?        // optional payment page for this item
+    sampleUrl    String?        // optional free sample / preview
+    orders       StoreOrder[]
 
     @@index([isActive, order])
     @@index([className])
     @@index([subject])
     @@index([category])
+}
+
+enum StoreOrderStatus {
+  PENDING    // order placed; buyer has not reported a payment yet
+  SUBMITTED  // buyer reported a payment reference; waiting for the academy to verify
+  PAID       // payment verified; download unlocked
+  CANCELLED
+}
+
+// One purchase of one paid Book. `accessToken` is the unguessable key in the
+// buyer's private order link; `orderNo` is the short reference people quote.
+model StoreOrder {
+  id             String           @id @default(cuid())
+  orderNo        String           @unique
+  accessToken    String           @unique
+  bookId         String
+  book           Book             @relation(fields: [bookId], references: [id], onDelete: Restrict)
+  bookTitle      String           // title at the time of purchase
+  amount         Int              // rupees charged at the time of purchase
+  buyerName      String
+  buyerMobile    String
+  buyerEmail     String?
+  status         StoreOrderStatus @default(PENDING)
+  paymentRef     String?          // transaction / UTR reference reported by the buyer or entered by the admin
+  paidAt         DateTime?
+  verifiedBy     String?          // admin who verified the payment
+  adminNote      String?
+  source         String           @default("WEBSITE") // WEBSITE | ADMIN
+  downloadCount  Int              @default(0)
+  lastDownloadAt DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([status, createdAt])
+  @@index([buyerMobile])
+  @@index([bookId])
+}
+
+// Single row (id = "default") with how buyers pay the academy.
+model StoreSettings {
+  id           String   @id @default("default")
+  upiId        String?
+  payeeName    String?
+  paymentLink  String?  // used when a book has no payment link of its own
+  instructions String?
+  updatedAt    DateTime @updatedAt
 }
 
 model Enquiry {

@@ -230,6 +230,16 @@ export const PopupFrequency = {
 export type PopupFrequency = (typeof PopupFrequency)[keyof typeof PopupFrequency]
 
 
+export const StoreOrderStatus = {
+  PENDING: 'PENDING',
+  SUBMITTED: 'SUBMITTED',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type StoreOrderStatus = (typeof StoreOrderStatus)[keyof typeof StoreOrderStatus]
+
+
 export const DoubtStatus = {
   ASKED: 'ASKED',
   ANSWERED: 'ANSWERED',

@@ -28,6 +28,7 @@ import {
   HelpCircle,
   CalendarCheck,
   KeyRound,
+  ShoppingBag,
 } from "lucide-react";
 import { adminLogout } from "@/lib/adminAuth";
 import { Logo } from "@/components/website/Logo";
@@ -75,6 +76,7 @@ const GROUPS: { label: string; items: { href: string; label: string; icon: typeo
     label: "Books & Study Material",
     items: [
       { href: "/admin/books", label: "Books", icon: BookOpen },
+      { href: "/admin/store", label: "Store Orders", icon: ShoppingBag },
       { href: "/admin/materials", label: "Study Material", icon: Library },
     ],
   },

@@ -16,6 +16,7 @@ import {
   verifySessionToken,
 } from "../lib/session";
 import { requireApiRole, sanitizeUser } from "../lib/server-auth";
+import * as store from "../lib/store";
 import { batchAllowed, decideAccess, isLiveWindowOpen } from "../lib/testAccess";
 import type { AccessDecision } from "../lib/testAccess";
 import {
@@ -412,6 +413,62 @@ check(
   "admin test CRUD is API-backed",
   adminTests.includes("/api/tests") && editPage.includes('method: "PATCH"') && previewPage.includes("Unpublish")
 );
+
+// -------------------------------------------------------- study material store ---
+// Money-adjacent rules: only an admin can unlock a download, a paid file is
+// never handed out by the public books API, and the behaviour of the real
+// validators (lib/store) is exercised directly.
+{
+  const storeAdminOrders = read("app/api/admin/store/orders/route.ts");
+  const storeAdminOrder = read("app/api/admin/store/orders/[id]/route.ts");
+  const storeAdminSettings = read("app/api/admin/store/settings/route.ts");
+  const storeSubmit = read("app/api/store/orders/[token]/submit/route.ts");
+  const storeDownload = read("app/api/store/orders/[token]/download/route.ts");
+  const storeCreate = read("app/api/store/orders/route.ts");
+  const booksPublic = read("app/api/books/route.ts");
+  const guard = 'requireApiRole(req, ["ADMIN"])';
+  check(
+    "store admin routes are ADMIN-only",
+    storeAdminOrders.split(guard).length - 1 >= 2 && storeAdminOrder.includes(guard) && storeAdminSettings.split(guard).length - 1 >= 2
+  );
+  check("only the admin route can set an order PAID", storeAdminOrder.includes('status: "PAID"') && storeSubmit.split("storeOrder.update(").length - 1 === 1 && !storeSubmit.includes("paidAt") && !storeCreate.includes("paidAt") && !storeCreate.includes('"PAID"'));
+  check("buyer report moves an order to SUBMITTED only", storeSubmit.includes('status: "SUBMITTED"') && storeSubmit.includes("isAccessToken(token)"));
+  check("download requires a PAID order", storeDownload.includes('order.status !== "PAID"') && storeDownload.indexOf('order.status !== "PAID"') < storeDownload.indexOf("resolveStorageUrl("));
+  check("download responses are never cached", storeDownload.includes('"Cache-Control", "no-store"'));
+  check("orders can only be placed for sellable items", storeCreate.includes("isSellable(book, settings)") && storeCreate.includes("checkRateLimit("));
+  check("public books API strips paid files", booksPublic.includes("publicBook(") && booksPublic.includes("b.isPaid ? null"));
+
+  const paidRow = { isPaid: true, pdfUrl: "supabase://b/k.pdf", externalUrl: "https://x.test/f", cachedPdfUrl: "https://signed", paymentLink: "https://pay" };
+  const stripped = store.publicBook(paidRow) as Record<string, unknown>;
+  check("publicBook removes every file and payment link from a paid item", stripped.pdfUrl === null && stripped.externalUrl === null && stripped.cachedPdfUrl === null && stripped.paymentLink === null);
+  const freeRow = { isPaid: false, pdfUrl: "https://x.test/free.pdf", externalUrl: null };
+  check("publicBook leaves free items untouched", store.publicBook(freeRow) === freeRow);
+  check("payment links must be https", store.cleanHttpsUrl("https://rzp.io/l/abc") === "https://rzp.io/l/abc" && store.cleanHttpsUrl("javascript:alert(1)") === null && store.cleanHttpsUrl("http://pay.test") === null && store.cleanHttpsUrl('https://a.test/"><script>') === null);
+  check("UPI IDs are validated", store.cleanUpiId("neuron.academy@okaxis") === "neuron.academy@okaxis" && store.cleanUpiId("no-at-sign") === null && store.cleanUpiId("a@b c") === null);
+  check("mobile numbers are normalised to +91", store.cleanMobile("98765 43210") === "+919876543210" && store.cleanMobile("12345") === null && store.cleanMobile("+1 202 555 0100") === null);
+  check("payment references are cleaned", store.cleanPaymentRef("4312 5678-9012") === "431256789012" && store.cleanPaymentRef("12") === null && store.cleanPaymentRef("<script>") === null);
+  check("prices are whole rupees in range", store.cleanPrice("199") === 199 && store.cleanPrice(0) === null && store.cleanPrice(-5) === null && store.cleanPrice(10000000) === null && store.cleanPrice("abc") === null);
+  const tokens = new Set(Array.from({ length: 200 }, () => store.newAccessToken()));
+  check("order tokens are long, unique and well-formed", tokens.size === 200 && [...tokens].every((t) => store.isAccessToken(t)) && !store.isAccessToken("short") && !store.isAccessToken("../../etc/passwd"));
+  check("order numbers avoid look-alike characters", Array.from({ length: 200 }, () => store.newOrderNo()).every((n) => /^NA-[2-9A-HJ-KMNP-Z]{6}$/.test(n)));
+  const settings = { upiId: "neuron@okaxis", payeeName: "Neuron Academy", paymentLink: null, instructions: null };
+  const sellable = { isActive: true, isPaid: true, price: 199, pdfUrl: "supabase://b/k.pdf", externalUrl: null, paymentLink: null };
+  check(
+    "an item is sellable only with a price, a file and a way to pay",
+    store.isSellable(sellable, settings) &&
+      !store.isSellable({ ...sellable, isActive: false }, settings) &&
+      !store.isSellable({ ...sellable, price: null }, settings) &&
+      !store.isSellable({ ...sellable, pdfUrl: null }, settings) &&
+      !store.isSellable(sellable, { ...settings, upiId: null }) &&
+      store.isSellable({ ...sellable, paymentLink: "https://pay.test/x" }, { ...settings, upiId: null })
+  );
+  const uri = store.upiPayUri(settings, 199, "NA-ABC234") ?? "";
+  check("UPI link carries payee, amount and order number", uri.startsWith("upi://pay?") && uri.includes("pa=neuron%40okaxis") && uri.includes("am=199.00") && uri.includes("cu=INR") && uri.includes("NA-ABC234"));
+  const sale = store.parseSaleFields({ isPaid: true }, { isPaid: false, price: null });
+  const saleOk = store.parseSaleFields({ isPaid: true, price: 199, mrp: 299 }, { isPaid: false, price: null });
+  const saleBadMrp = store.parseSaleFields({ mrp: 100 }, { isPaid: true, price: 199 });
+  check("a paid item must have a price, and MRP must exceed it", !sale.ok && saleOk.ok && !saleBadMrp.ok);
+}
 
 // ------------------------------------------------------------------ summary ---
 if (savedSecret === undefined) delete process.env.SESSION_SECRET;

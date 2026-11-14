@@ -11,6 +11,7 @@ interface Book {
   id: string; title: string; description: string | null; author: string | null;
   subject: string | null; className: string | null; category: string | null;
   coverImageUrl: string | null; pdfUrl: string | null; externalUrl: string | null;
+  isPaid?: boolean; price?: number | null;
 }
 
 /** Phase 14 — study library (active books; scholarship sees ALL-visibility). */
@@ -102,7 +103,15 @@ export default function StudentBooksPage() {
                       <ExternalLink className="h-3.5 w-3.5" /> External Resource
                     </a>
                   ) : null}
-                  {!b.pdfUrl && !b.externalUrl ? <p className="text-center text-[12px] font-bold text-muted">Resource coming soon</p> : null}
+                  {!b.pdfUrl && !b.externalUrl ? (
+                    b.isPaid ? (
+                      <a href={`/store/${b.id}`} className="rounded-xl bg-navy-700 px-4 py-2 text-center text-[13px] font-bold text-white transition hover:bg-teal-600">
+                        Buy{typeof b.price === "number" ? ` · ₹${b.price.toLocaleString("en-IN")}` : ""}
+                      </a>
+                    ) : (
+                      <p className="text-center text-[12px] font-bold text-muted">Resource coming soon</p>
+                    )
+                  ) : null}
                 </div>
               </div>
             </article>
