@@ -13,7 +13,7 @@ export interface LegalSection {
 }
 
 export interface LegalDoc {
-  slug: "privacy-policy" | "terms";
+  slug: "privacy-policy" | "terms" | "refund-policy";
   title: string;
   description: string;
   updated: string;
@@ -27,7 +27,7 @@ export const PRIVACY_POLICY: LegalDoc = {
   slug: "privacy-policy",
   title: "Privacy Policy",
   description: "How Neuron Academy collects, uses and protects the personal information of students, parents and website visitors.",
-  updated: "13 November 2026",
+  updated: "14 November 2026",
   intro:
     "This policy explains what personal information Neuron Academy collects through this website, why we collect it, who we share it with and the choices you have. It applies to www.neuron-academy.in.",
   sections: [
@@ -40,7 +40,7 @@ export const PRIVACY_POLICY: LegalDoc = {
       bullets: [
         "Enquiry and admission forms: the student's or parent's name, mobile number, email address (if given), the course or class of interest, preferred batch and any message you write.",
         "Student registration for tests on this website: name, mobile number (verified by a one-time password sent by SMS), email address and password, and the tests attempted with their answers and scores.",
-        "Study material bought on this website: your name, mobile number, email address (if given), the item bought and the payment transaction number you enter. Payments go directly to the academy by UPI or a payment link; this website does not collect or store card, bank or UPI PIN details.",
+        "Study material bought on this website: your name, mobile number, email address (if given), the item bought and the payment transaction number you enter. Payments are made through Razorpay, our payment partner, or directly to the academy by UPI; Razorpay receives your name and contact details to process the payment and handles the card, bank or UPI details itself. This website does not collect or store card, bank or UPI PIN details.",
         "When you call, message or WhatsApp us: your number and what you choose to tell us.",
         "Technical information: like most websites, our hosting provider records basic details such as IP address, browser type and the pages requested. The site also stores small items on your device, for example to remember that you have already seen an announcement.",
         "Student results and photographs: published on this website only with the consent of the student or, for a minor, the parent or guardian.",
@@ -111,7 +111,7 @@ export const TERMS: LegalDoc = {
   slug: "terms",
   title: "Terms of Use",
   description: "The terms that apply to using the Neuron Academy website, its tests and its content.",
-  updated: "13 November 2026",
+  updated: "14 November 2026",
   intro: "These terms apply to your use of www.neuron-academy.in. By using the website you agree to them.",
   sections: [
     {
@@ -141,9 +141,9 @@ export const TERMS: LegalDoc = {
       heading: "5. Study material bought online",
       bullets: [
         "Study material sold on this website is a digital PDF. Nothing is posted to you.",
-        "You pay the academy directly. Your download unlocks on your order page after the academy confirms that the payment has been received.",
+        "Payment is made online through Razorpay (UPI, card or net banking) and your download unlocks on your order page as soon as the payment goes through. If online payment is unavailable, you pay the academy directly and the download unlocks after the academy confirms that the payment has been received.",
         "The file is for the buyer's own study. Please do not share, resell or upload it.",
-        "Please read the description and any free sample before buying. If you paid twice, paid the wrong amount or cannot open your file, contact us with your order number.",
+        "Please read the description and any free sample before buying. Digital study material is not refundable; see our Refund and Cancellation Policy. If you paid twice, paid the wrong amount or cannot open your file, contact us with your order number.",
       ],
     },
     {
@@ -177,6 +177,52 @@ export const TERMS: LegalDoc = {
     {
       heading: "11. Changes and contact",
       paragraphs: ["We may update these terms from time to time; the date at the top shows the latest revision. For any question about them, contact us using the details in section 1."],
+    },
+  ],
+};
+
+export const REFUND_POLICY: LegalDoc = {
+  slug: "refund-policy",
+  title: "Refund and Cancellation Policy",
+  description: "Neuron Academy's refund and cancellation rules for study material and other purchases made on this website.",
+  updated: "14 November 2026",
+  intro: "This policy applies to anything bought on this website. Please read it before you pay.",
+  sections: [
+    {
+      heading: "1. No refund on purchases made on this website",
+      paragraphs: [
+        "Purchases made on this website are final. Once a payment is made, the order cannot be cancelled and the amount is not refunded, except as stated in section 3.",
+      ],
+    },
+    {
+      heading: "2. Digital study material (PDF downloads)",
+      bullets: [
+        "Digital study material is delivered as a download as soon as the payment goes through. Because it cannot be returned, it is not refundable and cannot be exchanged.",
+        "Please read the description and any free sample before buying.",
+      ],
+    },
+    {
+      heading: "3. Material delivered to you (physical items)",
+      bullets: [
+        "If you buy material that is delivered to you physically, you may ask for a refund within 4 days of receiving it.",
+        "To ask for a refund, contact us within those 4 days with your order number. Requests made after 4 days are not accepted.",
+      ],
+    },
+    {
+      heading: "4. Payment problems",
+      bullets: [
+        "If money left your account but your order does not show as paid, open your order page and press Check status, or contact us with your order number and we will sort it out.",
+        "If you were charged more than once for the same order, contact us with your order number and the payment details; the extra payment will be returned to the account it was paid from.",
+        "If you have paid and cannot open your file, contact us and we will send it to you.",
+      ],
+    },
+    {
+      heading: "5. Course fees",
+      paragraphs: ["Fees for classroom and online courses are not covered by this policy. They follow the terms stated by the academy at the time of admission."],
+    },
+    {
+      heading: "6. Contact",
+      paragraphs: [CONTACT_LINE],
     },
   ],
 };

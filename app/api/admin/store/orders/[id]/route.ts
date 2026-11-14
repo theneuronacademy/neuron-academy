@@ -5,11 +5,12 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
+import { cancelGatewayLink, gatewayEnabled, syncGatewayPayment } from "@/lib/razorpay";
 import { cleanPaymentRef } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
-const ACTIONS = ["markPaid", "cancel", "reopen", "note"] as const;
+const ACTIONS = ["markPaid", "cancel", "reopen", "note", "checkGateway"] as const;
 type Action = (typeof ACTIONS)[number];
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -32,8 +33,23 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const adminNote = typeof body.adminNote === "string" ? body.adminNote.trim().slice(0, 500) || null : undefined;
 
   try {
-    const order = await db.storeOrder.findUnique({ where: { id }, select: { id: true, status: true, paymentRef: true } });
+    const order = await db.storeOrder.findUnique({ where: { id }, select: { id: true, status: true, paymentRef: true, amount: true, gatewayLinkId: true, gatewayRef: true } });
     if (!order) return fail("Order not found.", 404);
+
+    // Ask Razorpay whether the buyer's online payment came through.
+    if (action === "checkGateway") {
+      if (!gatewayEnabled() || !order.gatewayLinkId) return fail("This order has no Razorpay payment to check.", 409);
+      const { paid, link } = await syncGatewayPayment(db, order);
+      if (!paid && !link) return fail("Could not reach Razorpay. Please try again in a minute.", 502);
+      const item = await db.storeOrder.findUnique({ where: { id } });
+      return ok({ item, paid });
+    }
+    // Before cancelling, make sure the buyer has not just paid; then close the link.
+    if (action === "cancel" && order.status !== "PAID" && order.gatewayLinkId && gatewayEnabled()) {
+      const { paid } = await syncGatewayPayment(db, order);
+      if (paid) return fail("Razorpay shows this order has been paid, so it was marked paid instead of cancelled.", 409);
+      await cancelGatewayLink(order.gatewayLinkId);
+    }
 
     const data: Record<string, unknown> = {};
     if (adminNote !== undefined) data.adminNote = adminNote;
@@ -43,7 +59,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       Object.assign(data, { status: "PAID", paidAt: new Date(), verifiedBy: auth.user.name || auth.user.email });
     } else if (action === "cancel") {
       if (order.status === "CANCELLED") return fail("This order is already cancelled.", 409);
-      Object.assign(data, { status: "CANCELLED" });
+      Object.assign(data, { status: "CANCELLED", gatewayLinkId: null, gatewayLinkUrl: null });
     } else if (action === "reopen") {
       // Back to waiting: "reported" if the buyer gave a reference, otherwise "not paid yet".
       Object.assign(data, { status: paymentRef || order.paymentRef ? "SUBMITTED" : "PENDING", paidAt: null, verifiedBy: null });

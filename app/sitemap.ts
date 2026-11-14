@@ -53,6 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...storeIds.map((id) => ({ url: `${BASE}/store/${id}`, lastModified: now })),
     { url: `${BASE}/privacy-policy`, lastModified: now },
     { url: `${BASE}/terms`, lastModified: now },
+    { url: `${BASE}/refund-policy`, lastModified: now },
     { url: `${BASE}/faculty`, lastModified: now },
     ...facultyIds.map((id) => ({ url: `${BASE}/faculty/${id}`, lastModified: now })),
     ...EXAM_PAGES.map((e) => ({ url: `${BASE}/coaching/${e.slug}`, lastModified: now })),

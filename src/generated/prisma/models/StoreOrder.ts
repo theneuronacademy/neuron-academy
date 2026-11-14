@@ -52,6 +52,9 @@ export type StoreOrderMinAggregateOutputType = {
   verifiedBy: string | null
   adminNote: string | null
   source: string | null
+  gatewayLinkId: string | null
+  gatewayLinkUrl: string | null
+  gatewayRef: string | null
   downloadCount: number | null
   lastDownloadAt: Date | null
   createdAt: Date | null
@@ -74,6 +77,9 @@ export type StoreOrderMaxAggregateOutputType = {
   verifiedBy: string | null
   adminNote: string | null
   source: string | null
+  gatewayLinkId: string | null
+  gatewayLinkUrl: string | null
+  gatewayRef: string | null
   downloadCount: number | null
   lastDownloadAt: Date | null
   createdAt: Date | null
@@ -96,6 +102,9 @@ export type StoreOrderCountAggregateOutputType = {
   verifiedBy: number
   adminNote: number
   source: number
+  gatewayLinkId: number
+  gatewayLinkUrl: number
+  gatewayRef: number
   downloadCount: number
   lastDownloadAt: number
   createdAt: number
@@ -130,6 +139,9 @@ export type StoreOrderMinAggregateInputType = {
   verifiedBy?: true
   adminNote?: true
   source?: true
+  gatewayLinkId?: true
+  gatewayLinkUrl?: true
+  gatewayRef?: true
   downloadCount?: true
   lastDownloadAt?: true
   createdAt?: true
@@ -152,6 +164,9 @@ export type StoreOrderMaxAggregateInputType = {
   verifiedBy?: true
   adminNote?: true
   source?: true
+  gatewayLinkId?: true
+  gatewayLinkUrl?: true
+  gatewayRef?: true
   downloadCount?: true
   lastDownloadAt?: true
   createdAt?: true
@@ -174,6 +189,9 @@ export type StoreOrderCountAggregateInputType = {
   verifiedBy?: true
   adminNote?: true
   source?: true
+  gatewayLinkId?: true
+  gatewayLinkUrl?: true
+  gatewayRef?: true
   downloadCount?: true
   lastDownloadAt?: true
   createdAt?: true
@@ -283,6 +301,9 @@ export type StoreOrderGroupByOutputType = {
   verifiedBy: string | null
   adminNote: string | null
   source: string
+  gatewayLinkId: string | null
+  gatewayLinkUrl: string | null
+  gatewayRef: string | null
   downloadCount: number
   lastDownloadAt: Date | null
   createdAt: Date
@@ -328,6 +349,9 @@ export type StoreOrderWhereInput = {
   verifiedBy?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   adminNote?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   source?: Prisma.StringFilter<"StoreOrder"> | string
+  gatewayLinkId?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
+  gatewayLinkUrl?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
+  gatewayRef?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   downloadCount?: Prisma.IntFilter<"StoreOrder"> | number
   lastDownloadAt?: Prisma.DateTimeNullableFilter<"StoreOrder"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"StoreOrder"> | Date | string
@@ -351,6 +375,9 @@ export type StoreOrderOrderByWithRelationInput = {
   verifiedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   adminNote?: Prisma.SortOrderInput | Prisma.SortOrder
   source?: Prisma.SortOrder
+  gatewayLinkId?: Prisma.SortOrderInput | Prisma.SortOrder
+  gatewayLinkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  gatewayRef?: Prisma.SortOrderInput | Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   lastDownloadAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -362,6 +389,7 @@ export type StoreOrderWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   orderNo?: string
   accessToken?: string
+  gatewayLinkId?: string
   AND?: Prisma.StoreOrderWhereInput | Prisma.StoreOrderWhereInput[]
   OR?: Prisma.StoreOrderWhereInput[]
   NOT?: Prisma.StoreOrderWhereInput | Prisma.StoreOrderWhereInput[]
@@ -377,12 +405,14 @@ export type StoreOrderWhereUniqueInput = Prisma.AtLeast<{
   verifiedBy?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   adminNote?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   source?: Prisma.StringFilter<"StoreOrder"> | string
+  gatewayLinkUrl?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
+  gatewayRef?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   downloadCount?: Prisma.IntFilter<"StoreOrder"> | number
   lastDownloadAt?: Prisma.DateTimeNullableFilter<"StoreOrder"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"StoreOrder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StoreOrder"> | Date | string
   book?: Prisma.XOR<Prisma.BookScalarRelationFilter, Prisma.BookWhereInput>
-}, "id" | "orderNo" | "accessToken">
+}, "id" | "orderNo" | "accessToken" | "gatewayLinkId">
 
 export type StoreOrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -400,6 +430,9 @@ export type StoreOrderOrderByWithAggregationInput = {
   verifiedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   adminNote?: Prisma.SortOrderInput | Prisma.SortOrder
   source?: Prisma.SortOrder
+  gatewayLinkId?: Prisma.SortOrderInput | Prisma.SortOrder
+  gatewayLinkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  gatewayRef?: Prisma.SortOrderInput | Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   lastDownloadAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -430,6 +463,9 @@ export type StoreOrderScalarWhereWithAggregatesInput = {
   verifiedBy?: Prisma.StringNullableWithAggregatesFilter<"StoreOrder"> | string | null
   adminNote?: Prisma.StringNullableWithAggregatesFilter<"StoreOrder"> | string | null
   source?: Prisma.StringWithAggregatesFilter<"StoreOrder"> | string
+  gatewayLinkId?: Prisma.StringNullableWithAggregatesFilter<"StoreOrder"> | string | null
+  gatewayLinkUrl?: Prisma.StringNullableWithAggregatesFilter<"StoreOrder"> | string | null
+  gatewayRef?: Prisma.StringNullableWithAggregatesFilter<"StoreOrder"> | string | null
   downloadCount?: Prisma.IntWithAggregatesFilter<"StoreOrder"> | number
   lastDownloadAt?: Prisma.DateTimeNullableWithAggregatesFilter<"StoreOrder"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"StoreOrder"> | Date | string
@@ -451,6 +487,9 @@ export type StoreOrderCreateInput = {
   verifiedBy?: string | null
   adminNote?: string | null
   source?: string
+  gatewayLinkId?: string | null
+  gatewayLinkUrl?: string | null
+  gatewayRef?: string | null
   downloadCount?: number
   lastDownloadAt?: Date | string | null
   createdAt?: Date | string
@@ -474,6 +513,9 @@ export type StoreOrderUncheckedCreateInput = {
   verifiedBy?: string | null
   adminNote?: string | null
   source?: string
+  gatewayLinkId?: string | null
+  gatewayLinkUrl?: string | null
+  gatewayRef?: string | null
   downloadCount?: number
   lastDownloadAt?: Date | string | null
   createdAt?: Date | string
@@ -495,6 +537,9 @@ export type StoreOrderUpdateInput = {
   verifiedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastDownloadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -518,6 +563,9 @@ export type StoreOrderUncheckedUpdateInput = {
   verifiedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastDownloadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -540,6 +588,9 @@ export type StoreOrderCreateManyInput = {
   verifiedBy?: string | null
   adminNote?: string | null
   source?: string
+  gatewayLinkId?: string | null
+  gatewayLinkUrl?: string | null
+  gatewayRef?: string | null
   downloadCount?: number
   lastDownloadAt?: Date | string | null
   createdAt?: Date | string
@@ -561,6 +612,9 @@ export type StoreOrderUpdateManyMutationInput = {
   verifiedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastDownloadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -583,6 +637,9 @@ export type StoreOrderUncheckedUpdateManyInput = {
   verifiedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastDownloadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -615,6 +672,9 @@ export type StoreOrderCountOrderByAggregateInput = {
   verifiedBy?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  gatewayLinkId?: Prisma.SortOrder
+  gatewayLinkUrl?: Prisma.SortOrder
+  gatewayRef?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   lastDownloadAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -642,6 +702,9 @@ export type StoreOrderMaxOrderByAggregateInput = {
   verifiedBy?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  gatewayLinkId?: Prisma.SortOrder
+  gatewayLinkUrl?: Prisma.SortOrder
+  gatewayRef?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   lastDownloadAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -664,6 +727,9 @@ export type StoreOrderMinOrderByAggregateInput = {
   verifiedBy?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  gatewayLinkId?: Prisma.SortOrder
+  gatewayLinkUrl?: Prisma.SortOrder
+  gatewayRef?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   lastDownloadAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -736,6 +802,9 @@ export type StoreOrderCreateWithoutBookInput = {
   verifiedBy?: string | null
   adminNote?: string | null
   source?: string
+  gatewayLinkId?: string | null
+  gatewayLinkUrl?: string | null
+  gatewayRef?: string | null
   downloadCount?: number
   lastDownloadAt?: Date | string | null
   createdAt?: Date | string
@@ -757,6 +826,9 @@ export type StoreOrderUncheckedCreateWithoutBookInput = {
   verifiedBy?: string | null
   adminNote?: string | null
   source?: string
+  gatewayLinkId?: string | null
+  gatewayLinkUrl?: string | null
+  gatewayRef?: string | null
   downloadCount?: number
   lastDownloadAt?: Date | string | null
   createdAt?: Date | string
@@ -808,6 +880,9 @@ export type StoreOrderScalarWhereInput = {
   verifiedBy?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   adminNote?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   source?: Prisma.StringFilter<"StoreOrder"> | string
+  gatewayLinkId?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
+  gatewayLinkUrl?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
+  gatewayRef?: Prisma.StringNullableFilter<"StoreOrder"> | string | null
   downloadCount?: Prisma.IntFilter<"StoreOrder"> | number
   lastDownloadAt?: Prisma.DateTimeNullableFilter<"StoreOrder"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"StoreOrder"> | Date | string
@@ -829,6 +904,9 @@ export type StoreOrderCreateManyBookInput = {
   verifiedBy?: string | null
   adminNote?: string | null
   source?: string
+  gatewayLinkId?: string | null
+  gatewayLinkUrl?: string | null
+  gatewayRef?: string | null
   downloadCount?: number
   lastDownloadAt?: Date | string | null
   createdAt?: Date | string
@@ -850,6 +928,9 @@ export type StoreOrderUpdateWithoutBookInput = {
   verifiedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastDownloadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -871,6 +952,9 @@ export type StoreOrderUncheckedUpdateWithoutBookInput = {
   verifiedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastDownloadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -892,6 +976,9 @@ export type StoreOrderUncheckedUpdateManyWithoutBookInput = {
   verifiedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.StringFieldUpdateOperationsInput | string
+  gatewayLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayLinkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gatewayRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastDownloadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -916,6 +1003,9 @@ export type StoreOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   verifiedBy?: boolean
   adminNote?: boolean
   source?: boolean
+  gatewayLinkId?: boolean
+  gatewayLinkUrl?: boolean
+  gatewayRef?: boolean
   downloadCount?: boolean
   lastDownloadAt?: boolean
   createdAt?: boolean
@@ -939,6 +1029,9 @@ export type StoreOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   verifiedBy?: boolean
   adminNote?: boolean
   source?: boolean
+  gatewayLinkId?: boolean
+  gatewayLinkUrl?: boolean
+  gatewayRef?: boolean
   downloadCount?: boolean
   lastDownloadAt?: boolean
   createdAt?: boolean
@@ -962,6 +1055,9 @@ export type StoreOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   verifiedBy?: boolean
   adminNote?: boolean
   source?: boolean
+  gatewayLinkId?: boolean
+  gatewayLinkUrl?: boolean
+  gatewayRef?: boolean
   downloadCount?: boolean
   lastDownloadAt?: boolean
   createdAt?: boolean
@@ -985,13 +1081,16 @@ export type StoreOrderSelectScalar = {
   verifiedBy?: boolean
   adminNote?: boolean
   source?: boolean
+  gatewayLinkId?: boolean
+  gatewayLinkUrl?: boolean
+  gatewayRef?: boolean
   downloadCount?: boolean
   lastDownloadAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type StoreOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNo" | "accessToken" | "bookId" | "bookTitle" | "amount" | "buyerName" | "buyerMobile" | "buyerEmail" | "status" | "paymentRef" | "paidAt" | "verifiedBy" | "adminNote" | "source" | "downloadCount" | "lastDownloadAt" | "createdAt" | "updatedAt", ExtArgs["result"]["storeOrder"]>
+export type StoreOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNo" | "accessToken" | "bookId" | "bookTitle" | "amount" | "buyerName" | "buyerMobile" | "buyerEmail" | "status" | "paymentRef" | "paidAt" | "verifiedBy" | "adminNote" | "source" | "gatewayLinkId" | "gatewayLinkUrl" | "gatewayRef" | "downloadCount" | "lastDownloadAt" | "createdAt" | "updatedAt", ExtArgs["result"]["storeOrder"]>
 export type StoreOrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   book?: boolean | Prisma.BookDefaultArgs<ExtArgs>
 }
@@ -1023,6 +1122,9 @@ export type $StoreOrderPayload<ExtArgs extends runtime.Types.Extensions.Internal
     verifiedBy: string | null
     adminNote: string | null
     source: string
+    gatewayLinkId: string | null
+    gatewayLinkUrl: string | null
+    gatewayRef: string | null
     downloadCount: number
     lastDownloadAt: Date | null
     createdAt: Date
@@ -1466,6 +1568,9 @@ export interface StoreOrderFieldRefs {
   readonly verifiedBy: Prisma.FieldRef<"StoreOrder", 'String'>
   readonly adminNote: Prisma.FieldRef<"StoreOrder", 'String'>
   readonly source: Prisma.FieldRef<"StoreOrder", 'String'>
+  readonly gatewayLinkId: Prisma.FieldRef<"StoreOrder", 'String'>
+  readonly gatewayLinkUrl: Prisma.FieldRef<"StoreOrder", 'String'>
+  readonly gatewayRef: Prisma.FieldRef<"StoreOrder", 'String'>
   readonly downloadCount: Prisma.FieldRef<"StoreOrder", 'Int'>
   readonly lastDownloadAt: Prisma.FieldRef<"StoreOrder", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"StoreOrder", 'DateTime'>

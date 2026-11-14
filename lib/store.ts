@@ -2,17 +2,17 @@
 //
 // How a purchase works:
 //   1. A visitor places an order for a paid Book  → StoreOrder PENDING.
-//   2. They pay the academy directly (payment link and/or UPI) and report the
-//      transaction reference                      → SUBMITTED.
-//   3. An admin checks the money arrived and marks the order paid → PAID.
-//   4. Only a PAID order can fetch the file, through its private order link.
-//
-// Nothing here talks to a payment gateway: the academy receives the money in
-// its own account and confirms each payment by hand.
+//   2a. Automatic (Razorpay keys configured): they pay on Razorpay, this
+//       server confirms the payment with Razorpay                → PAID.
+//   2b. Manual (no gateway): they pay the academy directly (payment link
+//       and/or UPI) and report the transaction reference → SUBMITTED, then
+//       an admin checks the money arrived and marks the order   → PAID.
+//   3. Only a PAID order can fetch the file, through its private order link.
 
 import { randomBytes, randomInt } from "node:crypto";
 import type { PrismaClient } from "@prisma/client";
 import { normalizePhone } from "@/lib/credentials";
+import { gatewayEnabled } from "@/lib/razorpay";
 
 export const STORE_STATUSES = ["PENDING", "SUBMITTED", "PAID", "CANCELLED"] as const;
 export type StoreStatus = (typeof STORE_STATUSES)[number];
@@ -88,14 +88,17 @@ export interface StorePaymentSettings {
   payeeName: string | null;
   paymentLink: string | null;
   instructions: string | null;
+  /** True when Razorpay is configured: buyers pay online and are confirmed automatically. */
+  gateway: boolean;
 }
 
-export const EMPTY_SETTINGS: StorePaymentSettings = { upiId: null, payeeName: null, paymentLink: null, instructions: null };
+export const EMPTY_SETTINGS: StorePaymentSettings = { upiId: null, payeeName: null, paymentLink: null, instructions: null, gateway: false };
 
 export async function loadStoreSettings(db: PrismaClient): Promise<StorePaymentSettings> {
   const row = await db.storeSettings.findUnique({ where: { id: "default" } });
-  if (!row) return EMPTY_SETTINGS;
-  return { upiId: row.upiId, payeeName: row.payeeName, paymentLink: row.paymentLink, instructions: row.instructions };
+  const gateway = gatewayEnabled();
+  if (!row) return { ...EMPTY_SETTINGS, gateway };
+  return { upiId: row.upiId, payeeName: row.payeeName, paymentLink: row.paymentLink, instructions: row.instructions, gateway };
 }
 
 /**
@@ -121,7 +124,7 @@ export function isSellable(
   settings: StorePaymentSettings
 ): boolean {
   const hasFile = Boolean(book.pdfUrl || book.externalUrl);
-  const hasWayToPay = Boolean(book.paymentLink || settings.paymentLink || settings.upiId);
+  const hasWayToPay = Boolean(settings.gateway || book.paymentLink || settings.paymentLink || settings.upiId);
   return book.isActive && book.isPaid && typeof book.price === "number" && book.price > 0 && hasFile && hasWayToPay;
 }
 
@@ -190,6 +193,8 @@ export interface StoreItem {
   sampleUrl: string | null;
   /** False when the item cannot be bought online yet (no file or no way to pay). */
   sellable: boolean;
+  /** True when payment is taken online and the download unlocks by itself. */
+  instantPay: boolean;
 }
 
 type BookRow = {
@@ -214,6 +219,7 @@ async function toStoreItem(b: BookRow, settings: StorePaymentSettings): Promise<
     mrp: b.mrp && b.price && b.mrp > b.price ? b.mrp : null,
     sampleUrl: b.sampleUrl,
     sellable: isSellable(b, settings),
+    instantPay: settings.gateway,
   };
 }
 

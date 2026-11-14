@@ -19,10 +19,10 @@ interface Order {
   id: string; orderNo: string; accessToken: string; bookId: string; bookTitle: string; amount: number;
   buyerName: string; buyerMobile: string; buyerEmail: string | null; status: Status; paymentRef: string | null;
   paidAt: string | null; verifiedBy: string | null; adminNote: string | null; source: string;
-  downloadCount: number; lastDownloadAt: string | null; createdAt: string;
+  downloadCount: number; lastDownloadAt: string | null; createdAt: string; gatewayLinkId?: string | null;
 }
 interface PaidBook { id: string; title: string; price: number | null; isPaid: boolean; isActive: boolean; pdfUrl: string | null; externalUrl: string | null }
-interface StoreSettings { upiId: string | null; payeeName: string | null; paymentLink: string | null; instructions: string | null }
+interface StoreSettings { upiId: string | null; payeeName: string | null; paymentLink: string | null; instructions: string | null; gateway?: boolean; gatewayMode?: "test" | "live" | null }
 
 const STATUS_LABEL: Record<Status, string> = { PENDING: "Not paid yet", SUBMITTED: "To verify", PAID: "Paid", CANCELLED: "Cancelled" };
 const STATUS_TONE: Record<Status, string> = {
@@ -109,7 +109,7 @@ export default function AdminStorePage() {
     );
   }, [orders, tab, search]);
 
-  async function act(order: Order, action: "markPaid" | "cancel" | "reopen", extra: Record<string, unknown> = {}): Promise<boolean> {
+  async function act(order: Order, action: "markPaid" | "cancel" | "reopen" | "checkGateway", extra: Record<string, unknown> = {}): Promise<boolean> {
     setBusyId(order.id);
     try {
       const res = await fetch(`/api/admin/store/orders/${order.id}`, {
@@ -193,15 +193,15 @@ export default function AdminStorePage() {
   }
 
   const inputCls = "mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm";
-  const canTakePayments = Boolean(settings.upiId || settings.paymentLink) || books.some((b) => b.isActive);
-  const hasPayMethod = Boolean(settings.upiId || settings.paymentLink);
+  const hasPayMethod = Boolean(settings.gateway || settings.upiId || settings.paymentLink);
+  const canTakePayments = hasPayMethod || books.some((b) => b.isActive);
   const btn = "inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-[12px] font-bold transition disabled:opacity-50";
 
   return (
     <AdminLayout title="Store Orders" subtitle={`${orders.length} order${orders.length === 1 ? "" : "s"} • ${counts.SUBMITTED} waiting for you to verify`}>
       <AdminPageHeader
         title="Store Orders"
-        description="Buyers pay you directly. Check that the money has arrived, then mark the order paid to unlock their download."
+        description={settings.gateway ? "Buyers pay online through Razorpay and their download unlocks automatically. You can still add or mark orders paid by hand." : "Buyers pay you directly. Check that the money has arrived, then mark the order paid to unlock their download."}
         actionLabel="Add order"
         actionIcon={Plus}
         onAction={() => {
@@ -220,6 +220,15 @@ export default function AdminStorePage() {
       {notice ? (
         <p className="mt-3 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-700" role="status">
           <CheckCircle2 className="h-4 w-4" /> {notice}
+        </p>
+      ) : null}
+
+      {settings.gateway ? (
+        <p className={cn("mt-4 flex items-center gap-2 rounded-xl border px-4 py-3 text-[13px] font-bold", settings.gatewayMode === "test" ? "border-amber-200 bg-amber-50 text-amber-900" : "border-emerald-200 bg-emerald-50 text-emerald-800")}>
+          <BadgeCheck className="h-4 w-4 shrink-0" />
+          {settings.gatewayMode === "test"
+            ? "Razorpay is connected in TEST mode: payments are practice payments and no real money moves. Switch to your live keys to take real payments."
+            : "Razorpay is connected: payments are confirmed automatically."}
         </p>
       ) : null}
 
@@ -289,6 +298,11 @@ export default function AdminStorePage() {
                     <BadgeCheck className="h-4 w-4" /> Mark paid
                   </button>
                 ) : null}
+                {settings.gateway && o.gatewayLinkId && (o.status === "PENDING" || o.status === "SUBMITTED") ? (
+                  <button disabled={busyId === o.id} onClick={() => void act(o, "checkGateway").then((ok) => ok && flash(`Checked order ${o.orderNo} with Razorpay.`))} className={cn(btn, "border-silver-300 text-navy-700 hover:border-teal-500")}>
+                    <RotateCcw className="h-4 w-4" /> Check Razorpay
+                  </button>
+                ) : null}
                 {o.status !== "CANCELLED" ? (
                   <button disabled={busyId === o.id} onClick={() => { if (window.confirm(o.status === "PAID" ? `Cancel order ${o.orderNo}? The buyer will lose access to the download.` : `Cancel order ${o.orderNo}?`)) void act(o, "cancel").then((ok) => ok && flash(`Order ${o.orderNo} cancelled.`)); }} className={cn(btn, "border-crimson-100 text-crimson hover:bg-crimson-50")}>
                     <XCircle className="h-4 w-4" /> Cancel
@@ -340,6 +354,11 @@ export default function AdminStorePage() {
       {/* Payment settings */}
       <AdminModal open={settingsOpen} title="Payment settings" onClose={() => setSettingsOpen(false)}>
         {modalError ? <p className="mb-3 rounded-xl bg-crimson-50 px-4 py-2.5 text-[13px] font-bold text-crimson" role="alert">{modalError}</p> : null}
+        {settings.gateway ? (
+          <p className="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-[13px] font-bold text-emerald-800">Razorpay is connected{settings.gatewayMode === "test" ? " (test mode)" : ""}. Buyers pay through Razorpay, so the details below are not shown to them. They are used only if Razorpay is ever disconnected.</p>
+        ) : (
+          <p className="mb-3 rounded-xl border border-silver-200 bg-silver-50 px-4 py-2.5 text-[13px] text-navy-700"><span className="font-bold">Automatic payments are off.</span> To let buyers pay and download without waiting for you, add your Razorpay keys in the website hosting settings (RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET).</p>
+        )}
         <p className="text-[13px] leading-relaxed text-muted">Buyers see these on the payment step. Fill in at least one way to pay. Money goes straight to your account; the website does not handle it.</p>
         <div className="mt-3 grid gap-3">
           <label className="block text-[12px] font-bold text-navy-700">UPI ID

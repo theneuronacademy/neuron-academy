@@ -5,6 +5,7 @@ import { NextRequest } from "next/server";
 import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
+import { gatewayEnabled, gatewayMode } from "@/lib/razorpay";
 import { cleanHttpsUrl, cleanUpiId, loadStoreSettings, refreshStorePages } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   if (!db) return dbNotConfigured("Reading store settings");
   try {
-    return ok({ item: await loadStoreSettings(db) });
+    return ok({ item: { ...(await loadStoreSettings(db)), gatewayMode: gatewayMode() } });
   } catch (err) {
     return serverError("admin-store:settings:read", err);
   }
@@ -45,7 +46,7 @@ export async function PUT(req: NextRequest) {
   try {
     const row = await db.storeSettings.upsert({ where: { id: "default" }, create: { id: "default", ...data }, update: data });
     await refreshStorePages();
-    return ok({ item: { upiId: row.upiId, payeeName: row.payeeName, paymentLink: row.paymentLink, instructions: row.instructions } });
+    return ok({ item: { upiId: row.upiId, payeeName: row.payeeName, paymentLink: row.paymentLink, instructions: row.instructions, gateway: gatewayEnabled(), gatewayMode: gatewayMode() } });
   } catch (err) {
     return serverError("admin-store:settings:save", err);
   }

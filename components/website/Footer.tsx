@@ -90,9 +90,10 @@ export function Footer() {
       <div className="border-t border-silver-200 bg-silver-50">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-neutral-500 sm:flex-row sm:px-6">
           <p>© {new Date().getFullYear()} Neuron Academy, Shaheen Bagh</p>
-          <p className="flex gap-4">
+          <p className="flex flex-wrap justify-center gap-x-4 gap-y-1">
             <Link href="/privacy-policy" className="hover:text-brand-primary hover:underline">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-brand-primary hover:underline">Terms of Use</Link>
+            <Link href="/refund-policy" className="hover:text-brand-primary hover:underline">Refund Policy</Link>
           </p>
         </div>
       </div>
