@@ -97,7 +97,8 @@ export function BuyForm({ bookId, priceLabel, instantPay = false }: { bookId: st
       <p className="text-[13px] leading-relaxed text-neutral-600">
         {instantPay
           ? "You pay on Razorpay's secure page by UPI, card or net banking. Your download opens straight after payment."
-          : "You pay on the next step. Your download unlocks after the academy confirms the payment."}
+          : "You pay on the next step. Your download unlocks after the academy confirms the payment."}{" "}
+        Digital material is not refundable. <Link href="/refund-policy" className="font-bold text-brand-primary underline underline-offset-4">Refund policy</Link>
       </p>
     </form>
   );
