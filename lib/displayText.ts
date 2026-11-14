@@ -142,3 +142,8 @@ export function resourceTag(raw: string): string {
   const map: Record<string, string> = { math: "Mathematics", maths: "Mathematics", "questions bank": "Question Bank", "question banks": "Question Bank" };
   return map[s.toLowerCase()] ?? s;
 }
+
+/** "₹1,999" */
+export function rupees(n: number): string {
+  return `₹${n.toLocaleString("en-IN")}`;
+}

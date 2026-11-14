@@ -10,7 +10,7 @@ import { Navbar } from "@/components/website/Navbar";
 import { TopRunningBanner, type BannerRow } from "@/components/website/TopRunningBanner";
 import { Hero } from "@/components/website/Hero";
 import { ToppersWall } from "@/components/website/ToppersWall";
-import { classLabel, courseHighlights, courseSummary, presentFaculty, resourceTag, sizedImage, titleCaseName } from "@/lib/displayText";
+import { classLabel, courseHighlights, courseSummary, presentFaculty, resourceTag, rupees, sizedImage, titleCaseName } from "@/lib/displayText";
 import { CrashCourseAd } from "@/components/website/CrashCourseAd";
 import { AdvertisementPopup } from "@/components/website/AdvertisementPopup";
 import { MobileActionBar } from "@/components/website/MobileActionBar";
@@ -325,6 +325,10 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
             visibleTo: String(r.visibleTo ?? "ALL"),
             isActive: Boolean(r.isActive),
             order: Number(r.order ?? 0),
+            isPaid: r.isPaid === true,
+            price: typeof r.price === "number" ? r.price : null,
+            mrp: typeof r.mrp === "number" ? r.mrp : null,
+            sampleUrl: typeof r.sampleUrl === "string" ? r.sampleUrl : null,
           })));
         }
       } catch {
@@ -593,6 +597,7 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
                 {(liveBooks ?? []).map((b, i) => {
                   const open = b.visibleTo === "ALL";
                   const link = b.pdfUrl || b.externalUrl;
+                  const forSale = b.isPaid === true && typeof b.price === "number" && b.price > 0;
                   const points = courseHighlights(b.description ?? "").slice(0, 4);
                   const tags = [b.subject && resourceTag(b.subject), b.className && classLabel(b.className), b.category && resourceTag(b.category)].filter(Boolean) as string[];
                   return (
@@ -611,9 +616,11 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
                       </div>
                       <div className="flex flex-1 flex-col p-5">
                         <div className="flex flex-wrap gap-1.5">
-                          <span className={open ? "rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-emerald-200" : "rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-800 ring-1 ring-amber-200"}>
-                            {open ? "Free to view" : "Enrolled students"}
-                          </span>
+                          {forSale ? null : (
+                            <span className={open ? "rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-emerald-200" : "rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-800 ring-1 ring-amber-200"}>
+                              {open ? "Free to view" : "Enrolled students"}
+                            </span>
+                          )}
                           {tags.map((t) => (
                             <span key={t} className="rounded-full bg-silver-50 px-2.5 py-1 text-[11px] font-bold text-navy-700 ring-1 ring-silver-200">{t}</span>
                           ))}
@@ -633,7 +640,17 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
                           </ul>
                         ) : null}
                         <div className="mt-auto pt-5">
-                          {!open ? (
+                          {forSale ? (
+                            <>
+                              <p className="mb-3 flex items-baseline gap-2">
+                                <span className="text-2xl font-extrabold text-navy-950">{rupees(b.price as number)}</span>
+                                {b.mrp && b.mrp > (b.price as number) ? <span className="text-sm font-semibold text-neutral-500 line-through">{rupees(b.mrp)}</span> : null}
+                              </p>
+                              <Link href={`/store/${b.id}`} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-primary-hover">
+                                View &amp; buy <ArrowRight className="h-4 w-4" aria-hidden />
+                              </Link>
+                            </>
+                          ) : !open ? (
                             <a href={STUDENT_PORTAL_URL} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand-primary px-4 py-2.5 text-sm font-bold text-brand-primary transition hover:bg-brand-primary/5">
                               Open in student portal <ArrowRight className="h-4 w-4" aria-hidden />
                             </a>

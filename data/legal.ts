@@ -27,7 +27,7 @@ export const PRIVACY_POLICY: LegalDoc = {
   slug: "privacy-policy",
   title: "Privacy Policy",
   description: "How Neuron Academy collects, uses and protects the personal information of students, parents and website visitors.",
-  updated: "11 November 2026",
+  updated: "13 November 2026",
   intro:
     "This policy explains what personal information Neuron Academy collects through this website, why we collect it, who we share it with and the choices you have. It applies to www.neuron-academy.in.",
   sections: [
@@ -40,6 +40,7 @@ export const PRIVACY_POLICY: LegalDoc = {
       bullets: [
         "Enquiry and admission forms: the student's or parent's name, mobile number, email address (if given), the course or class of interest, preferred batch and any message you write.",
         "Student registration for tests on this website: name, mobile number (verified by a one-time password sent by SMS), email address and password, and the tests attempted with their answers and scores.",
+        "Study material bought on this website: your name, mobile number, email address (if given), the item bought and the payment transaction number you enter. Payments go directly to the academy by UPI or a payment link; this website does not collect or store card, bank or UPI PIN details.",
         "When you call, message or WhatsApp us: your number and what you choose to tell us.",
         "Technical information: like most websites, our hosting provider records basic details such as IP address, browser type and the pages requested. The site also stores small items on your device, for example to remember that you have already seen an announcement.",
         "Student results and photographs: published on this website only with the consent of the student or, for a minor, the parent or guardian.",
@@ -110,7 +111,7 @@ export const TERMS: LegalDoc = {
   slug: "terms",
   title: "Terms of Use",
   description: "The terms that apply to using the Neuron Academy website, its tests and its content.",
-  updated: "11 November 2026",
+  updated: "13 November 2026",
   intro: "These terms apply to your use of www.neuron-academy.in. By using the website you agree to them.",
   sections: [
     {
@@ -137,7 +138,16 @@ export const TERMS: LegalDoc = {
       ],
     },
     {
-      heading: "5. Accounts and online tests",
+      heading: "5. Study material bought online",
+      bullets: [
+        "Study material sold on this website is a digital PDF. Nothing is posted to you.",
+        "You pay the academy directly. Your download unlocks on your order page after the academy confirms that the payment has been received.",
+        "The file is for the buyer's own study. Please do not share, resell or upload it.",
+        "Please read the description and any free sample before buying. If you paid twice, paid the wrong amount or cannot open your file, contact us with your order number.",
+      ],
+    },
+    {
+      heading: "6. Accounts and online tests",
       bullets: [
         "Give accurate details when you register, and keep your password and one-time passwords private.",
         "Attempt tests yourself and honestly. Do not copy, share or publish test questions.",
@@ -145,27 +155,27 @@ export const TERMS: LegalDoc = {
       ],
     },
     {
-      heading: "6. Our content",
+      heading: "7. Our content",
       paragraphs: [
         "The Neuron Academy name and logo, and the notes, question papers, videos, images and text on this website, belong to Neuron Academy or are used with permission. You may use them for your own study. Please do not copy, sell or redistribute them without our written permission.",
       ],
     },
     {
-      heading: "7. Links to other websites",
+      heading: "8. Links to other websites",
       paragraphs: ["The website links to other services, such as the student portal, WhatsApp, Google and official examination websites. We are not responsible for their content or their handling of your information."],
     },
     {
-      heading: "8. Liability",
+      heading: "9. Liability",
       paragraphs: [
         "The website is provided as it is. To the extent the law allows, Neuron Academy is not liable for loss arising from reliance on information on the website, or from the website being unavailable.",
       ],
     },
     {
-      heading: "9. Governing law",
+      heading: "10. Governing law",
       paragraphs: ["These terms are governed by the laws of India. The courts at Delhi have jurisdiction over any dispute."],
     },
     {
-      heading: "10. Changes and contact",
+      heading: "11. Changes and contact",
       paragraphs: ["We may update these terms from time to time; the date at the top shows the latest revision. For any question about them, contact us using the details in section 1."],
     },
   ],

@@ -28,10 +28,14 @@ export type AggregateBook = {
 
 export type BookAvgAggregateOutputType = {
   order: number | null
+  price: number | null
+  mrp: number | null
 }
 
 export type BookSumAggregateOutputType = {
   order: number | null
+  price: number | null
+  mrp: number | null
 }
 
 export type BookMinAggregateOutputType = {
@@ -53,6 +57,11 @@ export type BookMinAggregateOutputType = {
   cachedCoverUrl: string | null
   cachedPdfUrl: string | null
   cacheExpiresAt: Date | null
+  isPaid: boolean | null
+  price: number | null
+  mrp: number | null
+  paymentLink: string | null
+  sampleUrl: string | null
 }
 
 export type BookMaxAggregateOutputType = {
@@ -74,6 +83,11 @@ export type BookMaxAggregateOutputType = {
   cachedCoverUrl: string | null
   cachedPdfUrl: string | null
   cacheExpiresAt: Date | null
+  isPaid: boolean | null
+  price: number | null
+  mrp: number | null
+  paymentLink: string | null
+  sampleUrl: string | null
 }
 
 export type BookCountAggregateOutputType = {
@@ -95,16 +109,25 @@ export type BookCountAggregateOutputType = {
   cachedCoverUrl: number
   cachedPdfUrl: number
   cacheExpiresAt: number
+  isPaid: number
+  price: number
+  mrp: number
+  paymentLink: number
+  sampleUrl: number
   _all: number
 }
 
 
 export type BookAvgAggregateInputType = {
   order?: true
+  price?: true
+  mrp?: true
 }
 
 export type BookSumAggregateInputType = {
   order?: true
+  price?: true
+  mrp?: true
 }
 
 export type BookMinAggregateInputType = {
@@ -126,6 +149,11 @@ export type BookMinAggregateInputType = {
   cachedCoverUrl?: true
   cachedPdfUrl?: true
   cacheExpiresAt?: true
+  isPaid?: true
+  price?: true
+  mrp?: true
+  paymentLink?: true
+  sampleUrl?: true
 }
 
 export type BookMaxAggregateInputType = {
@@ -147,6 +175,11 @@ export type BookMaxAggregateInputType = {
   cachedCoverUrl?: true
   cachedPdfUrl?: true
   cacheExpiresAt?: true
+  isPaid?: true
+  price?: true
+  mrp?: true
+  paymentLink?: true
+  sampleUrl?: true
 }
 
 export type BookCountAggregateInputType = {
@@ -168,6 +201,11 @@ export type BookCountAggregateInputType = {
   cachedCoverUrl?: true
   cachedPdfUrl?: true
   cacheExpiresAt?: true
+  isPaid?: true
+  price?: true
+  mrp?: true
+  paymentLink?: true
+  sampleUrl?: true
   _all?: true
 }
 
@@ -276,6 +314,11 @@ export type BookGroupByOutputType = {
   cachedCoverUrl: string | null
   cachedPdfUrl: string | null
   cacheExpiresAt: Date | null
+  isPaid: boolean
+  price: number | null
+  mrp: number | null
+  paymentLink: string | null
+  sampleUrl: string | null
   _count: BookCountAggregateOutputType | null
   _avg: BookAvgAggregateOutputType | null
   _sum: BookSumAggregateOutputType | null
@@ -320,6 +363,12 @@ export type BookWhereInput = {
   cachedCoverUrl?: Prisma.StringNullableFilter<"Book"> | string | null
   cachedPdfUrl?: Prisma.StringNullableFilter<"Book"> | string | null
   cacheExpiresAt?: Prisma.DateTimeNullableFilter<"Book"> | Date | string | null
+  isPaid?: Prisma.BoolFilter<"Book"> | boolean
+  price?: Prisma.IntNullableFilter<"Book"> | number | null
+  mrp?: Prisma.IntNullableFilter<"Book"> | number | null
+  paymentLink?: Prisma.StringNullableFilter<"Book"> | string | null
+  sampleUrl?: Prisma.StringNullableFilter<"Book"> | string | null
+  orders?: Prisma.StoreOrderListRelationFilter
 }
 
 export type BookOrderByWithRelationInput = {
@@ -341,6 +390,12 @@ export type BookOrderByWithRelationInput = {
   cachedCoverUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   cachedPdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   cacheExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPaid?: Prisma.SortOrder
+  price?: Prisma.SortOrderInput | Prisma.SortOrder
+  mrp?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  orders?: Prisma.StoreOrderOrderByRelationAggregateInput
 }
 
 export type BookWhereUniqueInput = Prisma.AtLeast<{
@@ -365,6 +420,12 @@ export type BookWhereUniqueInput = Prisma.AtLeast<{
   cachedCoverUrl?: Prisma.StringNullableFilter<"Book"> | string | null
   cachedPdfUrl?: Prisma.StringNullableFilter<"Book"> | string | null
   cacheExpiresAt?: Prisma.DateTimeNullableFilter<"Book"> | Date | string | null
+  isPaid?: Prisma.BoolFilter<"Book"> | boolean
+  price?: Prisma.IntNullableFilter<"Book"> | number | null
+  mrp?: Prisma.IntNullableFilter<"Book"> | number | null
+  paymentLink?: Prisma.StringNullableFilter<"Book"> | string | null
+  sampleUrl?: Prisma.StringNullableFilter<"Book"> | string | null
+  orders?: Prisma.StoreOrderListRelationFilter
 }, "id">
 
 export type BookOrderByWithAggregationInput = {
@@ -386,6 +447,11 @@ export type BookOrderByWithAggregationInput = {
   cachedCoverUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   cachedPdfUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   cacheExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPaid?: Prisma.SortOrder
+  price?: Prisma.SortOrderInput | Prisma.SortOrder
+  mrp?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BookCountOrderByAggregateInput
   _avg?: Prisma.BookAvgOrderByAggregateInput
   _max?: Prisma.BookMaxOrderByAggregateInput
@@ -415,6 +481,11 @@ export type BookScalarWhereWithAggregatesInput = {
   cachedCoverUrl?: Prisma.StringNullableWithAggregatesFilter<"Book"> | string | null
   cachedPdfUrl?: Prisma.StringNullableWithAggregatesFilter<"Book"> | string | null
   cacheExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Book"> | Date | string | null
+  isPaid?: Prisma.BoolWithAggregatesFilter<"Book"> | boolean
+  price?: Prisma.IntNullableWithAggregatesFilter<"Book"> | number | null
+  mrp?: Prisma.IntNullableWithAggregatesFilter<"Book"> | number | null
+  paymentLink?: Prisma.StringNullableWithAggregatesFilter<"Book"> | string | null
+  sampleUrl?: Prisma.StringNullableWithAggregatesFilter<"Book"> | string | null
 }
 
 export type BookCreateInput = {
@@ -436,6 +507,12 @@ export type BookCreateInput = {
   cachedCoverUrl?: string | null
   cachedPdfUrl?: string | null
   cacheExpiresAt?: Date | string | null
+  isPaid?: boolean
+  price?: number | null
+  mrp?: number | null
+  paymentLink?: string | null
+  sampleUrl?: string | null
+  orders?: Prisma.StoreOrderCreateNestedManyWithoutBookInput
 }
 
 export type BookUncheckedCreateInput = {
@@ -457,6 +534,12 @@ export type BookUncheckedCreateInput = {
   cachedCoverUrl?: string | null
   cachedPdfUrl?: string | null
   cacheExpiresAt?: Date | string | null
+  isPaid?: boolean
+  price?: number | null
+  mrp?: number | null
+  paymentLink?: string | null
+  sampleUrl?: string | null
+  orders?: Prisma.StoreOrderUncheckedCreateNestedManyWithoutBookInput
 }
 
 export type BookUpdateInput = {
@@ -478,6 +561,12 @@ export type BookUpdateInput = {
   cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  price?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mrp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orders?: Prisma.StoreOrderUpdateManyWithoutBookNestedInput
 }
 
 export type BookUncheckedUpdateInput = {
@@ -499,6 +588,12 @@ export type BookUncheckedUpdateInput = {
   cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  price?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mrp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orders?: Prisma.StoreOrderUncheckedUpdateManyWithoutBookNestedInput
 }
 
 export type BookCreateManyInput = {
@@ -520,6 +615,11 @@ export type BookCreateManyInput = {
   cachedCoverUrl?: string | null
   cachedPdfUrl?: string | null
   cacheExpiresAt?: Date | string | null
+  isPaid?: boolean
+  price?: number | null
+  mrp?: number | null
+  paymentLink?: string | null
+  sampleUrl?: string | null
 }
 
 export type BookUpdateManyMutationInput = {
@@ -541,6 +641,11 @@ export type BookUpdateManyMutationInput = {
   cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  price?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mrp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type BookUncheckedUpdateManyInput = {
@@ -562,6 +667,11 @@ export type BookUncheckedUpdateManyInput = {
   cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  price?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mrp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type BookCountOrderByAggregateInput = {
@@ -583,10 +693,17 @@ export type BookCountOrderByAggregateInput = {
   cachedCoverUrl?: Prisma.SortOrder
   cachedPdfUrl?: Prisma.SortOrder
   cacheExpiresAt?: Prisma.SortOrder
+  isPaid?: Prisma.SortOrder
+  price?: Prisma.SortOrder
+  mrp?: Prisma.SortOrder
+  paymentLink?: Prisma.SortOrder
+  sampleUrl?: Prisma.SortOrder
 }
 
 export type BookAvgOrderByAggregateInput = {
   order?: Prisma.SortOrder
+  price?: Prisma.SortOrder
+  mrp?: Prisma.SortOrder
 }
 
 export type BookMaxOrderByAggregateInput = {
@@ -608,6 +725,11 @@ export type BookMaxOrderByAggregateInput = {
   cachedCoverUrl?: Prisma.SortOrder
   cachedPdfUrl?: Prisma.SortOrder
   cacheExpiresAt?: Prisma.SortOrder
+  isPaid?: Prisma.SortOrder
+  price?: Prisma.SortOrder
+  mrp?: Prisma.SortOrder
+  paymentLink?: Prisma.SortOrder
+  sampleUrl?: Prisma.SortOrder
 }
 
 export type BookMinOrderByAggregateInput = {
@@ -629,16 +751,191 @@ export type BookMinOrderByAggregateInput = {
   cachedCoverUrl?: Prisma.SortOrder
   cachedPdfUrl?: Prisma.SortOrder
   cacheExpiresAt?: Prisma.SortOrder
+  isPaid?: Prisma.SortOrder
+  price?: Prisma.SortOrder
+  mrp?: Prisma.SortOrder
+  paymentLink?: Prisma.SortOrder
+  sampleUrl?: Prisma.SortOrder
 }
 
 export type BookSumOrderByAggregateInput = {
   order?: Prisma.SortOrder
+  price?: Prisma.SortOrder
+  mrp?: Prisma.SortOrder
+}
+
+export type BookScalarRelationFilter = {
+  is?: Prisma.BookWhereInput
+  isNot?: Prisma.BookWhereInput
 }
 
 export type EnumBookVisibilityFieldUpdateOperationsInput = {
   set?: $Enums.BookVisibility
 }
 
+export type BookCreateNestedOneWithoutOrdersInput = {
+  create?: Prisma.XOR<Prisma.BookCreateWithoutOrdersInput, Prisma.BookUncheckedCreateWithoutOrdersInput>
+  connectOrCreate?: Prisma.BookCreateOrConnectWithoutOrdersInput
+  connect?: Prisma.BookWhereUniqueInput
+}
+
+export type BookUpdateOneRequiredWithoutOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.BookCreateWithoutOrdersInput, Prisma.BookUncheckedCreateWithoutOrdersInput>
+  connectOrCreate?: Prisma.BookCreateOrConnectWithoutOrdersInput
+  upsert?: Prisma.BookUpsertWithoutOrdersInput
+  connect?: Prisma.BookWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BookUpdateToOneWithWhereWithoutOrdersInput, Prisma.BookUpdateWithoutOrdersInput>, Prisma.BookUncheckedUpdateWithoutOrdersInput>
+}
+
+export type BookCreateWithoutOrdersInput = {
+  id?: string
+  title: string
+  description?: string | null
+  author?: string | null
+  subject?: string | null
+  className?: string | null
+  category?: string | null
+  coverImageUrl?: string | null
+  pdfUrl?: string | null
+  externalUrl?: string | null
+  visibleTo?: $Enums.BookVisibility
+  isActive?: boolean
+  order?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  cachedCoverUrl?: string | null
+  cachedPdfUrl?: string | null
+  cacheExpiresAt?: Date | string | null
+  isPaid?: boolean
+  price?: number | null
+  mrp?: number | null
+  paymentLink?: string | null
+  sampleUrl?: string | null
+}
+
+export type BookUncheckedCreateWithoutOrdersInput = {
+  id?: string
+  title: string
+  description?: string | null
+  author?: string | null
+  subject?: string | null
+  className?: string | null
+  category?: string | null
+  coverImageUrl?: string | null
+  pdfUrl?: string | null
+  externalUrl?: string | null
+  visibleTo?: $Enums.BookVisibility
+  isActive?: boolean
+  order?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  cachedCoverUrl?: string | null
+  cachedPdfUrl?: string | null
+  cacheExpiresAt?: Date | string | null
+  isPaid?: boolean
+  price?: number | null
+  mrp?: number | null
+  paymentLink?: string | null
+  sampleUrl?: string | null
+}
+
+export type BookCreateOrConnectWithoutOrdersInput = {
+  where: Prisma.BookWhereUniqueInput
+  create: Prisma.XOR<Prisma.BookCreateWithoutOrdersInput, Prisma.BookUncheckedCreateWithoutOrdersInput>
+}
+
+export type BookUpsertWithoutOrdersInput = {
+  update: Prisma.XOR<Prisma.BookUpdateWithoutOrdersInput, Prisma.BookUncheckedUpdateWithoutOrdersInput>
+  create: Prisma.XOR<Prisma.BookCreateWithoutOrdersInput, Prisma.BookUncheckedCreateWithoutOrdersInput>
+  where?: Prisma.BookWhereInput
+}
+
+export type BookUpdateToOneWithWhereWithoutOrdersInput = {
+  where?: Prisma.BookWhereInput
+  data: Prisma.XOR<Prisma.BookUpdateWithoutOrdersInput, Prisma.BookUncheckedUpdateWithoutOrdersInput>
+}
+
+export type BookUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  author?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleTo?: Prisma.EnumBookVisibilityFieldUpdateOperationsInput | $Enums.BookVisibility
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  price?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mrp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type BookUncheckedUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  author?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  className?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleTo?: Prisma.EnumBookVisibilityFieldUpdateOperationsInput | $Enums.BookVisibility
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cachedCoverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cachedPdfUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cacheExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  price?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mrp?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+
+/**
+ * Count Type BookCountOutputType
+ */
+
+export type BookCountOutputType = {
+  orders: number
+}
+
+export type BookCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  orders?: boolean | BookCountOutputTypeCountOrdersArgs
+}
+
+/**
+ * BookCountOutputType without action
+ */
+export type BookCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BookCountOutputType
+   */
+  select?: Prisma.BookCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BookCountOutputType without action
+ */
+export type BookCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StoreOrderWhereInput
+}
 
 
 export type BookSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -660,6 +957,13 @@ export type BookSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   cachedCoverUrl?: boolean
   cachedPdfUrl?: boolean
   cacheExpiresAt?: boolean
+  isPaid?: boolean
+  price?: boolean
+  mrp?: boolean
+  paymentLink?: boolean
+  sampleUrl?: boolean
+  orders?: boolean | Prisma.Book$ordersArgs<ExtArgs>
+  _count?: boolean | Prisma.BookCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["book"]>
 
 export type BookSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -681,6 +985,11 @@ export type BookSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   cachedCoverUrl?: boolean
   cachedPdfUrl?: boolean
   cacheExpiresAt?: boolean
+  isPaid?: boolean
+  price?: boolean
+  mrp?: boolean
+  paymentLink?: boolean
+  sampleUrl?: boolean
 }, ExtArgs["result"]["book"]>
 
 export type BookSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -702,6 +1011,11 @@ export type BookSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   cachedCoverUrl?: boolean
   cachedPdfUrl?: boolean
   cacheExpiresAt?: boolean
+  isPaid?: boolean
+  price?: boolean
+  mrp?: boolean
+  paymentLink?: boolean
+  sampleUrl?: boolean
 }, ExtArgs["result"]["book"]>
 
 export type BookSelectScalar = {
@@ -723,13 +1037,26 @@ export type BookSelectScalar = {
   cachedCoverUrl?: boolean
   cachedPdfUrl?: boolean
   cacheExpiresAt?: boolean
+  isPaid?: boolean
+  price?: boolean
+  mrp?: boolean
+  paymentLink?: boolean
+  sampleUrl?: boolean
 }
 
-export type BookOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "author" | "subject" | "className" | "category" | "coverImageUrl" | "pdfUrl" | "externalUrl" | "visibleTo" | "isActive" | "order" | "createdAt" | "updatedAt" | "cachedCoverUrl" | "cachedPdfUrl" | "cacheExpiresAt", ExtArgs["result"]["book"]>
+export type BookOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "author" | "subject" | "className" | "category" | "coverImageUrl" | "pdfUrl" | "externalUrl" | "visibleTo" | "isActive" | "order" | "createdAt" | "updatedAt" | "cachedCoverUrl" | "cachedPdfUrl" | "cacheExpiresAt" | "isPaid" | "price" | "mrp" | "paymentLink" | "sampleUrl", ExtArgs["result"]["book"]>
+export type BookInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  orders?: boolean | Prisma.Book$ordersArgs<ExtArgs>
+  _count?: boolean | Prisma.BookCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type BookIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type BookIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $BookPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Book"
-  objects: {}
+  objects: {
+    orders: Prisma.$StoreOrderPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
@@ -749,6 +1076,11 @@ export type $BookPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     cachedCoverUrl: string | null
     cachedPdfUrl: string | null
     cacheExpiresAt: Date | null
+    isPaid: boolean
+    price: number | null
+    mrp: number | null
+    paymentLink: string | null
+    sampleUrl: string | null
   }, ExtArgs["result"]["book"]>
   composites: {}
 }
@@ -1143,6 +1475,7 @@ readonly fields: BookFieldRefs;
  */
 export interface Prisma__BookClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  orders<T extends Prisma.Book$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Book$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StoreOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1190,6 +1523,11 @@ export interface BookFieldRefs {
   readonly cachedCoverUrl: Prisma.FieldRef<"Book", 'String'>
   readonly cachedPdfUrl: Prisma.FieldRef<"Book", 'String'>
   readonly cacheExpiresAt: Prisma.FieldRef<"Book", 'DateTime'>
+  readonly isPaid: Prisma.FieldRef<"Book", 'Boolean'>
+  readonly price: Prisma.FieldRef<"Book", 'Int'>
+  readonly mrp: Prisma.FieldRef<"Book", 'Int'>
+  readonly paymentLink: Prisma.FieldRef<"Book", 'String'>
+  readonly sampleUrl: Prisma.FieldRef<"Book", 'String'>
 }
     
 
@@ -1206,6 +1544,10 @@ export type BookFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Book
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
   /**
    * Filter, which Book to fetch.
    */
@@ -1225,6 +1567,10 @@ export type BookFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
+  /**
    * Filter, which Book to fetch.
    */
   where: Prisma.BookWhereUniqueInput
@@ -1242,6 +1588,10 @@ export type BookFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Book
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
   /**
    * Filter, which Book to fetch.
    */
@@ -1291,6 +1641,10 @@ export type BookFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
+  /**
    * Filter, which Book to fetch.
    */
   where?: Prisma.BookWhereInput
@@ -1338,6 +1692,10 @@ export type BookFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Book
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
   /**
    * Filter, which Books to fetch.
    */
@@ -1387,6 +1745,10 @@ export type BookCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
+  /**
    * The data needed to create a Book.
    */
   data: Prisma.XOR<Prisma.BookCreateInput, Prisma.BookUncheckedCreateInput>
@@ -1434,6 +1796,10 @@ export type BookUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Book
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
   /**
    * The data needed to update a Book.
    */
@@ -1501,6 +1867,10 @@ export type BookUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
+  /**
    * The filter to search for the Book to update in case it exists.
    */
   where: Prisma.BookWhereUniqueInput
@@ -1527,6 +1897,10 @@ export type BookDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
+  /**
    * Filter which Book to delete.
    */
   where: Prisma.BookWhereUniqueInput
@@ -1547,6 +1921,30 @@ export type BookDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * Book.orders
+ */
+export type Book$ordersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StoreOrder
+   */
+  select?: Prisma.StoreOrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StoreOrder
+   */
+  omit?: Prisma.StoreOrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StoreOrderInclude<ExtArgs> | null
+  where?: Prisma.StoreOrderWhereInput
+  orderBy?: Prisma.StoreOrderOrderByWithRelationInput | Prisma.StoreOrderOrderByWithRelationInput[]
+  cursor?: Prisma.StoreOrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StoreOrderScalarFieldEnum | Prisma.StoreOrderScalarFieldEnum[]
+}
+
+/**
  * Book without action
  */
 export type BookDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1558,4 +1956,8 @@ export type BookDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Book
    */
   omit?: Prisma.BookOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookInclude<ExtArgs> | null
 }

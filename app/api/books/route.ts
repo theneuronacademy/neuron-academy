@@ -8,6 +8,7 @@ import { getDb } from "@/lib/prisma";
 import { resolveCoverUrl, resolveStorageUrl } from "@/lib/storageProvider";
 import { resolveStudent } from "@/lib/testAccess";
 import { viewerFor, withPublicCache } from "@/lib/publicView";
+import { publicBook } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -44,11 +45,14 @@ async function handleGet(req: NextRequest) {
       take: 200,
     });
     const items = await Promise.all(
-      rows.map(async (b) => ({
-        ...b,
-        coverImageUrl: await resolveCoverUrl(b.coverImageUrl),
-        pdfUrl: await resolveStorageUrl(b.pdfUrl),
-      }))
+      rows.map(async (b) =>
+        // Paid items never expose their file here — only a paid order can fetch it.
+        publicBook({
+          ...b,
+          coverImageUrl: await resolveCoverUrl(b.coverImageUrl),
+          pdfUrl: b.isPaid ? null : await resolveStorageUrl(b.pdfUrl),
+        })
+      )
     );
     return ok({ items, source: "database" });
   } catch (err) {

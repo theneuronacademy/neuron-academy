@@ -18,12 +18,14 @@ interface Book {
   subject: string | null; className: string | null; category: string | null;
   coverImageUrl: string | null; pdfUrl: string | null; externalUrl: string | null;
   visibleTo: "ALL" | "REGULAR_ONLY"; isActive: boolean; order: number;
+  // Store: a paid item is sold through /store instead of being free to open.
+  isPaid: boolean; price: number | null; mrp: number | null; paymentLink: string | null; sampleUrl: string | null;
   // Durable storage refs (present on API rows); the form round-trips refs,
   // never expiring signed display URLs, back into PATCH.
   coverRef?: string | null; pdfRef?: string | null;
 }
 
-const EMPTY: Partial<Book> = { title: "", description: "", author: "", subject: "", className: "", category: "", pdfUrl: "", externalUrl: "", visibleTo: "ALL", isActive: true, order: 0 };
+const EMPTY: Partial<Book> = { title: "", description: "", author: "", subject: "", className: "", category: "", pdfUrl: "", externalUrl: "", visibleTo: "ALL", isActive: true, order: 0, isPaid: false, price: null, mrp: null, paymentLink: "", sampleUrl: "" };
 
 /** Phase 14 — admin book library management (CRUD + activate + reorder). */
 export default function AdminBooksPage() {
@@ -139,7 +141,11 @@ export default function AdminBooksPage() {
   async function remove(b: Book) {
     if (!window.confirm(`Delete "${b.title}"? This cannot be undone.`)) return;
     try {
-      await fetch(`/api/admin/books/${b.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/books/${b.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const json = await res.json().catch(() => null);
+        window.alert(json?.error ?? "Could not delete this book.");
+      }
       await load();
     } catch {
       /* ignore */
@@ -155,7 +161,8 @@ export default function AdminBooksPage() {
   }
 
   const inputCls = "mt-1.5 w-full rounded-xl border border-silver-300 px-3 py-2.5 text-base outline-none focus:border-teal-500 sm:text-sm";
-  const set = (k: keyof Book, v: string | boolean | number) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: keyof Book, v: string | boolean | number | null) => setForm((f) => ({ ...f, [k]: v }));
+  const num = (v: string): number | null => (v.trim() === "" || !Number.isFinite(Number(v)) ? null : Number(v));
   // Client-side search over the loaded library (small dataset).
   const filtered = rows.filter(
     (b) =>
@@ -191,7 +198,7 @@ export default function AdminBooksPage() {
                   {b.isActive ? "ACTIVE" : "HIDDEN"}
                 </span>
                 <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-extrabold text-navy-700">
-                  {b.visibleTo === "ALL" ? "ALL STUDENTS" : "REGULAR ONLY"}
+                  {b.isPaid ? `FOR SALE • ₹${(b.price ?? 0).toLocaleString("en-IN")}` : b.visibleTo === "ALL" ? "ALL STUDENTS" : "REGULAR ONLY"}
                 </span>
               </div>
               <div className="flex flex-1 flex-col p-4">
@@ -271,6 +278,33 @@ export default function AdminBooksPage() {
           <label className="block text-[12px] font-bold text-navy-700">External URL (optional)
             <input value={form.externalUrl ?? ""} onChange={(e) => set("externalUrl", e.target.value)} placeholder="https://…" className={inputCls} />
           </label>
+          <div className="rounded-xl border border-silver-200 bg-silver-50 p-3">
+            <label className="flex items-center gap-2 text-[13px] font-bold text-navy-700">
+              <input type="checkbox" checked={form.isPaid === true} onChange={(e) => set("isPaid", e.target.checked)} className="h-4 w-4 accent-[#008C9E]" />
+              Sell this item (buyers pay before they can download)
+            </label>
+            {form.isPaid ? (
+              <div className="mt-3 grid gap-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="block text-[12px] font-bold text-navy-700">Price (₹) *
+                    <input type="number" min={1} value={form.price ?? ""} onChange={(e) => set("price", num(e.target.value))} placeholder="e.g. 199" className={inputCls} />
+                  </label>
+                  <label className="block text-[12px] font-bold text-navy-700">MRP (₹, optional)
+                    <input type="number" min={1} value={form.mrp ?? ""} onChange={(e) => set("mrp", num(e.target.value))} placeholder="Shown crossed out" className={inputCls} />
+                  </label>
+                </div>
+                <label className="block text-[12px] font-bold text-navy-700">Payment link for this item (optional)
+                  <input value={form.paymentLink ?? ""} onChange={(e) => set("paymentLink", e.target.value)} placeholder="https://… (leave empty to use your UPI / default link)" className={inputCls} />
+                </label>
+                <label className="block text-[12px] font-bold text-navy-700">Free sample link (optional)
+                  <input value={form.sampleUrl ?? ""} onChange={(e) => set("sampleUrl", e.target.value)} placeholder="https://… a few sample pages" className={inputCls} />
+                </label>
+                <p className="text-[12px] font-medium leading-relaxed text-muted">
+                  The PDF above is given only to buyers whose order you mark paid in Store Orders. Upload the file here rather than pasting a public link, so it cannot be opened without paying.
+                </p>
+              </div>
+            ) : null}
+          </div>
           <label className="flex items-center gap-2 text-[13px] font-bold text-navy-700">
             <input type="checkbox" checked={form.isActive !== false} onChange={(e) => set("isActive", e.target.checked)} className="h-4 w-4 accent-[#008C9E]" />
             Active (visible to students)

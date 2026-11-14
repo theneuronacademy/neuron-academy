@@ -5,6 +5,7 @@ import { dbNotConfigured, fail, ok, serverError } from "@/lib/api-response";
 import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { deleteStorageObject } from "@/lib/storageProvider";
+import { parseSaleFields, refreshStorePages } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -36,9 +37,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const coverBody = clean(body.coverImageUrl, 1000);
   if (coverBody && coverBody.includes("/object/sign/")) return fail("Invalid cover URL.", 400);
   try {
+    const current = await db.book.findUnique({ where: { id }, select: { isPaid: true, price: true } });
+    if (!current) return fail("Book not found.", 404);
+    const sale = parseSaleFields(body, current);
+    if (!sale.ok) return fail(sale.error, 400);
     const row = await db.book.update({
       where: { id },
       data: {
+        ...sale.data,
         ...(typeof body.title === "string" && body.title.trim() ? { title: body.title.trim().slice(0, 160) } : {}),
         ...(body.description !== undefined ? { description: clean(body.description, 2000) ?? null } : {}),
         ...(body.author !== undefined ? { author: clean(body.author, 120) ?? null } : {}),
@@ -55,6 +61,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(typeof body.order === "number" && Number.isFinite(body.order) ? { order: Math.floor(body.order) } : {}),
       },
     });
+    await refreshStorePages(id);
     return ok({ item: row });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";
@@ -72,6 +79,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   try {
     const existing = await db.book.findUnique({ where: { id }, select: { coverImageUrl: true, pdfUrl: true } });
     if (!existing) return fail("Book not found.", 404);
+    // Orders keep pointing at the item they bought, so it cannot be deleted.
+    const orders = await db.storeOrder.count({ where: { bookId: id } });
+    if (orders > 0) return fail("This item has store orders, so it cannot be deleted. Deactivate it instead.", 409);
     // Delete owned storage objects first. On durable (Supabase) storage a
     // failed object delete fails the whole request — never pretend cleanup
     // succeeded and never orphan cover files. Local files are best-effort.
@@ -84,6 +94,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       }
     }
     await db.book.delete({ where: { id } });
+    await refreshStorePages(id);
     return ok({ deleted: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";

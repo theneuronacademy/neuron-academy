@@ -326,6 +326,11 @@ export interface LiveBookRow {
   visibleTo?: string;
   isActive?: boolean;
   order?: number;
+  /** Store: paid items are bought at /store/[id]; their file is not in this row. */
+  isPaid?: boolean;
+  price?: number | null;
+  mrp?: number | null;
+  sampleUrl?: string | null;
 }
 
 /** Published books for the public book section. */

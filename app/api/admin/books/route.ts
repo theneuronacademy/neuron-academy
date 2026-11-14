@@ -7,6 +7,7 @@ import { getDb } from "@/lib/prisma";
 import { requireApiRole } from "@/lib/server-auth";
 import { resolveCoverUrl, resolveStorageUrl } from "@/lib/storageProvider";
 import { missingFields } from "@/lib/validation";
+import { parseSaleFields, refreshStorePages } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +65,8 @@ export async function POST(req: NextRequest) {
   const coverUrl = clean(body.coverImageUrl, 1000);
   if (coverUrl && coverUrl.includes("/object/sign/")) return fail("Invalid cover URL.", 400);
   if (externalUrl && !/^https?:\/\//.test(externalUrl)) return fail("External URL must start with http(s).", 400);
+  const sale = parseSaleFields(body, { isPaid: false, price: null });
+  if (!sale.ok) return fail(sale.error, 400);
   try {
     const created = await db.book.create({
       data: {
@@ -79,8 +82,10 @@ export async function POST(req: NextRequest) {
         visibleTo: VIS.includes(body.visibleTo as (typeof VIS)[number]) ? (body.visibleTo as (typeof VIS)[number]) : "ALL",
         isActive: body.isActive === undefined ? true : body.isActive === true,
         order: typeof body.order === "number" && Number.isFinite(body.order) ? Math.floor(body.order) : 0,
+        ...sale.data,
       },
     });
+    await refreshStorePages(created.id);
     return ok({ item: created }, 201);
   } catch (err) {
     return serverError("admin-books:create", err);

@@ -421,6 +421,8 @@ export const ModelName = {
   PushSubscription: 'PushSubscription',
   ResultShowcase: 'ResultShowcase',
   Book: 'Book',
+  StoreOrder: 'StoreOrder',
+  StoreSettings: 'StoreSettings',
   Enquiry: 'Enquiry',
   Announcement: 'Announcement',
   Bookmark: 'Bookmark',
@@ -452,7 +454,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "aboutImage" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "enquiry" | "announcement" | "bookmark" | "timetableEntry" | "doubt" | "doubtReply" | "material" | "assignment" | "submission" | "gradebookConfig" | "parentMessage" | "adminAuditLog" | "adminPermission" | "adminRolePermission" | "notificationSchedulerRun" | "homepageContent"
+    modelProps: "user" | "student" | "faculty" | "course" | "batch" | "banner" | "popup" | "galleryItem" | "aboutImage" | "testimonial" | "result" | "testAccess" | "test" | "question" | "testAttempt" | "pdfImport" | "attendance" | "notification" | "notificationRead" | "notificationDelivery" | "otpRequest" | "pushSubscription" | "resultShowcase" | "book" | "storeOrder" | "storeSettings" | "enquiry" | "announcement" | "bookmark" | "timetableEntry" | "doubt" | "doubtReply" | "material" | "assignment" | "submission" | "gradebookConfig" | "parentMessage" | "adminAuditLog" | "adminPermission" | "adminRolePermission" | "notificationSchedulerRun" | "homepageContent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2232,6 +2234,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    StoreOrder: {
+      payload: Prisma.$StoreOrderPayload<ExtArgs>
+      fields: Prisma.StoreOrderFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StoreOrderFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StoreOrderFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>
+        }
+        findFirst: {
+          args: Prisma.StoreOrderFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StoreOrderFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>
+        }
+        findMany: {
+          args: Prisma.StoreOrderFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>[]
+        }
+        create: {
+          args: Prisma.StoreOrderCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>
+        }
+        createMany: {
+          args: Prisma.StoreOrderCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StoreOrderCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>[]
+        }
+        delete: {
+          args: Prisma.StoreOrderDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>
+        }
+        update: {
+          args: Prisma.StoreOrderUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>
+        }
+        deleteMany: {
+          args: Prisma.StoreOrderDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StoreOrderUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StoreOrderUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>[]
+        }
+        upsert: {
+          args: Prisma.StoreOrderUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreOrderPayload>
+        }
+        aggregate: {
+          args: Prisma.StoreOrderAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStoreOrder>
+        }
+        groupBy: {
+          args: Prisma.StoreOrderGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StoreOrderGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StoreOrderCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StoreOrderCountAggregateOutputType> | number
+        }
+      }
+    }
+    StoreSettings: {
+      payload: Prisma.$StoreSettingsPayload<ExtArgs>
+      fields: Prisma.StoreSettingsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StoreSettingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StoreSettingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>
+        }
+        findFirst: {
+          args: Prisma.StoreSettingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StoreSettingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>
+        }
+        findMany: {
+          args: Prisma.StoreSettingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>[]
+        }
+        create: {
+          args: Prisma.StoreSettingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>
+        }
+        createMany: {
+          args: Prisma.StoreSettingsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StoreSettingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>[]
+        }
+        delete: {
+          args: Prisma.StoreSettingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>
+        }
+        update: {
+          args: Prisma.StoreSettingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>
+        }
+        deleteMany: {
+          args: Prisma.StoreSettingsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StoreSettingsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StoreSettingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>[]
+        }
+        upsert: {
+          args: Prisma.StoreSettingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StoreSettingsPayload>
+        }
+        aggregate: {
+          args: Prisma.StoreSettingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStoreSettings>
+        }
+        groupBy: {
+          args: Prisma.StoreSettingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StoreSettingsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StoreSettingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StoreSettingsCountAggregateOutputType> | number
+        }
+      }
+    }
     Enquiry: {
       payload: Prisma.$EnquiryPayload<ExtArgs>
       fields: Prisma.EnquiryFieldRefs
@@ -3952,10 +4102,52 @@ export const BookScalarFieldEnum = {
   updatedAt: 'updatedAt',
   cachedCoverUrl: 'cachedCoverUrl',
   cachedPdfUrl: 'cachedPdfUrl',
-  cacheExpiresAt: 'cacheExpiresAt'
+  cacheExpiresAt: 'cacheExpiresAt',
+  isPaid: 'isPaid',
+  price: 'price',
+  mrp: 'mrp',
+  paymentLink: 'paymentLink',
+  sampleUrl: 'sampleUrl'
 } as const
 
 export type BookScalarFieldEnum = (typeof BookScalarFieldEnum)[keyof typeof BookScalarFieldEnum]
+
+
+export const StoreOrderScalarFieldEnum = {
+  id: 'id',
+  orderNo: 'orderNo',
+  accessToken: 'accessToken',
+  bookId: 'bookId',
+  bookTitle: 'bookTitle',
+  amount: 'amount',
+  buyerName: 'buyerName',
+  buyerMobile: 'buyerMobile',
+  buyerEmail: 'buyerEmail',
+  status: 'status',
+  paymentRef: 'paymentRef',
+  paidAt: 'paidAt',
+  verifiedBy: 'verifiedBy',
+  adminNote: 'adminNote',
+  source: 'source',
+  downloadCount: 'downloadCount',
+  lastDownloadAt: 'lastDownloadAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreOrderScalarFieldEnum = (typeof StoreOrderScalarFieldEnum)[keyof typeof StoreOrderScalarFieldEnum]
+
+
+export const StoreSettingsScalarFieldEnum = {
+  id: 'id',
+  upiId: 'upiId',
+  payeeName: 'payeeName',
+  paymentLink: 'paymentLink',
+  instructions: 'instructions',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreSettingsScalarFieldEnum = (typeof StoreSettingsScalarFieldEnum)[keyof typeof StoreSettingsScalarFieldEnum]
 
 
 export const EnquiryScalarFieldEnum = {
@@ -4656,6 +4848,20 @@ export type ListEnumBookVisibilityFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
+ * Reference to a field of type 'StoreOrderStatus'
+ */
+export type EnumStoreOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StoreOrderStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'StoreOrderStatus[]'
+ */
+export type ListEnumStoreOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StoreOrderStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'EnquiryStatus'
  */
 export type EnumEnquiryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EnquiryStatus'>
@@ -4885,6 +5091,8 @@ export type GlobalOmitConfig = {
   pushSubscription?: Prisma.PushSubscriptionOmit
   resultShowcase?: Prisma.ResultShowcaseOmit
   book?: Prisma.BookOmit
+  storeOrder?: Prisma.StoreOrderOmit
+  storeSettings?: Prisma.StoreSettingsOmit
   enquiry?: Prisma.EnquiryOmit
   announcement?: Prisma.AnnouncementOmit
   bookmark?: Prisma.BookmarkOmit
