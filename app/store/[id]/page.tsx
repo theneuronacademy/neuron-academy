@@ -6,6 +6,9 @@ import { Navbar } from "@/components/website/Navbar";
 import { Footer } from "@/components/website/Footer";
 import { BuyForm } from "@/components/store/BuyForm";
 import { CONTACT } from "@/data/contact";
+import { getExamPage } from "@/data/exams";
+import { SITE_URL } from "@/lib/site";
+import { examSlugsForTitle } from "@/lib/storeLinks";
 import { getDb } from "@/lib/prisma";
 import { getStoreItem, getStoreItems } from "@/lib/store";
 import { classLabel, courseHighlights, courseSummary, resourceTag, rupees, sizedImage, titleCaseName } from "@/lib/displayText";
@@ -23,12 +26,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const item = await getStoreItem(getDb(), id);
   if (!item) return { title: "Item Not Found" };
-  const description = `${courseSummary(item.description) || item.title} Digital PDF from Neuron Academy, Shaheen Bagh. Price ${rupees(item.price)}.`.slice(0, 300);
+  const description = `${courseSummary(item.description) || item.title} PDF download from Neuron Academy, Shaheen Bagh, New Delhi. Price ${rupees(item.price)}, instant download after payment.`.slice(0, 300);
   return {
     title: item.title,
     description,
     alternates: { canonical: `/store/${item.id}` },
-    openGraph: { title: item.title, description, type: "website", siteName: "Neuron Academy", locale: "en_IN", url: `/store/${item.id}` },
+    openGraph: { title: item.title, description, type: "website", siteName: "Neuron Academy", locale: "en_IN", url: `/store/${item.id}`, ...(item.coverImageUrl ? { images: [{ url: item.coverImageUrl }] } : {}) },
   };
 }
 
@@ -43,6 +46,25 @@ export default async function StoreItemPage({ params }: { params: Promise<{ id: 
   const saving = item.mrp ? item.mrp - item.price : 0;
   const whatsapp = `${CONTACT.whatsappHref}?text=${encodeURIComponent(`Hello, I would like to buy "${item.title}".`)}`;
 
+  const exams = examSlugsForTitle(item.title).map((s) => getExamPage(s)).filter((e): e is NonNullable<typeof e> => Boolean(e));
+  const url = `${SITE_URL}/store/${item.id}`;
+  const facts: Array<[string, string]> = [
+    ["Format", "PDF (digital download)"],
+    ...(item.subject ? [["Subject", resourceTag(item.subject)] as [string, string]] : []),
+    ...(item.className ? [["For", `${classLabel(item.className)} students`] as [string, string]] : []),
+    ...(item.author ? [["Prepared by", `${titleCaseName(item.author)}, Neuron Academy`] as [string, string]] : []),
+    ["Delivery", item.instantPay ? "Download opens straight after payment" : "Download unlocks after payment is confirmed"],
+  ];
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Study material store", item: `${SITE_URL}/store` },
+      { "@type": "ListItem", position: 3, name: item.title, item: url },
+    ],
+  };
+
   // Product structured data: lets search engines show the price.
   const jsonLd = {
     "@context": "https://schema.org",
@@ -50,14 +72,18 @@ export default async function StoreItemPage({ params }: { params: Promise<{ id: 
     name: item.title,
     description: summary || item.title,
     ...(item.coverImageUrl ? { image: item.coverImageUrl } : {}),
+    url,
+    sku: item.id,
+    category: "Study material (digital PDF)",
     brand: { "@type": "Organization", name: "Neuron Academy" },
-    offers: { "@type": "Offer", price: item.price, priceCurrency: "INR", availability: item.sellable ? "https://schema.org/InStock" : "https://schema.org/PreOrder" },
+    offers: { "@type": "Offer", url, price: item.price, priceCurrency: "INR", itemCondition: "https://schema.org/NewCondition", seller: { "@type": "Organization", name: "Neuron Academy" }, availability: item.sellable ? "https://schema.org/InStock" : "https://schema.org/PreOrder" },
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd).replace(/</g, "\\u003c") }} />
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
         <Link href="/store" className="inline-flex items-center gap-1 text-[13px] font-bold text-brand-primary hover:underline">
           <ArrowLeft className="h-4 w-4" aria-hidden /> All study material
@@ -95,6 +121,20 @@ export default async function StoreItemPage({ params }: { params: Promise<{ id: 
                   </li>
                 ))}
               </ul>
+            ) : null}
+            <dl className="mt-6 divide-y divide-silver-200 rounded-xl border border-silver-200 bg-white px-4 text-sm">
+              {facts.map(([k, v]) => (
+                <div key={k} className="flex justify-between gap-4 py-2.5"><dt className="text-neutral-600">{k}</dt><dd className="text-right font-bold text-navy-950">{v}</dd></div>
+              ))}
+            </dl>
+            {exams.length > 0 ? (
+              <p className="mt-5 text-[15px] leading-relaxed text-neutral-700">
+                Preparing for this exam?{" "}
+                {exams.map((e, i) => (
+                  <span key={e.slug}>{i > 0 ? ", " : ""}<Link href={`/coaching/${e.slug}`} className="font-bold text-brand-primary underline-offset-4 hover:underline">{e.label} coaching at Neuron Academy</Link></span>
+                ))}
+                .
+              </p>
             ) : null}
             {item.sampleUrl ? (
               <a href={item.sampleUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
