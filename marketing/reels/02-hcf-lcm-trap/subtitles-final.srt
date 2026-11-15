@@ -1,0 +1,29 @@
+1
+-1:59:59,958 --> 00:00:04,383
+HCF into LCM barabar product —
+kya ye hamesha sahi hai?
+
+2
+00:00:04,455 --> 00:00:08,367
+Do numbers lo: 6 aur 20.
+HCF 2, LCM 60.
+
+3
+00:00:08,488 --> 00:00:12,650
+2 into 60 — 120.
+Aur 6 into 20 bhi 120.
+
+4
+00:00:12,725 --> 00:00:15,270
+Do positive integers ke liye
+ye hamesha sahi hai.
+
+5
+00:00:29,580 --> 00:00:31,467
+Ye formula sirf do numbers ke liye hai.
+
+6
+00:00:31,583 --> 00:00:35,735
+Teen numbers mein prime factorisation
+se HCF aur LCM nikaalo.
+

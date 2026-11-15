@@ -1,0 +1,114 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../class10-maths-crash-course-ad/src/fonts.css">
+<style>
+:root{--navy:#0B1F4B;--deep:#06122E;--green:#22C55E;--red:#EF4444}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--deep)}
+body{font-family:Poppins,sans-serif;color:#fff}
+#stage{position:absolute;inset:0;background:radial-gradient(1100px 900px at 50% 40%,#16357a 0%,#0B1F4B 45%,#06122E 100%)}
+#grid{position:absolute;inset:-120px;background-image:linear-gradient(rgba(140,180,255,.07) 2px,transparent 2px),linear-gradient(90deg,rgba(140,180,255,.07) 2px,transparent 2px);background-size:90px 90px}
+.el{position:absolute;left:0;right:0;text-align:center;opacity:0}
+.h{font-weight:900;line-height:1.08;letter-spacing:-1px;white-space:nowrap;text-shadow:0 8px 30px rgba(0,0,0,.5)}
+.g{color:var(--green)} .r{color:var(--red)}
+.m{font-family:"STIX Two Text",serif;font-weight:500;white-space:nowrap}
+.m i{font-style:italic} .m sup{font-size:.58em;vertical-align:.62em;line-height:0}
+.card{display:inline-block;background:#fff;color:var(--navy);border-radius:36px;padding:26px 60px;box-shadow:0 30px 70px rgba(0,0,0,.45)}
+.pill{display:inline-block;border-radius:999px;font-weight:800;white-space:nowrap;letter-spacing:2px;text-transform:uppercase}
+.gp{background:var(--green);color:#06122E}
+.rp{background:var(--red);color:#fff}
+.chip{display:inline-block;border:3px solid rgba(34,197,94,.9);background:rgba(6,18,46,.7);border-radius:26px;padding:10px 40px;font-size:76px}
+.row{position:absolute;left:70px;width:940px;height:250px;border-radius:40px;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.05));border:2px solid rgba(150,190,255,.3);display:flex;align-items:center;gap:30px;padding:0 40px;text-align:left;opacity:0}
+.row svg{flex:none;width:250px;height:208px}
+.row .d{font-size:86px;line-height:1}
+.row .t{font-weight:700;font-size:46px;line-height:1.15;margin-top:12px}
+.sub{position:absolute;left:70px;right:70px;top:1350px;text-align:center;font-weight:600;font-size:44px;line-height:1.32;opacity:0;text-shadow:0 4px 16px rgba(0,0,0,.9)}
+.sub b{color:var(--green);font-weight:800}
+#brand{position:absolute;left:56px;top:262px;display:flex;align-items:center;gap:18px;font-weight:800;font-size:30px;letter-spacing:1px}
+.logo{display:inline-block;border-radius:50%;background:#fff url(../../../class10-maths-crash-course-ad/assets/neuron-academy-logo.jpg) center/128% no-repeat}
+#tag{position:absolute;right:56px;top:276px;font-weight:600;font-size:26px;color:#b9cdf5;letter-spacing:1px}
+#bar{position:absolute;left:0;top:0;height:8px;background:var(--green);width:0}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;padding:0 6px}.fr .dn{border-top:5px solid #fff;padding:6px 8px 0;margin-top:6px}
+.strike{position:absolute;left:-10px;right:-10px;top:50%;height:10px;margin-top:-5px;background:var(--red);border-radius:5px;transform-origin:left center}
+</style></head><body>
+<div id="stage"><div id="grid"></div></div>
+<div id="brand"><span class="logo" style="width:84px;height:84px"></span>NEURON ACADEMY</div>
+<div id="tag">Class 10 · Trigonometry</div>
+
+<!-- S1 hook 0-3 -->
+<div class="el" data-t="0.1,2.95" data-fx="up" style="top:410px"><span class="pill gp" style="font-size:34px;padding:12px 36px">Class 10 · Board Exam</span></div>
+<div class="el h" data-t="0.2,2.95" data-fx="slam" style="top:520px;font-size:230px;line-height:1">3</div>
+<div class="el h" data-t="0.4,2.95" data-fx="up" style="top:760px;font-size:92px">Trig Identities</div>
+<div class="el h" data-t="1.5,2.95" data-fx="up" style="top:930px;font-size:72px;font-weight:700">Yaad karo sirf</div>
+<div class="el h g" data-t="1.8,2.95" data-fx="slam" style="top:1020px;font-size:220px;line-height:1">1<span id="q1" style="display:none"></span><span id="q2" style="display:none"></span></div>
+
+<!-- S2 base identity 3-8 -->
+<div class="el h" data-t="3.1,7.95" data-fx="up" style="top:400px;font-size:62px;font-weight:700">Ye ek identity yaad rakho:</div>
+<div class="el" data-t="3.5,7.95" data-fx="zoom" style="top:520px"><span class="card m" style="font-size:112px;padding:34px 44px">sin<sup>2</sup><i>θ</i> + cos<sup>2</sup><i>θ</i> = 1</span></div>
+<div class="el" data-t="4.6,7.95" data-fx="fade" style="top:800px"><svg viewBox="0 0 700 420" style="width:700px;height:420px"><path id="tri" d="M90 350H590V90Z" fill="rgba(34,197,94,.10)" stroke="#22C55E" stroke-width="7" stroke-linejoin="round"/><path d="M550 350V310H590" fill="none" stroke="#fff" stroke-width="4"/><path d="M170 350A80 80 0 0 0 161 313" fill="none" stroke="#fff" stroke-width="4"/><text x="190" y="335" fill="#fff" font-family="STIX Two Text" font-style="italic" font-size="44">θ</text><text x="300" y="195" fill="#fff" font-family="STIX Two Text" font-size="52">1</text><text x="290" y="405" fill="#b9cdf5" font-family="STIX Two Text" font-size="46">cos <tspan font-style="italic">θ</tspan></text><text x="605" y="235" fill="#b9cdf5" font-family="STIX Two Text" font-size="46">sin <tspan font-style="italic">θ</tspan></text></svg></div>
+
+<!-- S3 divide by cos^2 8-17 -->
+<div class="el m" data-t="8.1,16.95" data-fx="up" style="top:395px;font-size:66px;color:#cfe0ff">sin<sup>2</sup><i>θ</i> + cos<sup>2</sup><i>θ</i> = 1</div>
+<div class="el" data-t="8.6,16.95" data-fx="zoom" style="top:520px"><span class="pill gp m" style="font-size:64px;padding:8px 48px;text-transform:none;letter-spacing:0;font-weight:500">÷ cos<sup>2</sup><i>θ</i></span></div>
+<div class="el m" data-t="10.0,16.95" data-fx="up" style="top:690px;font-size:74px"><span class="fr"><span>sin<sup>2</sup><i>θ</i></span><span class="dn">cos<sup>2</sup><i>θ</i></span></span> + <span class="fr"><span>cos<sup>2</sup><i>θ</i></span><span class="dn">cos<sup>2</sup><i>θ</i></span></span> = <span class="fr"><span>1</span><span class="dn">cos<sup>2</sup><i>θ</i></span></span></div>
+<div class="el" data-t="12.6,16.95" data-fx="zoom" style="top:990px"><span class="card m" style="font-size:104px;padding:30px 40px">tan<sup>2</sup><i>θ</i> + 1 = sec<sup>2</sup><i>θ</i></span></div>
+<div class="el h g" data-t="13.2,16.95" data-fx="up" style="top:1230px;font-size:60px">Identity 2 ✓</div>
+
+<!-- S4 divide by sin^2 17-26 -->
+<div class="el m" data-t="17.1,25.95" data-fx="up" style="top:395px;font-size:66px;color:#cfe0ff">sin<sup>2</sup><i>θ</i> + cos<sup>2</sup><i>θ</i> = 1</div>
+<div class="el" data-t="17.6,25.95" data-fx="zoom" style="top:520px"><span class="pill gp m" style="font-size:64px;padding:8px 48px;text-transform:none;letter-spacing:0;font-weight:500">÷ sin<sup>2</sup><i>θ</i></span></div>
+<div class="el m" data-t="19.0,25.95" data-fx="up" style="top:690px;font-size:74px"><span class="fr"><span>sin<sup>2</sup><i>θ</i></span><span class="dn">sin<sup>2</sup><i>θ</i></span></span> + <span class="fr"><span>cos<sup>2</sup><i>θ</i></span><span class="dn">sin<sup>2</sup><i>θ</i></span></span> = <span class="fr"><span>1</span><span class="dn">sin<sup>2</sup><i>θ</i></span></span></div>
+<div class="el" data-t="21.6,25.95" data-fx="zoom" style="top:990px"><span class="card m" style="font-size:96px;padding:30px 36px">1 + cot<sup>2</sup><i>θ</i> = cosec<sup>2</sup><i>θ</i></span></div>
+<div class="el h g" data-t="22.2,25.95" data-fx="up" style="top:1230px;font-size:60px">Identity 3 ✓</div>
+
+<!-- S5 trap 26-31 -->
+<div class="el" data-t="26.1,30.95" data-fx="zoom" style="top:420px"><span class="pill rp" style="font-size:44px;padding:14px 50px">Exam trap</span></div>
+<div class="el m" data-t="26.5,30.95" data-fx="up" style="top:570px;font-size:96px"><span style="position:relative;display:inline-block;color:#ffd0d0">tan<sup>2</sup><i>θ</i> − sec<sup>2</sup><i>θ</i> = 1<span class="strike" id="xs"></span></span> <span class="r" style="font-family:Poppins;font-weight:900">✗</span></div>
+<div class="el m" data-t="27.6,30.95" data-fx="slam" style="top:780px;font-size:104px"><span class="g">sec<sup>2</sup><i>θ</i> − tan<sup>2</sup><i>θ</i> = 1</span> <span class="g" style="font-family:Poppins;font-weight:900">✓</span></div>
+<div class="el h" data-t="28.6,30.95" data-fx="up" style="top:1030px;font-size:66px">Order galat, <span class="r">sign galat.</span></div>
+
+<!-- S6 CTA 31-36 -->
+<div class="el h" data-t="31.1,36.5" data-fx="up" style="top:405px;font-size:52px;font-weight:700">Aise hi daily Maths videos ke liye</div>
+<div class="el" data-t="31.5,36.5" data-fx="zoom" style="top:510px"><span class="pill gp" id="fol" style="font-size:110px;padding:14px 90px;letter-spacing:4px">Follow</span></div>
+<div class="el" data-t="32.3,36.5" data-fx="zoom" style="top:740px"><span class="logo" style="width:330px;height:330px;box-shadow:0 0 0 6px var(--green),0 0 80px rgba(34,197,94,.45)"></span></div>
+<div class="el" data-t="33.9,36.5" data-fx="up" style="top:1110px;font-weight:700;font-size:44px;letter-spacing:8px;color:var(--green)">ACTIVATE YOUR NEURON AT</div>
+<div class="el h" data-t="34.0,36.5" data-fx="up" style="top:1175px;font-size:92px">NEURON ACADEMY</div>
+
+<!-- subtitles: planned narration, re-timed once the recording exists -->
+<div class="sub" data-t="0.2,2.95" style="top:1300px">Teen trigonometry identities —<br>yaad sirf <b>ek</b> karni hai!</div>
+<div class="sub" data-t="3.2,7.95">Sine square theta plus cos square theta<br><b>equals one</b>.</div>
+<div class="sub" data-t="8.2,12.5">Isse <b>cos square theta</b> se divide karo…</div>
+<div class="sub" data-t="12.6,16.95" style="top:1380px">tan square theta plus one<br>equals <b>sec square theta</b>.</div>
+<div class="sub" data-t="17.2,21.5">Aur <b>sine square theta</b> se divide karo…</div>
+<div class="sub" data-t="21.6,25.95" style="top:1380px">one plus cot square theta<br>equals <b>cosec square theta</b>.</div>
+<div class="sub" data-t="26.2,30.95">sec square minus tan square<br><b>one</b> hota hai — ulta nahi.</div>
+<div id="bar"></div>
+<script>
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),eo=x=>1-Math.pow(1-cl(x),3);
+const back=x=>{x=cl(x);const s=1.9;return 1+(s+1)*Math.pow(x-1,3)+s*Math.pow(x-1,2)};
+const T=o=>o.dataset.t.split(',').map(Number);
+const els=[...document.querySelectorAll('.el')].map(e=>({e,a:T(e)[0],b:T(e)[1],fx:e.dataset.fx}));
+const rows=[...document.querySelectorAll('.row')].map(e=>({e,a:T(e)[0],b:T(e)[1],pb:e.querySelector('.pb'),dt:[...e.querySelectorAll('.dt')]}));
+rows.forEach(r=>{r.len=r.pb.getTotalLength();r.pb.style.strokeDasharray=r.len});
+const subs=[...document.querySelectorAll('.sub')].map(e=>({e,a:T(e)[0],b:T(e)[1]}));
+const $=id=>document.getElementById(id),DUR=36;
+window.seek=t=>{
+  $('grid').style.transform=`translate(${-t*2.3}px,${-t*2.3}px)`;
+  $('bar').style.width=(cl(t/DUR)*1080)+'px';
+  for(const o of els){ if(t<o.a||t>o.b){o.e.style.opacity=0;continue}
+    const a=cl((t-o.a)/(o.fx==='slam'?.2:.35)),out=cl((o.b-t)/.2);let tr='';
+    if(o.fx==='up')tr=`translateY(${(1-eo(a))*60}px)`;else if(o.fx==='zoom')tr=`scale(${.5+.5*back(a)})`;else if(o.fx==='slam')tr=`scale(${1+1.6*(1-eo(a))})`;
+    o.e.style.opacity=a*out;o.e.style.transform=tr}
+  for(const r of rows){ if(t<r.a||t>r.b){r.e.style.opacity=0;continue}
+    const a=cl((t-r.a)/.35),out=cl((r.b-t)/.2);r.e.style.opacity=a*out;r.e.style.transform=`translateX(${(1-eo(a))*-120}px)`;
+    r.pb.style.strokeDashoffset=r.len*(1-eo((t-r.a-.25)/.9));
+    r.dt.forEach(d=>{const k=back((t-r.a-1.15)/.3);d.setAttribute('r',t>r.a+1.15?11*k:0)})}
+  for(const s of subs){s.e.style.opacity=(t<s.a||t>s.b)?0:cl((t-s.a)/.15)*cl((s.b-t)/.15)}
+  
+  $('xs').style.transform=`scaleX(${eo((t-27.1)/.3)}) rotate(-5deg)`;
+  $('fol').style.transform=`scale(${1+.035*Math.sin(t*6)})`;
+  const end=cl((t-33.6)/.3);$('brand').style.opacity=1-end;$('tag').style.opacity=1-end;
+};
+seek(0);
+</script><script>(()=>{const A=[[-0.05, -0.25], [0.2, 0.0], [1.5, 2.28], [1.8, 3.15], [3.1, 4.5], [3.5, 4.7], [4.6, 6.0], [8.1, 8.2], [8.6, 8.6], [10.0, 9.6], [12.6, 11.21], [13.2, 13.5], [17.1, 15.2], [17.6, 15.5], [19.0, 16.5], [21.6, 17.94], [22.2, 20.2], [26.1, 21.7], [26.5, 21.9], [27.1, 22.6], [27.6, 22.95], [28.6, 25.79], [31.1, 26.7], [31.5, 26.85], [33.9, 28.9], [36, 31.46]],s0=window.seek;
+window.seek=t=>{let d=A[A.length-1][0];for(let i=1;i<A.length;i++){if(t<=A[i][1]){const[a,b]=[A[i-1],A[i]];d=a[0]+(b[0]-a[0])*(t-a[1])/(b[1]-a[1]);break}}s0(d)};window.seek(0)})();</script></body></html>

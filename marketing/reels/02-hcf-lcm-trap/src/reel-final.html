@@ -1,0 +1,117 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../class10-maths-crash-course-ad/src/fonts.css">
+<style>
+:root{--navy:#0B1F4B;--deep:#06122E;--green:#22C55E;--red:#EF4444}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--deep)}
+body{font-family:Poppins,sans-serif;color:#fff}
+#stage{position:absolute;inset:0;background:radial-gradient(1100px 900px at 50% 40%,#16357a 0%,#0B1F4B 45%,#06122E 100%)}
+#grid{position:absolute;inset:-120px;background-image:linear-gradient(rgba(140,180,255,.07) 2px,transparent 2px),linear-gradient(90deg,rgba(140,180,255,.07) 2px,transparent 2px);background-size:90px 90px}
+.el{position:absolute;left:0;right:0;text-align:center;opacity:0}
+.h{font-weight:900;line-height:1.08;letter-spacing:-1px;white-space:nowrap;text-shadow:0 8px 30px rgba(0,0,0,.5)}
+.g{color:var(--green)} .r{color:var(--red)}
+.m{font-family:"STIX Two Text",serif;font-weight:500;white-space:nowrap}
+.m i{font-style:italic} .m sup{font-size:.58em;vertical-align:.62em;line-height:0}
+.card{display:inline-block;background:#fff;color:var(--navy);border-radius:36px;padding:26px 60px;box-shadow:0 30px 70px rgba(0,0,0,.45)}
+.pill{display:inline-block;border-radius:999px;font-weight:800;white-space:nowrap;letter-spacing:2px;text-transform:uppercase}
+.gp{background:var(--green);color:#06122E}
+.rp{background:var(--red);color:#fff}
+.chip{display:inline-block;border:3px solid rgba(34,197,94,.9);background:rgba(6,18,46,.7);border-radius:26px;padding:10px 40px;font-size:76px}
+.row{position:absolute;left:70px;width:940px;height:250px;border-radius:40px;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.05));border:2px solid rgba(150,190,255,.3);display:flex;align-items:center;gap:30px;padding:0 40px;text-align:left;opacity:0}
+.row svg{flex:none;width:250px;height:208px}
+.row .d{font-size:86px;line-height:1}
+.row .t{font-weight:700;font-size:46px;line-height:1.15;margin-top:12px}
+.sub{position:absolute;left:70px;right:70px;top:1350px;text-align:center;font-weight:600;font-size:44px;line-height:1.32;opacity:0;text-shadow:0 4px 16px rgba(0,0,0,.9)}
+.sub b{color:var(--green);font-weight:800}
+#brand{position:absolute;left:56px;top:262px;display:flex;align-items:center;gap:18px;font-weight:800;font-size:30px;letter-spacing:1px}
+.logo{display:inline-block;border-radius:50%;background:#fff url(../../../class10-maths-crash-course-ad/assets/neuron-academy-logo.jpg) center/128% no-repeat}
+#tag{position:absolute;right:56px;top:276px;font-weight:600;font-size:26px;color:#b9cdf5;letter-spacing:1px}
+#bar{position:absolute;left:0;top:0;height:8px;background:var(--green);width:0}
+.strike{position:absolute;left:-10px;right:-10px;top:50%;height:10px;margin-top:-5px;background:var(--red);border-radius:5px;transform-origin:left center}
+</style></head><body>
+<div id="stage"><div id="grid"></div></div>
+<div id="brand"><span class="logo" style="width:84px;height:84px"></span>NEURON ACADEMY</div>
+<div id="tag">Class 10 · Real Numbers</div>
+
+<!-- S1 hook 0-3 -->
+<div class="el" data-t="0.1,2.95" data-fx="up" style="top:410px"><span class="pill gp" style="font-size:34px;padding:12px 36px">Class 10 · Board Exam</span></div>
+<div class="el" data-t="0.25,2.95" data-fx="zoom" style="top:540px"><span class="card m" style="font-size:78px;padding:28px 34px">HCF × LCM = Product</span></div>
+<div class="el h" data-t="1.0,2.95" data-fx="slam" style="top:820px;font-size:150px">Hamesha<span id="q1" class="g" style="display:inline-block">?</span></div>
+<div class="el h r" data-t="1.9,2.95" data-fx="slam" style="top:1040px;font-size:120px">Nahi!<span id="q2" style="display:none"></span></div>
+
+<!-- S2 two numbers 3-10 -->
+<div class="el h" data-t="3.15,9.95" data-fx="up" style="top:400px;font-size:66px;font-weight:700">Do numbers: <span class="g">6 aur 20</span></div>
+<div class="el m" data-t="4.3,9.95" data-fx="zoom" style="top:530px;left:90px;right:auto;width:430px"><span class="chip">HCF = 2</span></div>
+<div class="el m" data-t="5.1,9.95" data-fx="zoom" style="top:530px;left:540px;right:auto;width:460px"><span class="chip">LCM = 60</span></div>
+<div class="el m" data-t="6.0,9.95" data-fx="up" style="top:740px;font-size:78px">HCF × LCM = 2 × 60 = <span class="g">120</span></div>
+<div class="el m" data-t="7.6,9.95" data-fx="up" style="top:870px;font-size:78px">6 × 20 = <span class="g">120</span></div>
+<div class="el" data-t="8.8,9.95" data-fx="zoom" style="top:1070px"><span class="pill gp" style="font-size:60px;padding:14px 60px;letter-spacing:1px">Barabar ✓</span></div>
+
+<!-- S3 rule 10-14 -->
+<div class="el h" data-t="10.1,13.95" data-fx="up" style="top:430px;font-size:62px;font-weight:700">Do positive integers <span class="m" style="font-size:72px"><i>a</i>, <i>b</i></span> ke liye:</div>
+<div class="el" data-t="10.6,13.95" data-fx="zoom" style="top:600px"><span class="card m" style="font-size:60px;padding:36px 28px">HCF(<i>a</i>, <i>b</i>) × LCM(<i>a</i>, <i>b</i>) = <i>a</i> × <i>b</i></span></div>
+<div class="el h g" data-t="12.2,13.95" data-fx="slam" style="top:880px;font-size:92px">Sirf DO numbers!</div>
+
+<!-- S4 three numbers 14-27 -->
+<div class="el h" data-t="14.1,26.95" data-fx="up" style="top:395px;font-size:66px;font-weight:700">Teen numbers: <span class="r">6, 72, 120</span></div>
+<div class="el m" data-t="15.6,26.95" data-fx="up" style="top:505px;font-size:50px;color:#cfe0ff">6 = 2 × 3 &nbsp;·&nbsp; 72 = 2<sup>3</sup> × 3<sup>2</sup> &nbsp;·&nbsp; 120 = 2<sup>3</sup> × 3 × 5</div>
+<div class="el m" data-t="16.6,26.95" data-fx="zoom" style="top:620px;left:90px;right:auto;width:430px"><span class="chip">HCF = 6</span></div>
+<div class="el m" data-t="17.8,26.95" data-fx="zoom" style="top:620px;left:520px;right:auto;width:480px"><span class="chip">LCM = 360</span></div>
+<div class="el m" data-t="19.2,26.95" data-fx="up" style="top:810px;font-size:86px">HCF × LCM = 6 × 360</div>
+<div class="el m" data-t="20.6,26.95" data-fx="slam" style="top:915px;font-size:110px">= 2,160</div>
+<div class="el m" data-t="22.0,26.95" data-fx="up" style="top:1060px;font-size:86px">6 × 72 × 120</div>
+<div class="el m" data-t="23.4,26.95" data-fx="slam" style="top:1165px;font-size:110px">= 51,840</div>
+<div class="el" data-t="25.0,26.95" data-fx="zoom" style="top:1320px"><span class="pill rp" style="font-size:54px;padding:14px 56px;letter-spacing:1px">Barabar nahi ✗</span></div>
+
+<!-- S5 takeaway 27-33 -->
+<div class="el" data-t="27.1,32.95" data-fx="zoom" style="top:420px"><span class="pill rp" style="font-size:44px;padding:14px 50px">Exam trap</span></div>
+<div class="el m" data-t="27.5,32.95" data-fx="up" style="top:560px;font-size:76px"><span style="position:relative;display:inline-block;color:#ffd0d0">HCF × LCM = <i>a</i> × <i>b</i> × <i>c</i><span class="strike" id="xs"></span></span> <span class="r" style="font-family:Poppins;font-weight:900">✗</span></div>
+<div class="el h" data-t="29.0,32.95" data-fx="up" style="top:760px;font-size:70px">Teen numbers mein:</div>
+<div class="el h g" data-t="29.8,32.95" data-fx="slam" style="top:870px;font-size:92px">Prime factorisation</div>
+<div class="el h" data-t="30.8,32.95" data-fx="up" style="top:1010px;font-size:54px;font-weight:700">se HCF aur LCM alag-alag nikaalo.</div>
+
+<!-- S6 CTA 33-38 -->
+<div class="el h" data-t="33.1,38.5" data-fx="up" style="top:405px;font-size:52px;font-weight:700">Aise hi daily Maths videos ke liye</div>
+<div class="el" data-t="33.5,38.5" data-fx="zoom" style="top:510px"><span class="pill gp" id="fol" style="font-size:110px;padding:14px 90px;letter-spacing:4px">Follow</span></div>
+<div class="el" data-t="34.3,38.5" data-fx="zoom" style="top:740px"><span class="logo" style="width:330px;height:330px;box-shadow:0 0 0 6px var(--green),0 0 80px rgba(34,197,94,.45)"></span></div>
+<div class="el" data-t="36.1,38.5" data-fx="up" style="top:1110px;font-weight:700;font-size:44px;letter-spacing:8px;color:var(--green)">ACTIVATE YOUR NEURON AT</div>
+<div class="el h" data-t="36.2,38.5" data-fx="up" style="top:1175px;font-size:92px">NEURON ACADEMY</div>
+
+<!-- subtitles: planned narration, re-timed once the recording exists -->
+<div class="sub" data-t="0.2,2.95">HCF into LCM barabar product —<br>kya ye <b>hamesha</b> sahi hai?</div>
+<div class="sub" data-t="3.1,5.9">Do numbers lo: 6 aur 20.<br>HCF 2, LCM 60.</div>
+<div class="sub" data-t="6.0,9.95">2 into 60 — 120.<br>Aur 6 into 20 bhi <b>120</b>.</div>
+<div class="sub" data-t="10.1,13.95">Do positive integers ke liye<br>ye <b>hamesha sahi</b> hai.</div>
+<div class="sub" data-t="27.2,29.0">Ye formula <b>sirf do numbers</b> ke liye hai.</div>
+<div class="sub" data-t="29.1,32.95">Teen numbers mein <b>prime factorisation</b><br>se HCF aur LCM nikaalo.</div>
+<div id="bar"></div>
+<script>
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),eo=x=>1-Math.pow(1-cl(x),3);
+const back=x=>{x=cl(x);const s=1.9;return 1+(s+1)*Math.pow(x-1,3)+s*Math.pow(x-1,2)};
+const T=o=>o.dataset.t.split(',').map(Number);
+const els=[...document.querySelectorAll('.el')].map(e=>({e,a:T(e)[0],b:T(e)[1],fx:e.dataset.fx}));
+const rows=[...document.querySelectorAll('.row')].map(e=>({e,a:T(e)[0],b:T(e)[1],pb:e.querySelector('.pb'),dt:[...e.querySelectorAll('.dt')]}));
+rows.forEach(r=>{r.len=r.pb.getTotalLength();r.pb.style.strokeDasharray=r.len});
+const subs=[...document.querySelectorAll('.sub')].map(e=>({e,a:T(e)[0],b:T(e)[1]}));
+const $=id=>document.getElementById(id),DUR=38;
+window.seek=t=>{
+  $('grid').style.transform=`translate(${-t*2.3}px,${-t*2.3}px)`;
+  $('bar').style.width=(cl(t/DUR)*1080)+'px';
+  for(const o of els){ if(t<o.a||t>o.b){o.e.style.opacity=0;continue}
+    const a=cl((t-o.a)/(o.fx==='slam'?.2:.35)),out=cl((o.b-t)/.2);let tr='';
+    if(o.fx==='up')tr=`translateY(${(1-eo(a))*60}px)`;else if(o.fx==='zoom')tr=`scale(${.5+.5*back(a)})`;else if(o.fx==='slam')tr=`scale(${1+1.6*(1-eo(a))})`;
+    o.e.style.opacity=a*out;o.e.style.transform=tr}
+  for(const r of rows){ if(t<r.a||t>r.b){r.e.style.opacity=0;continue}
+    const a=cl((t-r.a)/.35),out=cl((r.b-t)/.2);r.e.style.opacity=a*out;r.e.style.transform=`translateX(${(1-eo(a))*-120}px)`;
+    r.pb.style.strokeDashoffset=r.len*(1-eo((t-r.a-.25)/.9));
+    r.dt.forEach(d=>{const k=back((t-r.a-1.15)/.3);d.setAttribute('r',t>r.a+1.15?11*k:0)})}
+  for(const s of subs){s.e.style.opacity=(t<s.a||t>s.b)?0:cl((t-s.a)/.15)*cl((s.b-t)/.15)}
+  const p=1+.18*Math.abs(Math.sin(t*5));$('q1').style.transform=`scale(${p})`;
+  $('xs').style.transform=`scaleX(${eo((t-28.2)/.3)}) rotate(-5deg)`;
+  $('fol').style.transform=`scale(${1+.035*Math.sin(t*6)})`;
+  const end=cl((t-35.8)/.3);$('brand').style.opacity=1-end;$('tag').style.opacity=1-end;
+};
+seek(0);
+</script><script>(()=>{const A=[[-0.05, -0.25], [0.25, 0.0], [1.0, 3.158], [1.9, 3.879], [3.15, 4.479], [4.3, 6.389], [5.1, 7.398], [6.0, 8.488], [7.6, 10.096], [8.8, 12.076], [10.1, 12.725], [12.2, 14.167], [14.1, 15.364], [15.6, 16.65], [16.6, 19.031], [17.8, 20.323], [19.2, 21.842], [20.6, 23.403], [22.0, 25.048], [23.4, 26.588], [25.0, 28.573], [27.1, 29.475], [29.0, 31.467], [29.8, 32.392], [30.8, 33.749], [33.1, 35.874], [36.1, 37.375], [38, 39.67]],s0=window.seek;
+window.seek=t=>{let d=A[A.length-1][0];for(let i=1;i<A.length;i++){if(t<=A[i][1]){const[a,b]=[A[i-1],A[i]];d=a[0]+(b[0]-a[0])*(t-a[1])/(b[1]-a[1]);break}}s0(d)};window.seek(0)})();</script></body></html>

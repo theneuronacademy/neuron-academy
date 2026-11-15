@@ -1,0 +1,33 @@
+1
+00:00:00,000 --> 00:00:04,344
+Teen trigonometry identities —
+yaad sirf ek karni hai!
+
+2
+00:00:04,550 --> 00:00:08,106
+Sine square theta plus cos square theta
+equals one.
+
+3
+00:00:08,280 --> 00:00:11,148
+Isse cos square theta se divide karo…
+
+4
+00:00:11,210 --> 00:00:15,135
+tan square theta plus one
+equals sec square theta.
+
+5
+00:00:15,260 --> 00:00:17,885
+Aur sine square theta se divide karo…
+
+6
+00:00:17,940 --> 00:00:21,642
+one plus cot square theta
+equals cosec square theta.
+
+7
+00:00:21,750 --> 00:00:26,645
+sec square minus tan square
+one hota hai — ulta nahi.
+

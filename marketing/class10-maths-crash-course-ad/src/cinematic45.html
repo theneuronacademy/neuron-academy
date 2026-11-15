@@ -1,0 +1,262 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{--navy:#0A1633;--blue:#2D7CFF;--gold:#F5C542;--grey:#8FA3C8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#050b1c}
+body{font-family:Poppins,sans-serif;color:#fff}
+#bg{position:absolute;left:0;top:0}
+.el{position:absolute;left:0;right:0;text-align:center;opacity:0;will-change:transform,opacity}
+.h{white-space:nowrap;font-weight:900;text-transform:uppercase;line-height:1.04;letter-spacing:-1px;text-shadow:0 10px 40px rgba(0,0,0,.6)}
+.s{font-weight:500;letter-spacing:6px;text-transform:uppercase;color:#cfe0ff}
+.g{color:var(--gold)}
+.gt{background:linear-gradient(180deg,#fff0b0 0%,#F5C542 45%,#c9952a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 10px 30px rgba(245,197,66,.35))}
+.line{display:inline-block;height:6px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.cap{font-weight:600;font-size:44px;line-height:1.3;padding:0 90px;text-shadow:0 4px 18px rgba(0,0,0,.9)}
+.cap b{color:var(--gold);font-weight:700}
+.logo{display:inline-block;border-radius:50%;background:#fff url(../assets/neuron-academy-logo.jpg) center/128% no-repeat;box-shadow:0 0 0 6px rgba(245,197,66,.85),0 0 90px rgba(45,124,255,.75),0 30px 80px rgba(0,0,0,.6)}
+.pill{white-space:nowrap;display:inline-block;border-radius:999px;font-weight:800;text-transform:uppercase}
+.gp{background:linear-gradient(180deg,#ffe58a,#F5C542 55%,#d9a52e);color:#0A1633;box-shadow:0 16px 50px rgba(245,197,66,.4)}
+.op{border:3px solid rgba(245,197,66,.8);color:var(--gold);background:rgba(10,22,51,.55)}
+.ring{display:inline-flex;align-items:center;justify-content:center;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle at 50% 35%,rgba(45,124,255,.5),rgba(10,22,51,.85) 70%);border:4px solid rgba(245,197,66,.85);box-shadow:0 0 100px rgba(45,124,255,.55),inset 0 0 60px rgba(45,124,255,.35)}
+.ring svg{width:190px;height:190px;stroke:#fff;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.live{display:inline-flex;align-items:center;gap:16px;background:#e3122b;border-radius:14px;padding:8px 26px;font-weight:800;font-size:40px;letter-spacing:3px}
+.live i{width:22px;height:22px;border-radius:50%;background:#fff;display:block}
+.cal{display:inline-block;width:520px;border-radius:44px;overflow:hidden;background:#fff;box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 5px rgba(245,197,66,.85)}
+.cal .top{background:linear-gradient(180deg,#2D7CFF,#1750c8);font-weight:800;font-size:58px;letter-spacing:6px;padding:26px 0}
+.cal .d{color:#0A1633;font-weight:900;font-size:300px;line-height:1.1}
+.cal .y{color:#1750c8;font-weight:800;font-size:64px;padding-bottom:30px;letter-spacing:8px}
+.strike{position:absolute;left:50%;top:50%;height:10px;width:440px;margin-left:-220px;margin-top:-5px;background:var(--gold);border-radius:5px;transform-origin:left center}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(2,5,14,.75) 100%);pointer-events:none}
+#wm{position:absolute;left:0;right:0;top:270px;text-align:center;opacity:0}
+</style></head><body>
+<canvas id="bg" width="1080" height="1920"></canvas>
+<div id="vig"></div>
+
+<!-- S1 hook 0-3 -->
+<div class="el s" data-t="0.15,3.0" data-fx="fade" style="top:330px;font-size:46px">CBSE Class 10</div>
+<div class="el h" data-t="0.25,3.0" data-fx="slam" style="top:400px;font-size:128px">Boards 2027</div>
+<div class="el h gt" data-t="1.3,3.0" data-fx="slam" style="top:1230px;font-size:100px">Maths se darr?</div>
+
+<!-- S2 problem 3-7 -->
+<div class="el h" data-t="3.15,6.95" data-fx="slam" style="top:520px;font-size:150px">Formulas?</div>
+<div class="el h" data-t="4.35,6.95" data-fx="slam" style="top:790px;font-size:150px">Sawaal?</div>
+<div class="el h gt" data-t="5.75,6.95" data-fx="slam" style="top:1060px;font-size:170px">Time?</div>
+
+<!-- S3 turn 7-10.5 -->
+<div class="el h" data-t="7.25,10.4" data-fx="up" style="top:660px;font-size:92px">Maths darr nahi.</div>
+<div class="el" data-t="8.0,10.4" data-fx="fade" style="top:800px"><span class="line" style="width:520px"></span></div>
+<div class="el h gt" data-t="8.3,10.4" data-fx="slam" style="top:850px;font-size:190px">Skill hai.</div>
+
+<!-- S4 brand 10.5-15 -->
+<div class="el" data-t="10.9,14.9" data-fx="zoom" style="top:330px"><span class="logo" style="width:470px;height:470px"></span></div>
+<div class="el s g" data-t="11.6,14.9" data-fx="up" style="top:860px;font-size:40px;font-weight:600">Neuron Academy presents</div>
+<div class="el h" data-t="11.9,14.9" data-fx="up" style="top:935px;font-size:96px">Online<br><span class="gt">Mathematics</span><br>Crash Course</div>
+<div class="el" data-t="12.7,14.9" data-fx="up" style="top:1275px"><span class="pill op" style="font-size:38px;padding:16px 44px;letter-spacing:2px">CBSE Class 10 · Board Examination 2027</span></div>
+<div class="el s" data-t="13.2,14.9" data-fx="fade" style="top:1390px;font-size:38px">Live + Recorded Classes</div>
+
+<!-- S5 live 15-18.5 -->
+<div class="el" data-t="15.2,18.4" data-fx="zoom" style="top:470px"><span class="ring"><svg viewBox="0 0 100 100"><rect x="12" y="20" width="76" height="50" rx="6"/><path d="M36 86h28M50 70v16"/><path d="M43 35v20l17-10z" fill="#fff"/></svg></span></div>
+<div class="el" data-t="15.5,18.4" data-fx="fade" style="top:420px;left:560px;right:auto"><span class="live" id="liveb"><i></i>LIVE</span></div>
+<div class="el h" data-t="15.4,18.4" data-fx="up" style="top:900px;font-size:104px">Live <span class="gt">Interactive</span><br>Classes</div>
+<div class="el" data-t="15.7,18.4" data-fx="fade" style="top:1140px"><span class="line" style="width:420px"></span></div>
+<div class="el s" data-t="15.8,18.4" data-fx="up" style="top:1180px;font-size:40px">Ask your questions in class</div>
+
+<!-- S6 recorded 18.5-21.5 -->
+<div class="el" data-t="18.7,21.4" data-fx="zoom" style="top:470px"><span class="ring"><svg viewBox="0 0 100 100"><path d="M22 50a28 28 0 1 0 9-20.5"/><path d="M20 16v16h16"/><path d="M43 38v24l20-12z" fill="#fff"/></svg></span></div>
+<div class="el h" data-t="18.9,21.4" data-fx="up" style="top:900px;font-size:104px"><span class="gt">Recorded</span><br>Lectures</div>
+<div class="el" data-t="19.2,21.4" data-fx="fade" style="top:1140px"><span class="line" style="width:420px"></span></div>
+<div class="el s" data-t="19.3,21.4" data-fx="up" style="top:1180px;font-size:40px">Revise anytime</div>
+
+<!-- S7 syllabus 21.5-25.5 -->
+<div class="el" data-t="21.7,25.4" data-fx="zoom" style="top:470px"><span class="ring"><svg viewBox="0 0 100 100"><path d="M50 26c-8-7-20-8-34-6v54c14-2 26-1 34 6 8-7 20-8 34-6V20c-14-2-26-1-34 6z"/><path d="M50 26v54"/><path d="M60 50l7 7 12-14" stroke="#F5C542" stroke-width="6"/></svg></span></div>
+<div class="el h" data-t="21.9,25.4" data-fx="up" style="top:900px;font-size:96px"><span class="gt">Complete</span><br>Syllabus<br>Coverage</div>
+<div class="el" data-t="23.4,25.4" data-fx="up" style="top:1250px"><span class="pill op" style="font-size:36px;padding:16px 40px;letter-spacing:1px">Board Examination-Oriented Preparation</span></div>
+
+<!-- S8 doubt 25.5-28.5 -->
+<div class="el" data-t="25.7,28.4" data-fx="zoom" style="top:470px"><span class="ring"><svg viewBox="0 0 100 100"><path d="M14 22h72v46H46L28 84V68H14z"/><path id="qm" d="M41 38c0-12 18-12 18 0 0 7-9 7-9 14M50 60v.5"/><path id="tk" d="M36 46l10 10 20-22" stroke="#F5C542" stroke-width="7"/></svg></span></div>
+<div class="el s g" data-t="25.8,28.4" data-fx="fade" style="top:880px;font-size:40px;font-weight:600">Every week</div>
+<div class="el h" data-t="25.9,28.4" data-fx="up" style="top:945px;font-size:98px">Weekly Live<br><span class="gt">Doubt-Clearing</span><br>Classes</div>
+
+<!-- S9 price 28.5-34.5 -->
+<div class="el" id="oldfee" data-t="29.0,34.4" data-fx="fade" style="top:640px">
+  <div class="s" style="font-size:40px">Regular Fee</div>
+  <div class="h" id="oldamt" style="font-size:130px;position:relative;display:inline-block;padding:0 30px">₹2,999<span class="strike" id="strike"></span></div>
+</div>
+<div class="el s g" data-t="32.3,34.4" data-fx="fade" style="top:830px;font-size:50px;font-weight:700">Special Offer</div>
+<div class="el h gt" data-t="32.55,34.4" data-fx="slam" style="top:880px;font-size:230px;letter-spacing:-6px">₹1,999</div>
+<div class="el" data-t="33.4,34.4" data-fx="zoom" style="top:1215px"><span class="pill gp" style="font-size:46px;padding:14px 50px">Save ₹1,000</span></div>
+
+<!-- S10 date 34.5-37.5 -->
+<div class="el s g" data-t="34.7,37.4" data-fx="up" style="top:400px;font-size:64px;font-weight:800;letter-spacing:10px">Batch Starts</div>
+<div class="el" data-t="34.9,37.4" data-fx="slam" style="top:530px"><span class="cal"><div class="top">NOVEMBER</div><div class="d">16</div><div class="y">2026</div></span></div>
+<div class="el h" data-t="35.5,37.4" data-fx="up" style="top:1240px;font-size:84px">16 November 2026</div>
+<div class="el s" data-t="35.9,37.4" data-fx="fade" style="top:1370px;font-size:38px">Live + Recorded Classes</div>
+
+<!-- S11 CTA 37.5-42 -->
+<div class="el" data-t="37.7,41.9" data-fx="zoom" style="top:470px"><span class="pill gp" id="enrol" style="font-size:84px;padding:22px 80px">Enrol Now</span></div>
+<div class="el s" data-t="38.3,41.9" data-fx="up" style="top:760px;font-size:52px;font-weight:600">WhatsApp · Call</div>
+<div class="el h" data-t="39.0,41.9" data-fx="slam" style="top:850px;font-size:200px;right:auto;width:540px;text-align:right;padding-right:22px;letter-spacing:-4px">97119</div>
+<div class="el h" data-t="40.5,41.9" data-fx="slam" style="top:850px;font-size:200px;left:540px;text-align:left;padding-left:22px;letter-spacing:-4px">17317</div>
+<div class="el" data-t="41.0,41.9" data-fx="fade" style="top:1110px"><span class="line" style="width:760px"></span></div>
+<div class="el s" data-t="41.0,41.9" data-fx="up" style="top:1160px;font-size:40px">Offer fee <b class="g" style="font-weight:800">₹1,999</b> · Starts 16 Nov 2026</div>
+
+<!-- S12 end card 42-45 -->
+<div class="el" data-t="42.05,46" data-fx="zoom" style="top:285px"><span class="logo" style="width:400px;height:400px"></span></div>
+<div class="el s g" data-t="42.25,46" data-fx="up" style="top:735px;font-size:42px;font-weight:700;letter-spacing:9px">Activate your Neuron at</div>
+<div class="el h" data-t="42.35,46" data-fx="up" style="top:800px;font-size:92px">Neuron Academy</div>
+<div class="el" data-t="42.45,46" data-fx="fade" style="top:945px"><span class="line" style="width:700px"></span></div>
+<div class="el" data-t="42.5,46" data-fx="up" style="top:985px;font-size:44px;font-weight:600;line-height:1.4">Online Mathematics Crash Course<br><span style="color:#cfe0ff;font-size:38px">CBSE Class 10 · Board Examination 2027</span></div>
+<div class="el" data-t="42.6,46" data-fx="up" style="top:1150px"><span class="pill op" style="font-size:33px;padding:14px 34px">Batch starts 16 November 2026 · Offer fee ₹1,999</span></div>
+<div class="el s" data-t="42.7,46" data-fx="up" style="top:1262px;font-size:38px;font-weight:600">WhatsApp · Call</div>
+<div class="el h gt" data-t="42.7,46" data-fx="up" style="top:1310px;font-size:150px;letter-spacing:-2px">97119 17317</div>
+
+<!-- small logo watermark scenes 5-11 -->
+<div id="wm"><span class="logo" style="width:130px;height:130px;box-shadow:0 0 0 3px rgba(245,197,66,.85),0 0 40px rgba(45,124,255,.6)"></span></div>
+
+<!-- captions (narration text) -->
+<div class="el cap" data-t="0.2,2.95" data-fx="fade" style="top:1390px;font-size:42px;color:#cfe0ff">Board exam paas hai…</div>
+<div class="el cap" data-t="3.2,6.9" data-fx="fade" style="top:1360px;font-size:40px">Formulas bhool jaate hain.<br>Sawaal atak jaate hain.<br>Aur waqt… <b>kam hai.</b></div>
+<div class="el cap" data-t="8.9,10.4" data-fx="fade" style="top:1150px">Aur skill <b>seekhi ja sakti hai.</b></div>
+<div class="el cap" data-t="15.9,18.4" data-fx="fade" style="top:1330px">Sawaal poochiye, <b>usi waqt.</b></div>
+<div class="el cap" data-t="19.4,21.4" data-fx="fade" style="top:1330px">Jab chahein, <b>revise kijiye.</b></div>
+<div class="el cap" data-t="26.6,28.4" data-fx="fade" style="top:1330px">Har hafte — <b>aapke doubts clear.</b></div>
+<div class="el cap" data-t="38.4,41.9" data-fx="fade" style="top:1330px">Aaj hi <b>WhatsApp kijiye</b></div>
+
+<div id="flash"></div>
+<script>
+const cv=document.getElementById('bg'),c=cv.getContext('2d'),W=1080,H=1920;
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), eo=x=>1-Math.pow(1-cl(x),3), ei=x=>cl(x)**3;
+const back=x=>{x=cl(x);const s=1.9;return 1+(s+1)*Math.pow(x-1,3)+s*Math.pow(x-1,2)};
+const lerp=(a,b,k)=>a+(b-a)*k;
+function rnd(i){const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)}
+const win=(t,a,b,f=0.3)=>cl((t-a)/f)*cl((b-t)/f);
+const els=[...document.querySelectorAll('.el')].map(e=>{const [a,b]=e.dataset.t.split(',').map(Number);return{e,a,b,fx:e.dataset.fx}});
+const FORM=['x²','sin θ','πr²','√','a² + b²','tan θ','Sₙ','(a + b)²','θ','x = ?','aₙ','∠','⅓πr²h','cos θ','Δ','y = ?','2πr','b² − 4ac'];
+const NODES=[...Array(46)].map((_,i)=>{const a=rnd(i)*6.283,r=420+rnd(i+50)*780;return{x:540+Math.cos(a)*r*.8,y:900+Math.sin(a)*r,j:rnd(i+99)}});
+const P=[...Array(340)].map((_,i)=>({x:rnd(i+7)*W,y:rnd(i+17)*H,a:rnd(i+27)*6.283,s:rnd(i+37),r:rnd(i+47)}));
+
+function glow(x,y,r,col,a){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,col.replace('A',a));g.addColorStop(1,col.replace('A',0));c.fillStyle=g;c.fillRect(x-r,y-r,2*r,2*r)}
+const BL='rgba(45,124,255,A)',GD='rgba(245,197,66,A)',CY='rgba(90,170,255,A)';
+
+function draw(t){
+  // base
+  const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#081330');g.addColorStop(.5,'#0A1633');g.addColorStop(1,'#040916');
+  c.globalCompositeOperation='source-over';c.fillStyle=g;c.fillRect(0,0,W,H);
+  c.globalCompositeOperation='lighter';
+  // ambient glows
+  const warm=cl((t-7)/1.5);           // cold -> warm after the turn
+  glow(180+60*Math.sin(t*.3),1500-10*t,760,BL,.20+.06*Math.sin(t*.7));
+  glow(930,300+8*t,640,CY,.12);
+  if(warm>0) glow(540,1750,1100,GD,.10*warm);
+  // dust particles
+  for(let i=0;i<110;i++){const p=P[i];const y=((p.y-t*(18+p.s*40))%H+H)%H,x=p.x+Math.sin(t*.5+p.a)*30;
+    const gold=p.r<.35*warm+.08;c.fillStyle=gold?`rgba(245,197,66,${.25+.35*p.s})`:`rgba(140,185,255,${.12+.25*p.s})`;
+    c.beginPath();c.arc(x,y,1.2+p.s*2.6,0,6.283);c.fill()}
+
+  // S1 clock
+  let w=win(t,0,3.0,.25);
+  if(w>0){const cx=540,cy=900,R=270;c.save();c.globalAlpha=w;
+    c.strokeStyle='rgba(120,170,255,.75)';c.lineWidth=7;c.beginPath();c.arc(cx,cy,R,0,6.283);c.stroke();
+    c.strokeStyle='rgba(120,170,255,.25)';c.lineWidth=2;c.beginPath();c.arc(cx,cy,R+26,0,6.283);c.stroke();
+    for(let k=0;k<60;k++){const a=k/60*6.283,l=k%5?12:30;c.lineWidth=k%5?2:5;c.strokeStyle=k%5?'rgba(150,190,255,.45)':'rgba(255,255,255,.85)';
+      c.beginPath();c.moveTo(cx+Math.cos(a)*(R-14),cy+Math.sin(a)*(R-14));c.lineTo(cx+Math.cos(a)*(R-14-l),cy+Math.sin(a)*(R-14-l));c.stroke()}
+    // second hand ticks once per second with a tiny overshoot
+    const sec=Math.floor(t),fr=t-sec,sa=((52+sec+back(fr/.12))/60)*6.283-1.5708;
+    c.strokeStyle='#F5C542';c.lineWidth=6;c.lineCap='round';c.beginPath();c.moveTo(cx-Math.cos(sa)*40,cy-Math.sin(sa)*40);c.lineTo(cx+Math.cos(sa)*(R-50),cy+Math.sin(sa)*(R-50));c.stroke();
+    const ma=(58.7/60)*6.283-1.5708,ha=(11.9/12)*6.283-1.5708;c.strokeStyle='#fff';
+    c.lineWidth=9;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(ma)*(R-80),cy+Math.sin(ma)*(R-80));c.stroke();
+    c.lineWidth=12;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(ha)*(R-140),cy+Math.sin(ha)*(R-140));c.stroke();
+    c.fillStyle='#F5C542';c.beginPath();c.arc(cx,cy,13,0,6.283);c.fill();
+    glow(cx,cy,R*1.5,BL,.16+.10*Math.exp(-fr*6));c.restore()}
+
+  // S2 drifting formula fragments (pressure)
+  w=win(t,3.0,7.0,.3);
+  if(w>0){c.save();c.textAlign='center';const k=(t-3)/4;
+    for(let i=0;i<FORM.length;i++){const x=80+rnd(i+3)*920,y=((300+rnd(i+13)*1500+ (t-3)*(60+rnd(i)*120)*(i%2?1:-1))%1500+1500)%1500+250;
+      const sz=50+rnd(i+23)*90;c.font=`italic 500 ${sz}px "STIX Two Text",serif`;c.globalAlpha=w*(.10+.16*rnd(i+33))*(.6+.8*k);
+      c.fillStyle='#9cc3ff';c.save();c.translate(x,y);c.rotate((rnd(i+43)-.5)*.6+Math.sin(t*1.3+i)*.08);c.fillText(FORM[i],0,0);c.restore()}
+    c.restore()}
+
+  // S3 golden sweep
+  w=win(t,7.0,10.5,.35);
+  if(w>0){const k=(t-7)/3.5;glow(540,1900-900*eo(k),1200,GD,.26*w);
+    c.save();c.globalAlpha=.5*w;const x=-300+1700*eo(k*1.1);const sg=c.createLinearGradient(x-260,0,x+260,0);
+    sg.addColorStop(0,'rgba(245,197,66,0)');sg.addColorStop(.5,'rgba(255,225,140,.35)');sg.addColorStop(1,'rgba(245,197,66,0)');
+    c.fillStyle=sg;c.transform(1,0,-.35,1,0,0);c.fillRect(x-260+400,0,520,H);c.restore()}
+
+  // S4 neural network converging + burst; faint network later
+  const nt=t-10.5;
+  if(t>=9.6&&t<15.0){const a=win(t,9.6,15.0,.5),p=cl((t-9.6)/1.2),q=eo(cl(nt/.9));
+    c.save();c.lineCap='round';
+    NODES.forEach((n,i)=>{const d=cl(p*1.6-n.j*.6),pull=q*.42;const x=lerp(n.x,540,pull),y=lerp(n.y,720,pull);
+      const m=NODES[(i*7+3)%NODES.length],mx=lerp(m.x,540,pull),my=lerp(m.y,720,pull);
+      c.strokeStyle=`rgba(70,150,255,${.5*a*d})`;c.lineWidth=2.2;c.beginPath();c.moveTo(x,y);c.lineTo(lerp(x,mx,d),lerp(y,my,d));c.stroke();
+      c.strokeStyle=`rgba(90,170,255,${.28*a*d})`;c.beginPath();c.moveTo(x,y);c.lineTo(lerp(x,540,d),lerp(y,720,d));c.stroke();
+      const pu=.5+.5*Math.sin(t*5+i);c.fillStyle=`rgba(160,205,255,${a*(.5+.5*pu)*d})`;c.beginPath();c.arc(x,y,4+3*pu,0,6.283);c.fill();
+      // travelling pulse
+      const tr=(t*.9+n.j)%1;c.fillStyle=`rgba(245,197,66,${a*.9*d})`;c.beginPath();c.arc(lerp(x,540,tr),lerp(y,720,tr),3.5,0,6.283);c.fill()});
+    c.restore();
+    if(nt>=0){const b=Math.exp(-nt*2.2);glow(540,620,300+1500*eo(nt/.5),GD,.75*b);glow(540,570,640,GD,.20*cl(nt/.6)*a);glow(540,570,520,BL,.30*a)}}
+  // faint network backdrop for features
+  w=win(t,15.0,28.5,.5);
+  if(w>0){c.save();NODES.forEach((n,i)=>{const m=NODES[(i*7+3)%NODES.length];const x=n.x+Math.sin(t*.4+i)*18,y=n.y+Math.cos(t*.35+i)*18;
+      c.strokeStyle=`rgba(70,150,255,${.10*w})`;c.lineWidth=1.5;c.beginPath();c.moveTo(x,y);c.lineTo(m.x,m.y);c.stroke();
+      c.fillStyle=`rgba(150,200,255,${.30*w})`;c.beginPath();c.arc(x,y,3,0,6.283);c.fill()});c.restore();
+    glow(540,650,560,BL,.28*w);
+    // hologram geometry for the syllabus scene
+    const hw=win(t,21.6,25.5,.4);
+    if(hw>0){c.save();c.strokeStyle=`rgba(110,180,255,${.55*hw})`;c.lineWidth=3;const ro=t*.5;
+      const tri=(cx,cy,r,a)=>{c.beginPath();for(let k=0;k<4;k++){const an=a+k*2.094;c[k?'lineTo':'moveTo'](cx+Math.cos(an)*r,cy+Math.sin(an)*r)}c.stroke()};
+      tri(190,430-20*Math.sin(t),110,ro);c.beginPath();c.arc(900,470+20*Math.cos(t),95,0,6.283);c.moveTo(900,470+20*Math.cos(t));c.lineTo(900+95*Math.cos(ro),470+20*Math.cos(t)+95*Math.sin(ro));c.stroke();
+      c.beginPath();for(let x=-150;x<=150;x+=6){const y=x*x/110;c[x==-150?'moveTo':'lineTo'](180+x,1560-y)}c.stroke();
+      c.strokeStyle=`rgba(245,197,66,${.5*hw})`;c.beginPath();c.moveTo(20,1562);c.lineTo(340,1562);c.moveTo(180,1340);c.lineTo(180,1590);c.stroke();
+      c.strokeStyle=`rgba(110,180,255,${.55*hw})`;c.beginPath();c.ellipse(900,1560,90,26,0,0,6.283);c.moveTo(810,1560);c.lineTo(900,1370);c.lineTo(990,1560);c.stroke();c.restore()}}
+
+  // S9 gold particles gather into a ring, pulse on the reveal
+  if(t>=28.3&&t<34.6){const a=win(t,28.3,34.55,.35),k=eo((t-28.5)/3.2),cx=540,cy=1000,R=440;
+    const pulse=t>=32.55?Math.exp(-(t-32.55)*2.5):0;
+    for(let i=0;i<P.length;i++){const p=P[i];const an=p.a+t*(.25+.25*p.s),rr=R+(p.r-.5)*60*(1.4-k)+pulse*60*p.s;
+      const tx=cx+Math.cos(an)*rr,ty=cy+Math.sin(an)*rr*1.0,x=lerp(p.x,tx,k),y=lerp(p.y,ty,k);
+      c.fillStyle=`rgba(255,${200+40*p.s|0},${90+80*p.s|0},${a*(.35+.6*p.s)})`;c.beginPath();c.arc(x,y,1.5+p.s*3.2+pulse*2,0,6.283);c.fill()}
+    c.save();c.strokeStyle=`rgba(245,197,66,${a*k*(.35+.5*pulse)})`;c.lineWidth=5+10*pulse;c.beginPath();c.arc(cx,cy,R,0,6.283);c.stroke();c.restore();
+    glow(cx,cy,620,GD,a*(.10*k+.5*pulse));glow(540,0,900,'rgba(180,210,255,A)',.14*a)}
+
+  // S10-S12 gold rays + calm glow
+  w=cl((t-34.5)/.4);
+  if(w>0){c.save();c.translate(540,2050);for(let i=0;i<9;i++){const an=-1.5708+(i-4)*.2+Math.sin(t*.25+i)*.05;c.rotate(an);
+      const rg=c.createLinearGradient(0,0,1900,0);rg.addColorStop(0,`rgba(245,197,66,${.11*w})`);rg.addColorStop(1,'rgba(245,197,66,0)');
+      c.fillStyle=rg;c.beginPath();c.moveTo(0,-26);c.lineTo(1900,-110);c.lineTo(1900,110);c.lineTo(0,26);c.fill();c.rotate(-an)}c.restore();
+    glow(540,t>=42?520:800,720,BL,.26*w);if(t>=42)glow(540,500,560,GD,.16*cl((t-42)/.5))}
+  c.globalCompositeOperation='source-over';
+}
+
+const flash=document.getElementById('flash'),wm=document.getElementById('wm'),strike=document.getElementById('strike'),
+  oldamt=document.getElementById('oldamt'),oldfee=document.getElementById('oldfee'),qm=document.getElementById('qm'),tk=document.getElementById('tk'),
+  liveb=document.getElementById('liveb'),enrol=document.getElementById('enrol');
+const FL=[[10.5,.9],[32.55,.7],[42.0,.5],[7.0,.25]];
+window.seek=t=>{
+  draw(t);
+  for(const o of els){const a=cl((t-o.a)/(o.fx==='slam'?.22:.38)),out=cl((o.b-t)/.22);let tr='',op=Math.min(a,1)*out;
+    if(t<o.a||t>o.b){o.e.style.opacity=0;continue}
+    if(o.fx==='up')tr=`translateY(${(1-eo(a))*70}px)`;
+    else if(o.fx==='zoom')tr=`scale(${.4+.6*back(a)})`;
+    else if(o.fx==='slam')tr=`scale(${1+2.2*(1-eo(a))})`;
+    // slow push-in while on screen
+    tr+=` scale(${1+.012*(t-o.a)})`;
+    o.e.style.opacity=op;o.e.style.transform=tr}
+  let f=0;for(const [ft,amp] of FL){if(t>=ft)f=Math.max(f,amp*Math.exp(-(t-ft)*7))}flash.style.opacity=f;
+  wm.style.opacity=win(t,15.2,41.9,.4)*.95;
+  // price: strike-through then dim
+  const sk=eo((t-30.8)/.3);strike.style.transform=`scaleX(${sk}) rotate(-4deg)`;
+  oldamt.style.color=t>=30.8?'#8FA3C8':'#fff';
+  if(t>=29&&t<34.4){const d=eo((t-31.2)/.5);oldfee.style.transform=`translateY(${-45*d}px) scale(${1-.25*d})`}
+  // doubt bubble: ? becomes tick
+  const dk=cl((t-27.2)/.25);qm.style.opacity=1-dk;tk.style.opacity=dk;tk.style.strokeDasharray=60;tk.style.strokeDashoffset=60*(1-eo(dk));
+  liveb.style.opacity=.55+.45*Math.abs(Math.sin(t*4));
+  enrol.style.transform=`scale(${1+.04*Math.sin(t*6)})`;
+};
+seek(0);
+</script></body></html>
