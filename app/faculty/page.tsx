@@ -22,6 +22,7 @@ export default async function FacultyListingPage() {
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
             <SectionHeader
+              as="h1"
               eyebrow="FACULTY"
               title="Meet the academy’s faculty"
               desc="Learn more about the educators featured by Neuron Academy — each card opens the full profile."

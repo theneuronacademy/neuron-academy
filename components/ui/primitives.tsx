@@ -193,11 +193,11 @@ interface SectionHeaderProps {
   dark?: boolean;
 }
 
-export function SectionHeader({ eyebrow, title, desc, className, dark = false }: SectionHeaderProps) {
+export function SectionHeader({ eyebrow, title, desc, className, dark = false, as: Heading = "h2" }: SectionHeaderProps & { as?: "h1" | "h2" }) {
   return (
     <div className={cn("animate-slide-up max-w-3xl", className)}>
       <p className={cn("text-xs font-bold tracking-[0.16em] uppercase", dark ? "text-brand-secondary-300" : "text-brand-primary")}>{eyebrow}</p>
-      <h2 className={cn("mt-3 text-3xl font-extrabold leading-tight sm:text-4xl lg:text-[40px]", dark ? "text-white" : "text-navy-950")}>{title}</h2>
+      <Heading className={cn("mt-3 text-3xl font-extrabold leading-tight sm:text-4xl lg:text-[40px]", dark ? "text-white" : "text-navy-950")}>{title}</Heading>
       <div className="mt-4 h-1 w-14 rounded-full bg-brand-secondary" aria-hidden />
       {desc && <p className={cn("mt-3 text-base leading-relaxed sm:text-lg", dark ? "text-silver-200" : "text-neutral-600")}>{desc}</p>}
     </div>
