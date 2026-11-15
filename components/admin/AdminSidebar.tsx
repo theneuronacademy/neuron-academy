@@ -133,7 +133,9 @@ export function AdminSidebar({ mobile = false, onNavigate }: { mobile?: boolean;
               {!isCollapsed ? (
                 <div className="space-y-1 px-1 pb-1">
                   {g.items.map((it) => {
-                    const active = pathname === it.href || (it.href !== "/admin/dashboard" && pathname.startsWith(it.href + "/"));
+                    // A parent page ("/admin/website") is not highlighted when one of its own child pages has its own entry.
+                    const childHasEntry = g.items.some((o) => o.href !== it.href && o.href.startsWith(it.href + "/") && (pathname === o.href || pathname.startsWith(o.href + "/")));
+                    const active = pathname === it.href || (it.href !== "/admin/dashboard" && pathname.startsWith(it.href + "/") && !childHasEntry);
                     const exactDashboard = it.href === "/admin/dashboard" && pathname === "/admin/dashboard";
                     return (
                       <Link

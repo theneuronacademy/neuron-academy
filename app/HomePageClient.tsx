@@ -549,7 +549,7 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
           <div className="animate-float pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader dark eyebrow="STUDENT ACHIEVEMENTS" title="Toppers’ wall" desc="Selections and scores our students have earned — verified by the academy." />
+              <SectionHeader dark eyebrow="STUDENT ACHIEVEMENTS" title="Our students’ results" desc="Board exam scores and school entrance selections earned by Neuron Academy students." />
             </Reveal>
             <ToppersWall rows={wall} demo={!wallLive} />
             <Reveal delay={150}>

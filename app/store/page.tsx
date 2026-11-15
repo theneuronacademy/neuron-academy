@@ -28,6 +28,7 @@ export default async function StorePage() {
         <section className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
             <SectionHeader
+              as="h1"
               eyebrow="STUDY MATERIAL STORE"
               title="Question banks and study material"
               desc={items.some((i) => i.instantPay) ? "Prepared by Neuron Academy's teachers. Pay online and download the PDF straight away." : "Prepared by Neuron Academy's teachers. Pay online and download the PDF once your payment is confirmed."}
