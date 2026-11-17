@@ -53,7 +53,7 @@ export function Hero() {
             <span className="mt-1 block text-brand-primary">Class 6 to 12.</span>
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-neutral-600 sm:text-lg">
-            Prepare for JMI, AMU and CM SHRI school entrances, CBSE board exams, NEET and JEE with concept-first teaching, regular practice and tests.
+            Prepare for JMI, AMU and CM SHRI school entrances, CBSE board exams, NEET and JEE at our centre in Shaheen Bagh, New Delhi. Classes, a weekly mock test and doubt help, all in one place.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             {EXAM_PILLS.map((pill) => (
@@ -71,9 +71,9 @@ export function Hero() {
             </a>
           </div>
           <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-neutral-600">
-            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Mentor support</span>
-            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Regular mock tests</span>
-            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Digital practice tools</span>
+            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Mock test every week</span>
+            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Doubt lounge till 8 PM</span>
+            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-brand-primary" /> Open Mon–Sat, 8 AM–10:30 PM</span>
           </div>
         </div>
 

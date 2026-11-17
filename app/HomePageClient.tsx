@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  BookOpen, Users, FileText, Target, MonitorPlay, CheckCircle2, Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, Play, Eye,
+  BookOpen, CheckCircle2, Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, Play, Eye,
 } from "lucide-react";
 import { AnnouncementBar } from "@/components/website/AnnouncementBar";
 import { Navbar } from "@/components/website/Navbar";
@@ -24,7 +24,7 @@ import { FacultyCarousel } from "@/components/website/FacultyCarousel";
 import { Testimonials } from "@/components/website/Testimonials";
 import { ContactForm } from "@/components/website/ContactForm";
 import { Footer } from "@/components/website/Footer";
-import { Reveal, Marquee, Tilt, WaveDivider } from "@/components/website/motion";
+import { Reveal, WaveDivider } from "@/components/website/motion";
 import { SectionHeader, Card, StatusBadge } from "@/components/ui/primitives";
 import { useHomepageContent } from "@/lib/useHomepageContent";
 import {
@@ -37,7 +37,7 @@ import {
   FAQJsonLd,
   WebSiteJsonLd,
 } from "@/components/website/SchemaMarkup";
-import { FACULTY, GALLERY, CONTACT_INFO, EXAM_TICKER, FAQS } from "@/lib/websiteData";
+import { FACULTY, GALLERY, CONTACT_INFO, FAQS } from "@/lib/websiteData";
 import type { GalleryItem } from "@/data/gallery";
 import type { Testimonial } from "@/data/testimonials";
 import { getLiveCourses, getLiveFaculty, getLiveGallery, getLiveShowcase, getLiveTestimonials, getBooks, getLiveAboutMedia, getAboutMediaSettings, type LiveBookRow, type LiveAboutRow } from "@/services/siteApi";
@@ -48,12 +48,13 @@ import { RESULTS, type AcademyResult } from "@/data/results";
 import type { Course } from "@/data/courses";
 import type { FacultyMember } from "@/data/faculty";
 
-const TRUST = [
-  { icon: BookOpen, title: "Focused Courses", desc: "School entrances (JMI, AMU, CM SHRI), CBSE boards, NEET and JEE." },
-  { icon: FileText, title: "Regular Practice", desc: "Mock tests and question practice for exam preparation." },
-  { icon: Users, title: "Mentor Support", desc: "Guidance from the academy’s faculty team." },
-  { icon: Target, title: "Progress Tools", desc: "Academic activity and performance in one place." },
-  { icon: MonitorPlay, title: "Digital Assessments", desc: "Online tests with results and question review." },
+// Plain facts about the academy (address and hours from data/contact; the
+// rest from the academy's own ticker). No invented numbers.
+const FACTS = [
+  { k: "Classes", v: "6 to 12", d: "JMI, AMU and CM SHRI entrances, CBSE boards, NEET and JEE" },
+  { k: "Tests", v: "Every week", d: "Mock tests in the pattern of the exam you are preparing for" },
+  { k: "Doubts", v: "Till 8 PM", d: "Doubt lounge open after class for questions" },
+  { k: "Open", v: "Mon–Sat", d: "8:00 AM to 10:30 PM at FA-23, near Shaheen Masjid" },
 ];
 
 const STUDENT_PORTAL_URL = "https://estudde.com/";
@@ -374,32 +375,17 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
         <Hero />
         <CrashCourseAd />
 
-        {/* Academy features */}
-        <section className="relative overflow-hidden border-y border-silver-200 bg-gradient-to-b from-white to-silver-50">
-          <div className="pointer-events-none absolute -right-20 top-0 h-56 w-56 rounded-full bg-brand-primary/5 blur-3xl" aria-hidden />
-          <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6">
-            <Reveal>
-              <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
-                {["Small batches", "Weekly mocks", "Mentor support", "Entrance pathways"].map((l) => (
-                  <div key={l}>
-                    <p className="mt-0.5 text-[11px] font-semibold tracking-[0.12em] text-neutral-500">{l.toUpperCase()}</p>
-                  </div>
-                ))}
+        {/* Academy at a glance: plain facts, no icons */}
+        <section className="border-b border-silver-200 bg-white">
+          <dl className="mx-auto grid max-w-7xl grid-cols-2 divide-silver-200 px-4 sm:px-6 lg:grid-cols-4 lg:divide-x">
+            {FACTS.map((f) => (
+              <div key={f.k} className="py-6 lg:px-6 lg:first:pl-0">
+                <dt className="text-[12px] font-bold text-neutral-500">{f.k}</dt>
+                <dd className="mt-1 text-xl font-extrabold text-navy-950">{f.v}</dd>
+                <dd className="mt-1 pr-3 text-[13px] leading-snug text-neutral-600">{f.d}</dd>
               </div>
-            </Reveal>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              {TRUST.map((f, i) => (
-                <Reveal key={f.title} delay={i * 70}>
-                  <Tilt max={7}>
-                    <Card variant="metallic" className="flex h-full gap-3 p-4">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-primary/5 text-brand-primary"><f.icon className="h-5 w-5" /></span>
-                      <span><span className="block text-sm font-bold tracking-tight text-navy-900">{f.title}</span><span className="mt-1 block text-[13px] leading-snug text-neutral-600">{f.desc}</span></span>
-                    </Card>
-                  </Tilt>
-                </Reveal>
-              ))}
-            </div>
-          </div>
+            ))}
+          </dl>
         </section>
 
         {/* COURSES */}
@@ -407,7 +393,7 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
           <div className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-brand-secondary/10 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="COURSES" title="Find the right course for your goals" desc="Explore entrance preparation and foundation courses offered by Neuron Academy." />
+              <SectionHeader eyebrow="COURSES" title="Batches for Class 6 to 12" desc="Entrance batches for JMI, AMU and CM SHRI, school batches for each class, and two-year NEET and JEE programmes. Open a batch to see who it is for and how it runs." />
             </Reveal>
             <Reveal delay={100}>
               <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter courses by category">
@@ -494,12 +480,12 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
             </Reveal>
             <Reveal variant="right">
               <div>
-                <SectionHeader eyebrow="ABOUT" title={hc["about.heading"] || "A structured approach to exam preparation"} />
+                <SectionHeader eyebrow="ABOUT" title={hc["about.heading"] || "One place for classes, tests and doubts"} />
                 <p className="mt-4 text-[15px] leading-relaxed text-muted">
-                  {hc["about.text"] || "Neuron Academy supports students from Class 6 to 12 preparing for JMI, AMU and CM SHRI school entrances, CBSE board exams, NEET and JEE through focused classes, regular practice and mentor support."}
+                  {hc["about.text"] || "Neuron Academy is a coaching centre in Shaheen Bagh for students of Class 6 to 12. Most of our students prepare for the JMI, AMU and CM SHRI school entrances or their CBSE board exams; senior students prepare for NEET and JEE."}
                 </p>
                 <ul className="mt-5 space-y-3 text-[14px] text-ink">
-                  {["Focused courses for entrance preparation.", "Small batches and support from mentors.", "Regular mock tests and question practice.", "Digital tools for assessment and progress tracking."].map((t) => (
+                  {["Separate entrance batches for Class 6, 9 and 11 admissions.", "A mock test every week, in the exam\u2019s own pattern.", "Doubt lounge open till 8 PM, after class.", "Online tests and results on the student portal."].map((t) => (
                     <li key={t} className="flex gap-2 rounded-lg py-1"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" /> {t}</li>
                   ))}
                 </ul>
@@ -509,16 +495,12 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
           </div>
         </section>
 
-        {/* EXAM TICKER divider */}
-        <div className="bg-metallic-dark border-y border-white/10 py-3">
-          <Marquee items={EXAM_TICKER} className="text-white" itemClassName="text-white" />
-        </div>
 
         {/* FACULTY */}
         <section id="faculty" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="FACULTY" title="Meet the academy’s faculty" desc="Learn more about the educators featured by Neuron Academy." />
+              <SectionHeader title="Your teachers" desc="The people who take the classes, with their subjects, qualifications and years of teaching." />
             </Reveal>
             {facultyList.length > 0 && (
               <>
@@ -552,19 +534,6 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
               <SectionHeader dark eyebrow="STUDENT ACHIEVEMENTS" title="Our students’ results" desc="Board exam scores and school entrance selections earned by Neuron Academy students." />
             </Reveal>
             <ToppersWall rows={wall} demo={!wallLive} />
-            <Reveal delay={150}>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-center">
-                {[
-                  { l: "📝 Weekly Mocks" },
-                  { l: "📚 Syllabus Coverage" },
-                  { l: "💡 Doubt Lounge" },
-                ].map((x) => (
-                  <div key={x.l}>
-                    <p className="text-[11px] font-bold tracking-[0.18em] text-teal-300">{x.l.toUpperCase()}</p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
           </div>
         </section>
 
@@ -588,7 +557,7 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
         <section id="books" className="relative overflow-hidden bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="STUDY MATERIAL" title="Question banks & study resources" desc="Practice material prepared by Neuron Academy for entrance and board examinations." />
+              <SectionHeader eyebrow="STUDY MATERIAL" title="Question banks written by our teachers" desc="Made for the JMI entrance and CBSE boards. Look at the free sample, pay online and download the PDF straight away." />
             </Reveal>
             {(liveBooks ?? []).length === 0 ? (
               <p className="mt-10 rounded-card border border-dashed border-silver-300 bg-white p-8 text-center text-sm font-bold text-muted">No books published yet.</p>
@@ -683,7 +652,7 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
         <section id="gallery" className="bg-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="GALLERY" title="Inside Neuron Academy" desc="Explore photos shared by the academy." />
+              <SectionHeader title="Inside Neuron Academy" desc="Our classrooms in Shaheen Bagh, test days and batch photos." />
             </Reveal>
             <GallerySection items={galleryList} />
           </div>
@@ -695,7 +664,7 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
           <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-20 sm:px-6 lg:grid-cols-2">
             <Reveal variant="left">
               <div>
-                <SectionHeader eyebrow="CONTACT" title="Talk with the academy" desc="Visit Neuron Academy in Shaheen Bagh, call, or send an enquiry." />
+                <SectionHeader eyebrow="CONTACT" title="Visit, call or WhatsApp us" desc="Come to FA-23, near Shaheen Masjid, Shaheen Bagh, or send your question below." />
                 <div className="mt-6 space-y-3">
                 {[
                   { icon: Phone, t: CONTACT_INFO.phone, href: CONTACT.phoneHref },
@@ -759,7 +728,7 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
         <section className="bg-white">
           <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
             <Reveal>
-              <SectionHeader eyebrow="FAQ" title="Frequently asked questions" desc="Information about courses, classes and getting in touch." />
+              <SectionHeader title="Questions parents ask" />
             </Reveal>
             <Reveal delay={120}>
               <div className="mt-8"><Faq items={FAQS} /></div>

@@ -1,4 +1,7 @@
-// FAQ content (editable mock data — only claims supported by academy info).
+// FAQ content. Only facts the academy has published elsewhere on the site
+// (courses, contact details, hours, ticker).
+
+import { CONTACT } from "@/data/contact";
 
 export interface Faq {
   id: string;
@@ -10,61 +13,51 @@ export const FAQS: Faq[] = [
   {
     id: "classes",
     question: "Which classes does Neuron Academy teach?",
-    answer: "We offer classes from Class 1 through Class 12.",
+    answer: "Classes 6 to 12. Class 5 students can also join our batch for the Class 6 entrance at JMI, AMU and CM SHRI schools.",
+  },
+  {
+    id: "entrance",
+    question: "Which school entrances do you prepare for?",
+    answer: "JMI (Jamia), AMU and CM SHRI, for admission to Class 6, Class 9 and Class 11. Each has its own batch, and there is also a separate entrance test series.",
   },
   {
     id: "subjects",
-    question: "Which subjects are available?",
-    answer: "We provide support across school subjects, including Mathematics, Science, English, Social Studies and other subjects according to class and availability.",
-  },
-  {
-    id: "jee",
-    question: "Do you offer JEE preparation?",
-    answer: "Yes, we offer JEE preparation. Contact the academy for course details and batch availability.",
-  },
-  {
-    id: "neet",
-    question: "Do you offer NEET or medical entrance preparation?",
-    answer: "We offer medical entrance preparation. Contact the academy to confirm the available courses and batches.",
-  },
-  {
-    id: "commerce",
-    question: "Do you teach Commerce students?",
-    answer: "We provide Commerce subject support. Ask the academy about the subjects and classes currently available.",
-  },
-  {
-    id: "arts",
-    question: "Do you teach Arts or Humanities subjects?",
-    answer: "Contact the academy to discuss available Arts and Humanities subjects for your class.",
+    question: "Which subjects are taught?",
+    answer: "Mathematics, Science, English and Social Science in the school batches; Physics, Chemistry, Biology and Mathematics for NEET and JEE; and Commerce subjects. Ask us which subjects run in your child's batch.",
   },
   {
     id: "school-exams",
-    question: "Can students get help with school exams?",
-    answer: "Yes, students can enquire about school subject support and exam preparation for their class.",
+    question: "Do you help with school and board exams?",
+    answer: "Yes. Our school batches follow the NCERT and CBSE syllabus, and the Class 10 batch prepares students for the CBSE board exam.",
   },
   {
-    id: "all-subjects",
-    question: "Are classes available for all school subjects?",
-    answer: "We support multiple school subjects. Availability depends on the class, subject and current timetable.",
+    id: "neet-jee",
+    question: "Do you offer NEET and JEE preparation?",
+    answer: "Yes. Both are two-year programmes for students in Class 11 and 12.",
   },
   {
-    id: "admission",
-    question: "How can I enquire about admission?",
-    answer: "Call the academy, send a WhatsApp message, or email us using the contact details on the website.",
+    id: "tests",
+    question: "How often are tests held?",
+    answer: "There is a mock test every week, and students can bring their questions to the doubt lounge, which stays open till 8 PM.",
   },
   {
     id: "fees",
-    question: "How can I find out about fees and batches?",
-    answer: "Contact the academy directly for current fees, schedules and batch availability.",
+    question: "What are the fees, and when do batches start?",
+    answer: `Fees and start dates depend on the batch. Call or WhatsApp ${CONTACT.phone} and we will tell you the current fee and timings.`,
+  },
+  {
+    id: "admission",
+    question: "How do I take admission?",
+    answer: `Visit the academy, call or WhatsApp ${CONTACT.phone}, or send the enquiry form on this page. You can also ask for a free demo class first.`,
   },
   {
     id: "hours",
-    question: "What are the academy's opening hours?",
-    answer: "The academy is open Monday through Saturday, from 8:00 AM to 10:30 PM.",
+    question: "When is the academy open?",
+    answer: "Monday to Saturday, 8:00 AM to 10:30 PM.",
   },
   {
     id: "location",
-    question: "Where is Neuron Academy located?",
-    answer: "FA-23, near Shaheen Masjid, Shaheen Bagh, Jamia Nagar, New Delhi — 110025.",
+    question: "Where is Neuron Academy?",
+    answer: "FA-23, near Shaheen Masjid, Shaheen Bagh, Jamia Nagar, New Delhi 110025.",
   },
 ];
