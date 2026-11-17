@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, BookOpen, CheckCircle2, ExternalLink, FileText, MessageCircle, ShieldCheck } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, Eye, FileText, MessageCircle, ShieldCheck } from "lucide-react";
 import { Navbar } from "@/components/website/Navbar";
 import { Footer } from "@/components/website/Footer";
 import { BuyForm } from "@/components/store/BuyForm";
@@ -102,6 +102,11 @@ export default async function StoreItemPage({ params }: { params: Promise<{ id: 
                 </span>
               )}
             </div>
+            {item.sampleUrl ? (
+              <a href={item.sampleUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 rounded-xl border-2 border-brand-primary bg-white px-4 py-2.5 text-sm font-bold text-brand-primary transition hover:bg-brand-primary/5 lg:hidden">
+                <Eye className="h-4 w-4" aria-hidden /> View free sample
+              </a>
+            ) : null}
             <div className="mt-6 flex flex-wrap gap-1.5">
               {tags.map((t) => (
                 <span key={t} className="rounded-full bg-white px-2.5 py-1 text-[12px] font-bold text-navy-700 ring-1 ring-silver-200">{t}</span>
@@ -136,11 +141,6 @@ export default async function StoreItemPage({ params }: { params: Promise<{ id: 
                 .
               </p>
             ) : null}
-            {item.sampleUrl ? (
-              <a href={item.sampleUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-brand-primary underline-offset-4 hover:underline">
-                View a free sample <ExternalLink className="h-4 w-4" aria-hidden />
-              </a>
-            ) : null}
           </div>
 
           {/* Buy */}
@@ -152,6 +152,11 @@ export default async function StoreItemPage({ params }: { params: Promise<{ id: 
                 {saving > 0 ? <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[13px] font-bold text-emerald-700 ring-1 ring-emerald-200">Save {rupees(saving)}</span> : null}
               </p>
               <p className="mt-1 text-[13px] text-neutral-600">One-time payment for the PDF.</p>
+              {item.sampleUrl ? (
+                <a href={item.sampleUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand-primary px-4 py-2.5 text-sm font-bold text-brand-primary transition hover:bg-brand-primary/5">
+                  <Eye className="h-4 w-4" aria-hidden /> View free sample before you buy
+                </a>
+              ) : null}
               <div className="my-5 h-px bg-silver-200" />
               {item.sellable ? (
                 <BuyForm bookId={item.id} priceLabel={rupees(item.price)} instantPay={item.instantPay} />

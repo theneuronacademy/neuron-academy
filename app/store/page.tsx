@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen, Eye } from "lucide-react";
 import { Navbar } from "@/components/website/Navbar";
 import { Footer } from "@/components/website/Footer";
 import { SectionHeader } from "@/components/ui/primitives";
@@ -63,14 +63,19 @@ export default async function StorePage() {
                           <Link href={`/store/${item.id}`} className="hover:text-brand-primary">{item.title}</Link>
                         </h2>
                         {item.description ? <p className="mt-2 line-clamp-3 text-[13.5px] leading-relaxed text-neutral-700">{courseSummary(item.description)}</p> : null}
-                        <div className="mt-auto flex items-end justify-between gap-3 pt-5">
-                          <p className="flex items-baseline gap-2">
+                        <div className="mt-auto pt-5">
+                          <p className="mb-3 flex items-baseline gap-2">
                             <span className="text-2xl font-extrabold text-navy-950">{rupees(item.price)}</span>
                             {item.mrp ? <span className="text-sm font-semibold text-neutral-500 line-through">{rupees(item.mrp)}</span> : null}
                           </p>
-                          <Link href={`/store/${item.id}`} className="inline-flex items-center gap-1.5 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-primary-hover">
+                          <Link href={`/store/${item.id}`} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-primary-hover">
                             View &amp; buy <ArrowRight className="h-4 w-4" aria-hidden />
                           </Link>
+                          {item.sampleUrl ? (
+                            <a href={item.sampleUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand-primary px-4 py-2.5 text-sm font-bold text-brand-primary transition hover:bg-brand-primary/5">
+                              <Eye className="h-4 w-4" aria-hidden /> View free sample
+                            </a>
+                          ) : null}
                         </div>
                       </div>
                     </article>

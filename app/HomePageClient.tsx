@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  BookOpen, Users, FileText, Target, MonitorPlay, CheckCircle2, Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, Play,
+  BookOpen, Users, FileText, Target, MonitorPlay, CheckCircle2, Phone, Mail, MapPin, Clock, X, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, Play, Eye,
 } from "lucide-react";
 import { AnnouncementBar } from "@/components/website/AnnouncementBar";
 import { Navbar } from "@/components/website/Navbar";
@@ -649,6 +649,11 @@ export default function HomePage({ initialBannerRows = null, initial = null }: {
                               <Link href={`/store/${b.id}`} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-primary-hover">
                                 View &amp; buy <ArrowRight className="h-4 w-4" aria-hidden />
                               </Link>
+                              {b.sampleUrl ? (
+                                <a href={b.sampleUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand-primary px-4 py-2.5 text-sm font-bold text-brand-primary transition hover:bg-brand-primary/5">
+                                  <Eye className="h-4 w-4" aria-hidden /> View free sample
+                                </a>
+                              ) : null}
                             </>
                           ) : !open ? (
                             <a href={STUDENT_PORTAL_URL} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand-primary px-4 py-2.5 text-sm font-bold text-brand-primary transition hover:bg-brand-primary/5">
